@@ -2,7 +2,7 @@
 import hashlib
 import json
 from pathlib import Path
-import urllib.request
+import requests
 
 REVISION = "f7b908b5f8f23bc0462393c14d041354985af3bd"
 ROOT = Path("external/dst_sgnn")
@@ -19,8 +19,9 @@ def main():
                             "use float32 rather than mixed float64/float32"]}
     for filename in FILES:
         url = f"https://raw.githubusercontent.com/komorebi424/DST-SGNN/{REVISION}/model/{filename}"
-        with urllib.request.urlopen(url, timeout=60) as response:
-            raw = response.read()
+        response = requests.get(url, timeout=60)
+        response.raise_for_status()
+        raw = response.content
         manifest["original_sha256"][filename] = hashlib.sha256(raw).hexdigest()
         text = raw.decode().replace("from model.", "from dst_sgnn_upstream.")
         text = text.replace("self.cuda(0)", "pass").replace("self.to('cuda:0')", "pass")
