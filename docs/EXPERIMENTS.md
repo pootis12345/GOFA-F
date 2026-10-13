@@ -17,12 +17,13 @@
 - METR-LA / PeMS-BAY：[DCRNN 数据说明](https://github.com/liyaguang/DCRNN)。
 - AQI：[torch-spatiotemporal AirQuality](https://torch-spatiotemporal.readthedocs.io/en/latest/modules/datasets_in_tsl.html#tsl.datasets.AirQuality)。
 - AQI-36：[原始数据](https://github.com/Feiyunpublic/dataset-AQI-36)。
-- SWaT / WADI：[iTrust 数据申请](https://itrust.sutd.edu.sg/itrust-labs_datasets/dataset_info/)。
+- Electricity / Solar-Energy：[LSTNet 原作者公开数据](https://github.com/laiguokun/multivariate-time-series-data)。
+  经用户确认替代 SWaT/WADI，扩展能源领域；前者 321 路每小时用电量，后者 137 路每 10 分钟太阳能发电量。
 
 数据全部在服务器准备，不上传授权数据、检查点或大数组。
-工业数据只选择正常工况，剔除异常标签、日期、时间及编号列。多次采集分别赋 segments ID。
-官方正常/攻击划分不能直接当预测训练/测试划分；需要重新按正常工况时间顺序划分并披露。
-缺失值与真实零分开处理：工业真实零不得整体当作缺失。
+能源数据保留真实零值。多次采集分别赋 segments ID。
+AQI 部分站点训练段没有观测，使用训练段全体站点的汇总均值/方差作回退标准化，
+保留全部站点并记录 cold-start 索引。回退统计量不会使用验证或测试段。
 原始时间戳应排序、去重并校验采样间隔；遇到采集间断应分段或按固定网格重采样并显式标记缺失。
 转换程序不会自动猜测采样频率，也不会擅自聚合、插值或选择特征。
 
@@ -48,7 +49,7 @@ GNN 匹配到两个 GOFA-F 模型各自的总参数 ±10%。匹配过程只读�
 ## 指标与通过条件
 
 主指标为标准化 MSE 和原尺度 MAE，辅以 RMSE、逐预测步指标。
-MAPE 只在目标绝对值超过阈值时计算，接近零的工业量不作主指标。
+MAPE 只在目标绝对值超过阈值时计算，接近零的太阳能量不作主指标。
 跨数据集汇总采用每个数据集相对基线的比例/排名，不直接平均不同单位的原尺度 MAE。
 报告全部种子、均值、样本标准差，不能只取最好种子。
 

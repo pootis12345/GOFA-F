@@ -29,9 +29,11 @@
 |---|---|---|
 |交通|METR-LA、PeMS-BAY|零值按数据集约定作为缺失；不要使用全数据拟合的标准化版本|
 |环境|AQI、AQI-36|可能共享站点/时间，分别报告，不能当作独立跨域迁移证据|
-|工业系统|SWaT、WADI|需自行取得授权；仅使用正常工况，作为预测任务重新定义|
+|能源|Electricity、Solar-Energy|公开的电力负荷/太阳能发电数据，按用户确认扩展领域；保留真实零值|
 
 候选协议：每个数据集 3 个预测长度 × 3 个随机种子，完整矩阵 378 个作业（含两个分别匹配规模的 GNN）。
+能源数据来自 [LSTNet 原作者数据仓库](https://github.com/laiguokun/multivariate-time-series-data)，
+也是后续 GNN 预测研究的常用数据。按用户选择替代需要申请权限的工业数据。
 详细定义、原始数据来源和通过标准见 [实验协议](docs/EXPERIMENTS.md)。
 注册矩阵不代表已经取得这些数据或跑完实验。
 
@@ -48,6 +50,8 @@ ruff check .
 pytest -q
 python scripts/fetch_baseline.py
 python scripts/smoke_pretrained.py
+python scripts/download_public_data.py
+python scripts/prepare_public_data.py
 ```
 
 `pytest` 使用小型随机初始化的编码器验证机制；`smoke_pretrained.py` 才下载真正的预训练骨干并验证 GPU 前后向。

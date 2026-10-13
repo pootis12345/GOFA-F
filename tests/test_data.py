@@ -54,3 +54,17 @@ def test_pairwise_graph_ignores_unobserved_values():
     np.testing.assert_array_equal(a, b)
     np.testing.assert_array_equal(a, a.T)
     assert np.all(np.diag(a) == 1)
+
+
+def test_cold_start_scaler_uses_pooled_training_statistics(tmp_path):
+    series = sample(tmp_path)
+    series.mask[:series.train_end, 0] = False
+    z, mean, std = series.standardize()
+    observed = series.values[:series.train_end][series.mask[:series.train_end]]
+    assert mean[0] == pytest.approx(observed.mean())
+    assert std[0] == pytest.approx(observed.std())
+    series.values[series.train_end:, 0] += 1e9
+    _, mean2, std2 = series.standardize()
+    np.testing.assert_array_equal(mean, mean2)
+    np.testing.assert_array_equal(std, std2)
+    assert np.isfinite(z).all()

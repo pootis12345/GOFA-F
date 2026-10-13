@@ -94,6 +94,7 @@ def run(config, output):
            "backbone_revision": getattr(model, "resolved_revision", None),
            "baseline": getattr(model, "provenance", None), "parameters": counts,
            "data_sha256": series.fingerprint,
+           "cold_start_nodes": np.flatnonzero(series.mask[:series.train_end].sum(0) < 2).tolist(),
            "split": {"train_end": series.train_end, "val_end": series.val_end, "length": len(series.values)},
            "windows": {s: len(ds) for s, ds in splits.items()},
            "pid": os.getpid()}

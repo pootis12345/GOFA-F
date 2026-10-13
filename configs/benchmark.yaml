@@ -37,14 +37,14 @@ datasets:
     data: data/processed/aqi_36.npz
     context: 96
     horizons: [12, 24, 48]
-  swat:
-    domain: industrial
-    data: data/processed/swat.npz
+  electricity:
+    domain: energy
+    data: data/processed/electricity.npz
     context: 96
     horizons: [12, 24, 48]
-  wadi:
-    domain: industrial
-    data: data/processed/wadi.npz
+  solar:
+    domain: energy
+    data: data/processed/solar.npz
     context: 96
     horizons: [12, 24, 48]
 models:

@@ -38,15 +38,20 @@ class Series:
             raise ValueError("Expected values/mask [time,nodes] and segments [time]")
         if not 0 < train_end < val_end < len(values):
             raise ValueError("Invalid chronological split boundaries")
-        if np.any(mask[:train_end].sum(0) < 2):
-            raise ValueError("Each node needs at least two observed training values")
+        if mask[:train_end].sum() < 2:
+            raise ValueError("At least two observed training values are required")
         return cls(np.where(mask, values, 0), mask, segments, train_end, val_end, file_sha256(path))
 
     def standardize(self):
         x, m = self.values[:self.train_end], self.mask[:self.train_end]
         count = m.sum(0)
-        mean = (x * m).sum(0, dtype=np.float64) / count
-        var = (((x - mean) ** 2) * m).sum(0) / count
+        global_mean = x[m].mean(dtype=np.float64)
+        global_var = x[m].var(dtype=np.float64)
+        mean = (x * m).sum(0, dtype=np.float64) / np.maximum(count, 1)
+        var = (((x - mean) ** 2) * m).sum(0) / np.maximum(count, 1)
+        # Cold-start stations use same-unit pooled TRAINING statistics, never future data.
+        mean = np.where(count >= 2, mean, global_mean)
+        var = np.where(count >= 2, var, global_var)
         std = np.sqrt(var).clip(1e-5).astype(np.float32)
         mean = mean.astype(np.float32)
         z = np.where(self.mask, (self.values - mean) / std, 0).astype(np.float32)

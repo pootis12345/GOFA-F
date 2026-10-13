@@ -1,0 +1,42 @@
+# 远程验证记录
+
+日期：2026-10-13（Asia/Shanghai）。
+服务器：`/home/dcg/dcg_data/GOFA-F`，NVIDIA H100 PCIe 约 80GB，Python 3.11.17。
+项目使用独立 `.venv`，复用已有 CUDA PyTorch；未修改原 conda 环境中的依赖。
+
+## 已通过
+
+- GitHub Actions：提交 `a462de1584d884a930f19a9863a2082d0f3484c2`，静态检查、19 项测试、实验矩阵展开成功。
+- H100 服务器：相同提交的机制测试 19 项通过，2.25 秒。
+- 服务器真实预训练模型测试（代码提交 `b7771216a20aa7a1c6e10095a4b86b7464b92067`）：
+  T5、GOFA-F(T5)、Chronos-T5、GOFA-F(Chronos) 均完成 GPU 前向、反向、一次参数更新。
+  冻结骨干的适配器梯度、图门控梯度均非零。
+- 官方 DST-SGNN 适配完成 GPU 前向、反向，输出形状与梯度有限性检查通过。
+
+|模型（96 步历史，12 步预测）|实际总参数|实际可训练参数|
+|---|---:|---:|
+|T5 编码器预测适配|35,359,128|28,312|
+|GOFA-F(T5)|35,492,250|161,434|
+|Chronos 编码器预测适配|21,256,600|278,168|
+|GOFA-F(Chronos)|21,389,722|411,290|
+
+T5 权重版本：`df1b051c49625cf57a3d0d8d3863ed4d13564fe4`。
+Chronos 权重版本：`a971ba21945c4f1796b17a91fe69214b5f4ad472`。
+DST-SGNN 上游版本：`f7b908b5f8f23bc0462393c14d041354985af3bd`。
+
+日志保存在服务器 `/tmp/gofa-f-tests.log`、`/tmp/gofa-f-gpu-smoke.log`、
+`/tmp/gofa-f-baseline.log`。正式训练会将日志与 provenance 存在持久 outputs 目录。
+这里的验证输入是随机数，**没有任何数据集预测精度结论**。
+
+## 数据核对
+
+已从 TorchSpatiotemporal 官方维护的数据镜像下载交通与空气质量原始 HDF 数据包。
+METR-LA 为 34,272×207，PeMS-BAY 为 52,128×325；来源清单中的 PeMS-BAY 行数为 52,116，
+本项目保留下载版本的实际记录数并用哈希记录，未为对齐表格而裁切。
+空气质量原文件分别为 `full437.h5` 与 `small36.h5`。
+`pm25` 键表示 PM2.5 浓度；不能把它描述为综合 AQI 数值。
+原文件的 imputation evaluation mask 不用作预测的自然缺失 mask。
+
+## 待完成
+
+完整数据集训练、参数匹配 GNN 的正式成绩、多个随机种子、第三领域、全部消融与统计。
