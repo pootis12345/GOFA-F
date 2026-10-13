@@ -23,6 +23,8 @@ gofa-train = "gofa_f.train:main"
 gofa-prepare = "gofa_f.prepare:main"
 gofa-benchmark = "gofa_f.benchmark:main"
 gofa-report = "gofa_f.report:main"
+gofa-progress = "gofa_f.progress:main"
+gofa-tune = "gofa_f.tune:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

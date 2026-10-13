@@ -63,7 +63,10 @@ python scripts/prepare_public_data.py
 gofa-prepare --input data/raw/metr-la.h5 --key df --frequency 5min --zero-missing --output data/processed/metr_la.npz
 gofa-benchmark --plan
 python scripts/pilot.py --datasets metr_la pems_bay aqi aqi_36 electricity solar
-gofa-benchmark --seeds 42 --horizons 12 --output outputs/stage1-v1
+gofa-progress outputs/stage1-v2 --expected 42
+gofa-tune --plan
+# 以下为后续作业示例，先检查当前训练，使用独立固定提交快照与全新输出目录。
+gofa-benchmark --seeds 42 --horizons 12 --output outputs/new-stage
 gofa-benchmark --datasets metr_la --models persistence t5 gofa_t5 chronos gofa_chronos --output outputs/pilot-v1
 gofa-benchmark --output outputs/benchmark-v1
 gofa-report outputs/benchmark-v1 --output outputs/report.md
@@ -72,6 +75,10 @@ gofa-report outputs/benchmark-v1 --output outputs/report.md
 长时间的首轮完整训练可用 `bash scripts/run_stage1.sh`：六数据集、预测长度 12、种子 42，
 共 42 组，使用完整时间划分和验证早停。它是完整矩阵的第一阶段，尚不支持多种子结论。
 脚本使用已缓存权重，保存进程锁、提交号和退出状态，结束后生成结果表。
+
+验证集学习率搜索和不显示测试分数的进度检查见 [调参说明](docs/TUNING.md)。
+`gofa-train` / `gofa-benchmark --validation-only` 不构建测试窗口，完整结果标为 `validated`，
+不进入正式结果表；注册的第一轮学习率搜索为 108 组，目前尚未启动。
 
 HDF 内部键名需以实际文件为准。CSV/Excel 必须显式列出传感器列，防止时间戳和异常标签成为输入。
 NPZ 包含 `values[T,N]`、`mask[T,N]`，可选 `segments[T]` 和 `train_end/val_end`。

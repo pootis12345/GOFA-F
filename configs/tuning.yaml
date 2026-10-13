@@ -1,0 +1,7 @@
+# First equal-trial-budget search. Graph structure remains fixed in this round.
+# Execute only after checking the active GPU workload. No test evaluation.
+seeds: [42]
+horizons: [12]
+learning_rates: [0.00001, 0.0001, 0.001]
+selection_scale: standardized
+selection_metric: mae

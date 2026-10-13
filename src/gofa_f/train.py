@@ -72,6 +72,9 @@ def evaluate(model, loader, device, mean, std, horizon, amp=False):
 
 
 def run(config, output):
+    evaluation_split = config.get("evaluation_split", "test")
+    if evaluation_split not in ("validation", "test"):
+        raise ValueError("evaluation_split must be validation or test")
     output = Path(output)
     output.mkdir(parents=True, exist_ok=False)
     (output / "config.json").write_text(json.dumps(config, indent=2), encoding="utf-8")
@@ -82,11 +85,12 @@ def run(config, output):
                                     k=config.get("graph_k", 8))
     np.savez(output / "preprocessing.npz", mean=mean, std=std, adjacency=adjacency,
              train_end=series.train_end, val_end=series.val_end)
+    split_names = ("train", "val", "test") if evaluation_split == "test" else ("train", "val")
     splits = {s: Windows(series, normalized, s, config["context"], config["horizon"],
                          stride=config.get("train_stride", 1) if s == "train" else 1)
-              for s in ("train", "val", "test")}
+              for s in split_names}
     if config.get("max_eval_windows"):
-        for split in ("val", "test"):
+        for split in split_names[1:]:
             splits[split] = Subset(splits[split], range(min(len(splits[split]), config["max_eval_windows"])))
     device = torch.device(config.get("device", "cuda"))
     if device.type == "cuda" and not torch.cuda.is_available():
@@ -125,6 +129,7 @@ def run(config, output):
     amp = bool(config.get("amp", False) and device.type == "cuda"
                and config["model"].get("family") != "dst_sgnn")
     start, best, best_epoch, stale, steps = time.monotonic(), float("inf"), -1, 0, 0
+    best_validation = None
     if trainable:
         optimizer = torch.optim.AdamW(trainable, lr=config.get("lr", 1e-4),
                                       weight_decay=config.get("weight_decay", 1e-4))
@@ -157,6 +162,7 @@ def run(config, output):
             print(json.dumps(log), flush=True)
             if score < best:
                 best, best_epoch, stale = score, epoch, 0
+                best_validation = val
                 torch.save({"model": model.state_dict(), "epoch": epoch, "config": config}, output / "best.pt")
             else:
                 stale += 1
@@ -164,18 +170,26 @@ def run(config, output):
                 break
         saved = torch.load(output / "best.pt", map_location=device, weights_only=True)
         model.load_state_dict(saved["model"])
-    # Test data is evaluated only after validation has selected a checkpoint.
+    else:
+        best_validation = evaluate(model, loaders["val"], device, mean, std, config["horizon"], amp)
+    result = {"config": config, "environment": env, "best_epoch": best_epoch,
+              "validation": best_validation,
+              "status": "complete" if evaluation_split == "test" else "validated"}
+    # Tuning runs never construct a test loader or evaluate test targets.
+    if evaluation_split == "test":
+        if device.type == "cuda":
+            torch.cuda.synchronize()
+        test_start = time.monotonic()
+        result["test"] = evaluate(model, loaders["test"], device, mean, std, config["horizon"], amp)
+        if device.type == "cuda":
+            torch.cuda.synchronize()
+        result["test_seconds"] = time.monotonic() - test_start
     if device.type == "cuda":
         torch.cuda.synchronize()
-    test_start = time.monotonic()
-    test = evaluate(model, loaders["test"], device, mean, std, config["horizon"], amp)
-    if device.type == "cuda":
-        torch.cuda.synchronize()
-    result = {"config": config, "environment": env, "best_epoch": best_epoch, "test": test,
-              "elapsed_seconds": time.monotonic() - start,
-              "test_seconds": time.monotonic() - test_start,
-              "peak_cuda_bytes": torch.cuda.max_memory_allocated(device) if device.type == "cuda" else 0,
-              "status": "smoke" if config.get("max_steps") or config.get("max_eval_windows") else "complete"}
+    result.update(elapsed_seconds=time.monotonic() - start,
+                  peak_cuda_bytes=torch.cuda.max_memory_allocated(device) if device.type == "cuda" else 0)
+    if config.get("max_steps") or config.get("max_eval_windows"):
+        result["status"] = "smoke"
     (output / "result.json").write_text(json.dumps(result, indent=2), encoding="utf-8")
     return result
 
@@ -184,8 +198,12 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", required=True)
     parser.add_argument("--output", required=True)
+    parser.add_argument("--validation-only", action="store_true", help="Do not construct or evaluate test windows")
     args = parser.parse_args()
-    run(yaml.safe_load(Path(args.config).read_text(encoding="utf-8")), args.output)
+    config = yaml.safe_load(Path(args.config).read_text(encoding="utf-8"))
+    if args.validation_only:
+        config["evaluation_split"] = "validation"
+    run(config, args.output)
 
 
 if __name__ == "__main__":
