@@ -91,6 +91,8 @@ def run(config, output):
     device = torch.device(config.get("device", "cuda"))
     if device.type == "cuda" and not torch.cuda.is_available():
         raise RuntimeError("CUDA requested but unavailable; no silent CPU fallback")
+    if device.type == "cuda":
+        torch.cuda.reset_peak_memory_stats(device)
     model = build_model(config, adjacency, series.values.shape[1]).to(device)
     counts = parameter_counts(model)
     match = config.get("parameter_match")

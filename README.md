@@ -69,6 +69,10 @@ gofa-benchmark --output outputs/benchmark-v1
 gofa-report outputs/benchmark-v1 --output outputs/report.md
 ```
 
+长时间的首轮完整训练可用 `bash scripts/run_stage1.sh`：六数据集、预测长度 12、种子 42，
+共 42 组，使用完整时间划分和验证早停。它是完整矩阵的第一阶段，尚不支持多种子结论。
+脚本使用已缓存权重，保存进程锁、提交号和退出状态，结束后生成结果表。
+
 HDF 内部键名需以实际文件为准。CSV/Excel 必须显式列出传感器列，防止时间戳和异常标签成为输入。
 NPZ 包含 `values[T,N]`、`mask[T,N]`，可选 `segments[T]` 和 `train_end/val_end`。
 多段轨迹禁止跨段窗口；默认按时间 70/10/20 划分，验证/测试目标不会跨界。
@@ -83,7 +87,7 @@ SSH 连接信息仅放在被忽略的 `.remote/` 目录，密码与私钥不进�
 
 ## 当前阶段
 
-工程实现和远程验证在推进中；正式数据准备、参数匹配后的完整训练、统计比较和消融仍需完成。
+工程实现和远程验证已推进；参数匹配后的完整训练、统计比较和消融仍需完成。
 六数据集已在 H100 服务器准备完毕，具体版本见 [数据清单](docs/DATASETS.md)，
 已通过的检查见 [远程验证记录](docs/VERIFICATION.md)。
 任何性能结论以服务器生成的 `result.json` 为准。
