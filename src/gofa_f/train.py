@@ -10,7 +10,7 @@ import time
 
 import numpy as np
 import torch
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, Subset
 import transformers
 import yaml
 
@@ -43,13 +43,14 @@ def build_model(config, adjacency, nodes):
     return ForecastEncoder(context, horizon, adjacency, **m)
 
 
-def evaluate(model, loader, device, mean, std, horizon):
+def evaluate(model, loader, device, mean, std, horizon, amp=False):
     model.eval()
     raw, normalized = Metrics(horizon), Metrics(horizon)
     with torch.no_grad():
         for batch in loader:
             batch = {k: v.to(device) for k, v in batch.items()}
-            pred = model(batch["x"], batch["x_mask"]).float()
+            with torch.autocast(device_type=device.type, dtype=torch.bfloat16, enabled=amp):
+                pred = model(batch["x"], batch["x_mask"]).float()
             normalized.update(pred, batch["y"], batch["y_mask"])
             raw.update(pred * std + mean, batch["y"] * std + mean, batch["y_mask"])
     return {"raw": raw.result(), "standardized": normalized.result()}
@@ -69,6 +70,9 @@ def run(config, output):
     splits = {s: Windows(series, normalized, s, config["context"], config["horizon"],
                          stride=config.get("train_stride", 1) if s == "train" else 1)
               for s in ("train", "val", "test")}
+    if config.get("max_eval_windows"):
+        for split in ("val", "test"):
+            splits[split] = Subset(splits[split], range(min(len(splits[split]), config["max_eval_windows"])))
     device = torch.device(config.get("device", "cuda"))
     if device.type == "cuda" and not torch.cuda.is_available():
         raise RuntimeError("CUDA requested but unavailable; no silent CPU fallback")
@@ -101,14 +105,12 @@ def run(config, output):
     (output / "environment.json").write_text(json.dumps(env, indent=2), encoding="utf-8")
     print(json.dumps(env), flush=True)
     trainable = [p for p in model.parameters() if p.requires_grad]
+    amp = bool(config.get("amp", False) and device.type == "cuda"
+               and config["model"].get("family") != "dst_sgnn")
     start, best, best_epoch, stale, steps = time.monotonic(), float("inf"), -1, 0, 0
     if trainable:
         optimizer = torch.optim.AdamW(trainable, lr=config.get("lr", 1e-4),
                                       weight_decay=config.get("weight_decay", 1e-4))
-        amp = config.get("amp", False) and device.type == "cuda"
-        # Eigensolvers in official DST-SGNN require float32.
-        if config["model"].get("family") == "dst_sgnn":
-            amp = False
         accumulation = config.get("accumulation", 1)
         for epoch in range(config.get("epochs", 30)):
             model.train()
@@ -130,7 +132,7 @@ def run(config, output):
                     optimizer.zero_grad(set_to_none=True)
                 if config.get("max_steps") and steps >= config["max_steps"]:
                     break
-            val = evaluate(model, loaders["val"], device, mean, std, config["horizon"])
+            val = evaluate(model, loaders["val"], device, mean, std, config["horizon"], amp)
             score = val[config.get("selection_scale", "standardized")][config.get("selection_metric", "mae")]
             log = {"epoch": epoch, "train_loss": total_loss / batches, "validation": val, "steps": steps}
             with (output / "history.jsonl").open("a", encoding="utf-8") as stream:
@@ -149,14 +151,14 @@ def run(config, output):
     if device.type == "cuda":
         torch.cuda.synchronize()
     test_start = time.monotonic()
-    test = evaluate(model, loaders["test"], device, mean, std, config["horizon"])
+    test = evaluate(model, loaders["test"], device, mean, std, config["horizon"], amp)
     if device.type == "cuda":
         torch.cuda.synchronize()
     result = {"config": config, "environment": env, "best_epoch": best_epoch, "test": test,
               "elapsed_seconds": time.monotonic() - start,
               "test_seconds": time.monotonic() - test_start,
               "peak_cuda_bytes": torch.cuda.max_memory_allocated(device) if device.type == "cuda" else 0,
-              "status": "smoke" if config.get("max_steps") else "complete"}
+              "status": "smoke" if config.get("max_steps") or config.get("max_eval_windows") else "complete"}
     (output / "result.json").write_text(json.dumps(result, indent=2), encoding="utf-8")
     return result
 

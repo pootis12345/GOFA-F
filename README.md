@@ -23,7 +23,7 @@
 
 ## 数据与实验
 
-[awesome-gnn4ts](https://github.com/kimmeen/awesome-gnn4ts) 中的六个候选数据集：
+基于 [awesome-gnn4ts](https://github.com/kimmeen/awesome-gnn4ts) 选择，并按用户确认扩展能源领域的六个数据集：
 
 |领域|数据集|注意事项|
 |---|---|---|

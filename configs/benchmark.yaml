@@ -53,21 +53,25 @@ models:
   t5:
     family: encoder
     backbone: google-t5/t5-small
+    revision: df1b051c49625cf57a3d0d8d3863ed4d13564fe4
     graph_layers: []
     freeze_backbone: true
   gofa_t5:
     family: encoder
     backbone: google-t5/t5-small
+    revision: df1b051c49625cf57a3d0d8d3863ed4d13564fe4
     graph_layers: [1, 3]
     freeze_backbone: true
   chronos:
     family: encoder
     backbone: amazon/chronos-t5-small
+    revision: a971ba21945c4f1796b17a91fe69214b5f4ad472
     graph_layers: []
     freeze_backbone: true
   gofa_chronos:
     family: encoder
     backbone: amazon/chronos-t5-small
+    revision: a971ba21945c4f1796b17a91fe69214b5f4ad472
     graph_layers: [1, 3]
     freeze_backbone: true
   dst_sgnn:
@@ -81,4 +85,4 @@ parameter_matching:
   basis: total
   tolerance: 0.10
   widths: [16, 32, 64, 96, 128, 192, 256, 384, 512, 768, 1024]
-  hidden_sizes: [128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768]
+  hidden_sizes: [128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 40960, 65536]
