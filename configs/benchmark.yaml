@@ -15,7 +15,8 @@ defaults:
   selection_metric: mae
   train_ratio: 0.7
   val_ratio: 0.1
-seeds: [42, 43, 44]
+# Current execution is restricted to one seed by user request; defer 43/44.
+seeds: [42]
 datasets:
   metr_la:
     domain: traffic

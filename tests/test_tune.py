@@ -42,6 +42,8 @@ def test_search_rejects_truncated_and_unregistered_grids():
 
 def saved_trials(tmp_path):
     spec, search = settings()
+    # Exercise future multi-seed completeness independently of the current one-seed plan.
+    spec["seeds"] = [42, 43]
     search["seeds"] = [42, 43]
     jobs = trials(spec, search, datasets=["aqi_36"], models=["t5"])
     for name, config in jobs:
@@ -52,6 +54,16 @@ def saved_trials(tmp_path):
                   "validation": {"standardized": {"mae": 1 if config["lr"] == 1e-4 else 2}}}
         (directory / "result.json").write_text(json.dumps(result))
     return jobs
+
+
+def test_current_benchmark_is_restricted_to_seed42():
+    from gofa_f.benchmark import expand
+
+    spec, _ = settings()
+    jobs = list(expand(spec))
+    assert spec["seeds"] == [42]
+    assert len(jobs) == 126
+    assert {config["seed"] for _, config in jobs} == {42}
 
 
 def test_selection_requires_every_candidate_and_seed(tmp_path):
