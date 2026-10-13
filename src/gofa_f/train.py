@@ -30,6 +30,21 @@ def seed_everything(seed):
     torch.backends.cudnn.deterministic = True
 
 
+def clip_gradients(parameters, max_norm):
+    """Float64 norm accumulation avoids overflow for large finite spectral gradients."""
+    gradients = [p.grad for p in parameters if p.grad is not None]
+    if not gradients:
+        raise ValueError("No gradients to clip")
+    norm = torch.linalg.vector_norm(torch.stack([
+        torch.linalg.vector_norm(g.detach(), dtype=torch.float64) for g in gradients]))
+    if not torch.isfinite(norm):
+        raise FloatingPointError("Nonfinite gradient values; run retained for diagnosis")
+    scale = (max_norm / (norm + 1e-6)).clamp_max(1)
+    for gradient in gradients:
+        gradient.mul_(scale.to(gradient.dtype))
+    return norm
+
+
 def build_model(config, adjacency, nodes):
     m = dict(config["model"])
     family = m.pop("family", "encoder")
@@ -127,7 +142,7 @@ def run(config, output):
                 batches += 1
                 steps += 1
                 if (index + 1) % accumulation == 0 or index + 1 == len(loaders["train"]):
-                    torch.nn.utils.clip_grad_norm_(trainable, config.get("clip_grad", 1.0), error_if_nonfinite=True)
+                    clip_gradients(trainable, config.get("clip_grad", 1.0))
                     optimizer.step()
                     optimizer.zero_grad(set_to_none=True)
                 if config.get("max_steps") and steps >= config["max_steps"]:

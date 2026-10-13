@@ -1,8 +1,18 @@
 import json
 
 import numpy as np
+import pytest
+import torch
 
-from gofa_f.train import run
+from gofa_f.train import clip_gradients, run
+
+
+def test_finite_large_gradients_are_clipped_without_norm_overflow():
+    parameter = torch.nn.Parameter(torch.ones(2))
+    parameter.grad = torch.full((2,), 1e25)
+    norm = clip_gradients([parameter], 1.0)
+    assert torch.isfinite(norm)
+    assert parameter.grad.norm().item() == pytest.approx(1., abs=1e-5)
 
 
 def test_end_to_end_training_and_provenance(tmp_path):
