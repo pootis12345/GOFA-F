@@ -36,8 +36,8 @@ def test_frozen_backbone_keeps_adapter_gradients(chronos, checkpointing):
 def test_zero_gates_reproduce_no_graph_control():
     torch.manual_seed(7)
     control = tiny()
+    torch.manual_seed(7)
     graph = tiny((0, 2))
-    graph.load_state_dict(control.state_dict(), strict=False)
     x = torch.randn(2, 12, 3)
     mask = torch.ones_like(x, dtype=torch.bool)
     control.eval()

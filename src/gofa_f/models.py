@@ -53,8 +53,10 @@ class ForecastEncoder(nn.Module):
             raise ValueError("Graph layer indices must precede another Transformer block")
         if len(set(self.graph_layers)) != len(self.graph_layers):
             raise ValueError("Duplicate graph layer indices")
-        self.graph = nn.ModuleDict({str(i): GraphExchange(config.d_model, graph_rank, dropout)
-                                    for i in self.graph_layers})
+        # Graph-only initialization must not shift the paired adapter/head random stream.
+        with torch.random.fork_rng(devices=[]):
+            self.graph = nn.ModuleDict({str(i): GraphExchange(config.d_model, graph_rank, dropout)
+                                        for i in self.graph_layers})
         if self.is_chronos:
             if self.chronos["tokenizer_class"] != "MeanScaleUniformBins":
                 raise ValueError("Only original Chronos-T5 MeanScaleUniformBins is supported")
