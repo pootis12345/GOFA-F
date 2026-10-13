@@ -1,0 +1,43 @@
+name: Remote GPU benchmark
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        type: choice
+        options: [smoke, benchmark]
+        default: smoke
+        description: GPU integration smoke or complete registered matrix
+      output:
+        type: string
+        default: outputs/benchmark-v1
+        description: New output root; existing incomplete runs are preserved
+permissions:
+  contents: read
+concurrency:
+  group: gofa-f-gpu
+  cancel-in-progress: false
+jobs:
+  gpu:
+    runs-on: [self-hosted, linux, x64, gpu]
+    timeout-minutes: 4320
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install -e '.[dev,data]'
+      - run: python scripts/fetch_baseline.py
+      - run: pytest -q
+      - if: inputs.mode == 'smoke'
+        run: python scripts/smoke_pretrained.py
+      - if: inputs.mode == 'benchmark'
+        env:
+          OUTPUT_DIR: ${{ inputs.output }}
+        run: gofa-benchmark --output "$OUTPUT_DIR"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gofa-f-results-${{ github.run_id }}
+          path: |
+            outputs/**/result.json
+            outputs/**/environment.json
+            outputs/**/history.jsonl
+            outputs/**/config.json
+          if-no-files-found: ignore

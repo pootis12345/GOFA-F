@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.venv/
+*.egg-info/
+data/
+outputs/
+external/
+.remote/
+.env
+*.pem
+*.key
