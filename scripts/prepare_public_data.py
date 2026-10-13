@@ -50,7 +50,12 @@ def main():
             mask &= values != 0
         target = output / f"{name}.npz"
         if target.exists():
-            raise FileExistsError(target)
+            previous = json.loads(target.with_suffix(".metadata.json").read_text())
+            if (previous["hdf_sha256"] != file_sha256(extracted)
+                    or previous["prepared_sha256"] != file_sha256(target)):
+                raise ValueError(f"Existing data differs from source: {target}")
+            print(f"Verified existing: {target}", flush=True)
+            continue
         np.savez_compressed(target, values=np.where(mask, values, 0), mask=mask, segments=np.cumsum(cuts))
         metadata = {"dataset": name, "shape": list(values.shape), "frequency": frequency,
                     "start": str(time[0]), "end": str(time[-1]), "zero_is_missing": zero_missing,

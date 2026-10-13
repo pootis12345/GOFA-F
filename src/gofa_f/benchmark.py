@@ -62,10 +62,16 @@ def main():
     parser.add_argument("--output", default="outputs/benchmark-v1")
     parser.add_argument("--datasets", nargs="*")
     parser.add_argument("--models", nargs="*")
+    parser.add_argument("--seeds", nargs="*", type=int, help="Run only registered seeds")
+    parser.add_argument("--horizons", nargs="*", type=int, help="Run only registered forecast lengths")
     parser.add_argument("--plan", action="store_true", help="Print jobs without loading data/models")
     args = parser.parse_args()
     spec = yaml.safe_load(Path(args.config).read_text(encoding="utf-8"))
     for name, config in expand(spec):
+        if args.seeds and config["seed"] not in args.seeds:
+            continue
+        if args.horizons and config["horizon"] not in args.horizons:
+            continue
         if args.datasets and config["dataset"] not in args.datasets:
             continue
         if args.models and config["model_name"] not in args.models:

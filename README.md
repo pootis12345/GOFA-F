@@ -62,6 +62,8 @@ python scripts/prepare_public_data.py
 ```bash
 gofa-prepare --input data/raw/metr-la.h5 --key df --frequency 5min --zero-missing --output data/processed/metr_la.npz
 gofa-benchmark --plan
+python scripts/pilot.py --datasets metr_la pems_bay aqi aqi_36 electricity solar
+gofa-benchmark --seeds 42 --horizons 12 --output outputs/stage1-v1
 gofa-benchmark --datasets metr_la --models persistence t5 gofa_t5 chronos gofa_chronos --output outputs/pilot-v1
 gofa-benchmark --output outputs/benchmark-v1
 gofa-report outputs/benchmark-v1 --output outputs/report.md
@@ -82,6 +84,8 @@ SSH 连接信息仅放在被忽略的 `.remote/` 目录，密码与私钥不进�
 ## 当前阶段
 
 工程实现和远程验证在推进中；正式数据准备、参数匹配后的完整训练、统计比较和消融仍需完成。
+六数据集已在 H100 服务器准备完毕，具体版本见 [数据清单](docs/DATASETS.md)，
+已通过的检查见 [远程验证记录](docs/VERIFICATION.md)。
 任何性能结论以服务器生成的 `result.json` 为准。
 
 来源：[GOFA / ICLR 2025](https://arxiv.org/abs/2407.09709)、
