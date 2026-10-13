@@ -79,6 +79,7 @@ models:
     root: external/dst_sgnn
     width: 64
     hidden_size: 1024
+    spectral_precision: float64
 # Official model is matched separately to EACH graph backbone, within 10% total params.
 parameter_matching:
   references: [gofa_t5, gofa_chronos]
