@@ -118,12 +118,13 @@ class ForecastEncoder(nn.Module):
         hidden = stack.dropout(hidden.reshape(b * n, p, d))
         additive_mask = (~mask.reshape(b * n, p))[:, None, None, :].to(hidden.dtype)
         additive_mask = additive_mask * torch.finfo(hidden.dtype).min
+        cache_position = torch.arange(p, device=hidden.device)
         bias = None
         for i, block in enumerate(stack.block):
             # T5 relative position bias is shared after block 0 (transformers 4.46.3).
             def run(h, position_bias, layer=block):
                 result = layer(h, attention_mask=additive_mask, position_bias=position_bias,
-                               use_cache=False, output_attentions=False)
+                               use_cache=False, output_attentions=False, cache_position=cache_position)
                 return result[0], result[1]
             if self.training and self.gradient_checkpointing:
                 hidden, bias = checkpoint(run, hidden, bias, use_reentrant=False)
