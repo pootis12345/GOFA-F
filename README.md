@@ -56,7 +56,7 @@ python scripts/smoke_pretrained.py
 将原始 HDF 转为统一格式（在服务器执行）：
 
 ```bash
-gofa-prepare --input data/raw/metr-la.h5 --key df --zero-missing --output data/processed/metr_la.npz
+gofa-prepare --input data/raw/metr-la.h5 --key df --frequency 5min --zero-missing --output data/processed/metr_la.npz
 gofa-benchmark --plan
 gofa-benchmark --datasets metr_la --models persistence t5 gofa_t5 chronos gofa_chronos --output outputs/pilot-v1
 gofa-benchmark --output outputs/benchmark-v1

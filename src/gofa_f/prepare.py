@@ -16,6 +16,7 @@ def main():
     parser.add_argument("--key", default="data", help="NPZ key or HDF key")
     parser.add_argument("--columns", help="Comma separated sensor columns for CSV/Excel; required")
     parser.add_argument("--time-column", help="Optional timestamp column; rejects unordered/duplicate timestamps")
+    parser.add_argument("--frequency", help="Expected interval, e.g. 5min or 1h; splits at timestamp gaps")
     parser.add_argument("--sheet", default="0")
     parser.add_argument("--skiprows", type=int, default=0)
     parser.add_argument("--channel", type=int, default=0, help="Select feature from raw [time,node,feature]")
@@ -26,13 +27,17 @@ def main():
     args = parser.parse_args()
     source = Path(args.input)
     suffix = source.suffix.lower()
+    time = None
     if suffix == ".npy":
         values = np.load(source, allow_pickle=False)
     elif suffix == ".npz":
         with np.load(source, allow_pickle=False) as data:
             values = data[args.key]
     elif suffix in (".h5", ".hdf", ".hdf5"):
-        values = pd.read_hdf(source, key=args.key).to_numpy()
+        frame = pd.read_hdf(source, key=args.key)
+        if isinstance(frame.index, pd.DatetimeIndex):
+            time = pd.Series(frame.index)
+        values = frame.to_numpy()
     elif suffix in (".csv", ".xlsx", ".xls"):
         if not args.columns:
             parser.error("CSV/Excel input requires --columns listing sensor columns only")
@@ -44,8 +49,6 @@ def main():
         frame.columns = frame.columns.str.strip()
         if args.time_column:
             time = pd.to_datetime(frame[args.time_column], errors="raise")
-            if time.isna().any() or not time.is_monotonic_increasing or time.duplicated().any():
-                raise ValueError("Raw timestamps must be complete, ordered and unique")
         values = frame[[c.strip() for c in args.columns.split(",")]].apply(pd.to_numeric, errors="raise").to_numpy()
     else:
         raise ValueError(f"Unsupported raw format: {suffix}")
@@ -58,6 +61,17 @@ def main():
     if args.zero_missing:
         mask &= values != 0
     segments = np.load(args.segments, allow_pickle=False) if args.segments else np.zeros(len(values), np.int64)
+    if time is not None:
+        if time.isna().any() or not time.is_monotonic_increasing or time.duplicated().any():
+            raise ValueError("Raw timestamps must be complete, ordered and unique")
+        if not args.frequency:
+            parser.error("Timestamped input requires --frequency to detect collection gaps")
+        interval = pd.to_timedelta(args.frequency)
+        if interval <= pd.Timedelta(0):
+            parser.error("--frequency must be positive")
+        gaps = time.diff().fillna(interval).ne(interval).to_numpy()
+        explicit_cuts = np.r_[False, segments[1:] != segments[:-1]]
+        segments = np.cumsum(gaps | explicit_cuts)
     if segments.shape != (len(values),):
         raise ValueError("Invalid segment vector shape")
     extra = {"segments": segments}
