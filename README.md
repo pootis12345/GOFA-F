@@ -40,6 +40,7 @@
 能源数据来自 [LSTNet 原作者数据仓库](https://github.com/laiguokun/multivariate-time-series-data)，
 也是后续 GNN 预测研究的常用数据。按用户选择替代需要申请权限的工业数据。
 详细定义、原始数据来源和通过标准见 [实验协议](docs/EXPERIMENTS.md)。
+编码器流程、精确可训练参数、短历史文献与空间图来源见 [协议 v2 说明](docs/MODEL_FLOW_AND_PROTOCOL_V2.md)。
 注册矩阵不代表已经取得这些数据或跑完实验。
 
 ## 服务器运行
