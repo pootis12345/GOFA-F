@@ -171,6 +171,7 @@ class Data:
         self.windows = {split: Windows(self.series, normalized, split, config["context"], config["horizons"][0])
                         for split in ("train", "val", "test")}
         self.values = torch.from_numpy(normalized).to(device)
+        self.raw_values = torch.from_numpy(self.series.values).to(device)
         self.mask = torch.from_numpy(self.series.mask).to(device)
         self.mean, self.std = (torch.from_numpy(v).to(device) for v in (mean, std))
         self.context, self.horizon = config["context"], config["horizons"][0]
@@ -200,7 +201,8 @@ class Data:
         history = origins[:, None] + torch.arange(-self.context, 0, device=self.device)
         future = origins[:, None] + torch.arange(self.horizon, device=self.device)
         batch = {"x": self.values[history], "x_mask": self.mask[history],
-                 "y": self.values[future], "y_mask": self.mask[future], "origins": origins}
+                 "y": self.values[future], "y_raw": self.raw_values[future],
+                 "y_mask": self.mask[future], "origins": origins}
         if self.context_enabled:
             # Forecast timestamp is known in advance; no forecast values enter these features.
             batch["graph_features"] = node_features(batch["x"], batch["x_mask"], self.mean, self.std,
@@ -243,7 +245,7 @@ def evaluate(model, data, split, gpu, budget, deadline=None):
             gpu.shrink()
             continue
         normalized.update(pred, batch["y"], batch["y_mask"])
-        raw.update(pred * data.std + data.mean, batch["y"] * data.std + data.mean, batch["y_mask"])
+        raw.update(pred * data.std + data.mean, batch["y_raw"], batch["y_mask"])
         offset = end
     return {"raw": raw.result(), "standardized": normalized.result()}
 
@@ -290,19 +292,29 @@ def update(model, optimizer, data, indices, gpu, budget, cache, gradient_clip=1.
         return loss_sum
 
 
-def fit(model, data, directory, gpu, budget, lr, cache=None, max_updates=None, candidate_seconds=None):
+def fit(model, data, directory, gpu, budget, lr, cache=None, max_updates=None, candidate_seconds=None,
+        adapter_lr=None):
     directory = Path(directory)
     directory.mkdir(parents=True, exist_ok=True)
     parameters = [p for p in model.parameters() if p.requires_grad]
     optimizer_type = torch.optim.Adam if isinstance(model, HSDGNNAdapter) else torch.optim.AdamW
+    if adapter_lr is not None:
+        graph_parameters = [p for name, p in model.named_parameters()
+                            if p.requires_grad and not name.startswith("output_adapter.")]
+        head_parameters = [p for name, p in model.named_parameters()
+                           if p.requires_grad and name.startswith("output_adapter.")]
+        parameters = ([{"params": graph_parameters, "lr": lr}] if graph_parameters else [])
+        if head_parameters:
+            parameters.append({"params": head_parameters, "lr": adapter_lr})
     optimizer = optimizer_type(parameters, lr=lr, weight_decay=1e-4, fused=True)
     state = {"epoch": 0, "offset": 0, "updates": 0, "best_mae": None, "stale": 0,
-             "validation": None, "microbatch": gpu.micro, "lr": lr}
+              "validation": None, "microbatch": gpu.micro, "lr": lr, "adapter_lr": adapter_lr,
+              "last_validation_updates": None}
     path = directory / "last.pt"
     if path.exists():
         # Only trusted locally produced checkpoints are loaded; RNG tuples require weights_only=False.
         saved = torch.load(path, map_location="cpu", weights_only=False)
-        if saved["state"]["lr"] != lr:
+        if saved["state"]["lr"] != lr or saved["state"].get("adapter_lr") != adapter_lr:
             raise ValueError("Checkpoint learning rate mismatch")
         state = saved["state"]
         load_trained(model, saved["trained"])
@@ -319,10 +331,13 @@ def fit(model, data, directory, gpu, budget, lr, cache=None, max_updates=None, c
         atomic_json(directory / "progress.json", dict(state, remaining_seconds=max(0, budget.remaining())))
 
     def validation():
+        if state.get("last_validation_updates") == state["updates"]:
+            return
         deadline = start + candidate_seconds if candidate_seconds else None
         val = evaluate(model, data, "val", gpu, budget, deadline)
         score = val["raw"]["mae"]
         state["validation"] = val
+        state["last_validation_updates"] = state["updates"]
         if state["best_mae"] is None or score < state["best_mae"]:
             state["best_mae"], state["stale"] = score, 0
             atomic_torch(directory / "best.pt", {"trained": trained_state(model), "validation": val,

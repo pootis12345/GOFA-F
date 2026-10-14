@@ -1,0 +1,188 @@
+import json
+import subprocess
+import sys
+
+import pytest
+
+from gofa_f import idle_launcher as idle
+
+
+def xml(pids=(), used=0, utilization=0):
+    processes = "".join(f"<process_info><pid>{p}</pid><type>G</type></process_info>" for p in pids)
+    return f"""<nvidia_smi_log><gpu><uuid>GPU-test</uuid><compute_mode>Default</compute_mode>
+    <fb_memory_usage><used>{used} MiB</used></fb_memory_usage>
+    <utilization><gpu_util>{utilization} %</gpu_util></utilization>
+    <processes>{processes}</processes></gpu></nvidia_smi_log>"""
+
+
+def test_idle_launcher_import_never_loads_torch():
+    result = subprocess.run(
+        [sys.executable, "-c", 'import gofa_f.idle_launcher,sys; assert "torch" not in sys.modules'],
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 0, result.stderr
+
+
+def test_three_idle_samples_and_busy_or_error_resets_gate():
+    gate = idle.IdleGate()
+    busy = idle.parse_gpu_xml(xml([999]))
+    free = idle.parse_gpu_xml(xml())
+    for _ in range(8):
+        assert not gate.observe(busy)
+    assert not gate.observe(free)
+    assert not gate.observe(free)
+    assert not gate.observe(None)
+    assert not gate.observe(free)
+    assert not gate.observe(free)
+    assert gate.observe(free)
+    assert not gate.observe(idle.parse_gpu_xml(xml(used=257)))
+    assert not gate.observe(idle.parse_gpu_xml(xml(utilization=1)))
+    assert not gate.observe(idle.parse_gpu_xml(xml().replace("Default", "Exclusive_Process")))
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        xml().replace("0 %", "N/A"),
+        xml().replace("<processes></processes>", ""),
+        xml().replace("GPU-test", "N/A"),
+        xml().replace("0 MiB", "N/A"),
+    ],
+)
+def test_unknown_gpu_state_fails_closed(text):
+    with pytest.raises(ValueError):
+        idle.parse_gpu_xml(text)
+
+
+def test_foreign_process_including_graphics_requires_yield(monkeypatch):
+    monkeypatch.setattr(idle, "own_gpu_pids", lambda _: {100, 101})
+    assert not idle.foreign_task(idle.parse_gpu_xml(xml([100, 101])), 100, "GPU-test")
+    assert idle.foreign_task(idle.parse_gpu_xml(xml([100, 200])), 100, "GPU-test")
+    assert idle.foreign_task(None, 100, "GPU-test")
+
+
+def test_waiting_is_not_charged_and_resume_keeps_activity(tmp_path, monkeypatch):
+    clock = [0.0]
+    monkeypatch.setattr(idle.time, "monotonic", lambda: clock[0])
+    monkeypatch.setattr(idle, "process_identity", lambda _: "start")
+    ledger = idle.ActivityLedger(tmp_path / "active.json", 14400)
+    clock[0] += 1000
+    ledger.tick()
+    assert ledger.state["spent_seconds"] == 0
+    ledger.start(123)
+    clock[0] += 12
+    ledger.stop()
+    clock[0] += 1000
+    ledger.tick()
+    resumed = idle.ActivityLedger(ledger.path, 14400, json.loads(ledger.path.read_text()))
+    assert resumed.remaining == 14388
+    resumed.start(124)
+    clock[0] += 8
+    resumed.stop()
+    assert resumed.state["spent_seconds"] == 20
+
+
+@pytest.mark.parametrize("query_fails", [False, True])
+def test_watchdog_saves_yields_waits_and_resumes_own_worker_only(tmp_path, monkeypatch, query_fails):
+    clock = [0.0]
+    monkeypatch.setattr(idle.time, "monotonic", lambda: clock[0])
+    monkeypatch.setattr(idle.time, "sleep", lambda n: clock.__setitem__(0, clock[0] + n))
+    monkeypatch.setattr(idle, "process_identity", lambda _: "start")
+    monkeypatch.setattr(idle, "own_gpu_pids", lambda pid: {pid})
+    output = tmp_path / "run"
+    children = []
+    signals = []
+    queries = [0]
+
+    class Child:
+        def __init__(self, command, env, start_new_session):
+            assert start_new_session and env["GOFA_IDLE_ADMITTED"] == "1"
+            self.pid = 800 + len(children)
+            self.returncode = None
+            self.queries = 0
+            self.started = clock[0]
+            self.command = command
+            children.append(self)
+
+        def poll(self):
+            self.queries += 1
+            if len(children) == 2 and self.queries > 2:
+                self.returncode = 0
+                idle.atomic_json(output / "status.json", {"state": "complete"})
+            return self.returncode
+
+    def query():
+        queries[0] += 1
+        if len(children) == 1 and children[0].returncode is None:
+            if query_fails:
+                raise RuntimeError("nvidia-smi temporarily unavailable")
+            return idle.parse_gpu_xml(xml([children[0].pid, 999]))
+        return idle.parse_gpu_xml(xml())
+
+    def killpg(pid, signum):
+        signals.append((pid, signum))
+        assert pid == 800
+        children[0].returncode = 75
+        idle.atomic_json(output / "manifest.json", {})
+        idle.atomic_json(output / "status.json", {"state": "interrupted"})
+
+    monkeypatch.setattr(idle, "query_gpu", query)
+    monkeypatch.setattr(idle.subprocess, "Popen", Child)
+    monkeypatch.setattr(idle.subprocess, "check_output", lambda *a, **k: "test-revision")
+    monkeypatch.setattr(idle.os, "killpg", killpg)
+    idle.launch(output, ["worker", "--output", str(output)])
+    assert len(children) == 2 and signals == [(800, idle.signal.SIGTERM)]
+    assert children[0].started >= 60 and children[1].started - children[0].started >= 60
+    assert children[1].command[-1] == "--resume"
+    assert json.loads((output / "launcher.json").read_text())["state"] == "complete"
+    assert json.loads((output / "active_budget.json").read_text())["spent_seconds"] < 10
+
+
+def test_stuck_worker_is_killed_only_after_own_sixty_second_grace(tmp_path, monkeypatch):
+    clock = [0.0]
+    children = []
+    signals = []
+    output = tmp_path / "run"
+    monkeypatch.setattr(idle.time, "monotonic", lambda: clock[0])
+    monkeypatch.setattr(idle.time, "sleep", lambda n: clock.__setitem__(0, clock[0] + n))
+    monkeypatch.setattr(idle, "process_identity", lambda _: "start")
+    monkeypatch.setattr(idle, "own_gpu_pids", lambda p: {p})
+    monkeypatch.setattr(idle.subprocess, "check_output", lambda *a, **k: "test-revision")
+
+    class Child:
+        pid = 800
+        returncode = None
+
+        def __init__(self, *a, **k):
+            children.append(self)
+
+        def poll(self):
+            return self.returncode
+
+    def query():
+        return idle.parse_gpu_xml(xml([800, 999] if children else []))
+
+    def kill(pid, signum):
+        assert pid == 800
+        signals.append((signum, clock[0]))
+        if signum == idle.signal.SIGKILL:
+            children[0].returncode = -9
+            idle.atomic_json(output / "status.json", {"state": "incomplete"})
+
+    monkeypatch.setattr(idle, "query_gpu", query)
+    monkeypatch.setattr(idle.subprocess, "Popen", Child)
+    monkeypatch.setattr(idle.os, "killpg", kill)
+    idle.launch(output, ["worker"])
+    assert [v[0] for v in signals] == [idle.signal.SIGTERM, idle.signal.SIGKILL]
+    assert signals[1][1] - signals[0][1] >= 60
+
+
+def test_exhausted_activity_budget_never_launches_gpu_worker(tmp_path, monkeypatch):
+    output = tmp_path / "run"
+    output.mkdir()
+    idle.atomic_json(output / "active_budget.json", {"spent_seconds": 14400.0, "worker": None})
+    monkeypatch.setattr(idle.subprocess, "check_output", lambda *a, **k: "test-revision")
+    monkeypatch.setattr(idle, "query_gpu", lambda: pytest.fail("No query or worker after budget exhaustion"))
+    idle.launch(output, ["worker"])
+    assert json.loads((output / "launcher.json").read_text())["state"] == "budget_exhausted"

@@ -1,5 +1,16 @@
 # 运行交接记录
 
+## Stage 3 开发与空闲等待协议（2026-10-14）
+
+用户已批准：新 GOFA-F 固定 late_contiguous，先代码/CPU 验证，GPU 完全空闲才运行。
+新活动预算 4 小时，空闲等待不计费，其他任务出现即保存并退出。
+实现与规则见 `docs/STAGE3_PROTOCOL.md`；C 上 108 项 CPU 测试及六数据集真实权重
+CPU 初始一致性检查已通过。新入口 `scripts/run_adaptation_stage.sh`，GPU 检查尚待空闲。
+
+20:10（Asia/Shanghai）确认 stage2-native-v1 六数据集 24 份评价全部完成，
+原 runner/timeout 已退出。账本 14,716 秒，GOFA 原始 MAE 六集胜 native Bolt、四集胜
+限时匹配 HSD；METR-LA、Electricity 仍落后。下文“运行中”记录均为历史观察。
+
 ## 开发更新：节点上下文（2026-10-14）
 
 图模块新增共同单位下的水平、尺度、最近值、趋势、覆盖率，以及可用源时钟的日/周周期特征。

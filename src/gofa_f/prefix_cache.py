@@ -32,19 +32,23 @@ class PrefixCache:
     def build(cls, directory, key, model, batches, count, check_budget):
         directory = Path(directory)
         directory.mkdir(parents=True, exist_ok=True)
+        prefix_layers = key.get("prefix_layers", 1)
+        maximum = min(model.graph_layers) + 1 if model.graph_layers else len(model.native.encoder.block)
+        if prefix_layers > maximum:
+            raise ValueError("Cannot cache trainable graph activations")
         metadata = directory / "metadata.json"
         if metadata.exists():
             old = json.loads(metadata.read_text())
             compatible = dict(key, prefix_layers=old.get("prefix_layers", 1))
             if (old.get("complete") and old["key"] == compatible
-                    and old["prefix_layers"] <= min(model.graph_layers) + 1):
+                    and prefix_layers <= old["prefix_layers"] <= maximum):
                 return cls(directory)
-        atomic_json(metadata, {"complete": False, "key": key, "prefix_layers": 1})
+        atomic_json(metadata, {"complete": False, "key": key, "prefix_layers": prefix_layers})
         offset, arrays = 0, None
         for batch in batches:
             check_budget()
             with torch.no_grad(), torch.autocast("cuda", dtype=torch.bfloat16):
-                prefix = model.prefix(batch["x"], batch["x_mask"], 1)
+                prefix = model.prefix(batch["x"], batch["x_mask"], prefix_layers)
             hidden, mask, loc, scale = (v.detach().cpu() for v in prefix)
             if arrays is None:
                 specs = {"hidden": (hidden.shape[1:], np.uint16), "mask": (mask.shape[1:], bool),
@@ -61,7 +65,7 @@ class PrefixCache:
             raise ValueError("Prefix cache count mismatch")
         for array in arrays.values():
             array.flush()
-        atomic_json(metadata, {"complete": True, "key": key, "prefix_layers": 1})
+        atomic_json(metadata, {"complete": True, "key": key, "prefix_layers": prefix_layers})
         return cls(directory)
 
     def take(self, indices, device):

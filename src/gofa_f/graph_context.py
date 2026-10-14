@@ -62,7 +62,9 @@ def node_features(x, observed, train_mean, train_std, pooled_mean, pooled_std, c
 class ContextGraphExchange(GraphExchange):
     def __init__(self, width, rank, feature_dim):
         super().__init__(width, rank, 0.0)
-        self.context_projection = nn.Linear(feature_dim, rank, bias=False)
+        # Adding a zero projection must not perturb the NEXT graph layer's paired initialization.
+        with torch.random.fork_rng(devices=[]):
+            self.context_projection = nn.Linear(feature_dim, rank, bias=False)
         # Preserve the legacy graph model when adding this branch to an existing checkpoint.
         nn.init.zeros_(self.context_projection.weight)
 

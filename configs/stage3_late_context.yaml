@@ -1,0 +1,32 @@
+extends: next_stage_context.yaml
+protocol: native-v5-late-context-adapter
+mechanism_report: outputs/stage3-late-context-v1/mechanisms.json
+models:
+  gofa_bolt:
+    graph_layers: [1, 2]
+    layout_candidates: null
+graph_context:
+  output_adaptation: private_rank4_last_projection
+adaptation:
+  layout: late_contiguous
+  key_datasets: [metr_la, electricity]
+  extension_datasets: [pems_bay, aqi, aqi_36, solar]
+  variants:
+    G0: {graph: true, context: false, output_rank: 0}
+    G1: {graph: true, context: true, output_rank: 0}
+    G2: {graph: true, context: true, output_rank: 4}
+    B1: {graph: false, context: false, output_rank: 4}
+  graph_lr: 0.001
+  adapter_lr: 0.0001
+  selection_relative_tolerance: 0.0001
+  historical_output: outputs/stage2-native-v1
+  evaluation_protocol: raw-target-v2
+budget:
+  total_gpu_seconds: 14400
+  mechanism_and_reevaluation_seconds: 900
+  key_trial_seconds: 900
+  extension_trial_seconds: 1200
+  final_evaluation_seconds: 900
+  recovery_reserve_seconds: 600
+  waiting_for_idle_counts: false
+  resume_preserves_spent_budget: true

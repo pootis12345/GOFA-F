@@ -19,6 +19,7 @@ class Metrics:
         self.count = np.zeros(horizon, dtype=np.int64)
         self.ape = np.zeros(horizon, dtype=np.float64)
         self.ape_count = np.zeros(horizon, dtype=np.int64)
+        self.target_abs = np.zeros(horizon, dtype=np.float64)
         self.threshold = mape_threshold
 
     def update(self, prediction, target, mask):
@@ -29,6 +30,7 @@ class Metrics:
         self.abs += np.abs(error).sum((0, 2))
         self.square += np.square(error).sum((0, 2))
         self.count += m.sum((0, 2))
+        self.target_abs += np.where(m, np.abs(y), 0).astype(np.float64).sum((0, 2))
         pm = m & (np.abs(y) > self.threshold)
         self.ape += np.where(pm, np.abs(error) / np.maximum(np.abs(y), self.threshold), 0).sum((0, 2))
         self.ape_count += pm.sum((0, 2))
@@ -40,6 +42,8 @@ class Metrics:
         return {"mae": float(self.abs.sum()/count), "mse": float(self.square.sum()/count),
                 "rmse": float(np.sqrt(self.square.sum()/count)),
                 "mape_pct": float(100*self.ape.sum()/ape_count) if ape_count else None,
+                "mape_observations": int(ape_count), "mape_valid_fraction": float(ape_count/count),
+                "wape_pct": float(100*self.abs.sum()/self.target_abs.sum()) if self.target_abs.sum() else None,
                 "observations": int(count),
                 "by_horizon": [{"step": i+1, "mae": float(a/c), "rmse": float(np.sqrt(s/c)),
                                 "observations": int(c)}

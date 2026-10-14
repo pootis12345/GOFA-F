@@ -84,6 +84,7 @@ class Windows(Dataset):
         return {"x": torch.from_numpy(self.z[t-c:t]),
                 "x_mask": torch.from_numpy(self.series.mask[t-c:t]),
                 "y": torch.from_numpy(self.z[t:t+h]),
+                "y_raw": torch.from_numpy(self.series.values[t:t+h]),
                 "y_mask": torch.from_numpy(self.series.mask[t:t+h])}
 
 

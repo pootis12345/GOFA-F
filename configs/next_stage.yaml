@@ -26,7 +26,6 @@ models:
     graph_layers: [1, 2]  # AFTER blocks 2 and 3 of the four-block encoder.
     layout_candidates:
       late_contiguous: [1, 2]
-      spaced: [0, 2]
     layout_selection: validation_only
     comparison_optimizer_steps: 200
     comparison_max_seconds_per_candidate: 300

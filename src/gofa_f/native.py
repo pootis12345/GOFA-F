@@ -1,7 +1,8 @@
 """Native Bolt quantile decoding and the pinned official HSDGNN baseline.
 
 The full pretrained encoder, decoder, scaling and output head are frozen.
-Only GraphExchange modules are trained. Transformers is pinned to 4.46.3.
+Graph modules and an optional private low-rank head delta are trained.
+Transformers is pinned to 4.46.3. The shared native module is never patched.
 """
 import importlib.util
 from pathlib import Path
@@ -15,8 +16,32 @@ from gofa_f.models import GraphExchange
 from gofa_f.graph_context import ContextGraphExchange
 
 
+def late_contiguous_layers(block_count, graph_count=2):
+    """Keep the last Transformer block after the final graph exchange."""
+    if graph_count < 1 or block_count < graph_count + 1:
+        raise ValueError("Not enough Transformer blocks for interleaved late graphs")
+    return tuple(range(block_count - graph_count - 1, block_count - 1))
+
+
+class OutputAdapter(nn.Module):
+    def __init__(self, in_features, out_features, rank):
+        super().__init__()
+        if rank < 1 or rank > min(in_features, out_features):
+            raise ValueError("Invalid output adapter rank")
+        # A private CPU generator preserves the paired graph/global RNG state.
+        generator = torch.Generator(device="cpu").manual_seed(42)
+        self.a = nn.Parameter(torch.randn(rank, in_features, generator=generator) / in_features**.5)
+        self.b = nn.Parameter(torch.zeros(out_features, rank))
+
+    def forward(self, hidden):
+        # Train the small delta in FP32, then preserve the native head output dtype.
+        with torch.autocast(hidden.device.type, enabled=False):
+            return (hidden.float() @ self.a.t()) @ self.b.t()
+
+
 class NativeBolt(nn.Module):
-    def __init__(self, native, adjacency, horizon, graph_layers=(), rank=64, graph_feature_dim=0):
+    def __init__(self, native, adjacency, horizon, graph_layers=(), rank=64, graph_feature_dim=0,
+                 output_adapter_rank=0):
         super().__init__()
         self.native = native.requires_grad_(False).eval()
         self.native.gradient_checkpointing_disable()
@@ -33,6 +58,19 @@ class NativeBolt(nn.Module):
                                     if graph_feature_dim else GraphExchange(native.config.d_model, rank, 0.0)
                                     for i in graph_layers})
         self.median_index = native.chronos_config.quantiles.index(.5)
+        head = native.output_patch_embedding.output_layer
+        self.output_adapter = OutputAdapter(head.in_features, head.out_features, output_adapter_rank) \
+            if output_adapter_rank else None
+
+    def output_head(self, decoded):
+        head = self.native.output_patch_embedding
+        if self.output_adapter is None:
+            return head(decoded)
+        hidden = head.act(head.hidden_layer(decoded))
+        projected = head.output_layer(hidden)
+        projected = projected + self.output_adapter(hidden).to(projected.dtype)
+        output = head.dropout(projected) + head.residual_layer(decoded)
+        return head.layer_norm(output) if head.use_layer_norm else output
 
     def train(self, mode=True):
         super().train(mode)
@@ -104,7 +142,7 @@ class NativeBolt(nn.Module):
         hidden = self.native.encoder.final_layer_norm(hidden).reshape(b*n, p, d)
         mask = attention.reshape(b*n, p)
         decoded = self.native.decode(hidden, mask, hidden)
-        quantiles = self.native.output_patch_embedding(decoded).reshape(
+        quantiles = self.output_head(decoded).reshape(
             b*n, self.native.num_quantiles, self.native.chronos_config.prediction_length)
         quantiles = self.native.instance_norm.inverse(quantiles.flatten(1),
                                                      (loc.reshape(b*n, 1), scale.reshape(b*n, 1)))

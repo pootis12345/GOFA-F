@@ -68,7 +68,7 @@ def evaluate(model, loader, device, mean, std, horizon, amp=False):
             with torch.autocast(device_type=device.type, dtype=torch.bfloat16, enabled=amp):
                 pred = model(batch["x"], batch["x_mask"]).float()
             normalized.update(pred, batch["y"], batch["y_mask"])
-            raw.update(pred * std + mean, batch["y"] * std + mean, batch["y_mask"])
+            raw.update(pred * std + mean, batch["y_raw"], batch["y_mask"])
     return {"raw": raw.result(), "standardized": normalized.result()}
 
 
