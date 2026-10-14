@@ -53,6 +53,8 @@ def expand(spec):
                                       model=copy.deepcopy(model), model_name=label)
                         if reference:
                             config["match_reference"] = reference
+                        if "graph" in info:
+                            config["graph"] = copy.deepcopy(info["graph"])
                         yield f"{dataset}/{label}/h{horizon}/seed{seed}", config
 
 
@@ -73,6 +75,13 @@ def execute(name, config, output, spec):
         from gofa_f.data import file_sha256
         if file_sha256(config["data"]) != existing["environment"]["data_sha256"]:
             raise ValueError(f"Prepared data changed since previous run: {output}")
+        graph = config.get("graph", {})
+        if graph.get("kind") in ("road_distance", "geographic_distance"):
+            recorded_graph = existing["environment"]["graph"]
+            graph_path = Path(graph["path"])
+            if (file_sha256(graph_path) != recorded_graph["graph_sha256"]
+                    or file_sha256(graph_path.with_suffix(".metadata.json")) != recorded_graph["metadata_sha256"]):
+                raise ValueError(f"Spatial graph changed since previous run: {output}")
         print(f"Completed: {name}", flush=True)
         return existing
     if output.exists():

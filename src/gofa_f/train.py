@@ -15,7 +15,8 @@ import transformers
 import yaml
 
 from gofa_f.baseline import DSTSGNNAdapter
-from gofa_f.data import Series, Windows, correlation_graph
+from gofa_f.data import Series, Windows
+from gofa_f.graphs import build_graph
 from gofa_f.metrics import Metrics, masked_loss
 from gofa_f.models import ForecastEncoder, Persistence, parameter_counts
 
@@ -81,8 +82,7 @@ def run(config, output):
     seed_everything(config.get("seed", 42))
     series = Series.load(config["data"], config.get("train_ratio", .7), config.get("val_ratio", .1))
     normalized, mean, std = series.standardize()
-    adjacency = correlation_graph(series.values[:series.train_end], series.mask[:series.train_end],
-                                    k=config.get("graph_k", 8))
+    adjacency, graph_provenance = build_graph(series, config)
     np.savez(output / "preprocessing.npz", mean=mean, std=std, adjacency=adjacency,
              train_end=series.train_end, val_end=series.val_end)
     split_names = ("train", "val", "test") if evaluation_split == "test" else ("train", "val")
@@ -98,6 +98,8 @@ def run(config, output):
     if device.type == "cuda":
         torch.cuda.reset_peak_memory_stats(device)
     model = build_model(config, adjacency, series.values.shape[1]).to(device)
+    graph_provenance["used_by_encoder"] = bool(config["model"].get("family", "encoder") == "encoder"
+                                                and config["model"].get("graph_layers"))
     counts = parameter_counts(model)
     match = config.get("parameter_match")
     if match:
@@ -119,6 +121,7 @@ def run(config, output):
            "backbone_revision": getattr(model, "resolved_revision", None),
            "baseline": getattr(model, "provenance", None), "parameters": counts,
            "data_sha256": series.fingerprint,
+           "graph": graph_provenance,
            "cold_start_nodes": np.flatnonzero(series.mask[:series.train_end].sum(0) < 2).tolist(),
            "split": {"train_end": series.train_end, "val_end": series.val_end, "length": len(series.values)},
            "windows": {s: len(ds) for s, ds in splits.items()},

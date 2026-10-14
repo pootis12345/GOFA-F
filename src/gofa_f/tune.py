@@ -68,6 +68,7 @@ def select(root, jobs):
         key = (expected["dataset"], expected["model_name"], expected["horizon"])
         groups[key][expected["lr"]].append({"seed": expected["seed"], "score": score,
             "path": str(path), "data_sha256": result["environment"]["data_sha256"],
+            "graph_sha256": result["environment"].get("graph", {}).get("graph_sha256"),
             "git_revision": result["environment"]["git_revision"]})
     selections = []
     for (dataset, model, horizon), rates in sorted(groups.items()):
@@ -76,6 +77,8 @@ def select(root, jobs):
             raise ValueError("Cannot select across different prepared data versions")
         if len({entry["git_revision"] for entry in entries}) != 1:
             raise ValueError("Cannot select across different code revisions")
+        if len({entry["graph_sha256"] for entry in entries}) != 1:
+            raise ValueError("Cannot select across different spatial graph versions")
         candidates = [{"lr": rate, "mean_validation": sum(e["score"] for e in results) / len(results),
                        "runs": results} for rate, results in sorted(rates.items())]
         # Deterministic tie break by smaller learning rate, never by test metrics.

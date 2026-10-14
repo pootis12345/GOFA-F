@@ -1,4 +1,5 @@
-# Six datasets from awesome-gnn4ts, three domains. No scores are prepopulated.
+# Protocol v2: shortest verified published histories and spatial graphs where audited.
+# Historical stage1 settings are preserved in benchmark_stage1.yaml and the running snapshot.
 defaults:
   device: cuda
   epochs: 30
@@ -21,32 +22,48 @@ datasets:
   metr_la:
     domain: traffic
     data: data/processed/metr_la.npz
-    context: 96
+    context: 12
+    graph:
+      kind: road_distance
+      path: data/graphs/protocol-v2/metr_la.npz
     horizons: [12, 24, 48]
   pems_bay:
     domain: traffic
     data: data/processed/pems_bay.npz
-    context: 96
+    context: 12
+    graph:
+      kind: road_distance
+      path: data/graphs/protocol-v2/pems_bay.npz
     horizons: [12, 24, 48]
   aqi:
     domain: environment
     data: data/processed/aqi.npz
-    context: 96
+    context: 24
+    graph:
+      kind: geographic_distance
+      path: data/graphs/protocol-v2/aqi.npz
     horizons: [12, 24, 48]
   aqi_36:
     domain: environment
     data: data/processed/aqi_36.npz
-    context: 96
+    context: 12
+    graph:
+      kind: geographic_distance
+      path: data/graphs/protocol-v2/aqi_36.npz
     horizons: [12, 24, 48]
   electricity:
     domain: energy
     data: data/processed/electricity.npz
-    context: 96
+    context: 8
+    graph:
+      kind: correlation
     horizons: [12, 24, 48]
   solar:
     domain: energy
     data: data/processed/solar.npz
-    context: 96
+    context: 24
+    graph:
+      kind: correlation
     horizons: [12, 24, 48]
 models:
   persistence:

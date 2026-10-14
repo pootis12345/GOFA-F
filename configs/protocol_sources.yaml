@@ -1,0 +1,44 @@
+protocol: v2
+date: '2026-10-14'
+history_rule: Minimum verified forecasting history among the audited sources, at the dataset's sampling rate.
+note: Not a claim to have exhausted all published work. Published horizons/splits may differ from our protocol.
+datasets:
+  metr_la:
+    context: 12
+    frequency: 5min
+    source: https://github.com/liyaguang/DCRNN/blob/master/data/model/dcrnn_la.yaml
+    evidence: model.seq_len=12, model.horizon=12
+    graph_kind: road_distance
+  pems_bay:
+    context: 12
+    frequency: 5min
+    source: https://github.com/microsoft/StemGNN#training-and-evaluation
+    evidence: Official configuration table, PEMS-BAY window_size=12
+    graph_kind: road_distance
+  aqi:
+    context: 24
+    frequency: 1h
+    source: https://proceedings.mlr.press/v235/marisca24a.html
+    evidence: Appendix Table 3, AQI 437 stations, 8760 hourly steps, Window=24, Horizon=6
+    graph_kind: geographic_distance
+  aqi_36:
+    context: 12
+    frequency: 1h
+    source: https://arxiv.org/pdf/2302.09746
+    evidence: Section IV-C downstream forecasting, past 12 steps predict next 12 steps on AQI-36
+    note: Use the forecasting experiment, not the 36-step imputation window. We retain natural missing masks.
+    graph_kind: geographic_distance
+  electricity:
+    context: 8
+    frequency: 1h
+    source: https://arxiv.org/pdf/2405.05959
+    evidence: Deterministic Electricity benchmark, Section 4.2 and Appendix D.3/Table 13 include 8-8
+    note: TimesNet-prepared hourly Electricity benchmark; this supports history=8, not a claim of identical data hashes or splits. Our retained forecast lengths differ.
+    graph_kind: correlation
+  solar:
+    context: 24
+    frequency: 10min
+    source: https://papers.nips.cc/paper_files/paper/2020/file/cdf6581cb7aca4b7e19ef136c6e601a5-Supplemental.pdf
+    evidence: Appendix D, 4-hour history at 10-minute sampling, predicting 0.5 hour, 137 Alabama stations
+    note: No verified shorter same-frequency source in this audit; do not substitute an hourly Solar benchmark.
+    graph_kind: correlation
