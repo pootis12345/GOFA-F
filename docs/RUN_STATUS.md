@@ -50,3 +50,25 @@
 
 B 与 C 的命令行 HTTPS 推送未能完成认证：B 凭据管理器等待，C 的 helper 指向已失效的 `gh` 路径。
 改用当前已连接的 GitHub 工具同步本轮提交，不复制凭据，不修改训练环境。
+
+## 用户暂停要求（2026-10-14 11:41，Asia/Shanghai）
+
+用户取消吞吐评测，要求 METR-LA / GOFA-F(Chronos) 完成后先暂停首轮后续作业。
+不要启动测速、DST-SGNN 或其他数据集的后续训练，等待用户进一步指示。
+GPU 为共享资源，不改独占模式，不操作其他用户的任务。
+
+- 当前首轮 runner 仍为 PID `703442`，父进程 `703436`。
+- C 上已启用外部守护 PID `1379816`；11:41 核对状态为 `armed`，当前训练继续。
+- 守护使用固定副本 `.remote/pause-stage1-v2.py`，不修改运行快照或 `.venv`。
+- 条件：`outputs/stage1-v2/metr_la/gofa_chronos/h12/seed42/result.json` 完整可读、
+  `status=complete`，且数据集、模型、种子、预测长度和记录的 runner PID 全部匹配。
+- 条件满足后先冻结 runner 的后续调度，再用 SIGTERM 结束这个 runner，释放其 GPU 资源。
+  仅操作本用户该阶段进程，使用 `/proc` 启动时刻防止 PID 复用误伤。
+- 记录：`outputs/stage1-v2.pause.json`；日志：`outputs/stage1-v2.pause.log`。
+  成功后记录 `state=paused`，阶段 `.status` 写为 `paused after metr_la/gofa_chronos/h12/seed42`。
+  父脚本 EXIT trap 可能短暂写出 failed(143)，最终以守护的明确暂停记录为准。
+
+首轮快照仅保存 `best.pt` 的模型权重、epoch 和配置，不含优化器、随机状态或数据迭代位置，
+不支持精确的中途断点续训。这里等待当前作业完整结束后才停止调度，保留所有完整结果。
+未来获准继续时，可以跳过已完成作业；不能把最佳权重加载描述为完整状态恢复。
+恢复前必须重新核对守护、进程和是否出现未完成的新作业目录，不能直接重复启动。
