@@ -1,5 +1,5 @@
-# Shortest audited histories AND forecast horizons; spatial graphs where audited.
-# Historical stage1 settings are preserved in benchmark_stage1.yaml and the running snapshot.
+# Shortest audited history tasks with their paired forecast horizons; audited spatial graphs.
+# Historical stage1 settings are preserved in benchmark_stage1.yaml and the fixed snapshot.
 defaults:
   device: cuda
   epochs: 30
@@ -26,7 +26,7 @@ datasets:
     graph:
       kind: road_distance
       path: data/graphs/protocol-v2/metr_la.npz
-    horizons: [1]
+    horizons: [12]
   pems_bay:
     domain: traffic
     data: data/processed/pems_bay.npz
@@ -34,7 +34,7 @@ datasets:
     graph:
       kind: road_distance
       path: data/graphs/protocol-v2/pems_bay.npz
-    horizons: [1]
+    horizons: [3]
   aqi:
     domain: environment
     data: data/processed/aqi.npz
@@ -42,7 +42,7 @@ datasets:
     graph:
       kind: geographic_distance
       path: data/graphs/protocol-v2/aqi.npz
-    horizons: [3]
+    horizons: [6]
   aqi_36:
     domain: environment
     data: data/processed/aqi_36.npz
@@ -57,7 +57,7 @@ datasets:
     context: 8
     graph:
       kind: correlation
-    horizons: [1]
+    horizons: [8]
   solar:
     domain: energy
     data: data/processed/solar.npz

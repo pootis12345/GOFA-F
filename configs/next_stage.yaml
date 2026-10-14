@@ -3,6 +3,7 @@
 status: planned
 protocol: native-v3
 length_sources: configs/protocol_sources.yaml
+length_rule: Keep the selected shortest-history task and its paired horizon from the same source.
 seed: 42
 datasets: [metr_la, pems_bay, aqi, aqi_36, electricity, solar]
 success_metric: raw_mae

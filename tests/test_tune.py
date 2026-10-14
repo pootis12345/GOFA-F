@@ -73,7 +73,7 @@ def test_dataset_default_horizons_keep_all_datasets_in_validation_search():
     for _, config in jobs:
         assert config["horizon"] in spec["datasets"][config["dataset"]]["horizons"]
     explicit = dict(search, horizons=[12])
-    assert {config["dataset"] for _, config in trials(spec, explicit)} == {"aqi_36"}
+    assert {config["dataset"] for _, config in trials(spec, explicit)} == {"metr_la", "aqi_36"}
     with pytest.raises(ValueError, match="horizons"):
         trials(spec, dict(search, horizons="all"))
 

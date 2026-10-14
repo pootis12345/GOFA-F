@@ -81,7 +81,7 @@ def test_registered_contexts_and_graph_kinds_match_audited_sources():
         assert config["horizon"] == source["horizon"]
         assert config["graph"]["kind"] == source["graph_kind"]
         assert source["source"].startswith("https://")
-        assert source["horizon_source"].startswith("https://")
+        assert source["horizon_source"] == source["source"]
     old = yaml.safe_load(Path("configs/benchmark_stage1.yaml").read_text(encoding="utf-8"))
     assert all(info["context"] == 96 for info in old["datasets"].values())
     assert all(info["horizons"] == [12, 24, 48] for info in old["datasets"].values())

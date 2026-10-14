@@ -1,5 +1,24 @@
 # 运行交接记录
 
+## 最新状态：旧首轮已停止（2026-10-14 14:46，Asia/Shanghai）
+
+用户最新要求“不再运行旧首轮”，取代此前“GOFA-F(Chronos) 完成后暂停”的安排。
+核对 PID、启动时刻、用户、命令和快照目录后，已停止 runner `703442` 和守护 `1379816`；
+父脚本 `703436` 也已退出。14:46 复核三个 PID 均不存在，GPU compute-apps 列表为空。
+没有启动新训练或测速，也没有操作其他用户进程。
+
+- `outputs/stage1-v2.status`：`stopped by user; old stage1-v2 cancelled`。
+- `outputs/stage1-v2.pause.json`：`state=stopped_by_user`，记录停止时间与被中断作业。
+- 保留 4 组完整结果：METR-LA 的 Persistence、T5、GOFA-F(T5)、Chronos。
+- METR-LA / GOFA-F(Chronos) 保留 `best.pt` 与 `history.jsonl`；完成 19 个 epoch（0–18），
+  尚无 `result.json`，不能当作已完成正式结果。该检查点不含完整恢复状态。
+- 固定运行快照和开发仓库在停止时均干净；未修改数据、环境或已有检查点。
+
+后续默认 L→H 已按此前选定的最短历史任务配对修正为：12→12、12→3、24→6、12→12、8→8、24→3。
+原生 Bolt/HSDGNN 接入及加速仍待实现。以下内容为历次观察和旧安排，以本节最新状态为准。
+
+## 历史记录
+
 2026-10-13，H100 服务器首轮完整数据实验已启动。
 
 - 开发仓库：`/home/dcg/dcg_data/GOFA-F`。
@@ -86,3 +105,10 @@ pause_state=armed，GPU 为 H100 PCIe/Default，总显存 81,559 MiB、空闲 77
 下一阶段已选择原生 Bolt-mini、其图版本及新 GNN HSDGNN，新增 GPU 预算 8 小时，
 六数据集分别训练，先精度、语言与迁移后置；完整设计在 `docs/NEXT_STAGE_PROTOCOL.md`。
 本轮只更新长度配置、相应验证搜索兼容与设计清单，未接入/启动新的模型训练或 GPU 测速。
+
+2026-10-14 用户进一步澄清：预测长度须取此前最短历史任务对应的值，不独立寻找最短 H。
+开发默认 L→H 修正为 METR-LA 12→12、PeMS-BAY 12→3、AQI 24→6、AQI-36 12→12、
+Electricity 8→8、Solar-Energy 24→3，取代上一条的 1/1/3/12/1/3。
+此前选定的历史来源保持不变，来源与配对证据见 `configs/protocol_sources.yaml`。
+仅修订后续协议；原首轮快照不变。用户随后取消旧首轮，执行结果见本文件顶部最新状态。
+没有启动新训练或测速。
