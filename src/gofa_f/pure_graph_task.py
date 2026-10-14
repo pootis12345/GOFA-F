@@ -21,6 +21,7 @@ from gofa_f.native import NativeBolt
 from gofa_f.prefix_cache import PrefixCache, atomic_json
 from gofa_f.pure_graph_stage import config_file, task_directory
 from gofa_f.stage_budget import BudgetExhausted
+from gofa_f.data import file_sha256
 
 
 class TaskBudget(ActiveBudget):
@@ -64,9 +65,14 @@ def make_model(config, data, settings, variant, device, native=None):
 def model_counts(model):
     if isinstance(model, NativeBolt):
         counts = parameter_counts(model)
+        point_dof = counts["trainable"]
+        if model.output_adapter is not None and not model.native.output_patch_embedding.use_layer_norm:
+            point_dof -= model.output_adapter.b.numel() - model.horizon * model.output_adapter.b.shape[1]
         return {**counts, "registered_real_dof": counts["total"], "active_real_dof": None,
                 "trainable_real_dof": counts["trainable"], "complex_counting": "all parameters real",
-                "note": "Trainable graph/head audited; frozen backbone scalar usage not separately counted"}
+                "point_loss_active_trainable_real_dof": point_dof,
+                "note": "Trainable tensor count; median/horizon-only loss may not update all head rows. "
+                        "Frozen backbone scalar usage not separately counted"}
     from gofa_f.ufg import audit_parameters
     return audit_parameters(model)
 
@@ -138,7 +144,8 @@ def diagnostics(model, data, gpu, budget):
                          "missing_labels": int(missing[:, i].sum()),
                          "absolute_error_share": float(absolute[:, i].sum()/total) if total else None}
                         for i in range(nodes)],
-            "by_horizon": [{"step": i+1, "mae": float(absolute[i].sum()/count[i].sum())}
+            "by_horizon": [{"step": i+1, "mae": float(absolute[i].sum()/count[i].sum())
+                            if count[i].sum() else None}
                            for i in range(horizon)],
             "scale_quintiles": [aggregate(group) for group in groups], "top_five_percent_scale": aggregate(high),
             "categories": {name: {"mae": value[0]/value[1] if value[1] else None,
@@ -165,7 +172,15 @@ def mechanism(config, spec, output, family, gpu, budget):
             raise AssertionError("Value-only BF16 path failed")
         atomic_json(directory / "values_only.json", {"passed": True, "parameters": model_counts(model)})
     else:
-        from gofa_f.ufg import UFGTime, audit_parameters, runtime_versions
+        from gofa_f.ufg import UFGTime, audit_parameters, runtime_versions, portable_knn_graph
+        points = torch.randn(2, 7, 2, generator=torch.Generator().manual_seed(42))
+        cpu_graph = portable_knn_graph(points, 2)
+        gpu.check(budget)
+        cuda_graph = portable_knn_graph(points.to(gpu.device), 2)
+        def edges(graph):
+            return sorted(zip(*(edge.cpu().tolist() for edge in graph.edges())))
+        if edges(cpu_graph) != edges(cuda_graph):
+            raise AssertionError("CPU reference and official CUDA kNN differ on untied distances")
         for length in (8, 12, 24):
             runtime.seed(42)
             model = UFGTime(config["stage4"]["upstream_root"], length, 3, 3,
@@ -206,7 +221,8 @@ def mechanism(config, spec, output, family, gpu, budget):
             counts = audit_parameters(continuous)
         atomic_json(directory / "mechanisms.json", {"passed": True, "versions": runtime_versions(),
                     "parameters": counts, "checks": ["complex CUDA finite gradients", "batch graph isolation",
-                    "short histories 8/12/24", "2+1 RMSprop resume equals 3 uninterrupted updates"]})
+                    "short histories 8/12/24", "CPU brute-force reference equals official CUDA kNN",
+                    "2+1 RMSprop resume equals 3 uninterrupted updates"]})
 
 
 def run(args):
@@ -215,6 +231,10 @@ def run(args):
     config = config_file(args.config)
     spec = yaml.safe_load(Path("configs/benchmark.yaml").read_text())
     output = Path(args.output).resolve()
+    binding = json.loads((output / "manifest.json").read_text())
+    for name, checksum in binding["inputs"][args.dataset].items():
+        if file_sha256(name) != checksum:
+            raise ValueError("Stage input changed after manifest binding: " + name)
     for signum in (signal.SIGINT, signal.SIGTERM):
         signal.signal(signum, runtime.stop_handler)
     budget_path = output / "budget.json"
@@ -269,7 +289,6 @@ def run(args):
             selected = json.loads((output / "final_selection.json").read_text())
             key = args.dataset + "/" + args.variant
             bound = selected["jobs"][key]
-            from gofa_f.data import file_sha256
             if file_sha256(directory / "best.pt") != bound["checkpoint_sha256"]:
                 raise ValueError("Final checkpoint changed after the evaluation lock")
             saved = runtime.best(directory, model)

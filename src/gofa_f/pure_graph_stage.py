@@ -121,7 +121,9 @@ def manifest(config):
         if digest(Path(weights["local_weights"]) / name) != checksum:
             raise ValueError("Native checkpoint hash mismatch")
     versions = {}
-    script = "import importlib.metadata as m,json; print(json.dumps({p:m.version(p) for p in PACKAGES}))"
+    script = ("import importlib.metadata as m,json,sys; "
+              "print(json.dumps(dict({p:m.version(p) for p in PACKAGES},python=sys.version,"
+              "all_packages={d.metadata['Name']:d.version for d in m.distributions()})))")
     for family, packages in (("native", ["torch", "transformers", "chronos-forecasting", "numpy"]),
                              ("ufg", ["torch", "torch-geometric", "dgl", "numpy"])):
         command = [config["stage4"][family + "_python"], "-c", script.replace("PACKAGES", repr(packages))]
@@ -135,14 +137,31 @@ def manifest(config):
                 raise ValueError("Unexpected isolated runtime version: " + family + "/" + name)
     reference = Path(config["stage4"]["reference_output"])
     historical = {str(p.relative_to(reference)): digest(p) for p in reference.glob("reevaluation/*/*/result.json")}
+    expected_references = {f"reevaluation/{dataset}/{name}/result.json" for dataset in DATASETS
+                           for name in ("persistence", "native_bolt", "gofa_bolt", "matched_hsdgnn")}
+    if set(historical) != expected_references:
+        raise ValueError("Historical raw-target references are missing or unexpected")
+    historical_manifest = read(reference / "manifest.json", {})
+    if historical_manifest.get("config", {}).get("seed") != 42:
+        raise ValueError("Historical reference seed/protocol manifest missing")
+    for name in historical:
+        result = read(reference / name)
+        if result.get("status") != "complete" or result.get("evaluation_protocol") != "raw-target-v2":
+            raise ValueError("Incomplete or incompatible historical evaluation: " + name)
     return {"config": config, "inputs": inputs, "source": source, "versions": versions,
+            "gpu_uuid": os.environ.get("GOFA_GPU_UUID"),
             "weights": weights["file_sha256"], "historical_reference": historical,
+            "historical_manifest_sha256": digest(reference / "manifest.json"),
             "git_revision": subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()}
 
 
 def write_report(output, config):
     output = Path(output)
     status = read(output / "status.json", {})
+    launcher = read(output / "launcher.json", {})
+    if launcher.get("state") in ("wall_deadline", "failed", "incomplete") and status.get("state") in (
+            None, "running", "interrupted"):
+        status = {**status, "state": launcher["state"]}
     selection = read(output / "selection.json", {})
     ledger = read(output / "active_budget.json", {})
     lines = ["# stage4-pure-graph-v1", "", f"State: {status.get('state', 'not_started')}", "",

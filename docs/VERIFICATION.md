@@ -183,3 +183,17 @@ C 上禁用 CUDA、OMP/MKL 各 2 线程，Ruff 和 shell 语法检查通过，81
 记录在 `outputs/native-context-cpu-check.json`。这不是训练、精度或速度实验，不替代新的 BF16/GPU 前置检查。
 新增 1,408 个可训练参数，总计 101,250；新结构尚未训练。实现与文献结果见
 `docs/METR_LA_ARCHITECTURE_REVIEW.md`。
+# Stage 4 CPU 核验（2026-10-15）
+
+C隔离目录，CUDA_VISIBLE_DEVICES空、OMP/MKL各2线程：Ruff与shell语法检查通过。
+原生环境126通过/11按依赖跳过，独立UFG环境22通过/2按Chronos依赖跳过；
+JUnit用例标识合并覆盖137个独立用例，不能把跨环境重合用例重复计数。
+覆盖绝对截止保存、自建进程组让出/恢复、NVML非Torch显存、复数自由度与恢复、
+五维值上下文、自环隔离、缺失累积、验证选择/最终测试锁，以及诊断对测试标签不变。
+UFG源码有效前向以CPU兼容kNN分派验证；GPU仍保留官方算法，入场后另核验。
+
+真实权重/形状机制：六集G2-V/self共12组初始最大差0；六集UFG-S/A共12组前向与梯度有限。
+原始记录：C开发输出 `stage4-cpu-native.xml`、`stage4-cpu-ufg.xml`、
+`stage4-native-cpu-realweights.json`、`stage4-ufg-cpu-check.json`。
+本节不构成GPU通过或正式预测精度结论。
+

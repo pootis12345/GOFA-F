@@ -1,0 +1,791 @@
+{
+  "checked_at": "2026-10-14T17:57:10.648918+00:00",
+  "location": "C isolated scratch; CUDA_VISIBLE_DEVICES empty; OMP/MKL 2 threads",
+  "native_suite": {
+    "passed": 126,
+    "dependency_skipped": 11
+  },
+  "ufg_suite": {
+    "passed": 22,
+    "dependency_skipped": 2
+  },
+  "unique_passed_cases": 137,
+  "data_files_bound": {
+    "metr_la": {
+      "data/processed/metr_la.npz": "c5437fe6e78659915b8d30c6cc34acc9076353712a203b38d1d838c18e4c2119",
+      "data/graphs/protocol-v2/metr_la.npz": "a73a1a34b897bcc53e3ea4afc7f01bfd82ad9f6d3ab7fce0c97cd2bacd5b1d92",
+      "data/graphs/protocol-v2/metr_la.metadata.json": "dd0e264e04934ba94210c6fdfac76fef219c02b8d4f5651cab02fb36190b2d6b",
+      "data/features/context-v1/metr_la.npz": "10f706abf1472e1911d894bce668c411fab4cc590f04bc2e4ca5df312fbcf24e",
+      "data/features/context-v1/metr_la.metadata.json": "180349a5ae6fbcc6be43d7e95c06c08d68274edff7594b8ede492edd13a36fe2"
+    },
+    "pems_bay": {
+      "data/processed/pems_bay.npz": "40b4af01d93e23aaa4cb7a0ddee70fa2d64b91b99425c780654586fae7dd8803",
+      "data/graphs/protocol-v2/pems_bay.npz": "6c26aa9412a69841271be2156b27519b222b1036c5e37a4c96b7af54bec44bdb",
+      "data/graphs/protocol-v2/pems_bay.metadata.json": "627c9c4861eee292e14880e1ad567c0370a679afe18e3f9b9515cacc20935124",
+      "data/features/context-v1/pems_bay.npz": "fa4f1984746dbca7111d684e5e87cb89b4adc662dec884cba9c8826df686266b",
+      "data/features/context-v1/pems_bay.metadata.json": "545e261808e5ba54bff5773441f045cbef2db788944921f85be354841e8d8ce5"
+    },
+    "aqi": {
+      "data/processed/aqi.npz": "aef0d6c8689b67cf9d4fe65d7a61bcb8886ecc871d81fab7c5066a9ee244c5f2",
+      "data/graphs/protocol-v2/aqi.npz": "7a943bdaa3f67fda32ef6d3869e4e4dac265188fcddad3812b24f6f65c2ff08e",
+      "data/graphs/protocol-v2/aqi.metadata.json": "bc3b3d5e995cd08965fc52ba9a921793508cfc4f85f248e9da80410888d07552",
+      "data/features/context-v1/aqi.npz": "7e69cea06b961a2f23f9ad0c5d96e10c82a30557b12c04a07bb7b39dc3df3f97",
+      "data/features/context-v1/aqi.metadata.json": "3ca843785b4712f2c2d0998cf927b9ab2d1aac977f3f237ddb4468d62f64dd22"
+    },
+    "aqi_36": {
+      "data/processed/aqi_36.npz": "5435bda4b127fd495c161f38d01a2cfa8e0c1d9df73a3a9737fe02d9b2a09b00",
+      "data/graphs/protocol-v2/aqi_36.npz": "dc7384c7bb6fa0744b2c19d38b8b89711b427a5d25c1f15bc7d4e6ce46a25353",
+      "data/graphs/protocol-v2/aqi_36.metadata.json": "4bc0b067311d627b39960c5f9966e36bfb23737c14834dd839c9f4a5fe34518b",
+      "data/features/context-v1/aqi_36.npz": "68e3dd8d076a649527914bc00ebfebb146c382e3fe063e36f565d14336bc55b7",
+      "data/features/context-v1/aqi_36.metadata.json": "b70d54296b5b939bf81fcf21b2819952486596bd48c1428496fdff6ee0965e94"
+    },
+    "electricity": {
+      "data/processed/electricity.npz": "0c27687bb3e5c5cb5d532e4d370e2eb902813777501b8c08f951f72bf490e604",
+      "data/features/context-v1/electricity.npz": "85f124b584f84aa7522c00a9d548c5d51e0796b583e229494204ad32c8a93b2f",
+      "data/features/context-v1/electricity.metadata.json": "d11aeb39b26948a406eb40a9c09f07ddd2b83204761613a93bb0a11b84ce6fa1"
+    },
+    "solar": {
+      "data/processed/solar.npz": "9fa963a6f9cec9c53ca321d6dbc38bbb2606b9d1f767af9e789492453ed80566",
+      "data/features/context-v1/solar.npz": "a86cc7a34573a525a373a8ac1ee46c988a2ed697a5cf8a6532c64e38c66f36db",
+      "data/features/context-v1/solar.metadata.json": "2ed3378b9479f364757729df4b220b1c7cf937b7707010456fc983301a6d41d2"
+    }
+  },
+  "historical_reference_count": 24,
+  "versions": {
+    "native": {
+      "torch": "2.6.0+cu124",
+      "transformers": "4.46.3",
+      "chronos-forecasting": "2.3.2",
+      "numpy": "1.26.4",
+      "python": "3.11.17 (main, Oct  1 2026, 20:17:42) [GCC 14.3.0]",
+      "all_packages": {
+        "pip": "26.2.1",
+        "setuptools": "84.0.0",
+        "chronos-forecasting": "2.3.2",
+        "gofa-f": "0.1.0",
+        "sentencepiece": "0.2.2",
+        "py-cpuinfo": "9.0.0",
+        "tables": "3.11.1",
+        "hyperframe": "6.1.0",
+        "Pygments": "2.21.0",
+        "threadpoolctl": "3.7.0",
+        "pytest": "8.4.2",
+        "pluggy": "1.6.0",
+        "h2": "4.4.1",
+        "mdurl": "0.1.2",
+        "numpy": "2.4.6",
+        "tokenizers": "0.21.4",
+        "ruff": "0.11.13",
+        "iniconfig": "2.3.1",
+        "httpx": "0.28.1",
+        "rich": "15.0.0",
+        "typing-inspection": "0.4.4",
+        "annotated-types": "0.8.0",
+        "hpack": "4.2.0",
+        "pydantic_core": "2.50.1",
+        "msgpack": "1.2.3",
+        "openpyxl": "3.1.5",
+        "anyio": "4.15.1",
+        "PySocks": "1.7.1",
+        "ndindex": "1.10.1",
+        "transformers": "4.52.4",
+        "blosc2": "4.14.1",
+        "h11": "0.16.0",
+        "et_xmlfile": "2.0.0",
+        "pydantic": "2.14.1",
+        "httpcore": "1.0.9",
+        "scipy": "1.17.1",
+        "numexpr": "2.14.2",
+        "markdown-it-py": "4.2.0",
+        "pytz": "2026.5",
+        "torch": "2.6.0+cu124",
+        "certifi": "2026.7.22",
+        "Jinja2": "3.1.6",
+        "wheel": "0.47.0",
+        "tqdm": "4.70.1",
+        "MarkupSafe": "3.0.3",
+        "fsspec": "2026.7.0",
+        "nvidia-cublas-cu12": "12.4.5.8",
+        "psutil": "7.2.2",
+        "python-dateutil": "2.9.0.post0",
+        "gofaf": "0.1.0",
+        "hf-xet": "1.7.0",
+        "huggingface_hub": "0.36.2",
+        "multidict": "7.1.0",
+        "tzdata": "2026.5",
+        "nvidia-cuda-cupti-cu12": "12.4.127",
+        "attrs": "26.1.0",
+        "nvidia-cufft-cu12": "11.2.1.3",
+        "pandas": "2.3.3",
+        "yarl": "1.25.1",
+        "idna": "3.20",
+        "six": "1.17.0",
+        "nvidia-curand-cu12": "10.3.5.147",
+        "peft": "0.17.1",
+        "aiosignal": "1.4.0",
+        "nvidia-cuda-runtime-cu12": "12.4.127",
+        "einops": "0.8.2",
+        "packaging": "26.3",
+        "mpmath": "1.3.0",
+        "charset-normalizer": "3.5.2",
+        "nvidia-nvjitlink-cu12": "12.4.127",
+        "aiohttp": "3.14.5",
+        "xxhash": "4.0.1",
+        "nvidia-cusparse-cu12": "12.3.1.170",
+        "regex": "2026.9.29",
+        "aiohappyeyeballs": "2.7.1",
+        "frozenlist": "1.8.0",
+        "accelerate": "1.15.0",
+        "nvidia-cudnn-cu12": "9.1.0.70",
+        "filelock": "3.32.3",
+        "safetensors": "0.8.0",
+        "requests": "2.34.2",
+        "pyparsing": "3.3.3",
+        "nvidia-nccl-cu12": "2.21.5",
+        "PyYAML": "6.0.3",
+        "nvidia-cusparselt-cu12": "0.6.2",
+        "propcache": "0.5.4",
+        "torch-geometric": "2.7.0",
+        "networkx": "3.6.1",
+        "nvidia-cuda-nvrtc-cu12": "12.4.127",
+        "sympy": "1.13.1",
+        "typing_extensions": "4.16.0",
+        "triton": "3.2.0",
+        "urllib3": "2.8.0",
+        "nvidia-cusolver-cu12": "11.6.1.9",
+        "nvidia-nvtx-cu12": "12.4.127"
+      }
+    },
+    "ufg": {
+      "torch": "2.1.1+cu121",
+      "torch-geometric": "2.5.3",
+      "dgl": "2.0.0+cu121",
+      "numpy": "1.26.4",
+      "python": "3.11.17 (main, Oct  1 2026, 20:17:42) [GCC 14.3.0]",
+      "all_packages": {
+        "pytz": "2026.5",
+        "Jinja2": "3.1.6",
+        "scipy": "1.11.4",
+        "async-timeout": "4.0.3",
+        "Pygments": "2.21.0",
+        "requests": "2.32.3",
+        "threadpoolctl": "3.7.0",
+        "safetensors": "0.4.5",
+        "python-dateutil": "2.9.0.post0",
+        "idna": "3.7",
+        "pytest": "8.4.2",
+        "pluggy": "1.6.0",
+        "torchdata": "0.7.1",
+        "numpy": "1.26.4",
+        "tzdata": "2026.5",
+        "tokenizers": "0.20.3",
+        "pip": "24.0",
+        "iniconfig": "2.3.1",
+        "pandas": "2.3.3",
+        "setuptools": "79.0.1",
+        "dgl": "2.0.0+cu121",
+        "psutil": "6.0.0",
+        "joblib": "1.6.0",
+        "six": "1.17.0",
+        "charset-normalizer": "3.3.2",
+        "multidict": "6.0.5",
+        "pyparsing": "3.1.2",
+        "scikit-learn": "1.4.2",
+        "tqdm": "4.66.4",
+        "mpmath": "1.3.0",
+        "cloudpickle": "3.1.2",
+        "urllib3": "2.2.2",
+        "huggingface-hub": "0.26.2",
+        "certifi": "2024.7.4",
+        "attrs": "23.2.0",
+        "triton": "2.1.0",
+        "torch": "2.1.1+cu121",
+        "sympy": "1.14.0",
+        "PyYAML": "6.0.3",
+        "filelock": "4.1.2",
+        "frozenlist": "1.4.1",
+        "fsspec": "2026.9.0",
+        "aiohttp": "3.9.5",
+        "networkx": "3.6.1",
+        "regex": "2024.11.6",
+        "transformers": "4.46.3",
+        "torch_geometric": "2.5.3",
+        "typing_extensions": "4.16.0",
+        "yarl": "1.9.4",
+        "sentencepiece": "0.2.0",
+        "aiosignal": "1.3.1",
+        "packaging": "24.2",
+        "MarkupSafe": "3.0.4"
+      }
+    }
+  },
+  "source": {
+    "repository": "https://github.com/WonderHeiYi/UFGTIME",
+    "revision": "61f55135bc2bd6e9b9e5d592009d358015eea681",
+    "source_sha256": {
+      "src/model.py": "c7229e78ebb136570f783a62d4fd68760d8c36a5b93394a25429b26136de82b1",
+      "src/utils.py": "3839d247121677327e415695c867c0ee18415e00b93efb121292de15a4950701",
+      "main.py": "cb69e0a577aef24cb48e81abc2f1c0dffbd510a05e5094e6425713f17cc44a68",
+      "argument.py": "ddf3eafd6d5bd2f11d6ece951d2369f7ac20441f074c0495c6174491df78605c",
+      "config/ufgtime_config.yaml": "9ad855e09491b3603962444347b75285acdb04dc9cdd8fc8bce9b9fe84e11fbc",
+      "README.md": "faad6d68ec9da31eb5a550c6d4c03bde09db9db6ac6a557996d818484d1a2619"
+    },
+    "source_changes": []
+  },
+  "normalized_source_sha256": {
+    "src/gofa_f/benchmark.py": "c7df6da6f631df2fc71574f460dd5cd3bc56451fc65aa094fbd610ba1549dcd2",
+    "src/gofa_f/baseline.py": "6e93ec1ac84eb25706467feabb6d8f80ceb6d8c576be8011fc220827ec821f59",
+    "src/gofa_f/progress.py": "fa667a80647bd659c9c61c8c40f1488c6190523c24e8dcef2dfb5a96ecb15992",
+    "src/gofa_f/native_progress.py": "35e49046d92b8b9e164ad94c0a059edca7f26b15c65aac8fbbf81ae73e401a95",
+    "src/gofa_f/tune.py": "096d6fa903a28fc761c62b015545fa9fcd47a38efa9aed84201357181bd0194a",
+    "src/gofa_f/data.py": "b5b9a164cab4e396bd3183711829b4b4847927deb1ac51f43a19df6ce7de66ba",
+    "src/gofa_f/report.py": "529ad3951023532f2423c0d93c846887fa14c18fdbb8ba48f21958b8d6ee9214",
+    "src/gofa_f/metrics.py": "8dfa900844372ca5ea138bb0e178fabddc0e26516f74677d17f8659e7bd2c348",
+    "src/gofa_f/graph_context.py": "64a6d9a89e62b8bf2f6ca0cb5e6881bcfcd8694fec054915d2c8ed57c0a8a042",
+    "src/gofa_f/__init__.py": "0235e8b50b55a723a79451f6b13ed496f65bf4a40b8000974ca6246b01dfcaed",
+    "src/gofa_f/prefix_cache.py": "0b046ae356c2537d298ac3fea8ee21c348445a97935c28f6e749098138b8a430",
+    "src/gofa_f/adaptation_stage.py": "13e6314c1c1a35520ec02c8d2106c10efe5426378cefac1595508d6838d11de9",
+    "src/gofa_f/stage_budget.py": "428334d4a29bf2c4d6c13f6baf7e5385d33114d2e2061cb5a3ea9fce5e999e32",
+    "src/gofa_f/graphs.py": "4778f7d72e13827498f02b2829a53fe32f04ff3b46a5d320cd138754861d2b58",
+    "src/gofa_f/ufg.py": "c309ec0542ab73447d21b3fafbcad3bc5b72f0ccee6df43abf2521d7adb23147",
+    "src/gofa_f/native_stage.py": "fa6a76a7fc7dce8fb656262026e225ae746b7be131385a80bcf15dd5eefeb2a1",
+    "src/gofa_f/pure_graph_task.py": "5acf72295c3c00b7bf73299f9ff226afd97f88f3b8849b0ef5a660213a232214",
+    "src/gofa_f/native.py": "23b90bd6294c9c8548e3fb104deb06830f3682ff3d45ce1ac9f7745d09dab074",
+    "src/gofa_f/idle_launcher.py": "836cd702c1e8d57866a0ce52343c534ad699a647392edfd22381c33b4fba5374",
+    "src/gofa_f/models.py": "6bf7ffc4d9e80c05ed445f607245c7306f588b5a05202347caa8e95fee0e875c",
+    "src/gofa_f/train.py": "5eaac58ea47f9c5e75919bfec702d096fcd7276aa3d197cc93ad4a455a6f7b3d",
+    "src/gofa_f/pure_graph_stage.py": "d66c81c767e219af521717a5cf12631e20ffd874f567d9641d43fcf5fe32c231",
+    "src/gofa_f/prepare.py": "2325c745c118eeb8f9aeda7da1ef156e8545358bf82fbc257993548dbd52a8d5",
+    "tests/test_benchmark.py": "a8315586cf5fe6372c5a6b4de336f13d1c8b6e4f6d5633f74f37462e4a33403e",
+    "tests/test_pure_graph_stage.py": "edd52316528eec422a5c7163438221e2ca5c38804e7b3bbd6e5debe08de69d09",
+    "tests/test_adaptation_stage.py": "f3eba3c6706b00738d338b62c1ead006f889984a8e75fc7e1c1f92038ef92253",
+    "tests/test_metrics.py": "cf9aa4fcb18eaf6013b18d25e0ba2b3b3734614c28c6b33db899a817be8f2548",
+    "tests/test_tune.py": "20e725b2b215901cf96ef5330f3b51f9c9a121376eef88632239206a0e849fb3",
+    "tests/test_idle_launcher.py": "bc4fadbbddf2bb514f75e23cef58e8ee9b46c707ac33da6ffc5bed99c84707d5",
+    "tests/test_graphs.py": "3a09cbe04369cc455b42ec7af83e76bb66b1176c14bc4e44a31d950a19305299",
+    "tests/test_progress.py": "649f15756d588b3faf13510273c759f1a2be6f684f34b2a7132552b290b86eb6",
+    "tests/test_pause_after_run.py": "613202aefcee428edbb84a5dbdf61845580753a58a968aff98d9cf3d7e374535",
+    "tests/test_output_adapter.py": "cdbf92add6013f748527ab95ff603785de45d49a11c6cba6d3157ce3be72126e",
+    "tests/test_graph_context.py": "7fc0bc24efede61055c3e7b70a0ff1bf0bfd6f64d21b1f0c3194c0acc218a811",
+    "tests/test_prepare.py": "2d8975c87a5289d0743fce9a7569ad563a2fb4c3d45cfa592eec8577b8b40918",
+    "tests/test_ufg.py": "22aac0315a36ad34556745b02259f70dc97347c7ac5a5f8b849831c772a42a69",
+    "tests/test_data.py": "77a9cf69ed39eaecbe03053e5ac3115f67a327d29ee38124d08c3211856bd641",
+    "tests/test_models.py": "8ffb0187018150c212fc04e8dfa2e6dfe5b9591aa9e3934a59396169521c8029",
+    "tests/test_report.py": "da191f72a94bdb987468d75c2b98f11336d4e86601939609d5dcfdb28fced0b4",
+    "tests/test_native.py": "a125741d8d1f958013f3740ca39e58d35a9effe5f2549a837d5c4b3f9e80f11a",
+    "tests/test_training.py": "5a4f86e8079febaadda745f6aa2cb73f0ef37221ce5831707222ba27fb246e55",
+    "scripts/run_adaptation_stage.sh": "6541895fab4afa89c329a5406189ec4505ec5b0528780934ba071f3f3f36b66e",
+    "scripts/run_native_stage.sh": "7c9a0343208f38461807bb2f1f6952ea2fc606d69aee2616206b01e8fe0fb735",
+    "scripts/prepare_ufg_source.py": "7f9d894317acbd46ef022bfa138dc8cc518edc3a71a2bb452aa8b5295cc78819",
+    "scripts/smoke_pretrained.py": "4ffa7d89286b5abd0e44db36674fcb7d2f4ae3a12b61f1a12b4090c8c575e28c",
+    "scripts/pause_after_run.py": "070a1385f857a1f7f7a9f1cdbbf5df512c825d9f897aaa5dc3578a2146112125",
+    "scripts/download_public_data.py": "a61b9d434c87d7877f62a3bf01673f9a9d5dfcb5b186e4e9547fb59f29a2b18a",
+    "scripts/prepare_native_dependencies.py": "215e3bddf4d8ce860c4de8ec9eb6f480289f08e74a096db8e1c8a318ac300b1f",
+    "scripts/prepare_public_data.py": "1c4aa0bd5691750ba503c409870704a2f632a55770f604689ff75acfcdcb0fef",
+    "scripts/check_native.py": "d8852236ed71734a265b9c041805ea69256284d7ce407d623b877464a1714fb6",
+    "scripts/run_stage1.sh": "d5d9ab1f124bfefc88f9c4e78db14a91268f155c79c9decbe6aa8b7962b3d131",
+    "scripts/fetch_baseline.py": "397c152e89613b74c991559f5a0aa630ece423409b08825705e2e442c842dcf1",
+    "scripts/prepare_physical_graphs.py": "ab70a929c30becb6686cd8b9ea637dc0e332698ec8f7b280ca8464f81d0e37ae",
+    "scripts/run_pure_graph_stage.sh": "40e78db87955186a9b765c24ca7e66580612c82ca954134f9c7fc698db1e30be",
+    "scripts/prepare_graph_context.py": "01e6a97ab8f7a5c7b002ff7720e0d5f281faa3f883d12a354495731f28749f78",
+    "scripts/pilot.py": "5132f7724f5d22af70061945f583b7d862b875ad3f1cdc21fb7828cf44ebbb3c",
+    "configs/protocol_sources.yaml": "6ee097b19f0236dd82bd5fc718a31edacc69e2238ae79fb1524ffd6fb29a062d",
+    "configs/stage3_late_context.yaml": "3644f761379fdc6a7632d36c83dcd81bb52dc351a373f518c37963c6f3ae0b03",
+    "configs/next_stage_context.yaml": "2d883d09caabc12c7acf3cee8f66ea1958b84387dd42b3104653b7be00253b8d",
+    "configs/benchmark.yaml": "653ad0f2a14cc6a826f864e2c1d3cb27fd6a0d3ae3038a46df02b9959c353699",
+    "configs/tuning.yaml": "bbcb84ae44502553a146bbb0c9f7578639dd7fad0d13081d52258df5ba79f3e4",
+    "configs/stage4_pure_graph.yaml": "1e2c076011e3794c82ae55479d9bc06380186a24e61c9831c6b4d2cb5031a36c",
+    "configs/next_stage.yaml": "f63bfa1a49e1599e2f79d015045bc9fee345c1d41aa4d9e9b99c4103bc98d2f9",
+    "configs/ufg_requirements.txt": "bf63f5b6a94d7a79f01e2e80a6545bfebd3e8b60f35c092a3057e67ef449ad14",
+    "configs/benchmark_stage1.yaml": "4c3ceb9cf34ed116db1a6565bde7df9a5af74acd54a5ad09fb626d3d136effc6"
+  },
+  "real_native_checks": [
+    {
+      "dataset": "metr_la",
+      "self_only": false,
+      "max_initial_difference": 0.0,
+      "parameters": {
+        "total": 21345026,
+        "trainable": 108930,
+        "registered_real_dof": 21345026,
+        "active_real_dof": null,
+        "trainable_real_dof": 108930,
+        "complex_counting": "all parameters real",
+        "point_loss_active_trainable_real_dof": 106674,
+        "note": "Trainable tensor count; median/horizon-only loss may not update all head rows. Frozen backbone scalar usage not separately counted"
+      }
+    },
+    {
+      "dataset": "metr_la",
+      "self_only": true,
+      "max_initial_difference": 0.0,
+      "parameters": {
+        "total": 21345026,
+        "trainable": 108930,
+        "registered_real_dof": 21345026,
+        "active_real_dof": null,
+        "trainable_real_dof": 108930,
+        "complex_counting": "all parameters real",
+        "point_loss_active_trainable_real_dof": 106674,
+        "note": "Trainable tensor count; median/horizon-only loss may not update all head rows. Frozen backbone scalar usage not separately counted"
+      }
+    },
+    {
+      "dataset": "pems_bay",
+      "self_only": false,
+      "max_initial_difference": 0.0,
+      "parameters": {
+        "total": 21345026,
+        "trainable": 108930,
+        "registered_real_dof": 21345026,
+        "active_real_dof": null,
+        "trainable_real_dof": 108930,
+        "complex_counting": "all parameters real",
+        "point_loss_active_trainable_real_dof": 106638,
+        "note": "Trainable tensor count; median/horizon-only loss may not update all head rows. Frozen backbone scalar usage not separately counted"
+      }
+    },
+    {
+      "dataset": "pems_bay",
+      "self_only": true,
+      "max_initial_difference": 0.0,
+      "parameters": {
+        "total": 21345026,
+        "trainable": 108930,
+        "registered_real_dof": 21345026,
+        "active_real_dof": null,
+        "trainable_real_dof": 108930,
+        "complex_counting": "all parameters real",
+        "point_loss_active_trainable_real_dof": 106638,
+        "note": "Trainable tensor count; median/horizon-only loss may not update all head rows. Frozen backbone scalar usage not separately counted"
+      }
+    },
+    {
+      "dataset": "aqi",
+      "self_only": false,
+      "max_initial_difference": 0.0,
+      "parameters": {
+        "total": 21345026,
+        "trainable": 108930,
+        "registered_real_dof": 21345026,
+        "active_real_dof": null,
+        "trainable_real_dof": 108930,
+        "complex_counting": "all parameters real",
+        "point_loss_active_trainable_real_dof": 106650,
+        "note": "Trainable tensor count; median/horizon-only loss may not update all head rows. Frozen backbone scalar usage not separately counted"
+      }
+    },
+    {
+      "dataset": "aqi",
+      "self_only": true,
+      "max_initial_difference": 0.0,
+      "parameters": {
+        "total": 21345026,
+        "trainable": 108930,
+        "registered_real_dof": 21345026,
+        "active_real_dof": null,
+        "trainable_real_dof": 108930,
+        "complex_counting": "all parameters real",
+        "point_loss_active_trainable_real_dof": 106650,
+        "note": "Trainable tensor count; median/horizon-only loss may not update all head rows. Frozen backbone scalar usage not separately counted"
+      }
+    },
+    {
+      "dataset": "aqi_36",
+      "self_only": false,
+      "max_initial_difference": 0.0,
+      "parameters": {
+        "total": 21345026,
+        "trainable": 108930,
+        "registered_real_dof": 21345026,
+        "active_real_dof": null,
+        "trainable_real_dof": 108930,
+        "complex_counting": "all parameters real",
+        "point_loss_active_trainable_real_dof": 106674,
+        "note": "Trainable tensor count; median/horizon-only loss may not update all head rows. Frozen backbone scalar usage not separately counted"
+      }
+    },
+    {
+      "dataset": "aqi_36",
+      "self_only": true,
+      "max_initial_difference": 0.0,
+      "parameters": {
+        "total": 21345026,
+        "trainable": 108930,
+        "registered_real_dof": 21345026,
+        "active_real_dof": null,
+        "trainable_real_dof": 108930,
+        "complex_counting": "all parameters real",
+        "point_loss_active_trainable_real_dof": 106674,
+        "note": "Trainable tensor count; median/horizon-only loss may not update all head rows. Frozen backbone scalar usage not separately counted"
+      }
+    },
+    {
+      "dataset": "electricity",
+      "self_only": false,
+      "max_initial_difference": 0.0,
+      "parameters": {
+        "total": 21345026,
+        "trainable": 108930,
+        "registered_real_dof": 21345026,
+        "active_real_dof": null,
+        "trainable_real_dof": 108930,
+        "complex_counting": "all parameters real",
+        "point_loss_active_trainable_real_dof": 106658,
+        "note": "Trainable tensor count; median/horizon-only loss may not update all head rows. Frozen backbone scalar usage not separately counted"
+      }
+    },
+    {
+      "dataset": "electricity",
+      "self_only": true,
+      "max_initial_difference": 0.0,
+      "parameters": {
+        "total": 21345026,
+        "trainable": 108930,
+        "registered_real_dof": 21345026,
+        "active_real_dof": null,
+        "trainable_real_dof": 108930,
+        "complex_counting": "all parameters real",
+        "point_loss_active_trainable_real_dof": 106658,
+        "note": "Trainable tensor count; median/horizon-only loss may not update all head rows. Frozen backbone scalar usage not separately counted"
+      }
+    },
+    {
+      "dataset": "solar",
+      "self_only": false,
+      "max_initial_difference": 0.0,
+      "parameters": {
+        "total": 21345026,
+        "trainable": 108930,
+        "registered_real_dof": 21345026,
+        "active_real_dof": null,
+        "trainable_real_dof": 108930,
+        "complex_counting": "all parameters real",
+        "point_loss_active_trainable_real_dof": 106638,
+        "note": "Trainable tensor count; median/horizon-only loss may not update all head rows. Frozen backbone scalar usage not separately counted"
+      }
+    },
+    {
+      "dataset": "solar",
+      "self_only": true,
+      "max_initial_difference": 0.0,
+      "parameters": {
+        "total": 21345026,
+        "trainable": 108930,
+        "registered_real_dof": 21345026,
+        "active_real_dof": null,
+        "trainable_real_dof": 108930,
+        "complex_counting": "all parameters real",
+        "point_loss_active_trainable_real_dof": 106638,
+        "note": "Trainable tensor count; median/horizon-only loss may not update all head rows. Frozen backbone scalar usage not separately counted"
+      }
+    }
+  ],
+  "real_ufg_checks": [
+    {
+      "dataset": "metr_la",
+      "scale": "S",
+      "width": 16,
+      "parameters": {
+        "registered_numel": 6635,
+        "registered_real_dof": 8548,
+        "active_real_dof": 7332,
+        "trainable_real_dof": 7332,
+        "inactive_names": [
+          "embeddings",
+          "conv2_list.0.linear.weight",
+          "conv2_list.0.linear.bias",
+          "conv2_list.1.linear.weight",
+          "conv2_list.1.linear.bias"
+        ],
+        "complex_counting": "two real scalar degrees of freedom per complex scalar"
+      },
+      "finite_predictions_and_gradients": true,
+      "shape": [
+        2,
+        12,
+        207
+      ]
+    },
+    {
+      "dataset": "metr_la",
+      "scale": "A",
+      "width": 537,
+      "parameters": {
+        "registered_numel": 641213,
+        "registered_real_dof": 1264679,
+        "active_real_dof": 108927,
+        "trainable_real_dof": 108927,
+        "inactive_names": [
+          "embeddings",
+          "conv2_list.0.linear.weight",
+          "conv2_list.0.linear.bias",
+          "conv2_list.1.linear.weight",
+          "conv2_list.1.linear.bias"
+        ],
+        "complex_counting": "two real scalar degrees of freedom per complex scalar"
+      },
+      "finite_predictions_and_gradients": true,
+      "shape": [
+        2,
+        12,
+        207
+      ]
+    },
+    {
+      "dataset": "pems_bay",
+      "scale": "S",
+      "width": 16,
+      "parameters": {
+        "registered_numel": 8210,
+        "registered_real_dof": 10123,
+        "active_real_dof": 8907,
+        "trainable_real_dof": 8907,
+        "inactive_names": [
+          "embeddings",
+          "conv2_list.0.linear.weight",
+          "conv2_list.0.linear.bias",
+          "conv2_list.1.linear.weight",
+          "conv2_list.1.linear.bias"
+        ],
+        "complex_counting": "two real scalar degrees of freedom per complex scalar"
+      },
+      "finite_predictions_and_gradients": true,
+      "shape": [
+        2,
+        3,
+        325
+      ]
+    },
+    {
+      "dataset": "pems_bay",
+      "scale": "A",
+      "width": 554,
+      "parameters": {
+        "registered_numel": 676944,
+        "registered_real_dof": 1338983,
+        "active_real_dof": 108975,
+        "trainable_real_dof": 108975,
+        "inactive_names": [
+          "embeddings",
+          "conv2_list.0.linear.weight",
+          "conv2_list.0.linear.bias",
+          "conv2_list.1.linear.weight",
+          "conv2_list.1.linear.bias"
+        ],
+        "complex_counting": "two real scalar degrees of freedom per complex scalar"
+      },
+      "finite_predictions_and_gradients": true,
+      "shape": [
+        2,
+        3,
+        325
+      ]
+    },
+    {
+      "dataset": "aqi",
+      "scale": "S",
+      "width": 16,
+      "parameters": {
+        "registered_numel": 15545,
+        "registered_real_dof": 18870,
+        "active_real_dof": 17654,
+        "trainable_real_dof": 17654,
+        "inactive_names": [
+          "embeddings",
+          "conv2_list.0.linear.weight",
+          "conv2_list.0.linear.bias",
+          "conv2_list.1.linear.weight",
+          "conv2_list.1.linear.bias"
+        ],
+        "complex_counting": "two real scalar degrees of freedom per complex scalar"
+      },
+      "finite_predictions_and_gradients": true,
+      "shape": [
+        2,
+        6,
+        437
+      ]
+    },
+    {
+      "dataset": "aqi",
+      "scale": "A",
+      "width": 258,
+      "parameters": {
+        "registered_numel": 198013,
+        "registered_real_dof": 376304,
+        "active_real_dof": 108888,
+        "trainable_real_dof": 108888,
+        "inactive_names": [
+          "embeddings",
+          "conv2_list.0.linear.weight",
+          "conv2_list.0.linear.bias",
+          "conv2_list.1.linear.weight",
+          "conv2_list.1.linear.bias"
+        ],
+        "complex_counting": "two real scalar degrees of freedom per complex scalar"
+      },
+      "finite_predictions_and_gradients": true,
+      "shape": [
+        2,
+        6,
+        437
+      ]
+    },
+    {
+      "dataset": "aqi_36",
+      "scale": "S",
+      "width": 16,
+      "parameters": {
+        "registered_numel": 3557,
+        "registered_real_dof": 5470,
+        "active_real_dof": 4254,
+        "trainable_real_dof": 4254,
+        "inactive_names": [
+          "embeddings",
+          "conv2_list.0.linear.weight",
+          "conv2_list.0.linear.bias",
+          "conv2_list.1.linear.weight",
+          "conv2_list.1.linear.bias"
+        ],
+        "complex_counting": "two real scalar degrees of freedom per complex scalar"
+      },
+      "finite_predictions_and_gradients": true,
+      "shape": [
+        2,
+        12,
+        36
+      ]
+    },
+    {
+      "dataset": "aqi_36",
+      "scale": "A",
+      "width": 553,
+      "parameters": {
+        "registered_numel": 674807,
+        "registered_real_dof": 1334545,
+        "active_real_dof": 108969,
+        "trainable_real_dof": 108969,
+        "inactive_names": [
+          "embeddings",
+          "conv2_list.0.linear.weight",
+          "conv2_list.0.linear.bias",
+          "conv2_list.1.linear.weight",
+          "conv2_list.1.linear.bias"
+        ],
+        "complex_counting": "two real scalar degrees of freedom per complex scalar"
+      },
+      "finite_predictions_and_gradients": true,
+      "shape": [
+        2,
+        12,
+        36
+      ]
+    },
+    {
+      "dataset": "electricity",
+      "scale": "S",
+      "width": 16,
+      "parameters": {
+        "registered_numel": 8307,
+        "registered_real_dof": 10220,
+        "active_real_dof": 9004,
+        "trainable_real_dof": 9004,
+        "inactive_names": [
+          "embeddings",
+          "conv2_list.0.linear.weight",
+          "conv2_list.0.linear.bias",
+          "conv2_list.1.linear.weight",
+          "conv2_list.1.linear.bias"
+        ],
+        "complex_counting": "two real scalar degrees of freedom per complex scalar"
+      },
+      "finite_predictions_and_gradients": true,
+      "shape": [
+        2,
+        8,
+        321
+      ]
+    },
+    {
+      "dataset": "electricity",
+      "scale": "A",
+      "width": 550,
+      "parameters": {
+        "registered_numel": 668331,
+        "registered_real_dof": 1321190,
+        "active_real_dof": 108862,
+        "trainable_real_dof": 108862,
+        "inactive_names": [
+          "embeddings",
+          "conv2_list.0.linear.weight",
+          "conv2_list.0.linear.bias",
+          "conv2_list.1.linear.weight",
+          "conv2_list.1.linear.bias"
+        ],
+        "complex_counting": "two real scalar degrees of freedom per complex scalar"
+      },
+      "finite_predictions_and_gradients": true,
+      "shape": [
+        2,
+        8,
+        321
+      ]
+    },
+    {
+      "dataset": "solar",
+      "scale": "S",
+      "width": 16,
+      "parameters": {
+        "registered_numel": 7562,
+        "registered_real_dof": 10887,
+        "active_real_dof": 9671,
+        "trainable_real_dof": 9671,
+        "inactive_names": [
+          "embeddings",
+          "conv2_list.0.linear.weight",
+          "conv2_list.0.linear.bias",
+          "conv2_list.1.linear.weight",
+          "conv2_list.1.linear.bias"
+        ],
+        "complex_counting": "two real scalar degrees of freedom per complex scalar"
+      },
+      "finite_predictions_and_gradients": true,
+      "shape": [
+        2,
+        3,
+        137
+      ]
+    },
+    {
+      "dataset": "solar",
+      "scale": "A",
+      "width": 281,
+      "parameters": {
+        "registered_numel": 218767,
+        "registered_real_dof": 425877,
+        "active_real_dof": 108781,
+        "trainable_real_dof": 108781,
+        "inactive_names": [
+          "embeddings",
+          "conv2_list.0.linear.weight",
+          "conv2_list.0.linear.bias",
+          "conv2_list.1.linear.weight",
+          "conv2_list.1.linear.bias"
+        ],
+        "complex_counting": "two real scalar degrees of freedom per complex scalar"
+      },
+      "finite_predictions_and_gradients": true,
+      "shape": [
+        2,
+        3,
+        137
+      ]
+    }
+  ],
+  "limitations": [
+    "CPU only; no stage4 CUDA mechanism or prediction accuracy verified",
+    "DGL CPU brute-force kNN dispatch; original CUDA algorithm retained",
+    "Original InstanceNorm2d behavior and warnings retained"
+  ]
+}

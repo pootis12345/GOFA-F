@@ -7,8 +7,12 @@
 仅新增纯图UFGTime，HSD仅留历史，暂缓21M总参数匹配。
 G2-V关闭源时钟，匹配108,930实际可训练自由度；协议见 `docs/STAGE4_PROTOCOL.md`，
 来源/训练差异见 `docs/UFGTIME_REPRODUCTION_AUDIT.md`。
-当前开发代码在C隔离目录通过126项CPU测试（另10项UFG算子待依赖）；尚未启动GPU作业。
-独立 `.venv-ufg` 安装在CPU禁用CUDA环境进行，旧环境/快照/数据未改。
+当前开发代码在C隔离目录完成双环境核验：原生环境126通过/11按依赖跳过，
+UFG环境22通过/2按Chronos依赖跳过，合并覆盖全部137个独立CPU用例。
+六数据集G2-V/self共12次真实Bolt初始预测差均为0；UFG-S/A共12次真实形状前向/梯度有限。
+01:57复核最终代码：六集输入、24份历史原始标签评价与完整双环境依赖均已绑定；
+可移交CPU证据见 `docs/results/stage4-cpu-verification.json`。
+独立 `.venv-ufg` 安装和验证全程禁用CUDA，旧环境/快照/数据未改；尚无新GPU精度结果。
 后续须先核对输出与已有进程，避免重复启动；下文Stage3状态为已完成历史。
 
 ## 最新状态：Stage 3 已完成（2026-10-14 23:31，Asia/Shanghai）

@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 import torch
 
-from gofa_f.ufg import UFGTime, active_name, audit_parameters, matching_width, real_dof
+from gofa_f.ufg import UFGTime, active_name, audit_parameters, matching_width, real_dof, portable_knn_graph
 
 ROOT = Path("external/ufgtime")
 requires_source = pytest.mark.skipif(not (ROOT / "manifest.json").exists(), reason="Pinned UFG source absent")
@@ -30,6 +30,8 @@ def test_actual_forward_width_match_counts_complex_dof(length, horizon, nodes):
     assert width == model.width
     assert counts["active_real_dof"] == expected == counts["trainable_real_dof"]
     assert abs(expected / 108930 - 1) < .10
+    point_loss_dof = 108930 - (576-horizon)*4
+    assert abs(expected / point_loss_dof - 1) < .10
     assert counts["registered_real_dof"] > counts["active_real_dof"]
     assert all(not p.requires_grad for n, p in model.official.named_parameters() if not active_name(n))
 
@@ -63,3 +65,16 @@ def test_short_tail_batch_and_fully_missing_history_are_finite():
     model = UFGTime(ROOT, 8, 3, 3, width=8)
     output = model(torch.zeros(1, 8, 3), torch.zeros(1, 8, 3, dtype=torch.bool))
     assert output.shape == (1, 3, 3) and torch.isfinite(output).all()
+
+
+@requires_source
+def test_cpu_knn_reference_matches_exact_distances_and_has_no_cross_batch_edges():
+    pytest.importorskip("dgl")
+    points = torch.randn(2, 7, 2, generator=torch.Generator().manual_seed(5))
+    graph = portable_knn_graph(points, 2)
+    actual = set(zip(*(edge.tolist() for edge in graph.edges())))
+    distances = torch.cdist(points, points).square()
+    nearest = distances.argsort(dim=-1)[..., :2]
+    expected = {(batch*7+int(source), batch*7+target)
+                for batch in range(2) for target in range(7) for source in nearest[batch, target]}
+    assert actual == expected

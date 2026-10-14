@@ -18,6 +18,14 @@ UTILS_SHA256 = "3839d247121677327e415695c867c0ee18415e00b93efb121292de15a4950701
 TARGET_ACTIVE_DOF = 108930
 
 
+def portable_knn_graph(x, k, algorithm="bruteforce-sharemem", **kwargs):
+    from dgl import knn_graph
+    # The upstream CUDA kernel is not available on CPU. Only the CPU reference dispatch changes.
+    if x.device.type == "cpu" and algorithm == "bruteforce-sharemem":
+        algorithm = "bruteforce"
+    return knn_graph(x, k, algorithm=algorithm, **kwargs)
+
+
 def official_modules(root):
     root = Path(root).resolve()
     for name, digest in (("model.py", MODEL_SHA256), ("utils.py", UTILS_SHA256)):
@@ -43,6 +51,8 @@ def official_modules(root):
             sys.modules["src.utils"] = sys.modules[package_name + ".utils"]
         try:
             spec.loader.exec_module(module)
+            if name == "model":
+                module.knn_graph = portable_knn_graph
         finally:
             for key, value in old.items():
                 if value is None:
@@ -117,6 +127,7 @@ class UFGTime(nn.Module):
             "repository": "https://github.com/WonderHeiYi/UFGTIME", "revision": REVISION,
             "model_sha256": MODEL_SHA256, "utils_sha256": UTILS_SHA256,
             "effective_forward": "unmodified FreqTimeUFGV2", "width": self.width, "scale": scale,
+            "cpu_portability": "DGL bruteforce kNN; CUDA retains upstream bruteforce-sharemem",
             "signal_length": max(16, length), "haar": True, "level": 1, "k": 2, "s": 2,
             "cheb_order": 2, "unused_parameters_frozen": True,
             "total_parameter_matching": False, "parameter_audit": audit_parameters(self),
