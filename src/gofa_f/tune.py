@@ -12,15 +12,19 @@ from gofa_f.benchmark import execute, expand
 
 
 def trials(spec, search, datasets=None, models=None):
-    for key in ("seeds", "horizons"):
-        if not search[key] or len(set(search[key])) != len(search[key]):
-            raise ValueError(f"Search {key} must be nonempty and distinct")
+    if not search["seeds"] or len(set(search["seeds"])) != len(search["seeds"]):
+        raise ValueError("Search seeds must be nonempty and distinct")
+    horizons = search["horizons"]
+    dataset_default = horizons == "dataset_default"
+    if not dataset_default and (not isinstance(horizons, list) or not horizons
+                                or len(set(horizons)) != len(horizons)):
+        raise ValueError("Search horizons must be dataset_default or a nonempty distinct list")
     rates = search["learning_rates"]
     if not rates or len(set(rates)) != len(rates) or any(not math.isfinite(r) or r <= 0 for r in rates):
         raise ValueError("Learning rates must be distinct, positive and finite")
     jobs = []
     for name, config in expand(spec):
-        if config["seed"] not in search["seeds"] or config["horizon"] not in search["horizons"]:
+        if config["seed"] not in search["seeds"] or (not dataset_default and config["horizon"] not in horizons):
             continue
         if config["model"].get("family") == "persistence":
             continue
@@ -40,7 +44,7 @@ def trials(spec, search, datasets=None, models=None):
     if not set(search["seeds"]).issubset(spec["seeds"]):
         raise ValueError("Search seeds must be registered in the benchmark")
     for dataset in {config["dataset"] for _, config in jobs}:
-        if not set(search["horizons"]).issubset(spec["datasets"][dataset]["horizons"]):
+        if not dataset_default and not set(horizons).issubset(spec["datasets"][dataset]["horizons"]):
             raise ValueError(f"Search horizons must be registered for {dataset}")
     return jobs
 

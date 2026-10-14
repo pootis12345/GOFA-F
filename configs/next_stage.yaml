@@ -1,0 +1,75 @@
+# Design manifest, NOT executable by gofa-benchmark yet. No new training is started.
+# Native Bolt/HSDGNN adapters and the budget/cache runner remain to be implemented.
+status: planned
+protocol: native-v3
+length_sources: configs/protocol_sources.yaml
+seed: 42
+datasets: [metr_la, pems_bay, aqi, aqi_36, electricity, solar]
+success_metric: raw_mae
+success_rule: Each of all six datasets must beat both native_bolt and matched_hsdgnn.
+models:
+  native_bolt:
+    backbone: amazon/chronos-bolt-mini
+    revision: 251268337516a88e253628c43e1d26ec577b376b
+    point_forecast: median
+    train: false
+  gofa_bolt:
+    backbone: amazon/chronos-bolt-mini
+    revision: 251268337516a88e253628c43e1d26ec577b376b
+    freeze_native_model: true
+    graph_rank: 64
+    graph_layers: [1, 2]  # AFTER blocks 2 and 3 of the four-block encoder.
+    layout_candidates:
+      late_contiguous: [1, 2]
+      spaced: [0, 2]
+    layout_selection: validation_only
+    comparison_optimizer_steps: 200
+    comparison_max_seconds_per_candidate: 300
+    lr: 0.001
+    native_model_eval_mode: true
+    gradient_checkpointing: false
+    amp_dtype: bfloat16
+  matched_hsdgnn:
+    repository: https://github.com/zhourongleiden/HSDGNN
+    revision: 3b83c6a8abb2229bc176c97ac71f7676bbf584d1
+    rnn_units: 408
+    embed_dim: 32
+    parameter_tolerance: 0.10
+    learning_rates: [0.001, 0.003]
+    amp_dtype: float32
+  persistence:
+    train: false
+deferred_general_backbone:
+  backbone: google/flan-t5-small
+  revision: 0fc9ddf78a1e988dac52e2dac162b0ede4fd74ab
+resources:
+  shared_gpu: true
+  memory_cap_gib: 40
+  leave_free_gib: 16
+  effective_batch_size: 64
+  microbatch_candidates: [64, 32, 16, 8, 4, 2, 1]
+  accumulation_rule: effective_batch_size / microbatch_size
+  allow_tf32: true
+  fused_optimizer_if_supported: true
+  workers: 2
+  omp_threads: 2
+  mkl_threads: 2
+  pin_memory: true
+prefix_cache:
+  enabled_for_bolt_only: true
+  scope: current_dataset_and_layout_only
+  input_to_first_graph: true
+  dtype: bfloat16
+  forbid_trainable_or_stochastic_prefix: true
+  contents: [prefix_hidden, attention_mask, history_loc_scale, forecast_origins]
+  key: [data_sha256, backbone_revision, preprocessing_hash, split, context, prefix_layers, dtype, origins_hash]
+budget:
+  total_gpu_seconds: 28800
+  mechanism_seconds: 900
+  gofa_seconds_per_dataset: 1500
+  hsdgnn_seconds_per_dataset: 2400
+  final_evaluation_seconds: 4500
+  include_cache_construction: true
+  resume_preserves_spent_budget: true
+  exclude_old_stage1_job: true
+  on_exhaustion: save_and_stop_without_claiming_success

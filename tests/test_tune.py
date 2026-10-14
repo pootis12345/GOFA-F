@@ -62,8 +62,20 @@ def test_current_benchmark_is_restricted_to_seed42():
     spec, _ = settings()
     jobs = list(expand(spec))
     assert spec["seeds"] == [42]
-    assert len(jobs) == 126
+    assert len(jobs) == 42
     assert {config["seed"] for _, config in jobs} == {42}
+
+
+def test_dataset_default_horizons_keep_all_datasets_in_validation_search():
+    spec, search = settings()
+    jobs = trials(spec, search)
+    assert {config["dataset"] for _, config in jobs} == set(spec["datasets"])
+    for _, config in jobs:
+        assert config["horizon"] in spec["datasets"][config["dataset"]]["horizons"]
+    explicit = dict(search, horizons=[12])
+    assert {config["dataset"] for _, config in trials(spec, explicit)} == {"aqi_36"}
+    with pytest.raises(ValueError, match="horizons"):
+        trials(spec, dict(search, horizons="all"))
 
 
 def test_selection_requires_every_candidate_and_seed(tmp_path):

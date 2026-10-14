@@ -78,3 +78,11 @@ GPU 为共享资源，不改独占模式，不操作其他用户的任务。
 旧 96 步配置另存 `configs/benchmark_stage1.yaml`，当前快照继续保持原协议。
 出处与模型流程见 `docs/MODEL_FLOW_AND_PROTOCOL_V2.md`、`configs/protocol_sources.yaml`。
 此修订不授权启动新训练；已设置的完成后暂停要求仍有效。服务器为共享 GPU，继续禁止独占。
+
+2026-10-14 14:08（Asia/Shanghai）重新核对：B/C 为 `e7b5184`，旧 runner 与守护仍存活、
+pause_state=armed，GPU 为 H100 PCIe/Default，总显存 81,559 MiB、空闲 77,655 MiB。
+用户已将下一阶段本项目显存上限选为 40 GiB，允许在共享余量内扩大微批量。
+开发默认预测长度现为 1/1/3/12/1/3；当前快照不变。
+下一阶段已选择原生 Bolt-mini、其图版本及新 GNN HSDGNN，新增 GPU 预算 8 小时，
+六数据集分别训练，先精度、语言与迁移后置；完整设计在 `docs/NEXT_STAGE_PROTOCOL.md`。
+本轮只更新长度配置、相应验证搜索兼容与设计清单，未接入/启动新的模型训练或 GPU 测速。
