@@ -44,7 +44,8 @@
 详细定义、原始数据来源和通过标准见 [实验协议](docs/EXPERIMENTS.md)。
 编码器流程、精确可训练参数、短历史文献与空间图来源见 [协议 v2 说明](docs/MODEL_FLOW_AND_PROTOCOL_V2.md)。
 后续原生 Bolt/HSDGNN 的设计、配对任务出处和 40 GiB 加速方案见 [下一阶段协议](docs/NEXT_STAGE_PROTOCOL.md)，
-其新模型接入尚待实现，当前不启动新训练。
+新阶段原生模型接入、缓存、限时调度与完整训练状态恢复已实现；
+使用 `scripts/run_native_stage.sh`，不要使用旧 benchmark 启动新模型。
 注册矩阵不代表已经取得这些数据或跑完实验。
 
 ## 服务器运行

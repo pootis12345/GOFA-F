@@ -1,6 +1,6 @@
-# Design manifest, NOT executable by gofa-benchmark yet. No new training is started.
-# Native Bolt/HSDGNN adapters and the budget/cache runner remain to be implemented.
-status: planned
+# Executed by python -m gofa_f.native_stage, not the legacy gofa-benchmark.
+status: executable
+mechanism_report: outputs/native-mechanisms-v1.json
 protocol: native-v3
 length_sources: configs/protocol_sources.yaml
 length_rule: Keep the selected shortest-history task and its paired horizon from the same source.
@@ -14,6 +14,10 @@ models:
     revision: 251268337516a88e253628c43e1d26ec577b376b
     point_forecast: median
     train: false
+    local_weights: data/weights/chronos-bolt-mini-2512683
+    file_sha256:
+      config.json: 4299e93f30bb8d99d8f7dbaa39a1dfc6bf827ae67d4ef4c0b6ba4ca3df514980
+      model.safetensors: 1a1a4297f132b808c5c7da24e3cce549d519c01ff5c2661fcad404baba018f24
   gofa_bolt:
     backbone: amazon/chronos-bolt-mini
     revision: 251268337516a88e253628c43e1d26ec577b376b
@@ -31,6 +35,7 @@ models:
     gradient_checkpointing: false
     amp_dtype: bfloat16
   matched_hsdgnn:
+    root: external/hsdgnn
     repository: https://github.com/zhourongleiden/HSDGNN
     revision: 3b83c6a8abb2229bc176c97ac71f7676bbf584d1
     rnn_units: 408
@@ -52,7 +57,8 @@ resources:
   accumulation_rule: effective_batch_size / microbatch_size
   allow_tf32: true
   fused_optimizer_if_supported: true
-  workers: 2
+  input_pipeline: indexed_gpu_arrays
+  workers: 0  # Small prepared series are indexed directly on GPU, avoiding CPU window copies.
   omp_threads: 2
   mkl_threads: 2
   pin_memory: true
