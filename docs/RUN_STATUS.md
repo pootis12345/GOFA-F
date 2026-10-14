@@ -2,6 +2,23 @@
 
 ## Stage 3 开发与空闲等待协议（2026-10-14）
 
+21:23 已部署并启动 CPU 等待器，21:25（Asia/Shanghai）只读确认：
+`launcher.json.state=waiting_for_idle`，连续空闲计数 0，活动秒数 0；
+等待器 PID `1787228` 存活、无 worker 子进程、不在 GPU 进程表中。
+GPU 正由其他任务使用。此观察不是实时状态，后续必须重新核对。
+
+- 固定代码：`0916e8fecf2c6729aa7f23ebfcd7bcab7bd1345e`。
+- 固定快照：`/home/dcg/dcg_data/GOFA-F-runs/stage3-late-context-v1`。
+- 输出目录：开发仓库 `outputs/stage3-late-context-v1/`。
+- 启动记录/日志：`outputs/stage3-late-context-v1.launch.json` / `.log`。
+- 初始只生成 `launcher.json` 与启动器清单；worker 入场后才生成 `manifest.json`、
+  `status.json`、活动账本及 GPU 机制报告。没有 GPU 机制或新精度通过的结论。
+- CPU 真实权重记录已保存在开发输出 `outputs/stage3-cpu-realweights.json`，
+  校验部署提交与 CPU 验证源码在行尾规范化后完全一致。
+- 不从开发 HEAD 重启作业，不重复启动等待器；恢复应使用相同快照和清单。
+- 用户已授权每小时跟进，自动化 `gofa-f` 已启用；等待与普通进度保持安静，
+  仅终止结果或异常通知，报告终止结果后停用。它不启动、重启或修改 GPU 作业。
+
 用户已批准：新 GOFA-F 固定 late_contiguous，先代码/CPU 验证，GPU 完全空闲才运行。
 新活动预算 4 小时，空闲等待不计费，其他任务出现即保存并退出。
 实现与规则见 `docs/STAGE3_PROTOCOL.md`；C 上 108 项 CPU 测试及六数据集真实权重
