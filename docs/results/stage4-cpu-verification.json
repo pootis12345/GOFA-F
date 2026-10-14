@@ -791,9 +791,17 @@
   "prior_gpu_attempt": {
     "snapshot": "stage4-pure-graph-v1",
     "code": "95e0a0dca295a3f5f09fb329cc90f8378a4c0cb8",
-    "reason": "CUDA trajectory strict tolerance failed; no formal trials",
+    "reason": "CUDA trajectory strict tolerance failed; native mechanism passed and G2-V completed 95 updates before safe stop",
     "failed_element_abs_difference": 1.7347391576549853e-06,
     "active_seconds": 39.64177488069981,
-    "own_processes_verified_exited": true
+    "own_processes_verified_exited": true,
+    "preserved_formal_job": {
+      "dataset": "metr_la",
+      "variant": "g2_values",
+      "updates": 95,
+      "offset": 6080,
+      "best_validation": null,
+      "migration": "retain checkpoint/RNG/optimizer/sampler and frozen-prefix cache in v2"
+    }
   }
 }
