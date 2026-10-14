@@ -66,6 +66,25 @@ def test_complex_gradient_clipping_counts_both_components():
         clip_gradients([parameter], 1)
 
 
+def test_checkpoint_restore_audit_detects_optimizer_rng_and_sampler_changes():
+    import copy
+    from gofa_f.pure_graph_task import assert_checkpoint_equal
+    checkpoint = {"optimizer": {"square_avg": torch.tensor([1.+2.j])},
+                  "rng": (np.array([1, 2], dtype=np.uint32), torch.tensor([3], dtype=torch.uint8)),
+                  "state": {"offset": 64, "updates": 1}, "scheduler": {"mode": "min"}}
+    assert_checkpoint_equal(checkpoint, copy.deepcopy(checkpoint))
+    for section in ("optimizer", "rng", "state"):
+        changed = copy.deepcopy(checkpoint)
+        if section == "optimizer":
+            changed[section]["square_avg"] += 1e-6
+        elif section == "rng":
+            changed[section][0][0] += 1
+        else:
+            changed[section]["offset"] += 1
+        with pytest.raises(AssertionError):
+            assert_checkpoint_equal(checkpoint, changed)
+
+
 class ComplexToy(torch.nn.Module):
     def __init__(self):
         super().__init__()

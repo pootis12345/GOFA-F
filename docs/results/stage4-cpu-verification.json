@@ -1,15 +1,15 @@
 {
-  "checked_at": "2026-10-14T17:57:10.648918+00:00",
+  "checked_at": "2026-10-14T18:07:33.331376+00:00",
   "location": "C isolated scratch; CUDA_VISIBLE_DEVICES empty; OMP/MKL 2 threads",
   "native_suite": {
-    "passed": 126,
+    "passed": 127,
     "dependency_skipped": 11
   },
   "ufg_suite": {
-    "passed": 22,
+    "passed": 23,
     "dependency_skipped": 2
   },
-  "unique_passed_cases": 137,
+  "unique_passed_cases": 138,
   "data_files_bound": {
     "metr_la": {
       "data/processed/metr_la.npz": "c5437fe6e78659915b8d30c6cc34acc9076353712a203b38d1d838c18e4c2119",
@@ -249,15 +249,15 @@
     "src/gofa_f/graphs.py": "4778f7d72e13827498f02b2829a53fe32f04ff3b46a5d320cd138754861d2b58",
     "src/gofa_f/ufg.py": "c309ec0542ab73447d21b3fafbcad3bc5b72f0ccee6df43abf2521d7adb23147",
     "src/gofa_f/native_stage.py": "fa6a76a7fc7dce8fb656262026e225ae746b7be131385a80bcf15dd5eefeb2a1",
-    "src/gofa_f/pure_graph_task.py": "5acf72295c3c00b7bf73299f9ff226afd97f88f3b8849b0ef5a660213a232214",
+    "src/gofa_f/pure_graph_task.py": "0128124ac49d917416e5b95ce8569f7cbf7ebbf0f049ffcecc6e9963c8e6eeee",
     "src/gofa_f/native.py": "23b90bd6294c9c8548e3fb104deb06830f3682ff3d45ce1ac9f7745d09dab074",
     "src/gofa_f/idle_launcher.py": "836cd702c1e8d57866a0ce52343c534ad699a647392edfd22381c33b4fba5374",
     "src/gofa_f/models.py": "6bf7ffc4d9e80c05ed445f607245c7306f588b5a05202347caa8e95fee0e875c",
     "src/gofa_f/train.py": "5eaac58ea47f9c5e75919bfec702d096fcd7276aa3d197cc93ad4a455a6f7b3d",
-    "src/gofa_f/pure_graph_stage.py": "d66c81c767e219af521717a5cf12631e20ffd874f567d9641d43fcf5fe32c231",
+    "src/gofa_f/pure_graph_stage.py": "4a42e0532282a59d5634cf4a608aa3f9af521e4d4186407c43bd2854a79bd340",
     "src/gofa_f/prepare.py": "2325c745c118eeb8f9aeda7da1ef156e8545358bf82fbc257993548dbd52a8d5",
     "tests/test_benchmark.py": "a8315586cf5fe6372c5a6b4de336f13d1c8b6e4f6d5633f74f37462e4a33403e",
-    "tests/test_pure_graph_stage.py": "edd52316528eec422a5c7163438221e2ca5c38804e7b3bbd6e5debe08de69d09",
+    "tests/test_pure_graph_stage.py": "2db464371b16455b538543ad2df07ede878cd309954e1c44fb088eb6ed94406f",
     "tests/test_adaptation_stage.py": "f3eba3c6706b00738d338b62c1ead006f889984a8e75fc7e1c1f92038ef92253",
     "tests/test_metrics.py": "cf9aa4fcb18eaf6013b18d25e0ba2b3b3734614c28c6b33db899a817be8f2548",
     "tests/test_tune.py": "20e725b2b215901cf96ef5330f3b51f9c9a121376eef88632239206a0e849fb3",
@@ -286,7 +286,7 @@
     "scripts/run_stage1.sh": "d5d9ab1f124bfefc88f9c4e78db14a91268f155c79c9decbe6aa8b7962b3d131",
     "scripts/fetch_baseline.py": "397c152e89613b74c991559f5a0aa630ece423409b08825705e2e442c842dcf1",
     "scripts/prepare_physical_graphs.py": "ab70a929c30becb6686cd8b9ea637dc0e332698ec8f7b280ca8464f81d0e37ae",
-    "scripts/run_pure_graph_stage.sh": "40e78db87955186a9b765c24ca7e66580612c82ca954134f9c7fc698db1e30be",
+    "scripts/run_pure_graph_stage.sh": "533e9e786dac575a1e60e27ad8878e3479b88ce18536d1c3dc4968d3d11e39f2",
     "scripts/prepare_graph_context.py": "01e6a97ab8f7a5c7b002ff7720e0d5f281faa3f883d12a354495731f28749f78",
     "scripts/pilot.py": "5132f7724f5d22af70061945f583b7d862b875ad3f1cdc21fb7828cf44ebbb3c",
     "configs/protocol_sources.yaml": "6ee097b19f0236dd82bd5fc718a31edacc69e2238ae79fb1524ffd6fb29a062d",
@@ -787,5 +787,13 @@
     "CPU only; no stage4 CUDA mechanism or prediction accuracy verified",
     "DGL CPU brute-force kNN dispatch; original CUDA algorithm retained",
     "Original InstanceNorm2d behavior and warnings retained"
-  ]
+  ],
+  "prior_gpu_attempt": {
+    "snapshot": "stage4-pure-graph-v1",
+    "code": "95e0a0dca295a3f5f09fb329cc90f8378a4c0cb8",
+    "reason": "CUDA trajectory strict tolerance failed; no formal trials",
+    "failed_element_abs_difference": 1.7347391576549853e-06,
+    "active_seconds": 39.64177488069981,
+    "own_processes_verified_exited": true
+  }
 }

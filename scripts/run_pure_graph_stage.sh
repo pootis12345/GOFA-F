@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.."
-output="${1:-outputs/stage4-pure-graph-v1}"
+output="${1:-outputs/stage4-pure-graph-v2}"
 export PYTHONPATH="$PWD/src"
 export HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1
 export OMP_NUM_THREADS=2 MKL_NUM_THREADS=2 TOKENIZERS_PARALLELISM=false

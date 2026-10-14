@@ -164,7 +164,7 @@ def write_report(output, config):
         status = {**status, "state": launcher["state"]}
     selection = read(output / "selection.json", {})
     ledger = read(output / "active_budget.json", {})
-    lines = ["# stage4-pure-graph-v1", "", f"State: {status.get('state', 'not_started')}", "",
+    lines = ["# " + output.name, "", f"State: {status.get('state', 'not_started')}", "",
              "Seed 42; raw-target-v2; total parameter matching deferred.",
              "UFG is the pinned effective forward; inactive branches are frozen and counted separately.",
              "Complex scalar = two real degrees of freedom. Different model-native losses/optimizers are disclosed.",
