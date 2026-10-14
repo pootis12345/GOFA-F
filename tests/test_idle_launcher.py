@@ -186,3 +186,73 @@ def test_exhausted_activity_budget_never_launches_gpu_worker(tmp_path, monkeypat
     monkeypatch.setattr(idle, "query_gpu", lambda: pytest.fail("No query or worker after budget exhaustion"))
     idle.launch(output, ["worker"])
     assert json.loads((output / "launcher.json").read_text())["state"] == "budget_exhausted"
+
+
+def test_unlimited_activity_requires_wall_deadline(tmp_path):
+    with pytest.raises(ValueError, match="deadline"):
+        idle.launch(tmp_path / "run", ["worker"], total=None)
+
+
+def test_wall_deadline_ends_busy_wait_without_loading_worker(tmp_path, monkeypatch):
+    clock = [100.]
+    monkeypatch.setattr(idle.time, "time", lambda: clock[0])
+    monkeypatch.setattr(idle.time, "sleep", lambda n: clock.__setitem__(0, clock[0]+n))
+    monkeypatch.setattr(idle.subprocess, "check_output", lambda *a, **k: "test-revision")
+    monkeypatch.setattr(idle, "query_gpu", lambda: idle.parse_gpu_xml(xml([999])))
+    monkeypatch.setattr(idle.subprocess, "Popen", lambda *a, **k: pytest.fail("Busy GPU must not launch"))
+    output = tmp_path / "run"
+    idle.launch(output, ["worker"], total=None, wall_deadline=200)
+    assert clock[0] <= 200
+    assert json.loads((output / "launcher.json").read_text())["state"] == "wall_deadline"
+    assert json.loads((output / "active_budget.json").read_text())["spent_seconds"] == 0
+
+
+def test_deadline_timezone_and_unlimited_activity_ledger(tmp_path):
+    assert idle.parse_deadline("2026-10-15T11:16:00+08:00") == idle.parse_deadline("2026-10-15T03:16:00Z")
+    with pytest.raises(ValueError, match="timezone"):
+        idle.parse_deadline("2026-10-15T11:16:00")
+    ledger = idle.ActivityLedger(tmp_path / "activity.json", None, {"spent_seconds": 999999., "worker": None})
+    assert ledger.remaining == float("inf")
+
+
+def test_wall_deadline_saves_then_kills_only_own_stuck_worker(tmp_path, monkeypatch):
+    clock, signals, children = [0.], [], []
+    output = tmp_path / "run"
+    monkeypatch.setattr(idle.time, "time", lambda: clock[0])
+    monkeypatch.setattr(idle.time, "monotonic", lambda: clock[0])
+    monkeypatch.setattr(idle.time, "sleep", lambda n: clock.__setitem__(0, clock[0]+n))
+    monkeypatch.setattr(idle, "process_identity", lambda _: "start")
+    monkeypatch.setattr(idle, "query_gpu", lambda: idle.parse_gpu_xml(xml()))
+    monkeypatch.setattr(idle, "own_gpu_pids", lambda _: {800})
+    monkeypatch.setattr(idle.subprocess, "check_output", lambda *a, **k: "test-revision")
+    class Child:
+        pid, returncode = 800, None
+        def __init__(self, *a, **k):
+            children.append(self)
+        def poll(self):
+            return self.returncode
+    def kill(pid, signum):
+        assert pid == 800
+        signals.append((signum, clock[0]))
+        if signum == idle.signal.SIGKILL:
+            children[0].returncode = -9
+    monkeypatch.setattr(idle.subprocess, "Popen", Child)
+    monkeypatch.setattr(idle.os, "killpg", kill)
+    idle.launch(output, ["worker"], total=None, wall_deadline=200)
+    assert signals == [(idle.signal.SIGTERM, 140.), (idle.signal.SIGKILL, 200.)]
+    assert json.loads((output / "launcher.json").read_text())["state"] == "wall_deadline"
+
+
+def test_nvml_counts_non_torch_allocations_and_unknown_memory_fails_closed(monkeypatch):
+    monkeypatch.setattr(idle, "own_gpu_pids", lambda _: {100, 101})
+    gpu = idle.parse_gpu_xml(xml([101], used=35000).replace(
+        "<used>35000 MiB</used>", "<used>35000 MiB</used><total>81000 MiB</total>").replace(
+        "<pid>101</pid>", "<pid>101</pid><used_memory>35000 MiB</used_memory>"))
+    assert not idle.resource_breach(gpu, 100, 40, 16)
+    gpu["process_used_mib"][101] = 42000
+    assert idle.resource_breach(gpu, 100, 40, 16)
+    gpu["process_used_mib"][101] = None
+    assert idle.resource_breach(gpu, 100, 40, 16)
+    gpu["process_used_mib"][101] = 35000
+    gpu["used_mib"] = 70000
+    assert idle.resource_breach(gpu, 100, 40, 16)

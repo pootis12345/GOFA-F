@@ -168,15 +168,20 @@ class Data:
     def __init__(self, config, device):
         self.series = Series.load(config["data"])
         normalized, mean, std = self.series.standardize()
+        splits = ("train", "val") if config.get("validation_only", False) else ("train", "val", "test")
         self.windows = {split: Windows(self.series, normalized, split, config["context"], config["horizons"][0])
-                        for split in ("train", "val", "test")}
-        self.values = torch.from_numpy(normalized).to(device)
-        self.raw_values = torch.from_numpy(self.series.values).to(device)
-        self.mask = torch.from_numpy(self.series.mask).to(device)
+                        for split in splits}
+        available = self.series.val_end if config.get("validation_only", False) else len(normalized)
+        self.values = torch.from_numpy(normalized[:available]).to(device)
+        self.raw_values = torch.from_numpy(self.series.values[:available]).to(device)
+        self.mask = torch.from_numpy(self.series.mask[:available]).to(device)
         self.mean, self.std = (torch.from_numpy(v).to(device) for v in (mean, std))
         self.context, self.horizon = config["context"], config["horizons"][0]
         self.device = device
         self.context_enabled = config.get("graph_context", {}).get("enabled", False)
+        self.context_mode = config.get("graph_context", {}).get("feature_mode", "values_and_clock")
+        if self.context_mode not in ("values_only", "values_and_clock"):
+            raise ValueError("Unknown graph context feature mode")
         self.context_provenance = None
         if self.context_enabled:
             training = self.series.values[:self.series.train_end][self.series.mask[:self.series.train_end]]
@@ -192,7 +197,8 @@ class Data:
             self.calendar = torch.from_numpy(calendar).to(device)
             self.calendar_known = torch.from_numpy(known).to(device)
             self.clock = clock_features(self.calendar, self.calendar_known)
-            self.context_provenance = {"feature_names": FEATURE_NAMES, "clock": provenance,
+            self.context_provenance = {"feature_names": FEATURE_NAMES[:5] if self.context_mode == "values_only"
+                                       else FEATURE_NAMES, "clock": provenance,
                                        "pooled_mean": self.pooled_mean, "pooled_std": self.pooled_std,
                                        "statistics_fit": "observed training prefix only"}
 
@@ -207,6 +213,8 @@ class Data:
             # Forecast timestamp is known in advance; no forecast values enter these features.
             batch["graph_features"] = node_features(batch["x"], batch["x_mask"], self.mean, self.std,
                                                     self.pooled_mean, self.pooled_std, self.clock[origins])
+            if self.context_mode == "values_only":
+                batch["graph_features"] = batch["graph_features"][..., :5]
             batch["history_calendar"] = (self.calendar[history], self.calendar_known[history])
         return batch
 
@@ -250,7 +258,7 @@ def evaluate(model, data, split, gpu, budget, deadline=None):
     return {"raw": raw.result(), "standardized": normalized.result()}
 
 
-def update(model, optimizer, data, indices, gpu, budget, cache, gradient_clip=1.0):
+def update(model, optimizer, data, indices, gpu, budget, cache, gradient_clip=1.0, loss_kind="raw_mae"):
     before_rng = rng_state()
     while True:
         optimizer.zero_grad(set_to_none=True)
@@ -266,10 +274,12 @@ def update(model, optimizer, data, indices, gpu, budget, cache, gradient_clip=1.
                 subset = indices[i:i+gpu.micro]
                 batch = data.batch("train", subset)
                 pred = prediction(model, batch, cache, subset)
-                errors = ((pred - batch["y"]) * data.std).masked_select(batch["y_mask"])
+                residual = pred - batch["y"]
+                errors = (residual * data.std if loss_kind == "raw_mae" else residual).masked_select(
+                    batch["y_mask"])
                 if not torch.isfinite(errors).all():
                     raise FloatingPointError("Nonfinite training prediction")
-                loss = errors.abs().sum() / count
+                loss = (errors.abs() if loss_kind == "raw_mae" else errors.square()).sum() / count
                 loss.backward()
                 loss_sum += loss.detach().item()
         except torch.OutOfMemoryError:
@@ -286,18 +296,34 @@ def update(model, optimizer, data, indices, gpu, budget, cache, gradient_clip=1.
             restore_rng(before_rng)
             raise
         # An optimizer OOM must fail safely; never retry a potentially partially applied update.
-        torch.nn.utils.clip_grad_norm_([p for p in model.parameters() if p.requires_grad],
-                                      gradient_clip, error_if_nonfinite=True)
+        clip_gradients([p for p in model.parameters() if p.requires_grad], gradient_clip)
         optimizer.step()
         return loss_sum
 
 
+def clip_gradients(parameters, maximum):
+    gradients = [p.grad for p in parameters if p.grad is not None]
+    if any(g.is_complex() for g in gradients):
+        norm = torch.stack([g.abs().double().square().sum() for g in gradients]).sum().sqrt()
+        if not torch.isfinite(norm):
+            raise FloatingPointError("Nonfinite complex gradient norm")
+        factor = (maximum / (norm + 1e-6)).clamp(max=1)
+        for gradient in gradients:
+            gradient.mul_(factor.to(gradient.real.dtype))
+        return norm
+    return torch.nn.utils.clip_grad_norm_(parameters, maximum, error_if_nonfinite=True)
+
+
 def fit(model, data, directory, gpu, budget, lr, cache=None, max_updates=None, candidate_seconds=None,
-        adapter_lr=None):
+        adapter_lr=None, max_epochs=30, patience=5, optimizer_kind=None, loss_kind="raw_mae"):
     directory = Path(directory)
     directory.mkdir(parents=True, exist_ok=True)
     parameters = [p for p in model.parameters() if p.requires_grad]
-    optimizer_type = torch.optim.Adam if isinstance(model, HSDGNNAdapter) else torch.optim.AdamW
+    optimizer_kind = optimizer_kind or ("adam" if isinstance(model, HSDGNNAdapter) else "adamw")
+    if optimizer_kind not in ("adam", "adamw", "rmsprop") or loss_kind not in ("raw_mae", "standardized_mse"):
+        raise ValueError("Unknown optimizer or training loss")
+    optimizer_type = {"adam": torch.optim.Adam, "adamw": torch.optim.AdamW,
+                      "rmsprop": torch.optim.RMSprop}[optimizer_kind]
     if adapter_lr is not None:
         graph_parameters = [p for name, p in model.named_parameters()
                             if p.requires_grad and not name.startswith("output_adapter.")]
@@ -306,10 +332,15 @@ def fit(model, data, directory, gpu, budget, lr, cache=None, max_updates=None, c
         parameters = ([{"params": graph_parameters, "lr": lr}] if graph_parameters else [])
         if head_parameters:
             parameters.append({"params": head_parameters, "lr": adapter_lr})
-    optimizer = optimizer_type(parameters, lr=lr, weight_decay=1e-4, fused=True)
+    options = {} if optimizer_kind == "rmsprop" else {"fused": True}
+    optimizer = optimizer_type(parameters, lr=lr, weight_decay=1e-4, **options)
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, patience=10) \
+        if optimizer_kind == "rmsprop" else None
+    protocol = {"max_epochs": max_epochs, "patience": patience,
+                "optimizer": optimizer_kind, "loss": loss_kind, "effective_batch": 64}
     state = {"epoch": 0, "offset": 0, "updates": 0, "best_mae": None, "stale": 0,
               "validation": None, "microbatch": gpu.micro, "lr": lr, "adapter_lr": adapter_lr,
-              "last_validation_updates": None}
+              "last_validation_updates": None, "training_protocol": protocol}
     path = directory / "last.pt"
     if path.exists():
         # Only trusted locally produced checkpoints are loaded; RNG tuples require weights_only=False.
@@ -317,8 +348,15 @@ def fit(model, data, directory, gpu, budget, lr, cache=None, max_updates=None, c
         if saved["state"]["lr"] != lr or saved["state"].get("adapter_lr") != adapter_lr:
             raise ValueError("Checkpoint learning rate mismatch")
         state = saved["state"]
+        legacy_protocol = {"max_epochs": 30, "patience": 5, "optimizer": optimizer_kind,
+                           "loss": "raw_mae", "effective_batch": 64}
+        if state.get("training_protocol", legacy_protocol) != protocol:
+            raise ValueError("Checkpoint optimizer/loss/early-stopping protocol mismatch")
+        state["training_protocol"] = protocol
         load_trained(model, saved["trained"])
         optimizer.load_state_dict(saved["optimizer"])
+        if scheduler is not None:
+            scheduler.load_state_dict(saved["scheduler"])
         restore_rng(saved["rng"])
         gpu.micro = min(gpu.micro, state["microbatch"])
     start, last_save = time.monotonic(), time.monotonic()
@@ -326,7 +364,8 @@ def fit(model, data, directory, gpu, budget, lr, cache=None, max_updates=None, c
     def save():
         state["microbatch"] = gpu.micro
         atomic_torch(path, {"state": state, "trained": trained_state(model),
-                            "optimizer": optimizer.state_dict(), "rng": rng_state()})
+                            "optimizer": optimizer.state_dict(), "rng": rng_state(),
+                            "scheduler": scheduler.state_dict() if scheduler is not None else None})
         budget.tick(force=True)
         atomic_json(directory / "progress.json", dict(state, remaining_seconds=max(0, budget.remaining())))
 
@@ -338,6 +377,8 @@ def fit(model, data, directory, gpu, budget, lr, cache=None, max_updates=None, c
         score = val["raw"]["mae"]
         state["validation"] = val
         state["last_validation_updates"] = state["updates"]
+        if scheduler is not None:
+            scheduler.step(val["standardized"]["mse"])
         if state["best_mae"] is None or score < state["best_mae"]:
             state["best_mae"], state["stale"] = score, 0
             atomic_torch(directory / "best.pt", {"trained": trained_state(model), "validation": val,
@@ -351,7 +392,7 @@ def fit(model, data, directory, gpu, budget, lr, cache=None, max_updates=None, c
         print(json.dumps(dict(record, path=str(directory))), flush=True)
 
     try:
-        while state["epoch"] < 30 and state["stale"] < 5:
+        while state["epoch"] < max_epochs and state["stale"] < patience:
             gpu.check(budget)
             if max_updates is not None and state["updates"] >= max_updates:
                 break
@@ -367,7 +408,8 @@ def fit(model, data, directory, gpu, budget, lr, cache=None, max_updates=None, c
                 save()
                 continue
             end = min(state["offset"] + 64, len(order))
-            loss = update(model, optimizer, data, order[state["offset"]:end], gpu, budget, cache)
+            loss = update(model, optimizer, data, order[state["offset"]:end], gpu, budget, cache,
+                          loss_kind=loss_kind)
             state["offset"], state["updates"] = end, state["updates"] + 1
             if state["updates"] % 25 == 0:
                 print(json.dumps({"path": str(directory), "epoch": state["epoch"],

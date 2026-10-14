@@ -1,0 +1,25 @@
+extends: stage3_late_context.yaml
+protocol: native-v6-pure-graph-audit
+seed: 42
+stage4:
+  wall_deadline: '2026-10-15T11:16:00+08:00'
+  final_evaluation_reserve_seconds: 900
+  activity_limit_seconds: null  # User removed global and per-job activity caps.
+  upstream_root: external/ufgtime
+  upstream_revision: 61f55135bc2bd6e9b9e5d592009d358015eea681
+  ufg_python: .venv-ufg/bin/python
+  native_python: .venv-native/bin/python
+  graph_feature_mode: values_only
+  ufg_scales: [S, A]
+  learning_rates: [0.001, 0.003]
+  pilot_updates: 200
+  milestones: [10, 30, 100]
+  max_epochs: 100
+  patience: 15
+  graph_lr: 0.001
+  adapter_lr: 0.0001
+  ufg_weight_decay: 0.0001
+  ufg_loss: standardized_mse
+  target_active_real_dof: 108930
+  parameter_tolerance: 0.10
+  reference_output: outputs/stage3-late-context-v1
