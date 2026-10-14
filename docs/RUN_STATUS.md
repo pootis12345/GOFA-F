@@ -1,5 +1,17 @@
 # 运行交接记录
 
+## 最新状态：Stage 3 已完成（2026-10-14 23:31，Asia/Shanghai）
+
+`stage3-late-context-v1` 于 23:20:28 正常结束，状态与启动器均为 `complete`；
+23:31 只读确认 supervisor `1787228`、worker `1795465` 已退出。
+固定快照仍为 `0916e8fecf2c6729aa7f23ebfcd7bcab7bd1345e`，不要重复启动。
+完成八组关键消融、四组扩展及六数据集测试，验证集选择 G2（11 维上下文＋rank=4）。
+G2 六集胜原生 Bolt、五集胜历史限时 HSD，Electricity 仍落后 HSD 8.59%。
+活动总账本 6397.47 秒（1:46:37），没有追加剩余预算；每小时跟进 `gofa-f` 已暂停。
+完整结果、实际更新数、停止原因和科研边界见 `docs/STAGE3_RESULTS.md`，
+可移交摘要见 `docs/results/stage3-late-context-v1.json`。B 已下载所有小型 JSON/Markdown 输出。
+本轮执行完成不代表整个项目目标完成。下文等待/运行中状态均为历史观察。
+
 ## Stage 3 开发与空闲等待协议（2026-10-14）
 
 21:23 已部署并启动 CPU 等待器，21:25（Asia/Shanghai）只读确认：
