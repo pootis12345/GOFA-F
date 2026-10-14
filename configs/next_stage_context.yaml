@@ -1,0 +1,10 @@
+# Separate successor protocol. Does not modify or resume the running native-v3 snapshot.
+extends: next_stage.yaml
+protocol: native-v4-context
+mechanism_report: outputs/native-context-mechanisms-v1.json
+graph_context:
+  enabled: true
+  sidecar_root: data/features/context-v1
+  unit_alignment: reconstruct_physical_units_then_pooled_observed_training_stats
+  clock: original_source_timestamps_with_explicit_availability
+  output_adaptation: deferred_until_context_ablation

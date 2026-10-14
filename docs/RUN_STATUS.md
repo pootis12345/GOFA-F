@@ -1,5 +1,18 @@
 # 运行交接记录
 
+## 开发更新：节点上下文（2026-10-14）
+
+图模块新增共同单位下的水平、尺度、最近值、趋势、覆盖率，以及可用源时钟的日/周周期特征。
+独立配置 `configs/next_stage_context.yaml`、侧文件 `data/features/context-v1/`；
+当前固定快照 `stage2-native-v1` 仍为 `3c31da6`，未重启、未应用新结构。
+新结构仅完成 C 上 81 项 CPU 测试及真实权重 CPU 通路检查，没有精度提升结论。
+输出低秩适配尚为下一项消融设计，未训练；不能自动追加 GPU 预算。
+细节及 METR-LA 文献结果见 `docs/METR_LA_ARCHITECTURE_REVIEW.md`。
+
+16:47（Asia/Shanghai）只读观察：runner `1534896` 存活，快照工作区干净，
+METR-LA 四份结果完整；PeMS-BAY / GOFA-F(Bolt) 仍在训练，已完成 27 个 epoch。
+预算账本约已用 4,323 秒。这是一次状态观察，不是实时值或新结构的结果。
+
 ## 新阶段运行中（2026-10-14 15:35 启动，Asia/Shanghai）
 
 用户要求启动新训练。原生 Bolt-mini、GOFA-F(Bolt)、官方匹配 HSDGNN 接入及机制检查已完成。

@@ -13,9 +13,10 @@ export TRANSFORMERS_OFFLINE=1
 export OMP_NUM_THREADS=2
 export MKL_NUM_THREADS=2
 export TOKENIZERS_PARALLELISM=false
+config="${3:-configs/next_stage.yaml}"
 if [[ "${2:-}" == "--resume" ]]; then
-  exec .venv-native/bin/python -u -m gofa_f.native_stage --output "$output" --resume
+  exec .venv-native/bin/python -u -m gofa_f.native_stage --config "$config" --output "$output" --resume
 else
   test ! -e "$output" || { echo 'Output exists; inspect it and explicitly resume.' >&2; exit 1; }
-  exec .venv-native/bin/python -u -m gofa_f.native_stage --output "$output"
+  exec .venv-native/bin/python -u -m gofa_f.native_stage --config "$config" --output "$output"
 fi

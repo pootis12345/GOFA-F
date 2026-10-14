@@ -5,6 +5,10 @@
 由 `python -m gofa_f.native_stage` 执行 `configs/next_stage.yaml`；不使用旧 `gofa-benchmark` 运行新阶段。
 既有 `configs/benchmark.yaml` 提供同一组数据路径、长度和图来源，其中的旧模型菜单不参与新训练。
 
+后续图上下文修订使用独立 `configs/next_stage_context.yaml`，尚未启动训练；
+实现、验证边界及输出端适配设计见 [METR-LA 架构分析](METR_LA_ARCHITECTURE_REVIEW.md)。
+当前 `stage2-native-v1` 继续使用原固定快照，不含这项开发修订。
+
 ## 历史与预测长度
 
 |数据集|历史 L|预测 H|预测跨度|此前选定的历史任务及配对 H 出处|

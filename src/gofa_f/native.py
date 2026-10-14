@@ -12,10 +12,11 @@ from torch import nn
 
 from gofa_f.data import file_sha256
 from gofa_f.models import GraphExchange
+from gofa_f.graph_context import ContextGraphExchange
 
 
 class NativeBolt(nn.Module):
-    def __init__(self, native, adjacency, horizon, graph_layers=(), rank=64):
+    def __init__(self, native, adjacency, horizon, graph_layers=(), rank=64, graph_feature_dim=0):
         super().__init__()
         self.native = native.requires_grad_(False).eval()
         self.native.gradient_checkpointing_disable()
@@ -27,7 +28,9 @@ class NativeBolt(nn.Module):
         if horizon > native.chronos_config.prediction_length:
             raise ValueError("This protocol does not roll forecasts beyond the native output head")
         self.register_buffer("adjacency", torch.as_tensor(adjacency, dtype=torch.float32))
-        self.graph = nn.ModuleDict({str(i): GraphExchange(native.config.d_model, rank, 0.0)
+        self.graph_feature_dim = graph_feature_dim
+        self.graph = nn.ModuleDict({str(i): ContextGraphExchange(native.config.d_model, rank, graph_feature_dim)
+                                    if graph_feature_dim else GraphExchange(native.config.d_model, rank, 0.0)
                                     for i in graph_layers})
         self.median_index = native.chronos_config.quantiles.index(.5)
 
@@ -55,7 +58,16 @@ class NativeBolt(nn.Module):
         return hidden.reshape(b, n, *hidden.shape[1:]), attention.reshape(b, n, -1), \
             loc.reshape(b, n, 1), scale.reshape(b, n, 1)
 
-    def encode_range(self, hidden, mask, start, stop, graphs):
+    def exchange(self, index, hidden, mask, features):
+        graph_mask = mask.clone()
+        if self.native.chronos_config.use_reg_token:
+            graph_mask[..., -1] = mask[..., :-1].any(-1)
+        module = self.graph[str(index)]
+        if isinstance(module, ContextGraphExchange):
+            return module(hidden, self.adjacency, graph_mask, features)
+        return module(hidden, self.adjacency, graph_mask)
+
+    def encode_range(self, hidden, mask, start, stop, graphs, graph_features=None):
         b, n, p, d = hidden.shape
         stack = self.native.encoder
         flat_mask = mask.reshape(b*n, p)
@@ -69,10 +81,7 @@ class NativeBolt(nn.Module):
                                     use_cache=False, output_attentions=False, cache_position=positions)
             hidden, bias = result[0], result[1]
             if graphs and str(i) in self.graph:
-                graph_mask = mask.clone()
-                if self.native.chronos_config.use_reg_token:
-                    graph_mask[..., -1] = mask[..., :-1].any(-1)
-                hidden = self.graph[str(i)](hidden.reshape(b, n, p, d), self.adjacency, graph_mask)
+                hidden = self.exchange(i, hidden.reshape(b, n, p, d), mask, graph_features)
                 hidden = hidden.reshape(b*n, p, d)
         return hidden.reshape(b, n, p, d)
 
@@ -84,15 +93,13 @@ class NativeBolt(nn.Module):
         hidden = self.encode_range(hidden, attention, 0, layers, graphs=False)
         return hidden, attention, loc, scale
 
-    def from_prefix(self, prefix, layers, return_quantiles=False):
+    def from_prefix(self, prefix, layers, return_quantiles=False, graph_features=None):
         hidden, attention, loc, scale = prefix
         # The cache ends BEFORE the graph following its last frozen block.
         if str(layers - 1) in self.graph:
-            graph_mask = attention.clone()
-            if self.native.chronos_config.use_reg_token:
-                graph_mask[..., -1] = attention[..., :-1].any(-1)
-            hidden = self.graph[str(layers - 1)](hidden, self.adjacency, graph_mask)
-        hidden = self.encode_range(hidden, attention, layers, len(self.native.encoder.block), graphs=True)
+            hidden = self.exchange(layers - 1, hidden, attention, graph_features)
+        hidden = self.encode_range(hidden, attention, layers, len(self.native.encoder.block), graphs=True,
+                                   graph_features=graph_features)
         b, n, p, d = hidden.shape
         hidden = self.native.encoder.final_layer_norm(hidden).reshape(b*n, p, d)
         mask = attention.reshape(b*n, p)
@@ -106,9 +113,9 @@ class NativeBolt(nn.Module):
             return quantiles.permute(0, 2, 3, 1)
         return quantiles[:, :, self.median_index].transpose(1, 2)
 
-    def forward(self, x, mask):
+    def forward(self, x, mask, graph_features=None):
         layers = min(self.graph_layers) + 1 if self.graph_layers else len(self.native.encoder.block)
-        return self.from_prefix(self.prefix(x, mask, layers), layers)
+        return self.from_prefix(self.prefix(x, mask, layers), layers, graph_features=graph_features)
 
 
 class HSDGNNAdapter(nn.Module):
@@ -138,11 +145,15 @@ class HSDGNNAdapter(nn.Module):
                            "time_features": "sample-index cyclic phase, not claimed calendar weekday",
                            "graph": "official learned dynamic graph; no physical graph augmentation"}
 
-    def forward(self, x, mask, origins):
+    def forward(self, x, mask, origins, calendar=None):
         b, length, n = x.shape
         t = origins[:, None] + torch.arange(-length, 0, device=x.device)
         phase = (t % self.steps_per_day).float() / self.steps_per_day
         weekday = (t // self.steps_per_day % 7).float()
+        if calendar is not None:
+            values, known = calendar
+            phase = torch.where(known[..., 0], values[..., 0], phase)
+            weekday = torch.where(known[..., 1], values[..., 1], weekday)
         inputs = torch.stack((x.masked_fill(~mask, 0), phase[..., None].expand(b, length, n),
                               weekday[..., None].expand(b, length, n)), -1)
         return self.model(inputs).squeeze(-1)

@@ -4,6 +4,7 @@ Run only on C. Dataset windows and train-only preprocessing are shared across
 models. Validation selects layouts/LRs; test targets are read only afterwards.
 """
 import argparse
+import copy
 import gc
 import hashlib
 import json
@@ -20,6 +21,7 @@ import yaml
 
 from gofa_f.data import Series, Windows, file_sha256
 from gofa_f.graphs import build_graph
+from gofa_f.graph_context import FEATURE_DIM, FEATURE_NAMES, clock_features, load_calendar, node_features
 from gofa_f.metrics import Metrics
 from gofa_f.models import Persistence, parameter_counts
 from gofa_f.native import HSDGNNAdapter, NativeBolt
@@ -28,6 +30,48 @@ from gofa_f.stage_budget import Budget, BudgetExhausted
 
 
 STOP = False
+
+
+def stage_config(path, chain=()):
+    path = Path(path).resolve()
+    if path in chain:
+        raise ValueError("Cyclic stage configuration inheritance")
+    override = yaml.safe_load(path.read_text(encoding="utf-8"))
+    base = override.pop("extends", None)
+    if base is None:
+        return override
+    config = stage_config(path.parent / base, (*chain, path))
+
+    def merge(destination, source):
+        for key, value in source.items():
+            if isinstance(value, dict) and isinstance(destination.get(key), dict):
+                merge(destination[key], value)
+            else:
+                destination[key] = value
+    merge(config, override)
+    return config
+
+
+def dataset_settings(settings, config, name):
+    result = copy.deepcopy(settings)
+    if config.get("graph_context", {}).get("enabled"):
+        result["graph_context"] = {"enabled": True,
+                                   "time_path": str(Path(config["graph_context"]["sidecar_root"]) / f"{name}.npz")}
+    return result
+
+
+def context_inputs(config, spec):
+    """Bind resume to exact data and independent clock sidecars before any GPU work."""
+    if not config.get("graph_context", {}).get("enabled"):
+        return None
+    inputs = {}
+    for name in config["datasets"]:
+        settings = dataset_settings(spec["datasets"][name], config, name)
+        path = Path(settings["graph_context"]["time_path"])
+        inputs[name] = {"prepared_sha256": file_sha256(settings["data"]),
+                        "sidecar_sha256": file_sha256(path),
+                        "metadata_sha256": file_sha256(path.with_suffix(".metadata.json"))}
+    return inputs
 
 
 class StopRequested(RuntimeError):
@@ -131,13 +175,38 @@ class Data:
         self.mean, self.std = (torch.from_numpy(v).to(device) for v in (mean, std))
         self.context, self.horizon = config["context"], config["horizons"][0]
         self.device = device
+        self.context_enabled = config.get("graph_context", {}).get("enabled", False)
+        self.context_provenance = None
+        if self.context_enabled:
+            training = self.series.values[:self.series.train_end][self.series.mask[:self.series.train_end]]
+            self.pooled_mean = float(training.mean(dtype=np.float64))
+            self.pooled_std = max(float(training.std(dtype=np.float64)), 1e-5)
+            length = len(self.series.values)
+            if config["graph_context"].get("time_path"):
+                calendar, known, provenance = load_calendar(config["graph_context"]["time_path"],
+                                                            self.series.fingerprint, length)
+            else:
+                calendar, known = np.zeros((length, 2), np.float32), np.zeros((length, 2), bool)
+                provenance = {"known_calendar": False, "note": "No timestamp sidecar provided"}
+            self.calendar = torch.from_numpy(calendar).to(device)
+            self.calendar_known = torch.from_numpy(known).to(device)
+            self.clock = clock_features(self.calendar, self.calendar_known)
+            self.context_provenance = {"feature_names": FEATURE_NAMES, "clock": provenance,
+                                       "pooled_mean": self.pooled_mean, "pooled_std": self.pooled_std,
+                                       "statistics_fit": "observed training prefix only"}
 
     def batch(self, split, indices):
         origins = torch.as_tensor(np.asarray(self.windows[split].origins)[indices], device=self.device)
         history = origins[:, None] + torch.arange(-self.context, 0, device=self.device)
         future = origins[:, None] + torch.arange(self.horizon, device=self.device)
-        return {"x": self.values[history], "x_mask": self.mask[history],
-                "y": self.values[future], "y_mask": self.mask[future], "origins": origins}
+        batch = {"x": self.values[history], "x_mask": self.mask[history],
+                 "y": self.values[future], "y_mask": self.mask[future], "origins": origins}
+        if self.context_enabled:
+            # Forecast timestamp is known in advance; no forecast values enter these features.
+            batch["graph_features"] = node_features(batch["x"], batch["x_mask"], self.mean, self.std,
+                                                    self.pooled_mean, self.pooled_std, self.clock[origins])
+            batch["history_calendar"] = (self.calendar[history], self.calendar_known[history])
+        return batch
 
     def batches(self, split, size):
         for i in range(0, len(self.windows[split]), size):
@@ -148,11 +217,11 @@ def prediction(model, batch, cache=None, indices=None):
     if isinstance(model, NativeBolt):
         with torch.autocast("cuda", dtype=torch.bfloat16):
             if cache is None:
-                return model(batch["x"], batch["x_mask"]).float()
+                return model(batch["x"], batch["x_mask"], graph_features=batch.get("graph_features")).float()
             return model.from_prefix(cache.take(indices, batch["x"].device),
-                                     cache.metadata["prefix_layers"]).float()
+                                     cache.metadata["prefix_layers"], graph_features=batch.get("graph_features")).float()
     if isinstance(model, HSDGNNAdapter):
-        return model(batch["x"], batch["x_mask"], batch["origins"])
+        return model(batch["x"], batch["x_mask"], batch["origins"], calendar=batch.get("history_calendar"))
     return model(batch["x"], batch["x_mask"])
 
 
@@ -323,7 +392,9 @@ def stage(config_path, output, resume=False):
 
     if chronos.__version__ != "2.3.2" or transformers.__version__ != "4.46.3":
         raise RuntimeError("Native adapter requires chronos 2.3.2 and transformers 4.46.3")
-    config = yaml.safe_load(Path(config_path).read_text())
+    config = stage_config(config_path)
+    context_enabled = config.get("graph_context", {}).get("enabled", False)
+    graph_options = {"graph_feature_dim": FEATURE_DIM} if context_enabled else {}
     spec = yaml.safe_load(Path("configs/benchmark.yaml").read_text())
     if config["seed"] != 42 or spec["seeds"] != [42]:
         raise ValueError("Only seed 42 is authorized for this stage")
@@ -331,6 +402,8 @@ def stage(config_path, output, resume=False):
     output.mkdir(parents=True, exist_ok=resume)
     manifest = {"config": config, "datasets": spec["datasets"],
                 "git_revision": subprocess.check_output(["git", "rev-parse", "HEAD"]).decode().strip()}
+    if context_enabled:
+        manifest["context_inputs"] = context_inputs(config, spec)
     manifest_path = output / "manifest.json"
     if resume:
         old = json.loads(manifest_path.read_text())
@@ -343,6 +416,8 @@ def stage(config_path, output, resume=False):
     preflight = json.loads(Path(config["mechanism_report"]).read_text())
     if not preflight["passed"]:
         raise RuntimeError("Native mechanisms have not passed")
+    if preflight["config_hash"] != hashlib.sha256(json.dumps(config, sort_keys=True).encode()).hexdigest():
+        raise RuntimeError("Stage configuration changed since the native mechanism check")
     for name, expected in preflight["code_sha256"].items():
         if file_sha256(name) != expected:
             raise RuntimeError(f"Code changed since the native mechanism check: {name}")
@@ -390,14 +465,15 @@ def stage(config_path, output, resume=False):
             directory.mkdir(exist_ok=True)
             if (directory / "done.json").exists():
                 continue
-            settings = spec["datasets"][dataset]
+            settings = dataset_settings(spec["datasets"][dataset], config, dataset)
             seed(42)
             data = Data(settings, gpu.device)
             graph, graph_info = build_graph(data.series, settings)
             atomic_json(directory / "preprocessing.json", {"data_sha256": data.series.fingerprint,
                         "graph": graph_info, "train_end": data.series.train_end, "val_end": data.series.val_end,
                         "length": len(data.series.values), "context": data.context, "horizon": data.horizon,
-                        "windows": {name: len(windows) for name, windows in data.windows.items()}})
+                        "windows": {name: len(windows) for name, windows in data.windows.items()},
+                        "graph_context": data.context_provenance})
             np.savez(directory / "preprocessing.npz", mean=data.mean.cpu().numpy(), std=data.std.cpu().numpy(),
                      adjacency=graph)
             layouts = config["models"]["gofa_bolt"]["layout_candidates"]
@@ -407,7 +483,7 @@ def stage(config_path, output, resume=False):
             if not gofa_ready.exists():
                 status("running", dataset=dataset, model="gofa_bolt", phase="cache")
                 seed(42)
-                cache_model = NativeBolt(native, graph, data.horizon, layouts["late_contiguous"]).to(gpu.device)
+                cache_model = NativeBolt(native, graph, data.horizon, layouts["late_contiguous"], **graph_options).to(gpu.device)
                 key = {"data_sha256": data.series.fingerprint, "revision": weight_revision,
                        "preprocessing_hash": hashlib.sha256(data.mean.cpu().numpy().tobytes() +
                                                              data.std.cpu().numpy().tobytes()).hexdigest(),
@@ -423,7 +499,7 @@ def stage(config_path, output, resume=False):
                     candidates = []
                     for name, layers in layouts.items():
                         seed(42)
-                        model = NativeBolt(native, graph, data.horizon, layers).to(gpu.device)
+                        model = NativeBolt(native, graph, data.horizon, layers, **graph_options).to(gpu.device)
                         candidate = directory / "gofa_bolt" / name
                         status("running", dataset=dataset, model="gofa_bolt", phase=name)
                         state = fit(model, data, candidate, gpu, budget, .001, cache,
@@ -437,7 +513,7 @@ def stage(config_path, output, resume=False):
                                 "equal_updates_completed": all(c["state"]["updates"] == 200 for c in candidates)})
                 selected = json.loads(selection_path.read_text())["selected"]
                 seed(42)
-                gofa = NativeBolt(native, graph, data.horizon, selected["layers"]).to(gpu.device)
+                gofa = NativeBolt(native, graph, data.horizon, selected["layers"], **graph_options).to(gpu.device)
                 if selected["name"] == "late_contiguous" and budget.remaining() > 60:
                     cache.upgrade(gofa, gpu.micro, lambda: gpu.check(budget))
                 gofa_path = directory / "gofa_bolt" / selected["name"]
@@ -451,7 +527,7 @@ def stage(config_path, output, resume=False):
             else:
                 selected = json.loads((directory / "gofa_selection.json").read_text())["selected"]
                 seed(42)
-                gofa = NativeBolt(native, graph, data.horizon, selected["layers"]).to(gpu.device)
+                gofa = NativeBolt(native, graph, data.horizon, selected["layers"], **graph_options).to(gpu.device)
                 gofa_path = directory / "gofa_bolt" / selected["name"]
                 best(gofa_path, gofa)
                 target_count = parameter_counts(gofa)
@@ -466,9 +542,12 @@ def stage(config_path, output, resume=False):
 
             def new_hsd(dataset_data=data):
                 seed(42)
-                return HSDGNNAdapter(hsd_settings["root"], dataset_data.context, dataset_data.horizon,
+                model = HSDGNNAdapter(hsd_settings["root"], dataset_data.context, dataset_data.horizon,
                                      dataset_data.series.values.shape[1], steps, hsd_settings["rnn_units"],
                                      hsd_settings["embed_dim"]).to(gpu.device)
+                if dataset_data.context_enabled:
+                    model.provenance["time_features"] = "source clock where available; sample-index cyclic fallback otherwise"
+                return model
 
             hsd_selection = directory / "hsd_selection.json"
             hsd_ready = directory / "hsd_ready.json"
@@ -518,6 +597,7 @@ def stage(config_path, output, resume=False):
                             "context": data.context, "horizon": data.horizon, "seed": 42,
                             "validation": val, "test": test, "parameters": parameter_counts(model),
                             "graph": graph_info if name == "gofa_bolt" else getattr(model, "provenance", None),
+                            "graph_context": data.context_provenance if name in ("gofa_bolt", "matched_hsdgnn") else None,
                             "data_sha256": data.series.fingerprint, "git_revision": manifest["git_revision"],
                             "training_protocol": "time-bounded, at most 30 epochs, patience 5; native models untrained",
                             "scope_seconds": dict(budget.state["scopes"]),
