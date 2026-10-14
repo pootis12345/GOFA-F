@@ -1,0 +1,475 @@
+{
+  "observed_at": "2026-10-14T11:51:32+08:00",
+  "stage": "stage1-v2",
+  "status": "partial",
+  "completed": 4,
+  "expected": 42,
+  "current_incomplete": "metr_la/gofa_chronos/h12/seed42",
+  "note": "Existing completed results only. No new training, inference or throughput measurement. User-requested pause after GOFA-F(Chronos) remains armed. Test metrics must not select future hyperparameters.",
+  "results": [
+    {
+      "model": "chronos",
+      "dataset": "metr_la",
+      "seed": 42,
+      "context": 96,
+      "horizon": 12,
+      "test_raw": {
+        "mae": 3.8089802033408127,
+        "rmse": 7.739430254254407,
+        "mape_pct": 10.965862723660118,
+        "observations": 14940228,
+        "by_horizon": [
+          {
+            "step": 1,
+            "mae": 2.490452354742492,
+            "rmse": 4.428887169253937,
+            "observations": 1245052
+          },
+          {
+            "step": 2,
+            "mae": 2.8456335669705926,
+            "rmse": 5.432923011488298,
+            "observations": 1245046
+          },
+          {
+            "step": 3,
+            "mae": 3.121012278706312,
+            "rmse": 6.143017531889653,
+            "observations": 1245040
+          },
+          {
+            "step": 4,
+            "mae": 3.354248549153503,
+            "rmse": 6.7054176707689646,
+            "observations": 1245034
+          },
+          {
+            "step": 5,
+            "mae": 3.578816924710256,
+            "rmse": 7.221709814054177,
+            "observations": 1245028
+          },
+          {
+            "step": 6,
+            "mae": 3.7912357940849946,
+            "rmse": 7.663208093106587,
+            "observations": 1245022
+          },
+          {
+            "step": 7,
+            "mae": 3.9804499678103227,
+            "rmse": 8.065785167901714,
+            "observations": 1245016
+          },
+          {
+            "step": 8,
+            "mae": 4.173852987727809,
+            "rmse": 8.445712460688496,
+            "observations": 1245010
+          },
+          {
+            "step": 9,
+            "mae": 4.340515265582333,
+            "rmse": 8.758702892471074,
+            "observations": 1245004
+          },
+          {
+            "step": 10,
+            "mae": 4.507975582484363,
+            "rmse": 9.068283138350438,
+            "observations": 1244998
+          },
+          {
+            "step": 11,
+            "mae": 4.6779931042831135,
+            "rmse": 9.359792027039582,
+            "observations": 1244992
+          },
+          {
+            "step": 12,
+            "mae": 4.845718263012704,
+            "rmse": 9.65089303825229,
+            "observations": 1244986
+          }
+        ]
+      },
+      "test_standardized": {
+        "mae": 0.4021882281158736,
+        "mse": 0.5802923733548848
+      },
+      "best_validation_standardized_mae": 0.37165303897810165,
+      "epochs_completed": 29,
+      "best_epoch_1based": 24,
+      "parameters": {
+        "total": 21256600,
+        "trainable": 278168
+      },
+      "elapsed_seconds": 33923.11029289104,
+      "test_seconds": 83.46709627564996,
+      "peak_cuda_allocated_bytes": 2278198272,
+      "source_result": "outputs/stage1-v2/metr_la/chronos/h12/seed42/result.json",
+      "source_sha256": "7047924d96a2d75d46302f0e618e9e8c3cc21d69ba2568ba29fb6bbcf6434362",
+      "git_revision": "8e955b66c26f4d64b555e526813c7a03242f190a",
+      "git_dirty": false,
+      "data_sha256": "c5437fe6e78659915b8d30c6cc34acc9076353712a203b38d1d838c18e4c2119",
+      "split": {
+        "train_end": 23990,
+        "val_end": 27417,
+        "length": 34272
+      },
+      "windows": {
+        "train": 22885,
+        "val": 3281,
+        "test": 6313
+      }
+    },
+    {
+      "model": "gofa_t5",
+      "dataset": "metr_la",
+      "seed": 42,
+      "context": 96,
+      "horizon": 12,
+      "test_raw": {
+        "mae": 3.659452985742621,
+        "rmse": 7.30843823593265,
+        "mape_pct": 10.60935584456253,
+        "observations": 14940228,
+        "by_horizon": [
+          {
+            "step": 1,
+            "mae": 2.4862439502055085,
+            "rmse": 4.3425339582971585,
+            "observations": 1245052
+          },
+          {
+            "step": 2,
+            "mae": 2.8089727810952567,
+            "rmse": 5.224604534717779,
+            "observations": 1245046
+          },
+          {
+            "step": 3,
+            "mae": 3.046102563366519,
+            "rmse": 5.831238944772319,
+            "observations": 1245040
+          },
+          {
+            "step": 4,
+            "mae": 3.255535458642991,
+            "rmse": 6.348244921679282,
+            "observations": 1245034
+          },
+          {
+            "step": 5,
+            "mae": 3.4508423662158245,
+            "rmse": 6.80138199254192,
+            "observations": 1245028
+          },
+          {
+            "step": 6,
+            "mae": 3.635748823419378,
+            "rmse": 7.2158857526181786,
+            "observations": 1245022
+          },
+          {
+            "step": 7,
+            "mae": 3.806852996584878,
+            "rmse": 7.592212651505733,
+            "observations": 1245016
+          },
+          {
+            "step": 8,
+            "mae": 3.969574798030444,
+            "rmse": 7.915897837145375,
+            "observations": 1245010
+          },
+          {
+            "step": 9,
+            "mae": 4.132634363615778,
+            "rmse": 8.256442856008608,
+            "observations": 1245004
+          },
+          {
+            "step": 10,
+            "mae": 4.2917385101655405,
+            "rmse": 8.551355882712441,
+            "observations": 1244998
+          },
+          {
+            "step": 11,
+            "mae": 4.439705966953287,
+            "rmse": 8.829893123917234,
+            "observations": 1244992
+          },
+          {
+            "step": 12,
+            "mae": 4.589610106207831,
+            "rmse": 9.089169954494203,
+            "observations": 1244986
+          }
+        ]
+      },
+      "test_standardized": {
+        "mae": 0.3878416761512979,
+        "mse": 0.5228010403447652
+      },
+      "best_validation_standardized_mae": 0.3584948539289946,
+      "epochs_completed": 30,
+      "best_epoch_1based": 28,
+      "parameters": {
+        "total": 35492250,
+        "trainable": 161434
+      },
+      "elapsed_seconds": 7582.707831278443,
+      "test_seconds": 20.141437725163996,
+      "peak_cuda_allocated_bytes": 626888704,
+      "source_result": "outputs/stage1-v2/metr_la/gofa_t5/h12/seed42/result.json",
+      "source_sha256": "e2eccc63aab3816d71044660fd8c7aae8456c75c216fe688aafa8f9d4a22f524",
+      "git_revision": "8e955b66c26f4d64b555e526813c7a03242f190a",
+      "git_dirty": false,
+      "data_sha256": "c5437fe6e78659915b8d30c6cc34acc9076353712a203b38d1d838c18e4c2119",
+      "split": {
+        "train_end": 23990,
+        "val_end": 27417,
+        "length": 34272
+      },
+      "windows": {
+        "train": 22885,
+        "val": 3281,
+        "test": 6313
+      }
+    },
+    {
+      "model": "persistence",
+      "dataset": "metr_la",
+      "seed": 42,
+      "context": 96,
+      "horizon": 12,
+      "test_raw": {
+        "mae": 4.240453191011976,
+        "rmse": 8.17768191906771,
+        "mape_pct": 10.954904053342775,
+        "observations": 14940228,
+        "by_horizon": [
+          {
+            "step": 1,
+            "mae": 2.81329107071376,
+            "rmse": 4.622384646562677,
+            "observations": 1245052
+          },
+          {
+            "step": 2,
+            "mae": 3.2071997566553803,
+            "rmse": 5.669452737005185,
+            "observations": 1245046
+          },
+          {
+            "step": 3,
+            "mae": 3.497754351394017,
+            "rmse": 6.409727312505457,
+            "observations": 1245040
+          },
+          {
+            "step": 4,
+            "mae": 3.749752379254316,
+            "rmse": 7.020296906698878,
+            "observations": 1245034
+          },
+          {
+            "step": 5,
+            "mae": 3.9799429160478526,
+            "rmse": 7.550581501694781,
+            "observations": 1245028
+          },
+          {
+            "step": 6,
+            "mae": 4.204351028650082,
+            "rmse": 8.039194836699622,
+            "observations": 1245022
+          },
+          {
+            "step": 7,
+            "mae": 4.419394374390867,
+            "rmse": 8.487044284007222,
+            "observations": 1245016
+          },
+          {
+            "step": 8,
+            "mae": 4.623742501483923,
+            "rmse": 8.90177927063699,
+            "observations": 1245010
+          },
+          {
+            "step": 9,
+            "mae": 4.8154323034677375,
+            "rmse": 9.282651209765712,
+            "observations": 1245004
+          },
+          {
+            "step": 10,
+            "mae": 5.006276371551809,
+            "rmse": 9.64737447664296,
+            "observations": 1244998
+          },
+          {
+            "step": 11,
+            "mae": 5.191723026092032,
+            "rmse": 9.992211544885523,
+            "observations": 1244992
+          },
+          {
+            "step": 12,
+            "mae": 5.376732651199916,
+            "rmse": 10.325959073793738,
+            "observations": 1244986
+          }
+        ]
+      },
+      "test_standardized": {
+        "mae": 0.4643696520010196,
+        "mse": 0.7221069278927157
+      },
+      "best_validation_standardized_mae": null,
+      "epochs_completed": 0,
+      "best_epoch_1based": null,
+      "parameters": {
+        "total": 0,
+        "trainable": 0
+      },
+      "elapsed_seconds": 2.013374701142311,
+      "test_seconds": 2.0133029613643885,
+      "peak_cuda_allocated_bytes": 587264,
+      "source_result": "outputs/stage1-v2/metr_la/persistence/h12/seed42/result.json",
+      "source_sha256": "41098d0430fb46cbce80844a86a1c95cd6b76b2fbd8a50045c5717d84bc001a2",
+      "git_revision": "8e955b66c26f4d64b555e526813c7a03242f190a",
+      "git_dirty": true,
+      "data_sha256": "c5437fe6e78659915b8d30c6cc34acc9076353712a203b38d1d838c18e4c2119",
+      "split": {
+        "train_end": 23990,
+        "val_end": 27417,
+        "length": 34272
+      },
+      "windows": {
+        "train": 22885,
+        "val": 3281,
+        "test": 6313
+      }
+    },
+    {
+      "model": "t5",
+      "dataset": "metr_la",
+      "seed": 42,
+      "context": 96,
+      "horizon": 12,
+      "test_raw": {
+        "mae": 3.877523943765819,
+        "rmse": 7.789623629063777,
+        "mape_pct": 11.142655123365426,
+        "observations": 14940228,
+        "by_horizon": [
+          {
+            "step": 1,
+            "mae": 2.544377247720221,
+            "rmse": 4.508032795541465,
+            "observations": 1245052
+          },
+          {
+            "step": 2,
+            "mae": 2.892868454393983,
+            "rmse": 5.499351252133288,
+            "observations": 1245046
+          },
+          {
+            "step": 3,
+            "mae": 3.166372056034348,
+            "rmse": 6.193318130837772,
+            "observations": 1245040
+          },
+          {
+            "step": 4,
+            "mae": 3.430537628017249,
+            "rmse": 6.767818498138942,
+            "observations": 1245034
+          },
+          {
+            "step": 5,
+            "mae": 3.640355408226725,
+            "rmse": 7.265700214657115,
+            "observations": 1245028
+          },
+          {
+            "step": 6,
+            "mae": 3.866596341538518,
+            "rmse": 7.713397109413645,
+            "observations": 1245022
+          },
+          {
+            "step": 7,
+            "mae": 4.052362941807525,
+            "rmse": 8.113556337223848,
+            "observations": 1245016
+          },
+          {
+            "step": 8,
+            "mae": 4.247919711145462,
+            "rmse": 8.476768491201682,
+            "observations": 1245010
+          },
+          {
+            "step": 9,
+            "mae": 4.41883922536533,
+            "rmse": 8.800807769439578,
+            "observations": 1245004
+          },
+          {
+            "step": 10,
+            "mae": 4.582010960179408,
+            "rmse": 9.12518636001261,
+            "observations": 1244998
+          },
+          {
+            "step": 11,
+            "mae": 4.761712354202997,
+            "rmse": 9.417842946313048,
+            "observations": 1244992
+          },
+          {
+            "step": 12,
+            "mae": 4.926479288711128,
+            "rmse": 9.69671406383395,
+            "observations": 1244986
+          }
+        ]
+      },
+      "test_standardized": {
+        "mae": 0.40912201475431065,
+        "mse": 0.588434170642226
+      },
+      "best_validation_standardized_mae": 0.3770519578322011,
+      "epochs_completed": 26,
+      "best_epoch_1based": 21,
+      "parameters": {
+        "total": 35359128,
+        "trainable": 28312
+      },
+      "elapsed_seconds": 6216.338933181018,
+      "test_seconds": 19.220366519875824,
+      "peak_cuda_allocated_bytes": 550131200,
+      "source_result": "outputs/stage1-v2/metr_la/t5/h12/seed42/result.json",
+      "source_sha256": "83024a34e97e87f4e1221401daaac6cad25ca189d3e42e89409bd19045bfed2f",
+      "git_revision": "8e955b66c26f4d64b555e526813c7a03242f190a",
+      "git_dirty": true,
+      "data_sha256": "c5437fe6e78659915b8d30c6cc34acc9076353712a203b38d1d838c18e4c2119",
+      "split": {
+        "train_end": 23990,
+        "val_end": 27417,
+        "length": 34272
+      },
+      "windows": {
+        "train": 22885,
+        "val": 3281,
+        "test": 6313
+      }
+    }
+  ]
+}

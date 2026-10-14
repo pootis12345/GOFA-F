@@ -1,7 +1,9 @@
 # GOFA-F
 
 面向多变量时序预测的图语言模型研究实现，借鉴 [GOFA](https://github.com/JiaruiFeng/GOFA)
-在预训练 Transformer 内部交织图消息传递的思路。**目前没有正式数据集上的实测成绩，不能宣称达到较好结果。**
+在预训练 Transformer 内部交织图消息传递的思路。**首轮已有 METR-LA 的部分完整训练结果，
+多领域对比尚未完成，不能宣称总体达到目标。**
+已有结果、模型选择及协议局限见 [首轮部分分析](docs/analysis/STAGE1_PARTIAL_2026-10-14.md)。
 
 ## 模型与对照
 
