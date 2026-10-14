@@ -1,6 +1,6 @@
 # 运行交接记录
 
-## 新阶段已授权启动（2026-10-14）
+## 新阶段运行中（2026-10-14 15:35 启动，Asia/Shanghai）
 
 用户要求启动新训练。原生 Bolt-mini、GOFA-F(Bolt)、官方匹配 HSDGNN 接入及机制检查已完成。
 新阶段只用种子 42，六个数据集各 4 种设置（含 Persistence），共 24 份完整评价目标。
@@ -8,6 +8,24 @@
 训练使用新的固定快照和独立 `.venv-native`，不恢复旧首轮。
 每数据集 GOFA-F 上限 25 分钟、HSDGNN 上限 40 分钟；候选只看验证集，预算耗尽保存并停止。
 当前实现、恢复与查看进度的命令见 `docs/NEXT_STAGE_PROTOCOL.md`。
+
+- 固定代码：`3c31da62b39876c18a3e62ae3561d83f5be74da0`。
+- 固定快照：`/home/dcg/dcg_data/GOFA-F-runs/stage2-native-v1`。
+- 训练 PID：`1534896`；超时包装 PID：`1534895`，后续使用前须重新核对身份与存活。
+- 输出：开发仓库下 `outputs/stage2-native-v1/`；日志：`outputs/stage2-native-v1.log`。
+- 状态：`outputs/stage2-native-v1.status` 与阶段目录内 `status.json`。
+- 预算账本：阶段目录内 `budget.json`；启动记录：`outputs/stage2-native-v1.launch.json`。
+- 启动后核对已完成 METR-LA 两种图位置各 200 次更新，按完整验证 MAE 选择间隔位置 `[0,2]`，
+  继续同一检查点的正式训练；已观察到超过 800 次更新。这不是完整测试结果或普遍位置优劣结论。
+- 微批量/有效批量为 64/64，无梯度累积；关闭梯度检查点，进程显存启动时约 2.8 GiB。
+  后续 GNN 或更大数据集若需降低微批量，保持有效批量 64；不提高 40 GiB 上限或改独占模式。
+- 原生真实权重机制检查累计约 7.97 秒，计入新阶段总预算；外部 timeout 预留 60 秒保存。
+- 新快照启动后核对干净；旧首轮保持停止，未修改旧快照、数据或 `.venv`。
+
+在 C 的终端持续查看日志：`tail -f /home/dcg/dcg_data/GOFA-F/outputs/stage2-native-v1.log`。
+结构化进度：在开发仓库执行
+`watch -n 10 'PYTHONPATH=src .venv-native/bin/python -m gofa_f.native_progress outputs/stage2-native-v1'`。
+当前只授权这一新阶段；不要再次并行启动相同阶段或恢复旧首轮。
 
 ## 最新状态：旧首轮已停止（2026-10-14 14:46，Asia/Shanghai）
 
