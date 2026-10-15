@@ -1,5 +1,11 @@
 # 运行交接记录
 
+## Stage10 未合格，Stage11 滞后相关支持已预注册（2026-10-16，Asia/Shanghai）
+
+Stage10 `no_eligible_variant`，等待器2984281/worker2986445已退出，无失败。验证全步3.0878077061、第12步3.7064949538，两项均未通过，未测试；现有合格模型仍是Stage8T2。结果见 `docs/STAGE10_RESULTS.md` 与机器可读副本，勿重启旧阶段。
+
+Stage11回到T2的19维小结构，只加入训练前缀lag1/2/3的有向top8关联支持，不增参数，动态权重取并集逐边最大。新增97条有向边，图SHA `74a351a4ea001e5ab72e74921e9fdc7c2ade8e74807c3abf829cb1173414e5a5`，无跨连续时间段配对。专项7项CPU机制通过，准备全仓库回归及独立部署。协议 `docs/STAGE11_LAGGED_PROTOCOL.md`，验证门槛及绝对10:58截止保留；新GPU子任务必须严格空闲准入。以下Stage10部署为历史。
+
 ## Stage10 固定快照和CPU等待器已部署（2026-10-16 03:04，Asia/Shanghai）
 
 运行源码 `3d3f95be58db7a269951556e289f8e534d3a6fcf`，快照 `/home/dcg/dcg_data/GOFA-F-runs/stage10-metr-encoded-v1`，输出 C 开发仓库 `outputs/stage10-metr-encoded-v1/`，日志同级 `.log`、身份记录同级 `.launch.json`。B/C/GitHub代码同步，C禁CUDA全仓库195通过/11可选依赖跳过，快照11项输入核验通过；旧Stage9等待器及worker已退出后才部署。
