@@ -1,5 +1,11 @@
 # 运行交接记录
 
+## Stage13 rank6私有头固定快照与等待器已部署（2026-10-16 05:59，Asia/Shanghai）
+
+运行源码 `078c9f5a1abdae79127f388c1d1db56dd7ce4a4f`，快照 `/home/dcg/dcg_data/GOFA-F-runs/stage13-metr-head-v1`，输出C开发仓库 `outputs/stage13-metr-head-v1/`、日志同级 `.log`、身份同级 `.launch.json`。C禁CUDA、OMP/MKL各2线程213项CPU通过/11可选依赖跳过；快照12项输入核验通过，Stage12旧等待器和worker退出后才部署。
+
+CPU等待器首次北京时间2026-10-16 05:59:48启动，PID3103432/start_ticks602264777，使用前核对身份、禁止重复启动。绝对训练截止10:43、硬截止10:58，等待恢复不顺延。唯一h1_rank6保持T2图，仅扩私有头到rank6，真实可训练119,302参数、点预测涉及115,918自由度，处于历史METR-LA UFG-A的±10%内；初始预测/共同图权重配对通过。协议 `docs/STAGE13_HEAD_PROTOCOL.md`，验证门槛仍相对Stage8T2，部署时尚无GPU精度结果。新GPU子任务严格空闲准入，40GiB/Torch38GiB/16GiB余量、运行中他人加入不退出继续有效；10:58前按验证机制持续顺序迭代。下方准备与旧记录为历史。
+
 ## Stage12 未合格，Stage13 私有头容量准备部署（2026-10-16，Asia/Shanghai）
 
 Stage12跑满100epoch（35,900更新）后 `no_eligible_variant`，等待器3067411/worker3068792退出，无失败。验证全步3.0955940661、第12步3.7417769070，未测试；目前合格模型仍Stage8T2。结果 `docs/STAGE12_RESULTS.md` 与机器可读副本，旧阶段不重启。
