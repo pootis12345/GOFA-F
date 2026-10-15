@@ -1,0 +1,12 @@
+protocol: native-v9-locked-transfer
+seed: 42
+stage5_config: configs/stage5_routed.yaml
+stage5_result: docs/results/stage5-titan-six-v1.json
+source_dataset: metr_la
+source_checkpoint: outputs/stage5-titan-six-v1/trials/metr_la/routed/best.pt
+targets: [metr_la, pems_bay, aqi, aqi_36, electricity, solar]
+wall_window_hours: 8
+memory_cap_gib: 40
+leave_free_gib: 16
+yield_on_foreign: false
+admission_per_gpu_task: true
