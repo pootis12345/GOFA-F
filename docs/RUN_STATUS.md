@@ -1,5 +1,13 @@
 # 运行交接记录
 
+## 最新状态：Stage7 单检查点六集迁移评价等待 GPU（2026-10-15 21:02，Asia/Shanghai）
+
+固定快照 `stage7-locked-transfer-v1`、代码 `2c9ba946882cf22787bce22602289bc9c77361fa` 已与 GitHub、B、C 同步。C 禁用 CUDA、OMP/MKL 各两线程的六数据集真实 Bolt 权重前向检查通过；源 Stage5 METR-LA 检查点 SHA `7c3e3957d9a9fded1cff5302db775ef1bbc156c8e9dbcf97f26b07eb671beee9` 与锁定记录一致，快照清单的 22 个输入哈希核验通过。协议见 `docs/STAGE7_TRANSFER_PROTOCOL.md`。
+
+CPU 空闲等待器于 21:02:11 首次启动，初始 PID `2715356`、start_ticks `599039152`；使用前须重新核对身份及存活，禁止重复启动。首次核对 `launcher.json` 为 `waiting_for_idle`、活动秒数0，GPU 正被其他进程占用，尚无 Stage7 GPU 评价结果。输出在 C 开发仓库 `outputs/stage7-locked-transfer-v1/`，日志同级 `.log`；固定八小时墙钟窗口于 2026-10-16 05:02:11 截止，不因等待顺延。每个 GPU 子任务须三次间隔30秒确认完全空闲才启动；运行中其他用户加入不退出，显存余量不足暂停更新，项目上限40 GiB、至少留16 GiB。每小时跟进 `gofa-f` 仅在终止或异常时通知。
+
+本轮固定一份 Stage5 METR-LA 图模型检查点，对六集不更新权重直接评价；各目标仍使用自身训练前缀标准化与原图，因此应称校准后的权重迁移，不能称严格零样本。Stage5/Stage6 及旧快照不重启。下文 Stage6 已完成是历史记录。
+
 ## 最新状态：Stage6 METR-LA 长步预测已完成（2026-10-15 20:17，Asia/Shanghai）
 
 固定快照 `stage6-metr-long-v1`、代码 `bcdc74a2213ef0179706a11386d68468fcf50461`；等待器和 GPU 子进程均已退出，`launcher.json`、`status.json` 均为 `complete`，无失败记录。C1/C2 和按验证规则触发的 C1 自环控制全部早停并完成锁定测试。验证集全 12 步原始 MAE 分别为 3.14136/3.13675/3.21524。C2 比 C1 仅低 0.147%，符合预定 0.5% 内选较小模型规则，因此选 C1；没有根据测试集返选。C1 测试全 12 步 MAE 3.46977、第 12 步 4.24974；相比 Stage5 的 4.60272 有改善，但仍比 TITAN 外部参照 3.08 高 1.16974。C2 第 12 步为 4.24377，自环为 4.37098。活动账本 3,874.27 秒，未触及六小时截止。完整逐步误差、参数、更新数、显存和局限见 `docs/STAGE6_RESULTS.md`，机器可读副本见 `docs/results/stage6-metr-long-v1.json`。本阶段勿重复启动 GPU 作业。
