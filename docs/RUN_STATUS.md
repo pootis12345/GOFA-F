@@ -1,5 +1,11 @@
 # 运行交接记录
 
+## Stage9 未达预定收益，Stage10 非线性历史编码准备部署（2026-10-16，Asia/Shanghai）
+
+Stage9 `no_eligible_variant`，等待器2940624与worker2943503已核实退出，无异常。验证全步3.0727575920、第12步3.6824765599；改善仅约0.18%，未过0.5%门槛，测试留空、当前合格对照仍是Stage8T2。结果见 `docs/STAGE9_RESULTS.md` 及机器可读副本，勿重启本阶段。
+
+Stage10仅把24维有序历史分支改为24→32→64 GELU编码，19维摘要/时钟保持线性，在图聚合前融合，初始增量为零。协议 `docs/STAGE10_ENCODED_PROTOCOL.md`；门槛继续相对Stage8T2验证，不按测试新增候选。C禁CUDA专项6项通过，准备全仓库回归及独立固定快照。用户授权连续迭代的绝对截止仍是北京时间10:58，新GPU子任务必须严格空闲准入。下方Stage9部署记录为历史。
+
 ## Stage9 独立固定快照等待GPU（2026-10-16 02:09，Asia/Shanghai）
 
 运行源码 `e7acbb556d6b95d361d31c3c9224607266791394`，固定快照 `/home/dcg/dcg_data/GOFA-F-runs/stage9-metr-ordered-v1`，输出 C 开发仓库 `outputs/stage9-metr-ordered-v1/`、日志同级 `.log`、身份记录同级 `.launch.json`。C 禁CUDA、OMP/MKL各2线程：全仓库189通过/11可选依赖跳过，固定快照清单10输入核验通过；Stage8等待器及worker已核实退出后才启动本阶段。
