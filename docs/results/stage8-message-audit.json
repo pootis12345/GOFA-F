@@ -1,0 +1,43 @@
+{
+  "checkpoint_sha256": "1cd967855747ca3729267a5a55e2a5cce0284e99ca75da596b1bee700c0051ca",
+  "split": "train/validation only",
+  "precision": "CPU FP32 mechanism diagnostic, not a BF16 metric reevaluation",
+  "routing": {
+    "train/1": {
+      "mean_z_norm": 13.649434089660645,
+      "mean_mixed_norm": 12.033185005187988,
+      "mean_contrast_norm": 4.869479656219482,
+      "mean_self_message_cosine": 0.9239329695701599,
+      "dynamic_fraction_mean": 0.30871978402137756,
+      "amplitude_abs_mean": 0.5147160887718201,
+      "amplitude_abs_max": 0.9966278076171875
+    },
+    "train/2": {
+      "mean_z_norm": 21.983657836914062,
+      "mean_mixed_norm": 20.240215301513672,
+      "mean_contrast_norm": 5.994549751281738,
+      "mean_self_message_cosine": 0.9506049156188965,
+      "dynamic_fraction_mean": 0.4954254925251007,
+      "amplitude_abs_mean": 0.5426764488220215,
+      "amplitude_abs_max": 0.9893367290496826
+    },
+    "val/1": {
+      "mean_z_norm": 13.870648384094238,
+      "mean_mixed_norm": 11.990506172180176,
+      "mean_contrast_norm": 5.312280654907227,
+      "mean_self_message_cosine": 0.9129718542098999,
+      "dynamic_fraction_mean": 0.3117862343788147,
+      "amplitude_abs_mean": 0.5576598048210144,
+      "amplitude_abs_max": 0.9985761642456055
+    },
+    "val/2": {
+      "mean_z_norm": 22.134201049804688,
+      "mean_mixed_norm": 20.02328109741211,
+      "mean_contrast_norm": 6.686661720275879,
+      "mean_self_message_cosine": 0.9440956711769104,
+      "dynamic_fraction_mean": 0.4972974359989166,
+      "amplitude_abs_mean": 0.5463873147964478,
+      "amplitude_abs_max": 0.9898207783699036
+    }
+  }
+}

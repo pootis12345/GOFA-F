@@ -1,0 +1,172 @@
+{
+  "state": "no_eligible_variant",
+  "selection": {
+    "selection_split": "validation",
+    "stage8_baseline": 3.0783439033134705,
+    "qualification_threshold": 3.062952183796903,
+    "step12_ceiling": 3.6831616007344037,
+    "candidates": {
+      "l1_lagged": {
+        "validation_raw_mae": 3.0788605690819164,
+        "validation_step12_mae": 3.687826483567965,
+        "training_complete": true,
+        "updates": 22976
+      }
+    },
+    "both_candidates_valid": true,
+    "selected": null
+  },
+  "final_selection": {
+    "selection_split": "validation",
+    "sealed_at": 1792097114.5864582,
+    "selected": null,
+    "jobs": {
+      "l1_lagged": {
+        "checkpoint_sha256": "6dce5645b995962750bb397c4159201b5cd35b3cd6ff937ebfa8782e41b0d901",
+        "validation_raw_mae": 3.0788605690819164,
+        "validation_step12_mae": 3.687826483567965,
+        "updates": 22976,
+        "epochs": 64,
+        "training_complete": true,
+        "stop_reason": "early_stopping",
+        "parameters": {
+          "total": 21351174,
+          "trainable": 115078,
+          "registered_real_dof": 21351174,
+          "active_real_dof": null,
+          "trainable_real_dof": 115078,
+          "complex_counting": "all parameters real",
+          "point_loss_active_trainable_real_dof": 112822,
+          "note": "Trainable tensor count; median/horizon-only loss may not update all head rows. Frozen backbone scalar usage not separately counted"
+        }
+      }
+    }
+  },
+  "results": {
+    "l1_lagged": null
+  },
+  "protocol_audit": {
+    "prepared_rows": 34272,
+    "nodes": 207,
+    "train_end": 23990,
+    "val_end": 27417,
+    "split_ratios": [
+      0.6999883286647992,
+      0.09999416433239963,
+      0.20001750700280113
+    ],
+    "windows": {
+      "train": {
+        "count": 22969,
+        "first_origin": 12,
+        "last_origin": 23978,
+        "first_target": 12,
+        "last_target": 23989
+      },
+      "val": {
+        "count": 3281,
+        "first_origin": 23990,
+        "last_origin": 27405,
+        "first_target": 23990,
+        "last_target": 27416
+      },
+      "test": {
+        "count": 6313,
+        "first_origin": 27417,
+        "last_origin": 34260,
+        "first_target": 27417,
+        "last_target": 34271
+      }
+    },
+    "prepared_fields": [
+      "values",
+      "mask",
+      "segments"
+    ],
+    "graph_arrays": {
+      "adjacency": [
+        207,
+        207
+      ],
+      "node_ids": [
+        207
+      ]
+    },
+    "clock_shape": [
+      34272,
+      2
+    ],
+    "clock_known_counts": [
+      34272,
+      34272
+    ],
+    "sensor_order": "verified exact original HDF columns = prepared array columns = graph node IDs",
+    "source_hdf_sha256": "e00a068ca5ec0abcf225b5a044bf962cc1c32c4fef31bad8187c04f342ef0990",
+    "zero_observed_targets": 0,
+    "mask_rule": "prepared mask AND finite; original zeros retained only if prepared mask says observed",
+    "normalization": "per sensor, observed training prefix only; missing filled after normalization",
+    "target_rule": "all forecast targets inside their own chronological split; prior split history allowed",
+    "step12_rule": "original-unit masked MAE on raw target at origin+11",
+    "titan_alignment": "12-to-12 and nominal 70/10/20 only; official sensor order, exact zeros, window and metric code unavailable",
+    "titan_step12_external_mae": 3.08,
+    "comparison": "cross-implementation reference, not a strict reproduction",
+    "correlation_graph": {
+      "file_sha256": "d25fb015fb887d5fae60411af29cd20315fec31f8d635b4a965f07708312e8d0",
+      "prepared_sha256": "c5437fe6e78659915b8d30c6cc34acc9076353712a203b38d1d838c18e4c2119",
+      "train_end": 23990,
+      "k": 8,
+      "min_overlap": 24,
+      "physical_directed_edges": 1515,
+      "correlation_directed_edges": 2296,
+      "new_directed_edges": 1678,
+      "construction": "pairwise-complete absolute Pearson on observed training prefix; symmetrized top-8"
+    },
+    "lagged_graph": {
+      "file_sha256": "74a351a4ea001e5ab72e74921e9fdc7c2ade8e74807c3abf829cb1173414e5a5",
+      "prepared_sha256": "c5437fe6e78659915b8d30c6cc34acc9076353712a203b38d1d838c18e4c2119",
+      "train_end": 23990,
+      "lags": [
+        1,
+        2,
+        3
+      ],
+      "k": 8,
+      "min_overlap": 24,
+      "directed_nonself_edges": 1656,
+      "new_directed_edges_vs_stage8_support": 97,
+      "best_lag_counts": {
+        "1": 1209,
+        "2": 209,
+        "3": 238
+      },
+      "construction": "source[t-lag] to target[t], train prefix only, no segment crossings; absolute Pearson max over lag1/2/3, directed target top8",
+      "interpretation": "predictive association support, not a causal graph"
+    }
+  },
+  "activity": {
+    "spent_seconds": 1308.2984199607745,
+    "worker": null
+  },
+  "budget": {
+    "spent_seconds": 1296.4136965954676,
+    "scopes": {
+      "preflight/l1_lagged": 1.360550694167614,
+      "train/l1_lagged": 1295.0531459013
+    },
+    "active_scope": null
+  },
+  "memory": {
+    "l1_lagged": {
+      "phases": {
+        "train": {
+          "peak_allocated": 2397598720,
+          "peak_reserved": 2845835264,
+          "attempts": 1
+        }
+      },
+      "peak_allocated": 2397598720,
+      "peak_reserved": 2845835264
+    }
+  },
+  "failures": {}
+}

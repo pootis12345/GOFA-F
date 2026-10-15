@@ -1,5 +1,11 @@
 # 运行交接记录
 
+## Stage11 未合格，Stage12 对比消息准备部署（2026-10-16，Asia/Shanghai）
+
+Stage11 `no_eligible_variant`，等待器3028018/worker3032859退出，无失败。验证全步3.0788605691、第12步3.6878264836，未测试；当前合格模型仍Stage8T2。结果见 `docs/STAGE11_RESULTS.md` 和机器可读副本，旧阶段勿重启。
+
+对锁定T2的训练/验证CPU消息诊断显示与自身latent平均余弦约0.91–0.95，仅作机制线索。Stage12回到原T2相关支持，仅将图增量改为邻居混合消息减自身latent，不增参数，保留原生残差和物理先验≥0.5。协议 `docs/STAGE12_CONTRAST_PROTOCOL.md`，CPU专项6项通过，准备全仓库回归及固定快照；硬截止仍北京时间10:58、验证门槛保持。下方Stage11部署为历史。
+
 ## Stage11 固定快照和严格空闲等待器已部署（2026-10-16 04:05，Asia/Shanghai）
 
 运行源码 `171b188f8af93174b2d64916f2e0f369e8bc1848`，快照 `/home/dcg/dcg_data/GOFA-F-runs/stage11-metr-lagged-v1`，输出 C 开发仓库 `outputs/stage11-metr-lagged-v1/`、日志同级 `.log`、身份同级 `.launch.json`。C禁CUDA、OMP/MKL各2线程：202项CPU通过/11可选依赖跳过；快照13个输入哈希核验通过，Stage10旧等待器及worker退出后才部署。
