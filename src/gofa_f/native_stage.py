@@ -226,10 +226,13 @@ class Data:
 def prediction(model, batch, cache=None, indices=None):
     if isinstance(model, NativeBolt):
         with torch.autocast("cuda", dtype=torch.bfloat16):
+            extra = {"history": batch["x"], "history_mask": batch["x_mask"]} \
+                if getattr(model, "requires_history", False) else {}
             if cache is None:
                 return model(batch["x"], batch["x_mask"], graph_features=batch.get("graph_features")).float()
             return model.from_prefix(cache.take(indices, batch["x"].device),
-                                     cache.metadata["prefix_layers"], graph_features=batch.get("graph_features")).float()
+                                     cache.metadata["prefix_layers"], graph_features=batch.get("graph_features"),
+                                     **extra).float()
     if isinstance(model, HSDGNNAdapter):
         return model(batch["x"], batch["x_mask"], batch["origins"], calendar=batch.get("history_calendar"))
     return model(batch["x"], batch["x_mask"])
