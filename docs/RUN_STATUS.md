@@ -1,5 +1,11 @@
 # 运行交接记录
 
+## Stage12 独立快照和空闲等待器已部署（2026-10-16 05:01，Asia/Shanghai）
+
+运行源码 `9ef6b091652566c30760aa26ff57f569e55a6aec`，快照 `/home/dcg/dcg_data/GOFA-F-runs/stage12-metr-contrast-v1`，输出C开发仓库 `outputs/stage12-metr-contrast-v1/`、日志同级 `.log`、身份同级 `.launch.json`。C禁CUDA、OMP/MKL各2线程208项通过/11可选依赖跳过，快照12项输入核验通过；Stage11旧等待器和worker已退出后才部署。
+
+CPU等待器首次北京时间2026-10-16 05:01:17启动，PID3067411/start_ticks601913623；使用前核对身份，禁止重复启动。绝对训练截止10:43、硬截止10:58，等待恢复不顺延。唯一d1_contrast在T2原图上使用邻居混合消息减自身latent，不增参数，保留物理先验≥0.5，判定仍看预注册验证门槛。新GPU子任务严格三次间隔30秒空闲准入，运行中他人加入不退出，40GiB/Torch38GiB/16GiB余量不变。部署时尚无GPU机制或精度结果；10:58前继续依据验证机制顺序迭代。下方准备及旧阶段记录为历史。
+
 ## Stage11 未合格，Stage12 对比消息准备部署（2026-10-16，Asia/Shanghai）
 
 Stage11 `no_eligible_variant`，等待器3028018/worker3032859退出，无失败。验证全步3.0788605691、第12步3.6878264836，未测试；当前合格模型仍Stage8T2。结果见 `docs/STAGE11_RESULTS.md` 和机器可读副本，旧阶段勿重启。
