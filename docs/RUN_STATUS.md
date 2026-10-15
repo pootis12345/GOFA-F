@@ -1,5 +1,11 @@
 # 运行交接记录
 
+## Stage14 token角色固定快照与等待器已部署（2026-10-16 07:08，Asia/Shanghai）
+
+运行源码 `38c1643eb698a6dba42be30e132a7f51c6d0e265`，快照 `/home/dcg/dcg_data/GOFA-F-runs/stage14-metr-tokens-v1`，C开发输出 `outputs/stage14-metr-tokens-v1/`，日志同级 `.log`、身份同级 `.launch.json`。B/C/GitHub同步，C禁CUDA/OMP/MKL各2线程223通过/11可选依赖跳过，固定快照12项输入清单核验通过；Stage13旧等待器和worker退出后才部署。
+
+CPU等待器首次北京时间2026-10-16 07:08:37启动，PID3145789/start_ticks602677691；使用前重新核对身份、禁止重复启动。绝对训练截止10:43、硬截止10:58，等待与恢复不顺延。两组m1_data_only/m2_reg_only只改变图信息进入的token角色，参数与原T2一致，协议 `docs/STAGE14_TOKEN_PROTOCOL.md`。首次观测waiting_for_idle、活动0，尚无GPU机制或精度。新GPU子任务严格三次间隔30秒空闲准入；运行中他人加入不退出，40GiB/Torch38GiB/16GiB余量保留。10:58前继续仅据验证机制顺序迭代。下方准备及旧阶段记录为历史。
+
 ## Stage13未合格，Stage14 token角色路线准备部署（2026-10-16，Asia/Shanghai）
 
 Stage13已 `no_eligible_variant`，等待器3103432/worker3104082退出，无失败。验证全步3.0771045153、第12步3.6767182618，仅改善约0.04%，未过全步0.5%门槛，未测试；合格对照仍Stage8T2。结果 `docs/STAGE13_RESULTS.md` 及机器可读副本已保存，旧阶段不重启。
