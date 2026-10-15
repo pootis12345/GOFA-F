@@ -1,0 +1,36 @@
+extends: stage5_routed.yaml
+protocol: native-v15-metr-tokens
+datasets: [metr_la]
+architecture:
+  graph_feature_dim: 19
+  output_adapter_rank: 4
+stage14:
+  variants: [m1_data_only, m2_reg_only]
+  baseline_validation_mae: 3.0783439033134705
+  baseline_validation_step12_mae: 3.6831616007344037
+  maximum_validation_mae: 3.062952183796903
+  maximum_validation_step12_mae: 3.6831616007344037
+  simpler_tie_tolerance: 0.005
+  max_epochs: 100
+  patience: 15
+  milestones: [10, 30, 100]
+  graph_lr: 0.001
+  adapter_lr: 0.0001
+  loss: raw_mae
+  optimizer: adamw
+  sidecar: data/features/context-v1/metr_la.npz
+  native_python: .venv-native/bin/python
+  stage8_result: docs/results/stage8-metr-temporal-v1.json
+  validation_evidence: docs/results/stage13-metr-head-v1.json
+  parameter_reference: docs/results/stage4-pure-graph-v2.json
+  parameter_reference_dof: 108927
+  maximum_parameter_ratio: 1.1
+  correlation_source: outputs/stage8-metr-temporal-v1/correlation_graph.npz
+  correlation_sha256: d25fb015fb887d5fae60411af29cd20315fec31f8d635b4a965f07708312e8d0
+  hard_deadline: '2026-10-16T10:58:00+08:00'
+  stage5_cache: outputs/stage5-titan-six-v1/cache/metr_la
+  correlation_k: 8
+  correlation_min_overlap: 24
+  final_evaluation_reserve_seconds: 900
+resources:
+  wall_window_hours: 12

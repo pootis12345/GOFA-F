@@ -1,5 +1,11 @@
 # 运行交接记录
 
+## Stage13未合格，Stage14 token角色路线准备部署（2026-10-16，Asia/Shanghai）
+
+Stage13已 `no_eligible_variant`，等待器3103432/worker3104082退出，无失败。验证全步3.0771045153、第12步3.6767182618，仅改善约0.04%，未过全步0.5%门槛，未测试；合格对照仍Stage8T2。结果 `docs/STAGE13_RESULTS.md` 及机器可读副本已保存，旧阶段不重启。
+
+Stage14回到T2/rank4，不增参数，固定两组分别只给数据patch或REG汇总token注入图增量，原生注意力掩码不变。C禁CUDA/OMP/MKL各2线程全仓库223通过/11可选依赖跳过；真实权重、图掩码、缓存和恢复核验通过。预注册 `docs/STAGE14_TOKEN_PROTOCOL.md`，准备同步和固定快照。验证门槛、严格GPU空闲准入、40GiB/16GiB余量及10:58绝对截止保留。下方Stage13部署为历史。
+
 ## Stage13 rank6私有头固定快照与等待器已部署（2026-10-16 05:59，Asia/Shanghai）
 
 运行源码 `078c9f5a1abdae79127f388c1d1db56dd7ce4a4f`，快照 `/home/dcg/dcg_data/GOFA-F-runs/stage13-metr-head-v1`，输出C开发仓库 `outputs/stage13-metr-head-v1/`、日志同级 `.log`、身份同级 `.launch.json`。C禁CUDA、OMP/MKL各2线程213项CPU通过/11可选依赖跳过；快照12项输入核验通过，Stage12旧等待器和worker退出后才部署。
