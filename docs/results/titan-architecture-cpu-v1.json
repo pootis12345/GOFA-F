@@ -1,0 +1,130 @@
+{
+  "date": "2026-10-15",
+  "timezone": "Asia/Shanghai",
+  "status": "cpu_verified_not_trained",
+  "tests": [
+    {
+      "report": "pytest.xml",
+      "passed": 147,
+      "skipped": 11
+    },
+    {
+      "report": "pytest_ufg.xml",
+      "passed": 12,
+      "skipped": 0
+    }
+  ],
+  "unique_passed": 158,
+  "uncovered_skipped": [],
+  "real_weights": {
+    "protocol": "bolt-prior-routed-v1",
+    "device": "cpu",
+    "cuda_initialized": false,
+    "torch_version": "2.6.0+cu124",
+    "threads": 2,
+    "records": [
+      {
+        "dataset": "metr_la",
+        "context": 12,
+        "horizon": 12,
+        "nodes": 207,
+        "initial_max_difference": 0.0,
+        "cache_predictions_and_gradients_equal": true,
+        "native_unchanged_and_frozen": true,
+        "parameters": {
+          "total": 21349382,
+          "trainable": 113286,
+          "point_loss_active_trainable_upper_bound": 111030
+        }
+      },
+      {
+        "dataset": "pems_bay",
+        "context": 12,
+        "horizon": 3,
+        "nodes": 325,
+        "initial_max_difference": 0.0,
+        "cache_predictions_and_gradients_equal": true,
+        "native_unchanged_and_frozen": true,
+        "parameters": {
+          "total": 21349382,
+          "trainable": 113286,
+          "point_loss_active_trainable_upper_bound": 110994
+        }
+      },
+      {
+        "dataset": "aqi",
+        "context": 24,
+        "horizon": 6,
+        "nodes": 437,
+        "initial_max_difference": 0.0,
+        "cache_predictions_and_gradients_equal": true,
+        "native_unchanged_and_frozen": true,
+        "parameters": {
+          "total": 21349382,
+          "trainable": 113286,
+          "point_loss_active_trainable_upper_bound": 111006
+        }
+      },
+      {
+        "dataset": "aqi_36",
+        "context": 12,
+        "horizon": 12,
+        "nodes": 36,
+        "initial_max_difference": 0.0,
+        "cache_predictions_and_gradients_equal": true,
+        "native_unchanged_and_frozen": true,
+        "parameters": {
+          "total": 21349382,
+          "trainable": 113286,
+          "point_loss_active_trainable_upper_bound": 111030
+        }
+      },
+      {
+        "dataset": "electricity",
+        "context": 8,
+        "horizon": 8,
+        "nodes": 321,
+        "initial_max_difference": 0.0,
+        "cache_predictions_and_gradients_equal": true,
+        "native_unchanged_and_frozen": true,
+        "parameters": {
+          "total": 21349382,
+          "trainable": 113286,
+          "point_loss_active_trainable_upper_bound": 111014
+        }
+      },
+      {
+        "dataset": "solar",
+        "context": 24,
+        "horizon": 3,
+        "nodes": 137,
+        "initial_max_difference": 0.0,
+        "cache_predictions_and_gradients_equal": true,
+        "native_unchanged_and_frozen": true,
+        "parameters": {
+          "total": 21349382,
+          "trainable": 113286,
+          "point_loss_active_trainable_upper_bound": 110994
+        }
+      }
+    ],
+    "code_sha256": {
+      "src/gofa_f/routed_graph.py": "0d2620281befae655fe9c21516ea3bdc72c54939c66fb37051c511dd31ec9825",
+      "src/gofa_f/native.py": "879322c8d383e5863f165f5ab420f4c27f659239cf4a4b31f7766a9bb3fea98e",
+      "src/gofa_f/native_stage.py": "0b98b0fbd19632409b216e286f447a67104f8d49ad13c094f533275ff2a2f652",
+      "configs/titan_inspired.yaml": "6f726db4c6bc5e3795305fe015cb74298ecdc28dac2ff40f4993860b2befad0b",
+      "/mnt/sevenT/dcg_data/GOFA-F/.remote/titan-cpu-v1/scripts/check_routed_graph_cpu.py": "7e566ebc7698d1ff42eb3027e4ad3bce7d0ced8741296af5daa04143ad952fce"
+    },
+    "code_lf_sha256": {
+      "src/gofa_f/routed_graph.py": "0d2620281befae655fe9c21516ea3bdc72c54939c66fb37051c511dd31ec9825",
+      "src/gofa_f/native.py": "879322c8d383e5863f165f5ab420f4c27f659239cf4a4b31f7766a9bb3fea98e",
+      "src/gofa_f/native_stage.py": "883db1eeb9da5c3d7ee28b7f7de30f35cf61231cafa2145cc8b74f52e02d4b1c",
+      "configs/titan_inspired.yaml": "6f726db4c6bc5e3795305fe015cb74298ecdc28dac2ff40f4993860b2befad0b",
+      "scripts/check_routed_graph_cpu.py": "7e566ebc7698d1ff42eb3027e4ad3bce7d0ced8741296af5daa04143ad952fce"
+    }
+  },
+  "static_checks": {
+    "ruff": "passed_on_C",
+    "git_diff_check": "passed_on_B"
+  }
+}

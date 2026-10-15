@@ -1,5 +1,16 @@
 # 运行交接记录
 
+## TITAN 启发架构已实现并通过 CPU 验证（2026-10-15）
+
+新增 `bolt-prior-routed-v1`：late_contiguous `[1,2]` 上的先验约束动态图注意力和节点级门控，
+保留 Bolt、五维历史统计及私有 rank4 输出增量。至少 50% 先验聚合分量常驻，不新增图外边。
+参数增加4,356，总注册21,349,382、可训练113,286；历史静态模型默认行为保持。
+C禁CUDA、双线程核验158个独立CPU用例全覆盖，六集真实权重初始差0、冻结/缓存/梯度检查通过。
+文档 `docs/TITAN_ARCHITECTURE.md`，配置 `configs/titan_inspired.yaml`，
+证据 `docs/results/titan-architecture-cpu-v1.json`。只是借鉴 TITAN，不是官方复现。
+没有启动训练或GPU等待器，没有新精度结论。下一执行窗口已选12小时，尚未登记候选/固定快照/实际起止时间。
+旧stage4已完成，不重启；自动跟进保持暂停。下文均保留原阶段记录。
+
 ## 最新状态：Stage 4 v2 已完成（2026-10-15 09:14，Asia/Shanghai）
 
 08:51:59正常结束，stage/launcher均complete；09:06确认监督器2004343、worker2004876退出，

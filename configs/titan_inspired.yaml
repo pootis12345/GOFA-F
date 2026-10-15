@@ -1,0 +1,23 @@
+# Architecture specification only; historical stage runners do not consume this file.
+protocol: bolt-prior-routed-v1
+status: architecture_only
+seed: 42
+native_weights: data/weights/chronos-bolt-mini-2512683
+native_revision: 251268337516a88e253628c43e1d26ec577b376b
+native_file_sha256:
+  config.json: 4299e93f30bb8d99d8f7dbaa39a1dfc6bf827ae67d4ef4c0b6ba4ca3df514980
+  model.safetensors: 1a1a4297f132b808c5c7da24e3cce549d519c01ff5c2661fcad404baba018f24
+architecture:
+  graph_layers: [1, 2]
+  rank: 64
+  graph_feature_dim: 5
+  output_adapter_rank: 4
+  graph_exchange: prior_routed
+  graph_attention_rank: 16
+  graph_prior_floor: 0.5
+resources:
+  memory_cap_gib: 40
+  leave_free_gib: 16
+  wall_window_hours: 12
+  activity_limit_seconds: null
+# No training matrix, loss search, deadline or GPU launch is registered here.

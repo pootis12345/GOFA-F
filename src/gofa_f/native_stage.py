@@ -338,6 +338,8 @@ def fit(model, data, directory, gpu, budget, lr, cache=None, max_updates=None, c
         if optimizer_kind == "rmsprop" else None
     protocol = {"max_epochs": max_epochs, "patience": patience,
                 "optimizer": optimizer_kind, "loss": loss_kind, "effective_batch": 64}
+    if isinstance(model, NativeBolt) and model.graph_exchange != "static":
+        protocol["architecture"] = model.graph_architecture
     state = {"epoch": 0, "offset": 0, "updates": 0, "best_mae": None, "stale": 0,
               "validation": None, "microbatch": gpu.micro, "lr": lr, "adapter_lr": adapter_lr,
               "last_validation_updates": None, "training_protocol": protocol}

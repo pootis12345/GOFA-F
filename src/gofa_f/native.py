@@ -14,6 +14,7 @@ from torch import nn
 from gofa_f.data import file_sha256
 from gofa_f.models import GraphExchange
 from gofa_f.graph_context import ContextGraphExchange
+from gofa_f.routed_graph import PriorRoutedGraphExchange
 
 
 def late_contiguous_layers(block_count, graph_count=2):
@@ -41,7 +42,8 @@ class OutputAdapter(nn.Module):
 
 class NativeBolt(nn.Module):
     def __init__(self, native, adjacency, horizon, graph_layers=(), rank=64, graph_feature_dim=0,
-                 output_adapter_rank=0):
+                 output_adapter_rank=0, graph_exchange="static", graph_attention_rank=16,
+                 graph_prior_floor=.5):
         super().__init__()
         self.native = native.requires_grad_(False).eval()
         self.native.gradient_checkpointing_disable()
@@ -50,13 +52,34 @@ class NativeBolt(nn.Module):
         layers = len(native.encoder.block)
         if len(set(graph_layers)) != len(graph_layers) or any(i < 0 or i >= layers - 1 for i in graph_layers):
             raise ValueError("Graphs must be distinct inter-layer positions")
+        if graph_exchange not in ("static", "prior_routed"):
+            raise ValueError("Unknown graph exchange architecture")
+        if graph_exchange == "prior_routed" and (
+            not graph_feature_dim or tuple(graph_layers) != late_contiguous_layers(layers)
+        ):
+            raise ValueError("Prior-routed GOFA requires context and late_contiguous graph layers")
         if horizon > native.chronos_config.prediction_length:
             raise ValueError("This protocol does not roll forecasts beyond the native output head")
         self.register_buffer("adjacency", torch.as_tensor(adjacency, dtype=torch.float32))
+        if graph_exchange == "prior_routed" and (
+            self.adjacency.ndim != 2 or self.adjacency.shape[0] != self.adjacency.shape[1]
+            or not torch.isfinite(self.adjacency).all() or (self.adjacency < 0).any()
+        ):
+            raise ValueError("Prior adjacency must be finite, square and nonnegative")
+        self.graph_exchange = graph_exchange
+        self.graph_architecture = {
+            "exchange": graph_exchange, "layers": list(graph_layers), "rank": rank,
+            "feature_dim": graph_feature_dim, "attention_rank": graph_attention_rank,
+            "prior_floor": graph_prior_floor, "output_adapter_rank": output_adapter_rank,
+        }
         self.graph_feature_dim = graph_feature_dim
-        self.graph = nn.ModuleDict({str(i): ContextGraphExchange(native.config.d_model, rank, graph_feature_dim)
-                                    if graph_feature_dim else GraphExchange(native.config.d_model, rank, 0.0)
-                                    for i in graph_layers})
+        def exchange_module():
+            if graph_exchange == "prior_routed":
+                return PriorRoutedGraphExchange(native.config.d_model, rank, graph_feature_dim,
+                                                graph_attention_rank, graph_prior_floor)
+            return ContextGraphExchange(native.config.d_model, rank, graph_feature_dim) \
+                if graph_feature_dim else GraphExchange(native.config.d_model, rank, 0.0)
+        self.graph = nn.ModuleDict({str(i): exchange_module() for i in graph_layers})
         self.median_index = native.chronos_config.quantiles.index(.5)
         head = native.output_patch_embedding.output_layer
         self.output_adapter = OutputAdapter(head.in_features, head.out_features, output_adapter_rank) \
