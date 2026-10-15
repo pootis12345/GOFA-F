@@ -1,0 +1,30 @@
+{
+  "passed": true,
+  "cuda_initialized": false,
+  "dataset": "metr_la",
+  "seed": 42,
+  "context": 12,
+  "horizon": 12,
+  "source_clock_known": true,
+  "test_targets_loaded": false,
+  "variants": {
+    "c1_clock": {
+      "initial_max_difference": 0.0,
+      "cache_max_difference": 0.0,
+      "paired_common_parameters": true,
+      "cached_gradients_match": true,
+      "frozen_native": true,
+      "missing_node_finite": true,
+      "trainable_parameters": 114054
+    },
+    "c2_residual": {
+      "initial_max_difference": 0.0,
+      "cache_max_difference": 0.0,
+      "paired_common_parameters": true,
+      "cached_gradients_match": true,
+      "frozen_native": true,
+      "missing_node_finite": true,
+      "trainable_parameters": 116818
+    }
+  }
+}

@@ -23,6 +23,18 @@ def test_registered_stage_and_six_hour_window(tmp_path):
     assert long_stage.bind_window(tmp_path, resume=True, now=1000) == window
 
 
+def test_manifest_resume_rejects_changed_clock_or_deadline(tmp_path):
+    path = tmp_path/"manifest.json"
+    expected = {"git_revision": "fixed", "inputs": {"clock": "sha"},
+                "window": {"wall_deadline": 21600}}
+    long_stage.bind_manifest(path, expected, False)
+    long_stage.bind_manifest(path, expected, True)
+    with pytest.raises(ValueError):
+        long_stage.bind_manifest(path, dict(expected, inputs={"clock": "changed"}), True)
+    with pytest.raises(ValueError):
+        long_stage.bind_manifest(path, dict(expected, window={"wall_deadline": 21601}), True)
+
+
 def test_selection_uses_validation_only_and_prefers_simpler_within_half_percent(tmp_path):
     config = long_stage.config_file("configs/stage6_metr_long.yaml")
     for variant, score in (("c1_clock", 3.20), ("c2_residual", 3.19)):
@@ -97,6 +109,15 @@ def test_real_model_zero_increment_cache_and_frozen_native(residual):
     (quantiles[:, 1]**2).mean().backward()
     assert all(p.grad is None for p in native.parameters())
     assert all(p.grad is None or torch.isfinite(p.grad).all() for p in model.parameters())
+    if residual:
+        before = quantiles.detach()
+        with torch.no_grad():
+            model.temporal_residual.last.bias.fill_(.2)
+            after = model.from_prefix(model.prefix(x, mask, 2), 2,
+                return_quantiles=True, graph_features=features, history=x, history_mask=mask)
+        difference = after-before
+        torch.testing.assert_close(difference[:, 0], difference[:, 1])
+        torch.testing.assert_close(difference[:, 1], difference[:, 2])
 
 
 def test_stage_import_does_not_create_cuda_context():

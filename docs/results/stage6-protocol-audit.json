@@ -1,0 +1,66 @@
+{
+  "prepared_rows": 34272,
+  "nodes": 207,
+  "train_end": 23990,
+  "val_end": 27417,
+  "split_ratios": [
+    0.6999883286647992,
+    0.09999416433239963,
+    0.20001750700280113
+  ],
+  "windows": {
+    "train": {
+      "count": 22969,
+      "first_origin": 12,
+      "last_origin": 23978,
+      "first_target": 12,
+      "last_target": 23989
+    },
+    "val": {
+      "count": 3281,
+      "first_origin": 23990,
+      "last_origin": 27405,
+      "first_target": 23990,
+      "last_target": 27416
+    },
+    "test": {
+      "count": 6313,
+      "first_origin": 27417,
+      "last_origin": 34260,
+      "first_target": 27417,
+      "last_target": 34271
+    }
+  },
+  "prepared_fields": [
+    "values",
+    "mask",
+    "segments"
+  ],
+  "graph_arrays": {
+    "adjacency": [
+      207,
+      207
+    ],
+    "node_ids": [
+      207
+    ]
+  },
+  "clock_shape": [
+    34272,
+    2
+  ],
+  "clock_known_counts": [
+    34272,
+    34272
+  ],
+  "sensor_order": "verified exact original HDF columns = prepared array columns = graph node IDs",
+  "source_hdf_sha256": "e00a068ca5ec0abcf225b5a044bf962cc1c32c4fef31bad8187c04f342ef0990",
+  "zero_observed_targets": 0,
+  "mask_rule": "prepared mask AND finite; original zeros retained only if prepared mask says observed",
+  "normalization": "per sensor, observed training prefix only; missing filled after normalization",
+  "target_rule": "all forecast targets inside their own chronological split; prior split history allowed",
+  "step12_rule": "original-unit masked MAE on raw target at origin+11",
+  "titan_alignment": "12-to-12 and nominal 70/10/20 only; official sensor order, exact zeros, window and metric code unavailable",
+  "titan_step12_external_mae": 3.08,
+  "comparison": "cross-implementation reference, not a strict reproduction"
+}
