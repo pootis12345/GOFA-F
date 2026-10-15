@@ -1,6 +1,20 @@
 # 运行交接记录
 
-## 最新状态：Stage 4 v2 已部署（2026-10-15 02:11，Asia/Shanghai）
+## 最新状态：Stage 4 v2 已完成（2026-10-15 09:14，Asia/Shanghai）
+
+08:51:59正常结束，stage/launcher均complete；09:06确认监督器2004343、worker2004876退出，
+09:13复核GPU无进程、0MiB、Default模式，固定快照和六集输入未改变。
+18组主对照＋3组消融全部完成最终评价，21个锁定检查点SHA均已重新核验，无失败或未完成组。
+运行代码仍为 `79a9c86cbb10a4a7118b56235fbaa2aad18303a1`，不要从开发HEAD重复启动。
+原始单位MAE：G2-V六集胜原生Bolt，四集同时胜UFG-S/A；Electricity输UFG-A7.22%，AQI-36输两种UFG。
+活动监督账本24,011.408秒（6:40:11），包括v1首次39.642秒；478,970个正式更新，落选pilot另800更新。
+完整六集指标、消融、Electricity验证差距分解、参数与每组停止原因见 `docs/STAGE4_RESULTS.md`，
+机器可读证据见 `docs/results/stage4-pure-graph-v2.json`。B已下载小型结果、逐节点诊断和历史。
+该阶段执行已完成，全部数据集超过GNN、总参数匹配、语言交互、单检查点跨数据集能力仍未完成。
+每小时跟进 `gofa-f` 将在交付终止结果时暂停；不将提前完成后的时间转为新候选。
+下文部署/运行中状态均为历史观察。
+
+## Stage 4 v2 部署记录（2026-10-15 02:11，Asia/Shanghai）
 
 固定代码 `79a9c86cbb10a4a7118b56235fbaa2aad18303a1`，快照
 `/home/dcg/dcg_data/GOFA-F-runs/stage4-pure-graph-v2`；输出开发仓库

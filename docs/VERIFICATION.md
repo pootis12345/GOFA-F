@@ -197,3 +197,13 @@ UFG源码有效前向以CPU兼容kNN分派验证；GPU仍保留官方算法，�
 `stage4-native-cpu-realweights.json`、`stage4-ufg-cpu-check.json`。
 本节不构成GPU通过或正式预测精度结论。
 
+## Stage 4 GPU 与完成核验（2026-10-15）
+
+运行快照 `79a9c86cbb10a4a7118b56235fbaa2aad18303a1`，连续空闲准入后完成真实BF16、
+E2预测/梯度、冻结骨干、私有输出头、UFG复数CUDA梯度/批次隔离/短历史及CPU-CUDA邻接核验。
+UFG检查点模型/优化器/调度器/RNG/采样游标精确恢复；后续CUDA轨迹按rtol2e-4/atol2e-5检查，
+最大元素差1.735e-6，不声称CUDA逐位确定。初次更严格容差失败的v1记录保留。
+08:51正常完成21份评价；09:07只读逐一验证锁定检查点SHA，09:13核验输入/快照未变，
+监督器/worker退出、GPU无进程且0MiB/Default。完整审计在输出 `completion-audit.json`。
+结果与科学结论见 `STAGE4_RESULTS.md`；单种子、AQI重叠及总参数未匹配等边界继续保留。
+
