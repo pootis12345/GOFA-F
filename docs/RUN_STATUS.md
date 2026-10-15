@@ -1,5 +1,11 @@
 # 运行交接记录
 
+## Stage9 独立固定快照等待GPU（2026-10-16 02:09，Asia/Shanghai）
+
+运行源码 `e7acbb556d6b95d361d31c3c9224607266791394`，固定快照 `/home/dcg/dcg_data/GOFA-F-runs/stage9-metr-ordered-v1`，输出 C 开发仓库 `outputs/stage9-metr-ordered-v1/`、日志同级 `.log`、身份记录同级 `.launch.json`。C 禁CUDA、OMP/MKL各2线程：全仓库189通过/11可选依赖跳过，固定快照清单10输入核验通过；Stage8等待器及worker已核实退出后才启动本阶段。
+
+CPU等待器首次于北京时间2026-10-16 02:08:54启动，PID2940624/start_ticks600879381；使用前重新核对身份，禁止重复启动。绝对训练截止10:43、硬截止10:58，等待和恢复不顺延。首观测为waiting_for_idle、活动0；GPU机制与精度尚未发生。唯一候选o1_ordered保留Stage8T2相关图，以T2锁定验证为对照，阈值和细则见 `docs/STAGE9_ORDERED_PROTOCOL.md`。本轮结束后在用户原定10:58窗口内继续顺序迭代，不按测试返选；各版旧结果与快照保留。下方CPU准备及Stage8记录为历史。
+
 ## Stage8 已完成，Stage9 已预注册并完成专项CPU验证（2026-10-16，Asia/Shanghai）
 
 Stage8 `launcher/status=complete`，等待器2837909与worker2848602已退出，无失败。T1验证全步/第12步3.136663/3.787753未过全步门槛，未测试；T2验证3.078344/3.683162通过，锁定后测试全步3.406267、第12步4.136418。相较Stage6改善，但距TITAN外部参照3.08仍有1.056418差距。完整结果见 `docs/STAGE8_RESULTS.md` 与机器可读副本；勿重复启动Stage8。
