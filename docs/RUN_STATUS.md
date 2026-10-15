@@ -1,5 +1,11 @@
 # 运行交接记录
 
+## Stage10 固定快照和CPU等待器已部署（2026-10-16 03:04，Asia/Shanghai）
+
+运行源码 `3d3f95be58db7a269951556e289f8e534d3a6fcf`，快照 `/home/dcg/dcg_data/GOFA-F-runs/stage10-metr-encoded-v1`，输出 C 开发仓库 `outputs/stage10-metr-encoded-v1/`，日志同级 `.log`、身份记录同级 `.launch.json`。B/C/GitHub代码同步，C禁CUDA全仓库195通过/11可选依赖跳过，快照11项输入核验通过；旧Stage9等待器及worker已退出后才部署。
+
+CPU等待器首次北京时间2026-10-16 03:04:31启动，PID2984281/start_ticks601213052；使用前核对身份，禁止重复启动。绝对训练截止10:43、硬截止10:58，恢复和等待不顺延。严格三次间隔30秒空闲准入后才允许GPU机制/训练，运行中他人加入不退出；40GiB/Torch38GiB/16GiB余量保留。唯一候选e1_encoded以锁定Stage8T2为对照，验证门槛和结构见 `docs/STAGE10_ENCODED_PROTOCOL.md`；部署时尚无Stage10精度结果。10:58前继续按验证信息进行后续顺序迭代，旧结果不覆盖。以下准备和Stage9记录为历史。
+
 ## Stage9 未达预定收益，Stage10 非线性历史编码准备部署（2026-10-16，Asia/Shanghai）
 
 Stage9 `no_eligible_variant`，等待器2940624与worker2943503已核实退出，无异常。验证全步3.0727575920、第12步3.6824765599；改善仅约0.18%，未过0.5%门槛，测试留空、当前合格对照仍是Stage8T2。结果见 `docs/STAGE9_RESULTS.md` 及机器可读副本，勿重启本阶段。
