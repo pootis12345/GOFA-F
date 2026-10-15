@@ -1,5 +1,11 @@
 # 运行交接记录
 
+## Stage8 METR-LA 细粒度历史图上下文等待 GPU（2026-10-15 23:50，Asia/Shanghai）
+
+固定源码 `62f56fabe7c5e68ff8b0bbc3a6ad976b4ab3aecb`，C 快照 `/home/dcg/dcg_data/GOFA-F-runs/stage8-metr-temporal-v1`，输出在 C 开发仓库 `outputs/stage8-metr-temporal-v1/`、日志同级 `.log`、启动身份记录同级 `.launch.json`。B/GitHub/C 已同步代码，固定快照工作区干净。C 禁用 CUDA 的快照回归181通过、11跳过；清单核对10个输入哈希。相关图 SHA `d25fb015fb887d5fae60411af29cd20315fec31f8d635b4a965f07708312e8d0`，新增1,678条有向非自环动态候选边。
+
+CPU 空闲等待器于 2026-10-15 23:48:28 首次启动，实际 PID `2837909`、start_ticks `600036782`；使用前须重新核对身份与存活，不得重复启动。`window.json` 规定训练截止 2026-10-16 11:33:28、硬截止11:48:28（北京时间），等待不顺延。23:50只读确认 `launcher.json=waiting_for_idle`、活动0，GPU 正被其他任务占用；尚无 Stage8 GPU 机制或精度结果。每个子任务须三次间隔30秒完全空闲才进入；运行中他人加入不退出、低显存余量暂停更新，本项目最多40 GiB、留16 GiB，不设置独占模式。只在终止或异常时通知；旧阶段不重启。详细协议见 `docs/STAGE8_METR_TEMPORAL_PROTOCOL.md`。以下部署前记录及 Stage7 结果为历史记录。
+
 ## Stage8 代码和 CPU 审计完成，等待固定快照部署（2026-10-15）
 
 METR-LA 12→12、seed42 的 T1 四段历史图摘要与 T2 训练前缀 top-8 相关边已写入独立 Stage8 入口。C 上禁用 CUDA、OMP/MKL 各两线程的全仓库 CPU 回归为181通过、11项可选依赖跳过；真实 Bolt 权重与 METR-LA 前向、缓存一致性和精确恢复检查通过。真实协议审计确认训练前缀23,990行、207传感器及原物理图；相关图 SHA `d25fb015fb887d5fae60411af29cd20315fec31f8d635b4a965f07708312e8d0`，相对于物理图增加1,678条有向非自环动态候选边。本节部署前状态：尚无 Stage8 GPU 机制或精度结果，不得据此推断改进。细则见 `docs/STAGE8_METR_TEMPORAL_PROTOCOL.md`。下方 Stage7 完成状态为历史记录。
