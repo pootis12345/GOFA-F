@@ -1,6 +1,10 @@
 # 运行交接记录
 
-## Stage6 METR-LA 长步预测：严格空闲等待器已启动（2026-10-15 18:32，Asia/Shanghai）
+## 最新状态：Stage6 METR-LA 长步预测已完成（2026-10-15 20:17，Asia/Shanghai）
+
+固定快照 `stage6-metr-long-v1`、代码 `bcdc74a2213ef0179706a11386d68468fcf50461`；等待器和 GPU 子进程均已退出，`launcher.json`、`status.json` 均为 `complete`，无失败记录。C1/C2 和按验证规则触发的 C1 自环控制全部早停并完成锁定测试。验证集全 12 步原始 MAE 分别为 3.14136/3.13675/3.21524。C2 比 C1 仅低 0.147%，符合预定 0.5% 内选较小模型规则，因此选 C1；没有根据测试集返选。C1 测试全 12 步 MAE 3.46977、第 12 步 4.24974；相比 Stage5 的 4.60272 有改善，但仍比 TITAN 外部参照 3.08 高 1.16974。C2 第 12 步为 4.24377，自环为 4.37098。活动账本 3,874.27 秒，未触及六小时截止。完整逐步误差、参数、更新数、显存和局限见 `docs/STAGE6_RESULTS.md`，机器可读副本见 `docs/results/stage6-metr-long-v1.json`。本阶段勿重复启动 GPU 作业。
+
+## Stage6 等待器已部署（历史记录，2026-10-15 18:32，Asia/Shanghai）
 
 新候选 C1（六维源时钟）和 C2（再加共享节点直接预测残差头）已实现；两者均从预训练 Bolt-mini 重新初始化，固定 seed42、12→12、late_contiguous `[1,2]`。选择仅看完整验证集 12 步原始 MAE，合格时才训练相应自环控制，所有检查点 SHA 锁定后才评测测试集。独立配置与协议见 `configs/stage6_metr_long.yaml`、`docs/STAGE6_METR_LONG_PROTOCOL.md`。
 

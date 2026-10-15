@@ -1,0 +1,1296 @@
+{
+  "state": "complete",
+  "selection": {
+    "selection_split": "validation",
+    "stage5_baseline": 3.2724996365709145,
+    "qualification_threshold": 3.25613713838806,
+    "candidates": {
+      "c1_clock": {
+        "validation_raw_mae": 3.1413617665640574,
+        "training_complete": true,
+        "updates": 21899
+      },
+      "c2_residual": {
+        "validation_raw_mae": 3.1367453703103227,
+        "training_complete": true,
+        "updates": 29438
+      }
+    },
+    "both_candidates_valid": true,
+    "selected": "c1_clock",
+    "control": "self_clock"
+  },
+  "final_selection": {
+    "selection_split": "validation",
+    "sealed_at": 1792066419.873724,
+    "selected": "c1_clock",
+    "jobs": {
+      "c1_clock": {
+        "checkpoint_sha256": "f73b563f10b935fb90bea14c6e9f0ede331d6c75631d5cee21af2408e628f57a",
+        "validation_raw_mae": 3.1413617665640574,
+        "updates": 21899,
+        "epochs": 61,
+        "training_complete": true,
+        "stop_reason": "early_stopping",
+        "parameters": {
+          "total": 21350150,
+          "trainable": 114054,
+          "registered_real_dof": 21350150,
+          "active_real_dof": null,
+          "trainable_real_dof": 114054,
+          "complex_counting": "all parameters real",
+          "point_loss_active_trainable_real_dof": 111798,
+          "note": "Trainable tensor count; median/horizon-only loss may not update all head rows. Frozen backbone scalar usage not separately counted"
+        }
+      },
+      "c2_residual": {
+        "checkpoint_sha256": "b9f4a18bd21a878f6cd6bfa4eb6662a70970acfe55977804773575caead173df",
+        "validation_raw_mae": 3.1367453703103227,
+        "updates": 29438,
+        "epochs": 82,
+        "training_complete": true,
+        "stop_reason": "early_stopping",
+        "parameters": {
+          "total": 21352914,
+          "trainable": 116818,
+          "registered_real_dof": 21352914,
+          "active_real_dof": null,
+          "trainable_real_dof": 116818,
+          "complex_counting": "all parameters real",
+          "point_loss_active_trainable_real_dof": 114562,
+          "note": "Trainable tensor count; median/horizon-only loss may not update all head rows. Frozen backbone scalar usage not separately counted"
+        }
+      },
+      "self_clock": {
+        "checkpoint_sha256": "c72109b0cbec75fb00141ffdf329cfe5433735b5fe4cd1b7bc3cf738f830718e",
+        "validation_raw_mae": 3.2152367068051544,
+        "updates": 16155,
+        "epochs": 45,
+        "training_complete": true,
+        "stop_reason": "early_stopping",
+        "parameters": {
+          "total": 21350150,
+          "trainable": 114054,
+          "registered_real_dof": 21350150,
+          "active_real_dof": null,
+          "trainable_real_dof": 114054,
+          "complex_counting": "all parameters real",
+          "point_loss_active_trainable_real_dof": 111798,
+          "note": "Trainable tensor count; median/horizon-only loss may not update all head rows. Frozen backbone scalar usage not separately counted"
+        }
+      }
+    }
+  },
+  "results": {
+    "c1_clock": {
+      "status": "complete",
+      "variant": "c1_clock",
+      "seed": 42,
+      "parameters": {
+        "total": 21350150,
+        "trainable": 114054,
+        "registered_real_dof": 21350150,
+        "active_real_dof": null,
+        "trainable_real_dof": 114054,
+        "complex_counting": "all parameters real",
+        "point_loss_active_trainable_real_dof": 111798,
+        "note": "Trainable tensor count; median/horizon-only loss may not update all head rows. Frozen backbone scalar usage not separately counted"
+      },
+      "checkpoint_sha256": "f73b563f10b935fb90bea14c6e9f0ede331d6c75631d5cee21af2408e628f57a",
+      "checkpoint_updates": 16514,
+      "validation": {
+        "raw": {
+          "mae": 3.1413617665640574,
+          "mse": 42.819506279436816,
+          "rmse": 6.543661534602536,
+          "mape_pct": 8.951654369375062,
+          "mape_observations": 7892981,
+          "mape_valid_fraction": 1.0,
+          "wape_pct": 5.332250361273138,
+          "observations": 7892981,
+          "by_horizon": [
+            {
+              "step": 1,
+              "mae": 2.202458695358093,
+              "rmse": 3.9144794337481845,
+              "observations": 657759
+            },
+            {
+              "step": 2,
+              "mae": 2.4873124793512766,
+              "rmse": 4.778765437351556,
+              "observations": 657757
+            },
+            {
+              "step": 3,
+              "mae": 2.6937021356978157,
+              "rmse": 5.37535865056401,
+              "observations": 657752
+            },
+            {
+              "step": 4,
+              "mae": 2.8679759105124525,
+              "rmse": 5.831074125002132,
+              "observations": 657747
+            },
+            {
+              "step": 5,
+              "mae": 3.0194194158025587,
+              "rmse": 6.206837017892245,
+              "observations": 657744
+            },
+            {
+              "step": 6,
+              "mae": 3.1550008277005515,
+              "rmse": 6.539753447798387,
+              "observations": 657743
+            },
+            {
+              "step": 7,
+              "mae": 3.2785914633075706,
+              "rmse": 6.8378900356226415,
+              "observations": 657743
+            },
+            {
+              "step": 8,
+              "mae": 3.3942481586237263,
+              "rmse": 7.099280785406016,
+              "observations": 657744
+            },
+            {
+              "step": 9,
+              "mae": 3.5012864505999297,
+              "rmse": 7.338265654600978,
+              "observations": 657746
+            },
+            {
+              "step": 10,
+              "mae": 3.6030153616493186,
+              "rmse": 7.554940452286913,
+              "observations": 657747
+            },
+            {
+              "step": 11,
+              "mae": 3.6973016000701215,
+              "rmse": 7.75441325766239,
+              "observations": 657748
+            },
+            {
+              "step": 12,
+              "mae": 3.7960564115729487,
+              "rmse": 7.954326821351575,
+              "observations": 657751
+            }
+          ]
+        },
+        "standardized": {
+          "mae": 0.34710185199089233,
+          "mse": 0.47837658003767675,
+          "rmse": 0.6916477282820184,
+          "mape_pct": 226.2951912540094,
+          "mape_observations": 7892705,
+          "mape_valid_fraction": 0.9999650322229333,
+          "wape_pct": 48.1960886869301,
+          "observations": 7892981,
+          "by_horizon": [
+            {
+              "step": 1,
+              "mae": 0.2604063195899414,
+              "rmse": 0.47422045358416953,
+              "observations": 657759
+            },
+            {
+              "step": 2,
+              "mae": 0.2870040793571819,
+              "rmse": 0.5461967373744911,
+              "observations": 657757
+            },
+            {
+              "step": 3,
+              "mae": 0.30606620923006067,
+              "rmse": 0.5965908957523067,
+              "observations": 657752
+            },
+            {
+              "step": 4,
+              "mae": 0.3221857395350207,
+              "rmse": 0.6351718885620112,
+              "observations": 657747
+            },
+            {
+              "step": 5,
+              "mae": 0.3359919369130936,
+              "rmse": 0.6662905760041877,
+              "observations": 657744
+            },
+            {
+              "step": 6,
+              "mae": 0.3484260898454911,
+              "rmse": 0.6940338478911087,
+              "observations": 657743
+            },
+            {
+              "step": 7,
+              "mae": 0.35967779396580846,
+              "rmse": 0.7185890390342542,
+              "observations": 657743
+            },
+            {
+              "step": 8,
+              "mae": 0.37035231967599275,
+              "rmse": 0.7404576617653864,
+              "observations": 657744
+            },
+            {
+              "step": 9,
+              "mae": 0.38020821527107773,
+              "rmse": 0.7599110418067642,
+              "observations": 657746
+            },
+            {
+              "step": 10,
+              "mae": 0.38951667983143123,
+              "rmse": 0.7776602779120364,
+              "observations": 657747
+            },
+            {
+              "step": 11,
+              "mae": 0.3982172289143547,
+              "rmse": 0.793687523681847,
+              "observations": 657748
+            },
+            {
+              "step": 12,
+              "mae": 0.40717216629123987,
+              "rmse": 0.8096372741677047,
+              "observations": 657751
+            }
+          ]
+        }
+      },
+      "test": {
+        "raw": {
+          "mae": 3.4697675136151784,
+          "mse": 49.01557492391429,
+          "rmse": 7.001112406176199,
+          "mape_pct": 9.927533346861935,
+          "mape_observations": 14940228,
+          "mape_valid_fraction": 1.0,
+          "wape_pct": 6.0073808803177435,
+          "observations": 14940228,
+          "by_horizon": [
+            {
+              "step": 1,
+              "mae": 2.3772889088344895,
+              "rmse": 4.16608976233861,
+              "observations": 1245052
+            },
+            {
+              "step": 2,
+              "mae": 2.7025141933548027,
+              "rmse": 5.090078848625521,
+              "observations": 1245046
+            },
+            {
+              "step": 3,
+              "mae": 2.9377968420605423,
+              "rmse": 5.719056783775791,
+              "observations": 1245040
+            },
+            {
+              "step": 4,
+              "mae": 3.136978913375183,
+              "rmse": 6.204159654943851,
+              "observations": 1245034
+            },
+            {
+              "step": 5,
+              "mae": 3.31419227791235,
+              "rmse": 6.611064675787547,
+              "observations": 1245028
+            },
+            {
+              "step": 6,
+              "mae": 3.480029322781622,
+              "rmse": 6.981571965592908,
+              "observations": 1245022
+            },
+            {
+              "step": 7,
+              "mae": 3.629362714222771,
+              "rmse": 7.308275449496176,
+              "observations": 1245016
+            },
+            {
+              "step": 8,
+              "mae": 3.7661895490937627,
+              "rmse": 7.59463556654986,
+              "observations": 1245010
+            },
+            {
+              "step": 9,
+              "mae": 3.893525062980904,
+              "rmse": 7.861220815271628,
+              "observations": 1245004
+            },
+            {
+              "step": 10,
+              "mae": 4.017443221558021,
+              "rmse": 8.110392260541069,
+              "observations": 1244998
+            },
+            {
+              "step": 11,
+              "mae": 4.132258768871293,
+              "rmse": 8.332381349627353,
+              "observations": 1244992
+            },
+            {
+              "step": 12,
+              "mae": 4.249741977634748,
+              "rmse": 8.554655010801447,
+              "observations": 1244986
+            }
+          ]
+        },
+        "standardized": {
+          "mae": 0.3734684508729702,
+          "mse": 0.5032343563247506,
+          "rmse": 0.7093901298472869,
+          "mape_pct": 251.02691697425553,
+          "mape_observations": 14939462,
+          "mape_valid_fraction": 0.9999487290287672,
+          "wape_pct": 52.693904145869574,
+          "observations": 14940228,
+          "by_horizon": [
+            {
+              "step": 1,
+              "mae": 0.2763999910743727,
+              "rmse": 0.4935394557205144,
+              "observations": 1245052
+            },
+            {
+              "step": 2,
+              "mae": 0.30586375389787057,
+              "rmse": 0.5662384917043312,
+              "observations": 1245046
+            },
+            {
+              "step": 3,
+              "mae": 0.3268726417896252,
+              "rmse": 0.6162458162287557,
+              "observations": 1245040
+            },
+            {
+              "step": 4,
+              "mae": 0.3445728385946953,
+              "rmse": 0.6535877627081974,
+              "observations": 1245034
+            },
+            {
+              "step": 5,
+              "mae": 0.36019509753102663,
+              "rmse": 0.6841233290116758,
+              "observations": 1245028
+            },
+            {
+              "step": 6,
+              "mae": 0.3746509093801779,
+              "rmse": 0.7120042874035956,
+              "observations": 1245022
+            },
+            {
+              "step": 7,
+              "mae": 0.38775767049927223,
+              "rmse": 0.7360836586932719,
+              "observations": 1245016
+            },
+            {
+              "step": 8,
+              "mae": 0.39975642655107824,
+              "rmse": 0.7573457529810167,
+              "observations": 1245010
+            },
+            {
+              "step": 9,
+              "mae": 0.410703960814894,
+              "rmse": 0.7764251723174846,
+              "observations": 1245004
+            },
+            {
+              "step": 10,
+              "mae": 0.4215120716299394,
+              "rmse": 0.7948753425513708,
+              "observations": 1244998
+            },
+            {
+              "step": 11,
+              "mae": 0.4314785972036143,
+              "rmse": 0.8111347430750047,
+              "observations": 1244992
+            },
+            {
+              "step": 12,
+              "mae": 0.44186727207257465,
+              "rmse": 0.827481962881355,
+              "observations": 1244986
+            }
+          ]
+        }
+      },
+      "evaluation_protocol": "raw-target-v2"
+    },
+    "c2_residual": {
+      "status": "complete",
+      "variant": "c2_residual",
+      "seed": 42,
+      "parameters": {
+        "total": 21352914,
+        "trainable": 116818,
+        "registered_real_dof": 21352914,
+        "active_real_dof": null,
+        "trainable_real_dof": 116818,
+        "complex_counting": "all parameters real",
+        "point_loss_active_trainable_real_dof": 114562,
+        "note": "Trainable tensor count; median/horizon-only loss may not update all head rows. Frozen backbone scalar usage not separately counted"
+      },
+      "checkpoint_sha256": "b9f4a18bd21a878f6cd6bfa4eb6662a70970acfe55977804773575caead173df",
+      "checkpoint_updates": 24053,
+      "validation": {
+        "raw": {
+          "mae": 3.1367453703103227,
+          "mse": 42.814677701396405,
+          "rmse": 6.5432925734217635,
+          "mape_pct": 9.029276505192188,
+          "mape_observations": 7892981,
+          "mape_valid_fraction": 1.0,
+          "wape_pct": 5.32441433905699,
+          "observations": 7892981,
+          "by_horizon": [
+            {
+              "step": 1,
+              "mae": 2.2020088260916526,
+              "rmse": 3.92100947858604,
+              "observations": 657759
+            },
+            {
+              "step": 2,
+              "mae": 2.4860094935722956,
+              "rmse": 4.7765144351156446,
+              "observations": 657757
+            },
+            {
+              "step": 3,
+              "mae": 2.692472309649464,
+              "rmse": 5.371358389035737,
+              "observations": 657752
+            },
+            {
+              "step": 4,
+              "mae": 2.8659018844937294,
+              "rmse": 5.823220918206009,
+              "observations": 657747
+            },
+            {
+              "step": 5,
+              "mae": 3.0176975028032738,
+              "rmse": 6.207708210264107,
+              "observations": 657744
+            },
+            {
+              "step": 6,
+              "mae": 3.1533487905301936,
+              "rmse": 6.550867601611463,
+              "observations": 657743
+            },
+            {
+              "step": 7,
+              "mae": 3.2764775512997963,
+              "rmse": 6.850668203319372,
+              "observations": 657743
+            },
+            {
+              "step": 8,
+              "mae": 3.3897283568091323,
+              "rmse": 7.10677181120112,
+              "observations": 657744
+            },
+            {
+              "step": 9,
+              "mae": 3.494076027048527,
+              "rmse": 7.337910717941513,
+              "observations": 657746
+            },
+            {
+              "step": 10,
+              "mae": 3.5940371098471893,
+              "rmse": 7.55014510791261,
+              "observations": 657747
+            },
+            {
+              "step": 11,
+              "mae": 3.6876258994262043,
+              "rmse": 7.7503760850907835,
+              "observations": 657748
+            },
+            {
+              "step": 12,
+              "mae": 3.781588362044522,
+              "rmse": 7.938566088538304,
+              "observations": 657751
+            }
+          ]
+        },
+        "standardized": {
+          "mae": 0.34632036028682733,
+          "mse": 0.4771566073789969,
+          "rmse": 0.6907652331863532,
+          "mape_pct": 224.10955130773831,
+          "mape_observations": 7892705,
+          "mape_valid_fraction": 0.9999650322229333,
+          "wape_pct": 48.08757632013867,
+          "observations": 7892981,
+          "by_horizon": [
+            {
+              "step": 1,
+              "mae": 0.26037850772611704,
+              "rmse": 0.4748258482821737,
+              "observations": 657759
+            },
+            {
+              "step": 2,
+              "mae": 0.2867678867794699,
+              "rmse": 0.5458058225657378,
+              "observations": 657757
+            },
+            {
+              "step": 3,
+              "mae": 0.3058066263929316,
+              "rmse": 0.5957634009236753,
+              "observations": 657752
+            },
+            {
+              "step": 4,
+              "mae": 0.3217473866833772,
+              "rmse": 0.6338412077345128,
+              "observations": 657747
+            },
+            {
+              "step": 5,
+              "mae": 0.33551052922400115,
+              "rmse": 0.6654602112977326,
+              "observations": 657744
+            },
+            {
+              "step": 6,
+              "mae": 0.3478296383283798,
+              "rmse": 0.6939368233608812,
+              "observations": 657743
+            },
+            {
+              "step": 7,
+              "mae": 0.3590568874462352,
+              "rmse": 0.7184282160532455,
+              "observations": 657743
+            },
+            {
+              "step": 8,
+              "mae": 0.3695152288221315,
+              "rmse": 0.7399528737091086,
+              "observations": 657744
+            },
+            {
+              "step": 9,
+              "mae": 0.37919086271172864,
+              "rmse": 0.7592985341040716,
+              "observations": 657746
+            },
+            {
+              "step": 10,
+              "mae": 0.38820884007130874,
+              "rmse": 0.7762290415681695,
+              "observations": 657747
+            },
+            {
+              "step": 11,
+              "mae": 0.3966202554678705,
+              "rmse": 0.7920252574810208,
+              "observations": 657748
+            },
+            {
+              "step": 12,
+              "mae": 0.40521421356303583,
+              "rmse": 0.8070996070191258,
+              "observations": 657751
+            }
+          ]
+        }
+      },
+      "test": {
+        "raw": {
+          "mae": 3.4763650298139734,
+          "mse": 49.65656030702375,
+          "rmse": 7.046741112530228,
+          "mape_pct": 10.04753595901821,
+          "mape_observations": 14940228,
+          "mape_valid_fraction": 1.0,
+          "wape_pct": 6.018803487888627,
+          "observations": 14940228,
+          "by_horizon": [
+            {
+              "step": 1,
+              "mae": 2.379337970567056,
+              "rmse": 4.177583797564013,
+              "observations": 1245052
+            },
+            {
+              "step": 2,
+              "mae": 2.7043765710107603,
+              "rmse": 5.100199036024206,
+              "observations": 1245046
+            },
+            {
+              "step": 3,
+              "mae": 2.943209979803467,
+              "rmse": 5.735920458438303,
+              "observations": 1245040
+            },
+            {
+              "step": 4,
+              "mae": 3.14579821437312,
+              "rmse": 6.2297606863299855,
+              "observations": 1245034
+            },
+            {
+              "step": 5,
+              "mae": 3.3293649863023593,
+              "rmse": 6.656340891881982,
+              "observations": 1245028
+            },
+            {
+              "step": 6,
+              "mae": 3.497066106929658,
+              "rmse": 7.043866810067891,
+              "observations": 1245022
+            },
+            {
+              "step": 7,
+              "mae": 3.644307713780683,
+              "rmse": 7.378339731745784,
+              "observations": 1245016
+            },
+            {
+              "step": 8,
+              "mae": 3.77773848319153,
+              "rmse": 7.660587597161458,
+              "observations": 1245010
+            },
+            {
+              "step": 9,
+              "mae": 3.9001473480543476,
+              "rmse": 7.920281636712867,
+              "observations": 1245004
+            },
+            {
+              "step": 10,
+              "mae": 4.017918170431342,
+              "rmse": 8.162435060601029,
+              "observations": 1244998
+            },
+            {
+              "step": 11,
+              "mae": 4.133456426545337,
+              "rmse": 8.387624621958475,
+              "observations": 1244992
+            },
+            {
+              "step": 12,
+              "mae": 4.2437696080488925,
+              "rmse": 8.599495900233666,
+              "observations": 1244986
+            }
+          ]
+        },
+        "standardized": {
+          "mae": 0.3732977406527332,
+          "mse": 0.5061473254616125,
+          "rmse": 0.71144031756825,
+          "mape_pct": 247.72570407283743,
+          "mape_observations": 14939462,
+          "mape_valid_fraction": 0.9999487290287672,
+          "wape_pct": 52.669818073911244,
+          "observations": 14940228,
+          "by_horizon": [
+            {
+              "step": 1,
+              "mae": 0.27653628798098584,
+              "rmse": 0.4942544888426249,
+              "observations": 1245052
+            },
+            {
+              "step": 2,
+              "mae": 0.3056956476080283,
+              "rmse": 0.5664142439602377,
+              "observations": 1245046
+            },
+            {
+              "step": 3,
+              "mae": 0.3268803903654762,
+              "rmse": 0.6166916594126965,
+              "observations": 1245040
+            },
+            {
+              "step": 4,
+              "mae": 0.34474657073192644,
+              "rmse": 0.6545291626612119,
+              "observations": 1245034
+            },
+            {
+              "step": 5,
+              "mae": 0.36072395166528076,
+              "rmse": 0.6863984057394348,
+              "observations": 1245028
+            },
+            {
+              "step": 6,
+              "mae": 0.37527820169175036,
+              "rmse": 0.7150787203378548,
+              "observations": 1245022
+            },
+            {
+              "step": 7,
+              "mae": 0.38809913839072047,
+              "rmse": 0.7395513054571228,
+              "observations": 1245016
+            },
+            {
+              "step": 8,
+              "mae": 0.3997719033958741,
+              "rmse": 0.7604259972083709,
+              "observations": 1245010
+            },
+            {
+              "step": 9,
+              "mae": 0.41045356296142327,
+              "rmse": 0.7794027738060603,
+              "observations": 1245004
+            },
+            {
+              "step": 10,
+              "mae": 0.42059855124664464,
+              "rmse": 0.7969723769778808,
+              "observations": 1244998
+            },
+            {
+              "step": 11,
+              "mae": 0.4305820947917487,
+              "rmse": 0.8136693796691964,
+              "observations": 1244992
+            },
+            {
+              "step": 12,
+              "mae": 0.44021631934898997,
+              "rmse": 0.8292219593983513,
+              "observations": 1244986
+            }
+          ]
+        }
+      },
+      "evaluation_protocol": "raw-target-v2"
+    },
+    "self_clock": {
+      "status": "complete",
+      "variant": "self_clock",
+      "seed": 42,
+      "parameters": {
+        "total": 21350150,
+        "trainable": 114054,
+        "registered_real_dof": 21350150,
+        "active_real_dof": null,
+        "trainable_real_dof": 114054,
+        "complex_counting": "all parameters real",
+        "point_loss_active_trainable_real_dof": 111798,
+        "note": "Trainable tensor count; median/horizon-only loss may not update all head rows. Frozen backbone scalar usage not separately counted"
+      },
+      "checkpoint_sha256": "c72109b0cbec75fb00141ffdf329cfe5433735b5fe4cd1b7bc3cf738f830718e",
+      "checkpoint_updates": 10770,
+      "validation": {
+        "raw": {
+          "mae": 3.2152367068051544,
+          "mse": 45.71883528280011,
+          "rmse": 6.761570474586515,
+          "mape_pct": 9.289948625553885,
+          "mape_observations": 7892981,
+          "mape_valid_fraction": 1.0,
+          "wape_pct": 5.457648104692064,
+          "observations": 7892981,
+          "by_horizon": [
+            {
+              "step": 1,
+              "mae": 2.2019412246473653,
+              "rmse": 3.951882703719746,
+              "observations": 657759
+            },
+            {
+              "step": 2,
+              "mae": 2.500173013621996,
+              "rmse": 4.860895328174351,
+              "observations": 657757
+            },
+            {
+              "step": 3,
+              "mae": 2.7250047289550485,
+              "rmse": 5.492666610528861,
+              "observations": 657752
+            },
+            {
+              "step": 4,
+              "mae": 2.9166329457398987,
+              "rmse": 5.985683570163409,
+              "observations": 657747
+            },
+            {
+              "step": 5,
+              "mae": 3.084792682866544,
+              "rmse": 6.402252480368588,
+              "observations": 657744
+            },
+            {
+              "step": 6,
+              "mae": 3.23450637169279,
+              "rmse": 6.769594518327058,
+              "observations": 657743
+            },
+            {
+              "step": 7,
+              "mae": 3.37248623692662,
+              "rmse": 7.096987533275632,
+              "observations": 657743
+            },
+            {
+              "step": 8,
+              "mae": 3.4963961317774594,
+              "rmse": 7.375379149872696,
+              "observations": 657744
+            },
+            {
+              "step": 9,
+              "mae": 3.610523934871397,
+              "rmse": 7.618701612201785,
+              "observations": 657746
+            },
+            {
+              "step": 10,
+              "mae": 3.7139158885437475,
+              "rmse": 7.835049447943403,
+              "observations": 657747
+            },
+            {
+              "step": 11,
+              "mae": 3.813298325057208,
+              "rmse": 8.034861301704508,
+              "observations": 657748
+            },
+            {
+              "step": 12,
+              "mae": 3.913199289674431,
+              "rmse": 8.234813175713382,
+              "observations": 657751
+            }
+          ]
+        },
+        "standardized": {
+          "mae": 0.3533431591674721,
+          "mse": 0.4989127829634394,
+          "rmse": 0.7063375842778291,
+          "mape_pct": 226.41964564607406,
+          "mape_observations": 7892705,
+          "mape_valid_fraction": 0.9999650322229333,
+          "wape_pct": 49.06271210734535,
+          "observations": 7892981,
+          "by_horizon": [
+            {
+              "step": 1,
+              "mae": 0.26046142755291685,
+              "rmse": 0.47715335506965095,
+              "observations": 657759
+            },
+            {
+              "step": 2,
+              "mae": 0.2881097866181525,
+              "rmse": 0.5522450175930135,
+              "observations": 657757
+            },
+            {
+              "step": 3,
+              "mae": 0.30882250803976824,
+              "rmse": 0.6044720407623448,
+              "observations": 657752
+            },
+            {
+              "step": 4,
+              "mae": 0.32633671711542206,
+              "rmse": 0.6456711628442596,
+              "observations": 657747
+            },
+            {
+              "step": 5,
+              "mae": 0.3414444435675215,
+              "rmse": 0.6796946234065588,
+              "observations": 657744
+            },
+            {
+              "step": 6,
+              "mae": 0.35502647534706955,
+              "rmse": 0.7096008384482273,
+              "observations": 657743
+            },
+            {
+              "step": 7,
+              "mae": 0.3674647553691686,
+              "rmse": 0.7360692298564204,
+              "observations": 657743
+            },
+            {
+              "step": 8,
+              "mae": 0.3788224063981221,
+              "rmse": 0.7590306399282957,
+              "observations": 657744
+            },
+            {
+              "step": 9,
+              "mae": 0.38937992173950914,
+              "rmse": 0.778900359552994,
+              "observations": 657746
+            },
+            {
+              "step": 10,
+              "mae": 0.3989318266449694,
+              "rmse": 0.7963545344437244,
+              "observations": 657747
+            },
+            {
+              "step": 11,
+              "mae": 0.4080991272174881,
+              "rmse": 0.8125438312405769,
+              "observations": 657748
+            },
+            {
+              "step": 12,
+              "mae": 0.4172212802765814,
+              "rmse": 0.8291541610931441,
+              "observations": 657751
+            }
+          ]
+        }
+      },
+      "test": {
+        "raw": {
+          "mae": 3.5425590674799357,
+          "mse": 51.937479403414024,
+          "rmse": 7.206766223724343,
+          "mape_pct": 10.246483876649146,
+          "mape_observations": 14940228,
+          "mape_valid_fraction": 1.0,
+          "wape_pct": 6.133408513932927,
+          "observations": 14940228,
+          "by_horizon": [
+            {
+              "step": 1,
+              "mae": 2.378164803193826,
+              "rmse": 4.207770805201778,
+              "observations": 1245052
+            },
+            {
+              "step": 2,
+              "mae": 2.718071356432528,
+              "rmse": 5.179430824451227,
+              "observations": 1245046
+            },
+            {
+              "step": 3,
+              "mae": 2.9717300866485936,
+              "rmse": 5.842425245474783,
+              "observations": 1245040
+            },
+            {
+              "step": 4,
+              "mae": 3.186272016236632,
+              "rmse": 6.357193765176596,
+              "observations": 1245034
+            },
+            {
+              "step": 5,
+              "mae": 3.3769331097059188,
+              "rmse": 6.793578366774756,
+              "observations": 1245028
+            },
+            {
+              "step": 6,
+              "mae": 3.5557954264273,
+              "rmse": 7.187925214083812,
+              "observations": 1245022
+            },
+            {
+              "step": 7,
+              "mae": 3.7166964012279435,
+              "rmse": 7.538322891090922,
+              "observations": 1245016
+            },
+            {
+              "step": 8,
+              "mae": 3.861915565553527,
+              "rmse": 7.84118158563048,
+              "observations": 1245010
+            },
+            {
+              "step": 9,
+              "mae": 3.9975437254464192,
+              "rmse": 8.116383303351634,
+              "observations": 1245004
+            },
+            {
+              "step": 10,
+              "mae": 4.12677209643598,
+              "rmse": 8.372231902756171,
+              "observations": 1244998
+            },
+            {
+              "step": 11,
+              "mae": 4.249957704664484,
+              "rmse": 8.604378853818147,
+              "observations": 1244992
+            },
+            {
+              "step": 12,
+              "mae": 4.3709757096973565,
+              "rmse": 8.833970299884406,
+              "observations": 1244986
+            }
+          ]
+        },
+        "standardized": {
+          "mae": 0.37931933234220666,
+          "mse": 0.5213846404871114,
+          "rmse": 0.7220696922646119,
+          "mape_pct": 250.47802885498467,
+          "mape_observations": 14939462,
+          "mape_valid_fraction": 0.9999487290287672,
+          "wape_pct": 53.51942444507592,
+          "observations": 14940228,
+          "by_horizon": [
+            {
+              "step": 1,
+              "mae": 0.2764638319015896,
+              "rmse": 0.4959248386931707,
+              "observations": 1245052
+            },
+            {
+              "step": 2,
+              "mae": 0.3069965784341771,
+              "rmse": 0.5718958995209787,
+              "observations": 1245046
+            },
+            {
+              "step": 3,
+              "mae": 0.3295245690986587,
+              "rmse": 0.6242451288353592,
+              "observations": 1245040
+            },
+            {
+              "step": 4,
+              "mae": 0.348380437716105,
+              "rmse": 0.6632906721591344,
+              "observations": 1245034
+            },
+            {
+              "step": 5,
+              "mae": 0.36504670022660207,
+              "rmse": 0.6958329579086225,
+              "observations": 1245028
+            },
+            {
+              "step": 6,
+              "mae": 0.3806028042597925,
+              "rmse": 0.725002188632203,
+              "observations": 1245022
+            },
+            {
+              "step": 7,
+              "mae": 0.3946170934050177,
+              "rmse": 0.7503772842170814,
+              "observations": 1245016
+            },
+            {
+              "step": 8,
+              "mae": 0.4073450287231617,
+              "rmse": 0.7725722698889644,
+              "observations": 1245010
+            },
+            {
+              "step": 9,
+              "mae": 0.41917770581063524,
+              "rmse": 0.7924835130506156,
+              "observations": 1245004
+            },
+            {
+              "step": 10,
+              "mae": 0.43050590727703786,
+              "rmse": 0.8111749979451534,
+              "observations": 1244998
+            },
+            {
+              "step": 11,
+              "mae": 0.441336137437711,
+              "rmse": 0.8278541435282962,
+              "observations": 1244992
+            },
+            {
+              "step": 12,
+              "mae": 0.45184565153839407,
+              "rmse": 0.8443207494980108,
+              "observations": 1244986
+            }
+          ]
+        }
+      },
+      "evaluation_protocol": "raw-target-v2"
+    },
+    "self_residual": null
+  },
+  "protocol_audit": {
+    "prepared_rows": 34272,
+    "nodes": 207,
+    "train_end": 23990,
+    "val_end": 27417,
+    "split_ratios": [
+      0.6999883286647992,
+      0.09999416433239963,
+      0.20001750700280113
+    ],
+    "windows": {
+      "train": {
+        "count": 22969,
+        "first_origin": 12,
+        "last_origin": 23978,
+        "first_target": 12,
+        "last_target": 23989
+      },
+      "val": {
+        "count": 3281,
+        "first_origin": 23990,
+        "last_origin": 27405,
+        "first_target": 23990,
+        "last_target": 27416
+      },
+      "test": {
+        "count": 6313,
+        "first_origin": 27417,
+        "last_origin": 34260,
+        "first_target": 27417,
+        "last_target": 34271
+      }
+    },
+    "prepared_fields": [
+      "values",
+      "mask",
+      "segments"
+    ],
+    "graph_arrays": {
+      "adjacency": [
+        207,
+        207
+      ],
+      "node_ids": [
+        207
+      ]
+    },
+    "clock_shape": [
+      34272,
+      2
+    ],
+    "clock_known_counts": [
+      34272,
+      34272
+    ],
+    "sensor_order": "verified exact original HDF columns = prepared array columns = graph node IDs",
+    "source_hdf_sha256": "e00a068ca5ec0abcf225b5a044bf962cc1c32c4fef31bad8187c04f342ef0990",
+    "zero_observed_targets": 0,
+    "mask_rule": "prepared mask AND finite; original zeros retained only if prepared mask says observed",
+    "normalization": "per sensor, observed training prefix only; missing filled after normalization",
+    "target_rule": "all forecast targets inside their own chronological split; prior split history allowed",
+    "step12_rule": "original-unit masked MAE on raw target at origin+11",
+    "titan_alignment": "12-to-12 and nominal 70/10/20 only; official sensor order, exact zeros, window and metric code unavailable",
+    "titan_step12_external_mae": 3.08,
+    "comparison": "cross-implementation reference, not a strict reproduction"
+  },
+  "activity": {
+    "spent_seconds": 3874.2697780160233,
+    "worker": null
+  },
+  "budget": {
+    "spent_seconds": 3831.1522655319422,
+    "scopes": {
+      "preflight/c1_clock": 1.7518429886549711,
+      "train/c1_clock": 1247.9411215381697,
+      "train/c2_residual": 1656.1422696486115,
+      "train/self_clock": 912.1023805793375,
+      "evaluate/c1_clock": 4.4127796944230795,
+      "evaluate/c2_residual": 4.4121348932385445,
+      "evaluate/self_clock": 4.389736189506948
+    },
+    "active_scope": null
+  },
+  "memory": {
+    "c1_clock": {
+      "phases": {
+        "train": {
+          "peak_allocated": 2396819456,
+          "peak_reserved": 2860515328,
+          "attempts": 3
+        },
+        "evaluate": {
+          "peak_allocated": 679625216,
+          "peak_reserved": 752877568,
+          "attempts": 1
+        }
+      },
+      "peak_allocated": 2396819456,
+      "peak_reserved": 2860515328
+    },
+    "c2_residual": {
+      "phases": {
+        "train": {
+          "peak_allocated": 2396523520,
+          "peak_reserved": 2778726400,
+          "attempts": 3
+        },
+        "evaluate": {
+          "peak_allocated": 654083584,
+          "peak_reserved": 752877568,
+          "attempts": 1
+        }
+      },
+      "peak_allocated": 2396523520,
+      "peak_reserved": 2778726400
+    },
+    "self_clock": {
+      "phases": {
+        "train": {
+          "peak_allocated": 2396486144,
+          "peak_reserved": 2860515328,
+          "attempts": 3
+        },
+        "evaluate": {
+          "peak_allocated": 679625216,
+          "peak_reserved": 752877568,
+          "attempts": 1
+        }
+      },
+      "peak_allocated": 2396486144,
+      "peak_reserved": 2860515328
+    },
+    "self_residual": null
+  },
+  "failures": {}
+}
