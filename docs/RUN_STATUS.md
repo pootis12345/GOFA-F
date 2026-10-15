@@ -1,5 +1,11 @@
 # 运行交接记录
 
+## Stage12 未合格，Stage13 私有头容量准备部署（2026-10-16，Asia/Shanghai）
+
+Stage12跑满100epoch（35,900更新）后 `no_eligible_variant`，等待器3067411/worker3068792退出，无失败。验证全步3.0955940661、第12步3.7417769070，未测试；目前合格模型仍Stage8T2。结果 `docs/STAGE12_RESULTS.md` 与机器可读副本，旧阶段不重启。
+
+Stage13仅将T2私有输出适配rank4改为rank6，图和其他协议保持；119,302可训练参数是仍处于历史METR-LA UFG-A108,927自由度±10%内的最大整数秩预算，不做秩精度搜索。专项5项CPU检查通过，含真实参数、共同权重配对、私有头隔离和精确恢复，准备全仓库回归/独立部署。协议 `docs/STAGE13_HEAD_PROTOCOL.md`，验证门槛、严格共享GPU准入及10:58绝对截止保留。以下Stage12部署为历史。
+
 ## Stage12 独立快照和空闲等待器已部署（2026-10-16 05:01，Asia/Shanghai）
 
 运行源码 `9ef6b091652566c30760aa26ff57f569e55a6aec`，快照 `/home/dcg/dcg_data/GOFA-F-runs/stage12-metr-contrast-v1`，输出C开发仓库 `outputs/stage12-metr-contrast-v1/`、日志同级 `.log`、身份同级 `.launch.json`。C禁CUDA、OMP/MKL各2线程208项通过/11可选依赖跳过，快照12项输入核验通过；Stage11旧等待器和worker已退出后才部署。
