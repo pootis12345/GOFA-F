@@ -10,6 +10,7 @@ import time
 import xml.etree.ElementTree as ET
 
 import numpy as np
+import pandas as pd
 import yaml
 
 from gofa_f.data import Series, Windows, file_sha256
@@ -77,8 +78,25 @@ def protocol_audit(config):
     graph = Path(settings["graph"]["path"])
     with np.load(graph, allow_pickle=False) as source:
         graph_shapes = {name: list(source[name].shape) for name in source.files}
+        graph_node_ids = source["node_ids"].astype(str).tolist()
     with np.load(settings["data"], allow_pickle=False) as source:
         fields = list(source.files)
+        prepared_values = source["values"]
+        prepared_mask = source["mask"]
+    prepared_metadata = read(Path(settings["data"]).with_suffix(".metadata.json"))
+    graph_metadata = read(graph.with_suffix(".metadata.json"))
+    original = Path("data/raw/tsl/extracted/metr_la.h5")
+    if file_sha256(original) != prepared_metadata["hdf_sha256"] or \
+            graph_metadata["prepared_sha256"] != series.fingerprint:
+        raise ValueError("Source, graph and prepared-series provenance disagree")
+    frame = pd.read_hdf(original, key=prepared_metadata["hdf_key"])
+    raw_values = frame.to_numpy(dtype=np.float32)
+    raw_mask = np.isfinite(raw_values) & (raw_values != 0)
+    if graph_node_ids != list(map(str, frame.columns)) or \
+            graph_node_ids != graph_metadata["node_ids"] or \
+            not np.array_equal(prepared_mask, raw_mask) or \
+            not np.array_equal(prepared_values, np.where(raw_mask, raw_values, 0)):
+        raise ValueError("Original sensor columns, zeros or graph ordering differ")
     with np.load(config["stage6"]["sidecar"], allow_pickle=False) as source:
         clock_shape = list(source["calendar"].shape)
         clock_known = source["known"].sum(0).tolist()
@@ -97,6 +115,8 @@ def protocol_audit(config):
                          (len(series.values)-series.val_end)/len(series.values)],
         "windows": boundaries, "prepared_fields": fields,
         "graph_arrays": graph_shapes, "clock_shape": clock_shape, "clock_known_counts": clock_known,
+        "sensor_order": "verified exact original HDF columns = prepared array columns = graph node IDs",
+        "source_hdf_sha256": prepared_metadata["hdf_sha256"],
         "zero_observed_targets": int((series.values == 0).__and__(series.mask).sum()),
         "mask_rule": "prepared mask AND finite; original zeros retained only if prepared mask says observed",
         "normalization": "per sensor, observed training prefix only; missing filled after normalization",
@@ -121,6 +141,10 @@ def manifest(config, window):
         if file_sha256(path) != checksum:
             raise ValueError("Pretrained checkpoint changed: "+name)
         paths.append(path)
+    prior = read(config["stage6"]["stage5_result"])
+    if prior["results"]["metr_la"]["validation"]["raw"]["mae"] != \
+            config["stage6"]["baseline_validation_mae"]:
+        raise ValueError("Stage5 validation baseline changed")
     versions = subprocess.check_output([config["stage6"]["native_python"], "-c",
         "import sys,torch,transformers,chronos,json;print(json.dumps([sys.version,torch.__version__,transformers.__version__,chronos.__version__]))"],
         text=True, env=dict(os.environ, CUDA_VISIBLE_DEVICES=""))
@@ -221,14 +245,15 @@ def write_report(output, config):
     lines = ["# Stage6 METR-LA 12-to-12 long-horizon experiment", "", "State: "+status,
         "", "Selection: validation raw MAE across all 12 steps; Stage5 threshold "+
         str(config["stage6"]["baseline_validation_mae"]*(1-config["stage6"]["minimum_relative_gain"])),
-        "Chosen: "+str(selection.get("selected")), "", "|Variant|Best validation MAE|Test mean MAE|Test step 12 MAE|Updates|Stop|",
-        "|---|---:|---:|---:|---:|---|"]
+        "Chosen: "+str(selection.get("selected")), "", "|Variant|Best validation MAE|Test mean MAE|Test step 12 MAE|Gap to TITAN 3.08|Updates|Stop|",
+        "|---|---:|---:|---:|---:|---:|---|"]
     for v in ("c1_clock", "c2_residual", "self_clock", "self_residual"):
         bound, result = locked.get("jobs", {}).get(v, {}), results[v]
         raw = result["test"]["raw"] if result else None
         lines.append("|"+v+"|"+str(bound.get("validation_raw_mae", "—"))+"|"+
             str(raw["mae"] if raw else "—")+"|"+
             str(raw["by_horizon"][11]["mae"] if raw else "—")+"|"+
+            str(raw["by_horizon"][11]["mae"]-3.08 if raw else "—")+"|"+
             str(bound.get("updates", "—"))+"|"+str(bound.get("stop_reason", "—"))+"|")
     lines += ["", "TITAN 60-minute MAE 3.08 is a cross-implementation reference; exact protocol equivalence unverified.",
         "Single seed; Stage5 test previously viewed during development; no test-based candidate selection.",
@@ -237,6 +262,7 @@ def write_report(output, config):
     atomic_json(output/"report.json", {"state": status, "selection": selection, "final_selection": locked,
         "results": results, "protocol_audit": read(output/"protocol_audit.json"),
         "activity": read(output/"active_budget.json", {}),
+        "budget": read(output/"budget.json", {}),
         "memory": {v: read(task_directory(output, v)/"cuda_memory.json") for v in results},
         "failures": read(output/"failures.json", {})})
 
