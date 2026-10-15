@@ -1,5 +1,18 @@
 # 运行交接记录
 
+## 最新状态：Stage5 六集完整训练已完成（2026-10-15 16:43，Asia/Shanghai）
+
+固定快照 `stage5-titan-six-v1`、代码 `5d68ef3caaba0f8f7b6460b8301782ee8f87cb68`。
+只读核对 `launcher.json` 与 `status.json` 均为 `complete`，监督器 2403369 和子进程 2433421 已退出；
+六集均有锁定 SHA、完整验证和测试结果，`failures` 为空。没有重启 GPU 作业。
+测试原始 MAE（METR-LA/PeMS-BAY/AQI-437/AQI-36/Electricity/Solar-Energy）为
+3.63528/1.14560/16.4618/32.2666/315.194/0.419836，六集均低于旧 G2-V、UFG-S/A 和历史限时 HSD 的对应 MAE。
+监督活动账本 9,306.24 秒，六集更新数分别为 24,771/33,630/3,552/2,784/28,800/46,575；
+Electricity 达到 100 epoch，其余均按早停结束。没有墙钟截断或未完成组。
+完整指标、参数、显存、Electricity 诊断与局限见 `docs/STAGE5_RESULTS.md`，
+机器可读副本见 `docs/results/stage5-titan-six-v1.json`；B 的小型原始输出见 `outputs/stage5-titan-six-v1/`。
+本轮所有任务已结束，后续勿重复启动。下文 Stage5 “等待器已部署”是历史记录。
+
 ## Stage5 等待器已部署（2026-10-15 12:46，Asia/Shanghai）
 
 固定代码 `5d68ef3caaba0f8f7b6460b8301782ee8f87cb68`，快照
@@ -280,3 +293,4 @@ Electricity 8→8、Solar-Energy 24→3，取代上一条的 1/1/3/12/1/3。
 此前选定的历史来源保持不变，来源与配对证据见 `configs/protocol_sources.yaml`。
 仅修订后续协议；原首轮快照不变。用户随后取消旧首轮，执行结果见本文件顶部最新状态。
 没有启动新训练或测速。
+

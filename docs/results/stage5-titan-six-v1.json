@@ -1,0 +1,1662 @@
+{
+  "state": "complete",
+  "results": {
+    "metr_la": {
+      "status": "complete",
+      "dataset": "metr_la",
+      "variant": "routed",
+      "seed": 42,
+      "context": 12,
+      "horizon": 12,
+      "parameters": {
+        "total": 21349382,
+        "trainable": 113286,
+        "registered_real_dof": 21349382,
+        "active_real_dof": null,
+        "trainable_real_dof": 113286,
+        "complex_counting": "all parameters real",
+        "point_loss_active_trainable_real_dof": 111030,
+        "note": "Trainable tensor count; median/horizon-only loss may not update all head rows. Frozen backbone scalar usage not separately counted"
+      },
+      "checkpoint_sha256": "7c3e3957d9a9fded1cff5302db775ef1bbc156c8e9dbcf97f26b07eb671beee9",
+      "checkpoint_updates": 19386,
+      "training_complete": true,
+      "validation": {
+        "raw": {
+          "mae": 3.2724996365709145,
+          "mse": 47.38101327536227,
+          "rmse": 6.883386759100659,
+          "mape_pct": 9.314102724970525,
+          "mape_observations": 7892981,
+          "mape_valid_fraction": 1.0,
+          "wape_pct": 5.554848077385755,
+          "observations": 7892981,
+          "by_horizon": [
+            {
+              "step": 1,
+              "mae": 2.2075743617831023,
+              "rmse": 3.947325005072686,
+              "observations": 657759
+            },
+            {
+              "step": 2,
+              "mae": 2.5090591097419512,
+              "rmse": 4.856186002061315,
+              "observations": 657757
+            },
+            {
+              "step": 3,
+              "mae": 2.731620717923152,
+              "rmse": 5.49041274190683,
+              "observations": 657752
+            },
+            {
+              "step": 4,
+              "mae": 2.9271417780899016,
+              "rmse": 5.998444327036403,
+              "observations": 657747
+            },
+            {
+              "step": 5,
+              "mae": 3.104137243252582,
+              "rmse": 6.4377001986754765,
+              "observations": 657744
+            },
+            {
+              "step": 6,
+              "mae": 3.264100364927743,
+              "rmse": 6.831521828512127,
+              "observations": 657743
+            },
+            {
+              "step": 7,
+              "mae": 3.415005639152239,
+              "rmse": 7.18284306487673,
+              "observations": 657743
+            },
+            {
+              "step": 8,
+              "mae": 3.559389215141514,
+              "rmse": 7.501185231807375,
+              "observations": 657744
+            },
+            {
+              "step": 9,
+              "mae": 3.6970634405954246,
+              "rmse": 7.794346308140546,
+              "observations": 657746
+            },
+            {
+              "step": 10,
+              "mae": 3.8263780016254527,
+              "rmse": 8.055149454373398,
+              "observations": 657747
+            },
+            {
+              "step": 11,
+              "mae": 3.9520240608530877,
+              "rmse": 8.298371225731618,
+              "observations": 657748
+            },
+            {
+              "step": 12,
+              "mae": 4.076532931780052,
+              "rmse": 8.532777722338619,
+              "observations": 657751
+            }
+          ]
+        },
+        "standardized": {
+          "mae": 0.3594998722530157,
+          "mse": 0.5207761936174529,
+          "rmse": 0.7216482478447882,
+          "mape_pct": 233.92796794871109,
+          "mape_observations": 7892705,
+          "mape_valid_fraction": 0.9999650322229333,
+          "wape_pct": 49.917589395348486,
+          "observations": 7892981,
+          "by_horizon": [
+            {
+              "step": 1,
+              "mae": 0.2610064686077011,
+              "rmse": 0.47811651331450883,
+              "observations": 657759
+            },
+            {
+              "step": 2,
+              "mae": 0.2893842142315286,
+              "rmse": 0.5548290560277181,
+              "observations": 657757
+            },
+            {
+              "step": 3,
+              "mae": 0.3101546614262785,
+              "rmse": 0.6085305922374705,
+              "observations": 657752
+            },
+            {
+              "step": 4,
+              "mae": 0.3282046106845251,
+              "rmse": 0.6515333977583381,
+              "observations": 657747
+            },
+            {
+              "step": 5,
+              "mae": 0.3442629486585898,
+              "rmse": 0.6875174501605043,
+              "observations": 657744
+            },
+            {
+              "step": 6,
+              "mae": 0.3589995739314023,
+              "rmse": 0.7207466607322998,
+              "observations": 657743
+            },
+            {
+              "step": 7,
+              "mae": 0.3727415326924232,
+              "rmse": 0.7499158059566841,
+              "observations": 657743
+            },
+            {
+              "step": 8,
+              "mae": 0.38586278584572353,
+              "rmse": 0.7760468529035406,
+              "observations": 657744
+            },
+            {
+              "step": 9,
+              "mae": 0.39853483402474305,
+              "rmse": 0.8003637373598644,
+              "observations": 657746
+            },
+            {
+              "step": 10,
+              "mae": 0.4102966252067887,
+              "rmse": 0.8216744017200045,
+              "observations": 657747
+            },
+            {
+              "step": 11,
+              "mae": 0.4216817071409687,
+              "rmse": 0.8407971314906714,
+              "observations": 657748
+            },
+            {
+              "step": 12,
+              "mae": 0.4328713894545541,
+              "rmse": 0.8594404557174268,
+              "observations": 657751
+            }
+          ]
+        }
+      },
+      "test": {
+        "raw": {
+          "mae": 3.635282190911188,
+          "mse": 54.845392276406216,
+          "rmse": 7.405767500833807,
+          "mape_pct": 10.315705743843788,
+          "mape_observations": 14940228,
+          "mape_valid_fraction": 1.0,
+          "wape_pct": 6.2939446641731145,
+          "observations": 14940228,
+          "by_horizon": [
+            {
+              "step": 1,
+              "mae": 2.383782050283442,
+              "rmse": 4.201323619802774,
+              "observations": 1245052
+            },
+            {
+              "step": 2,
+              "mae": 2.731012865283402,
+              "rmse": 5.182104203360931,
+              "observations": 1245046
+            },
+            {
+              "step": 3,
+              "mae": 2.9898198313383473,
+              "rmse": 5.862772056955267,
+              "observations": 1245040
+            },
+            {
+              "step": 4,
+              "mae": 3.2153106248291987,
+              "rmse": 6.411368268188897,
+              "observations": 1245034
+            },
+            {
+              "step": 5,
+              "mae": 3.4219446563456475,
+              "rmse": 6.891286170657679,
+              "observations": 1245028
+            },
+            {
+              "step": 6,
+              "mae": 3.6179778917724055,
+              "rmse": 7.328065150445622,
+              "observations": 1245022
+            },
+            {
+              "step": 7,
+              "mae": 3.801736636797985,
+              "rmse": 7.717823557913658,
+              "observations": 1245016
+            },
+            {
+              "step": 8,
+              "mae": 3.973774637269962,
+              "rmse": 8.070716869052095,
+              "observations": 1245010
+            },
+            {
+              "step": 9,
+              "mae": 4.137838307443477,
+              "rmse": 8.395510116983226,
+              "observations": 1245004
+            },
+            {
+              "step": 10,
+              "mae": 4.297417619806758,
+              "rmse": 8.699599022107751,
+              "observations": 1244998
+            },
+            {
+              "step": 11,
+              "mae": 4.450187380072167,
+              "rmse": 8.978498816502759,
+              "observations": 1244992
+            },
+            {
+              "step": 12,
+              "mae": 4.602717488692225,
+              "rmse": 9.246248480300872,
+              "observations": 1244986
+            }
+          ]
+        },
+        "standardized": {
+          "mae": 0.38883931933889565,
+          "mse": 0.5504130041561454,
+          "rmse": 0.7418982438017665,
+          "mape_pct": 261.8404318241039,
+          "mape_observations": 14939462,
+          "mape_valid_fraction": 0.9999487290287672,
+          "wape_pct": 54.8626310294631,
+          "observations": 14940228,
+          "by_horizon": [
+            {
+              "step": 1,
+              "mae": 0.2772435017221575,
+              "rmse": 0.4978302051803811,
+              "observations": 1245052
+            },
+            {
+              "step": 2,
+              "mae": 0.3088704035931212,
+              "rmse": 0.5749710241814225,
+              "observations": 1245046
+            },
+            {
+              "step": 3,
+              "mae": 0.3320618917526984,
+              "rmse": 0.6286957138178045,
+              "observations": 1245040
+            },
+            {
+              "step": 4,
+              "mae": 0.3521369656801859,
+              "rmse": 0.6708012769926937,
+              "observations": 1245034
+            },
+            {
+              "step": 5,
+              "mae": 0.3704406187755523,
+              "rmse": 0.7072179324068932,
+              "observations": 1245028
+            },
+            {
+              "step": 6,
+              "mae": 0.387693995589987,
+              "rmse": 0.7403477930739568,
+              "observations": 1245022
+            },
+            {
+              "step": 7,
+              "mae": 0.40386733695375426,
+              "rmse": 0.7692905848477453,
+              "observations": 1245016
+            },
+            {
+              "step": 8,
+              "mae": 0.41889019303529634,
+              "rmse": 0.7956981790801513,
+              "observations": 1245010
+            },
+            {
+              "step": 9,
+              "mae": 0.4332045864443729,
+              "rmse": 0.8198535098942425,
+              "observations": 1245004
+            },
+            {
+              "step": 10,
+              "mae": 0.4471540325494042,
+              "rmse": 0.8426802581524719,
+              "observations": 1244998
+            },
+            {
+              "step": 11,
+              "mae": 0.4605524000760813,
+              "rmse": 0.8633932305267819,
+              "observations": 1244992
+            },
+            {
+              "step": 12,
+              "mae": 0.47396771682108974,
+              "rmse": 0.8834000512368032,
+              "observations": 1244986
+            }
+          ]
+        }
+      },
+      "evaluation_protocol": "raw-target-v2",
+      "layout": "late_contiguous",
+      "graph_precision": "float32"
+    },
+    "electricity": {
+      "status": "complete",
+      "dataset": "electricity",
+      "variant": "routed",
+      "seed": 42,
+      "context": 8,
+      "horizon": 8,
+      "parameters": {
+        "total": 21349382,
+        "trainable": 113286,
+        "registered_real_dof": 21349382,
+        "active_real_dof": null,
+        "trainable_real_dof": 113286,
+        "complex_counting": "all parameters real",
+        "point_loss_active_trainable_real_dof": 111014,
+        "note": "Trainable tensor count; median/horizon-only loss may not update all head rows. Frozen backbone scalar usage not separately counted"
+      },
+      "checkpoint_sha256": "07d150fb8de140d6b3d57d12a1d617aac16ca53d54ded801297122a769493beb",
+      "checkpoint_updates": 27072,
+      "training_complete": true,
+      "validation": {
+        "raw": {
+          "mae": 260.2346852262157,
+          "mse": 4539688.810203639,
+          "rmse": 2130.654549710872,
+          "mape_pct": 21.054527056476733,
+          "mape_observations": 6660850,
+          "mape_valid_fraction": 0.9884866390281893,
+          "wape_pct": 11.739488162156869,
+          "observations": 6738432,
+          "by_horizon": [
+            {
+              "step": 1,
+              "mae": 149.5050639990975,
+              "rmse": 1217.850615070232,
+              "observations": 842304
+            },
+            {
+              "step": 2,
+              "mae": 207.36005571700935,
+              "rmse": 1686.1865466148106,
+              "observations": 842304
+            },
+            {
+              "step": 3,
+              "mae": 241.8037021157833,
+              "rmse": 1948.3946665947099,
+              "observations": 842304
+            },
+            {
+              "step": 4,
+              "mae": 267.91838259891273,
+              "rmse": 2112.3259467722905,
+              "observations": 842304
+            },
+            {
+              "step": 5,
+              "mae": 286.92438083957865,
+              "rmse": 2291.8391653757717,
+              "observations": 842304
+            },
+            {
+              "step": 6,
+              "mae": 298.179905298296,
+              "rmse": 2412.991881187425,
+              "observations": 842304
+            },
+            {
+              "step": 7,
+              "mae": 309.4402988371422,
+              "rmse": 2471.612333168379,
+              "observations": 842304
+            },
+            {
+              "step": 8,
+              "mae": 320.74569240390593,
+              "rmse": 2559.108927868925,
+              "observations": 842304
+            }
+          ]
+        },
+        "standardized": {
+          "mae": 0.38771653568010656,
+          "mse": 0.3460999515660362,
+          "rmse": 0.5883026020391514,
+          "mape_pct": 268.55058918646057,
+          "mape_observations": 6738384,
+          "mape_valid_fraction": 0.9999928766811033,
+          "wape_pct": 51.134239989921255,
+          "observations": 6738432,
+          "by_horizon": [
+            {
+              "step": 1,
+              "mae": 0.21442546913463037,
+              "rmse": 0.34936440561311627,
+              "observations": 842304
+            },
+            {
+              "step": 2,
+              "mae": 0.3011152581992988,
+              "rmse": 0.47482688652072913,
+              "observations": 842304
+            },
+            {
+              "step": 3,
+              "mae": 0.35903278170363556,
+              "rmse": 0.5495788875139136,
+              "observations": 842304
+            },
+            {
+              "step": 4,
+              "mae": 0.40066852316953516,
+              "rmse": 0.5998407877841818,
+              "observations": 842304
+            },
+            {
+              "step": 5,
+              "mae": 0.42645511343609244,
+              "rmse": 0.6278466859716781,
+              "observations": 842304
+            },
+            {
+              "step": 6,
+              "mae": 0.444020790934871,
+              "rmse": 0.6469915892785215,
+              "observations": 842304
+            },
+            {
+              "step": 7,
+              "mae": 0.46615101416575144,
+              "rmse": 0.6717984857894866,
+              "observations": 842304
+            },
+            {
+              "step": 8,
+              "mae": 0.48986333469703786,
+              "rmse": 0.7038002877049159,
+              "observations": 842304
+            }
+          ]
+        }
+      },
+      "test": {
+        "raw": {
+          "mae": 315.19417670554077,
+          "mse": 8644025.203049805,
+          "rmse": 2940.0723125545405,
+          "mape_pct": 21.07843777894625,
+          "mape_observations": 13336037,
+          "mape_valid_fraction": 0.9884204083641361,
+          "wape_pct": 11.885526991545504,
+          "observations": 13492272,
+          "by_horizon": [
+            {
+              "step": 1,
+              "mae": 168.2702654427605,
+              "rmse": 1428.9129995948858,
+              "observations": 1686534
+            },
+            {
+              "step": 2,
+              "mae": 239.55450011557784,
+              "rmse": 2137.714665283848,
+              "observations": 1686534
+            },
+            {
+              "step": 3,
+              "mae": 290.37664435826116,
+              "rmse": 2792.489317048811,
+              "observations": 1686534
+            },
+            {
+              "step": 4,
+              "mae": 328.57806120820715,
+              "rmse": 3157.9687403996495,
+              "observations": 1686534
+            },
+            {
+              "step": 5,
+              "mae": 355.6698123335502,
+              "rmse": 3299.174085552863,
+              "observations": 1686534
+            },
+            {
+              "step": 6,
+              "mae": 367.88793647336365,
+              "rmse": 3328.7405092681547,
+              "observations": 1686534
+            },
+            {
+              "step": 7,
+              "mae": 376.6657326251963,
+              "rmse": 3311.991385299267,
+              "observations": 1686534
+            },
+            {
+              "step": 8,
+              "mae": 394.5504610874097,
+              "rmse": 3440.2721057383706,
+              "observations": 1686534
+            }
+          ]
+        },
+        "standardized": {
+          "mae": 0.41363823381706305,
+          "mse": 0.3846730062450059,
+          "rmse": 0.6202201272491936,
+          "mape_pct": 253.37673441709583,
+          "mape_observations": 13492152,
+          "mape_valid_fraction": 0.9999911060198016,
+          "wape_pct": 49.879907325611526,
+          "observations": 13492272,
+          "by_horizon": [
+            {
+              "step": 1,
+              "mae": 0.2218791428241102,
+              "rmse": 0.3473750410202065,
+              "observations": 1686534
+            },
+            {
+              "step": 2,
+              "mae": 0.3135970603234366,
+              "rmse": 0.4813902692689921,
+              "observations": 1686534
+            },
+            {
+              "step": 3,
+              "mae": 0.376018224321842,
+              "rmse": 0.5647861113569855,
+              "observations": 1686534
+            },
+            {
+              "step": 4,
+              "mae": 0.424027257625082,
+              "rmse": 0.6239667153508224,
+              "observations": 1686534
+            },
+            {
+              "step": 5,
+              "mae": 0.458151740762939,
+              "rmse": 0.6637600742943315,
+              "observations": 1686534
+            },
+            {
+              "step": 6,
+              "mae": 0.48092049062631914,
+              "rmse": 0.6923899698051417,
+              "observations": 1686534
+            },
+            {
+              "step": 7,
+              "mae": 0.5049381435296793,
+              "rmse": 0.7241614999729801,
+              "observations": 1686534
+            },
+            {
+              "step": 8,
+              "mae": 0.529573810523096,
+              "rmse": 0.7564846604425279,
+              "observations": 1686534
+            }
+          ]
+        }
+      },
+      "evaluation_protocol": "raw-target-v2",
+      "layout": "late_contiguous",
+      "graph_precision": "float32"
+    },
+    "pems_bay": {
+      "status": "complete",
+      "dataset": "pems_bay",
+      "variant": "routed",
+      "seed": 42,
+      "context": 12,
+      "horizon": 3,
+      "parameters": {
+        "total": 21349382,
+        "trainable": 113286,
+        "registered_real_dof": 21349382,
+        "active_real_dof": null,
+        "trainable_real_dof": 113286,
+        "complex_counting": "all parameters real",
+        "point_loss_active_trainable_real_dof": 110994,
+        "note": "Trainable tensor count; median/horizon-only loss may not update all head rows. Frozen backbone scalar usage not separately counted"
+      },
+      "checkpoint_sha256": "9b178609844d82685ca48cec3c2516b5f53210eccd207a6862380ba31478fd1b",
+      "checkpoint_updates": 25080,
+      "training_complete": true,
+      "validation": {
+        "raw": {
+          "mae": 1.1940243758071636,
+          "mse": 6.201230423760163,
+          "rmse": 2.490226982377342,
+          "mape_pct": 2.4662960853300233,
+          "mape_observations": 5080329,
+          "mape_valid_fraction": 1.0,
+          "wape_pct": 1.9223384116645141,
+          "observations": 5080329,
+          "by_horizon": [
+            {
+              "step": 1,
+              "mae": 0.8914703207566933,
+              "rmse": 1.6204524022143216,
+              "observations": 1693443
+            },
+            {
+              "step": 2,
+              "mae": 1.2193114908161227,
+              "rmse": 2.453191486748455,
+              "observations": 1693443
+            },
+            {
+              "step": 3,
+              "mae": 1.4712913158486747,
+              "rmse": 3.1558955643023463,
+              "observations": 1693443
+            }
+          ]
+        },
+        "standardized": {
+          "mae": 0.15995645611548867,
+          "mse": 0.10949505748566006,
+          "rmse": 0.330900373958175,
+          "mape_pct": 208.5186894646837,
+          "mape_observations": 5080329,
+          "mape_valid_fraction": 1.0,
+          "wape_pct": 22.950468755961143,
+          "observations": 5080329,
+          "by_horizon": [
+            {
+              "step": 1,
+              "mae": 0.1211558042977692,
+              "rmse": 0.2229969501559394,
+              "observations": 1693443
+            },
+            {
+              "step": 2,
+              "mae": 0.1634653732535964,
+              "rmse": 0.3275749026191214,
+              "observations": 1693443
+            },
+            {
+              "step": 3,
+              "mae": 0.19524819079510045,
+              "rmse": 0.41406788797515176,
+              "observations": 1693443
+            }
+          ]
+        }
+      },
+      "test": {
+        "raw": {
+          "mae": 1.1456000403578293,
+          "mse": 5.750621526018139,
+          "rmse": 2.398045355287956,
+          "mape_pct": 2.3078933408419458,
+          "mape_observations": 10162749,
+          "mape_valid_fraction": 1.0,
+          "wape_pct": 1.8338535159207618,
+          "observations": 10162749,
+          "by_horizon": [
+            {
+              "step": 1,
+              "mae": 0.8657688483500936,
+              "rmse": 1.589364603131076,
+              "observations": 3387583
+            },
+            {
+              "step": 2,
+              "mae": 1.1709083544294523,
+              "rmse": 2.3701766598182115,
+              "observations": 3387583
+            },
+            {
+              "step": 3,
+              "mae": 1.400122918293942,
+              "rmse": 3.0179541642678074,
+              "observations": 3387583
+            }
+          ]
+        },
+        "standardized": {
+          "mae": 0.15522583942927126,
+          "mse": 0.1054564358130997,
+          "rmse": 0.3247405669347452,
+          "mape_pct": 198.7963545234568,
+          "mape_observations": 10162749,
+          "mape_valid_fraction": 1.0,
+          "wape_pct": 23.587903108615855,
+          "observations": 10162749,
+          "by_horizon": [
+            {
+              "step": 1,
+              "mae": 0.11894540799015703,
+              "rmse": 0.22245115966131665,
+              "observations": 3387583
+            },
+            {
+              "step": 2,
+              "mae": 0.1587650244247675,
+              "rmse": 0.3225678985015206,
+              "observations": 3387583
+            },
+            {
+              "step": 3,
+              "mae": 0.1879670858728892,
+              "rmse": 0.40352786751468256,
+              "observations": 3387583
+            }
+          ]
+        }
+      },
+      "evaluation_protocol": "raw-target-v2",
+      "layout": "late_contiguous",
+      "graph_precision": "float32"
+    },
+    "aqi": {
+      "status": "complete",
+      "dataset": "aqi",
+      "variant": "routed",
+      "seed": 42,
+      "context": 24,
+      "horizon": 6,
+      "parameters": {
+        "total": 21349382,
+        "trainable": 113286,
+        "registered_real_dof": 21349382,
+        "active_real_dof": null,
+        "trainable_real_dof": 113286,
+        "complex_counting": "all parameters real",
+        "point_loss_active_trainable_real_dof": 111006,
+        "note": "Trainable tensor count; median/horizon-only loss may not update all head rows. Frozen backbone scalar usage not separately counted"
+      },
+      "checkpoint_sha256": "3ffc9711b3a389dd1109f2f2093e5611dbd21b587fff181677c40819815862bc",
+      "checkpoint_updates": 2112,
+      "training_complete": true,
+      "validation": {
+        "raw": {
+          "mae": 23.26045693467932,
+          "mse": 1712.8285161581566,
+          "rmse": 41.386332480157705,
+          "mape_pct": 39.99631078384106,
+          "mape_observations": 1827246,
+          "mape_valid_fraction": 1.0,
+          "wape_pct": 24.97177546253549,
+          "observations": 1827246,
+          "by_horizon": [
+            {
+              "step": 1,
+              "mae": 13.046052368174388,
+              "rmse": 26.291005620803947,
+              "observations": 304438
+            },
+            {
+              "step": 2,
+              "mae": 18.07321038473781,
+              "rmse": 33.600181456966794,
+              "observations": 304462
+            },
+            {
+              "step": 3,
+              "mae": 22.247980861055577,
+              "rmse": 39.38627037647183,
+              "observations": 304490
+            },
+            {
+              "step": 4,
+              "mae": 25.722162382975046,
+              "rmse": 43.90782611179164,
+              "observations": 304590
+            },
+            {
+              "step": 5,
+              "mae": 28.897696490504096,
+              "rmse": 48.15070997399304,
+              "observations": 304619
+            },
+            {
+              "step": 6,
+              "mae": 31.56593854917554,
+              "rmse": 51.55650103896971,
+              "observations": 304647
+            }
+          ]
+        },
+        "standardized": {
+          "mae": 0.4133524860164375,
+          "mse": 0.4595896951036115,
+          "rmse": 0.6779304500489792,
+          "mape_pct": 226.1677583450454,
+          "mape_observations": 1827246,
+          "mape_valid_fraction": 1.0,
+          "wape_pct": 42.03326108337212,
+          "observations": 1827246,
+          "by_horizon": [
+            {
+              "step": 1,
+              "mae": 0.22976344251269476,
+              "rmse": 0.4256718364986044,
+              "observations": 304438
+            },
+            {
+              "step": 2,
+              "mae": 0.3212587973973151,
+              "rmse": 0.5487314310008826,
+              "observations": 304462
+            },
+            {
+              "step": 3,
+              "mae": 0.39602394303782984,
+              "rmse": 0.6446026307600764,
+              "observations": 304490
+            },
+            {
+              "step": 4,
+              "mae": 0.4584321105266171,
+              "rmse": 0.721837874453087,
+              "observations": 304590
+            },
+            {
+              "step": 5,
+              "mae": 0.5137478348372483,
+              "rmse": 0.7891458461549927,
+              "observations": 304619
+            },
+            {
+              "step": 6,
+              "mae": 0.5607156450500131,
+              "rmse": 0.8459541302410458,
+              "observations": 304647
+            }
+          ]
+        }
+      },
+      "test": {
+        "raw": {
+          "mae": 16.461847049337464,
+          "mse": 948.3555474427661,
+          "rmse": 30.79538191746883,
+          "mape_pct": 37.72807697804668,
+          "mape_observations": 3999420,
+          "mape_valid_fraction": 1.0,
+          "wape_pct": 26.083138788648068,
+          "observations": 3999420,
+          "by_horizon": [
+            {
+              "step": 1,
+              "mae": 9.163970581764636,
+              "rmse": 19.606050186257516,
+              "observations": 666944
+            },
+            {
+              "step": 2,
+              "mae": 12.869053387675086,
+              "rmse": 25.35877453476476,
+              "observations": 666832
+            },
+            {
+              "step": 3,
+              "mae": 15.844671780897379,
+              "rmse": 29.590097774488527,
+              "observations": 666719
+            },
+            {
+              "step": 4,
+              "mae": 18.323265735703927,
+              "rmse": 32.91541318436543,
+              "observations": 666501
+            },
+            {
+              "step": 5,
+              "mae": 20.41391388479734,
+              "rmse": 35.62038457558569,
+              "observations": 666392
+            },
+            {
+              "step": 6,
+              "mae": 22.167705093821723,
+              "rmse": 37.89200709017183,
+              "observations": 666032
+            }
+          ]
+        },
+        "standardized": {
+          "mae": 0.29806353164131183,
+          "mse": 0.279132554203556,
+          "rmse": 0.5283299671640403,
+          "mape_pct": 245.70977911890265,
+          "mape_observations": 3999420,
+          "mape_valid_fraction": 1.0,
+          "wape_pct": 45.14461176713367,
+          "observations": 3999420,
+          "by_horizon": [
+            {
+              "step": 1,
+              "mae": 0.1670685082986714,
+              "rmse": 0.3398098822155872,
+              "observations": 666944
+            },
+            {
+              "step": 2,
+              "mae": 0.2351014863628803,
+              "rmse": 0.43813881843520897,
+              "observations": 666832
+            },
+            {
+              "step": 3,
+              "mae": 0.2881291688670057,
+              "rmse": 0.5098161541535472,
+              "observations": 666719
+            },
+            {
+              "step": 4,
+              "mae": 0.33155766234310263,
+              "rmse": 0.5650725745690041,
+              "observations": 666501
+            },
+            {
+              "step": 5,
+              "mae": 0.3679868814531863,
+              "rmse": 0.6091106062278435,
+              "observations": 666392
+            },
+            {
+              "step": 6,
+              "mae": 0.39874134788010307,
+              "rmse": 0.6460606494043604,
+              "observations": 666032
+            }
+          ]
+        }
+      },
+      "evaluation_protocol": "raw-target-v2",
+      "layout": "late_contiguous",
+      "graph_precision": "float32"
+    },
+    "aqi_36": {
+      "status": "complete",
+      "dataset": "aqi_36",
+      "variant": "routed",
+      "seed": 42,
+      "context": 12,
+      "horizon": 12,
+      "parameters": {
+        "total": 21349382,
+        "trainable": 113286,
+        "registered_real_dof": 21349382,
+        "active_real_dof": null,
+        "trainable_real_dof": 113286,
+        "complex_counting": "all parameters real",
+        "point_loss_active_trainable_real_dof": 111030,
+        "note": "Trainable tensor count; median/horizon-only loss may not update all head rows. Frozen backbone scalar usage not separately counted"
+      },
+      "checkpoint_sha256": "5e4de122e7909b953c66c55349495c51b031620076049a83173286891c99c9c3",
+      "checkpoint_updates": 1344,
+      "training_complete": true,
+      "validation": {
+        "raw": {
+          "mae": 40.80720326676302,
+          "mse": 4234.064994682299,
+          "rmse": 65.06969336551617,
+          "mape_pct": 108.7439333035643,
+          "mape_observations": 327743,
+          "mape_valid_fraction": 1.0,
+          "wape_pct": 37.51593734002081,
+          "observations": 327743,
+          "by_horizon": [
+            {
+              "step": 1,
+              "mae": 14.59762049046025,
+              "rmse": 25.96961419788015,
+              "observations": 27314
+            },
+            {
+              "step": 2,
+              "mae": 21.44895787033591,
+              "rmse": 36.571948866645265,
+              "observations": 27313
+            },
+            {
+              "step": 3,
+              "mae": 27.082360943706988,
+              "rmse": 44.57099920660031,
+              "observations": 27311
+            },
+            {
+              "step": 4,
+              "mae": 31.923761217226886,
+              "rmse": 51.305549455729256,
+              "observations": 27311
+            },
+            {
+              "step": 5,
+              "mae": 36.570737231293236,
+              "rmse": 57.97068373492686,
+              "observations": 27311
+            },
+            {
+              "step": 6,
+              "mae": 40.97366810319853,
+              "rmse": 63.95114305740619,
+              "observations": 27312
+            },
+            {
+              "step": 7,
+              "mae": 45.08095203272837,
+              "rmse": 68.93630821204314,
+              "observations": 27312
+            },
+            {
+              "step": 8,
+              "mae": 48.71897469337879,
+              "rmse": 73.47597973263372,
+              "observations": 27312
+            },
+            {
+              "step": 9,
+              "mae": 52.0457634758237,
+              "rmse": 77.55708911051435,
+              "observations": 27312
+            },
+            {
+              "step": 10,
+              "mae": 54.684524692005766,
+              "rmse": 80.39310637936111,
+              "observations": 27312
+            },
+            {
+              "step": 11,
+              "mae": 57.07288586436899,
+              "rmse": 82.77017036418451,
+              "observations": 27312
+            },
+            {
+              "step": 12,
+              "mae": 59.488561746669156,
+              "rmse": 85.1350963015812,
+              "observations": 27311
+            }
+          ]
+        },
+        "standardized": {
+          "mae": 0.5428823822269894,
+          "mse": 0.7411783475468093,
+          "rmse": 0.8609171548684631,
+          "mape_pct": 222.89545725382627,
+          "mape_observations": 327743,
+          "mape_valid_fraction": 1.0,
+          "wape_pct": 51.45485282529171,
+          "observations": 327743,
+          "by_horizon": [
+            {
+              "step": 1,
+              "mae": 0.19390799331732728,
+              "rmse": 0.34148160608810874,
+              "observations": 27314
+            },
+            {
+              "step": 2,
+              "mae": 0.28559647858037424,
+              "rmse": 0.4852283774766292,
+              "observations": 27313
+            },
+            {
+              "step": 3,
+              "mae": 0.36075155524491476,
+              "rmse": 0.5920840983674676,
+              "observations": 27311
+            },
+            {
+              "step": 4,
+              "mae": 0.42484740454170306,
+              "rmse": 0.6795550091118483,
+              "observations": 27311
+            },
+            {
+              "step": 5,
+              "mae": 0.4865911995049838,
+              "rmse": 0.7684430280969295,
+              "observations": 27311
+            },
+            {
+              "step": 6,
+              "mae": 0.5449900134244704,
+              "rmse": 0.847871070612366,
+              "observations": 27312
+            },
+            {
+              "step": 7,
+              "mae": 0.5995229084502854,
+              "rmse": 0.9137796830148496,
+              "observations": 27312
+            },
+            {
+              "step": 8,
+              "mae": 0.6476544892605482,
+              "rmse": 0.9725499077816251,
+              "observations": 27312
+            },
+            {
+              "step": 9,
+              "mae": 0.6918888106121507,
+              "rmse": 1.0257407424178622,
+              "observations": 27312
+            },
+            {
+              "step": 10,
+              "mae": 0.7274568031729073,
+              "rmse": 1.062726845784262,
+              "observations": 27312
+            },
+            {
+              "step": 11,
+              "mae": 0.7595559529120185,
+              "rmse": 1.0930992740319008,
+              "observations": 27312
+            },
+            {
+              "step": 12,
+              "mae": 0.7918560172206814,
+              "rmse": 1.123896577329705,
+              "observations": 27311
+            }
+          ]
+        }
+      },
+      "test": {
+        "raw": {
+          "mae": 32.26659928189912,
+          "mse": 2663.0949123548203,
+          "rmse": 51.605182998947114,
+          "mape_pct": 83.60276015247021,
+          "mape_observations": 663692,
+          "mape_valid_fraction": 1.0,
+          "wape_pct": 38.054146227966044,
+          "observations": 663692,
+          "by_horizon": [
+            {
+              "step": 1,
+              "mae": 11.703747709994374,
+              "rmse": 22.462051442563705,
+              "observations": 55328
+            },
+            {
+              "step": 2,
+              "mae": 17.597189387758714,
+              "rmse": 31.75562351911012,
+              "observations": 55326
+            },
+            {
+              "step": 3,
+              "mae": 22.66774841904901,
+              "rmse": 38.92747436041931,
+              "observations": 55323
+            },
+            {
+              "step": 4,
+              "mae": 26.834759196206047,
+              "rmse": 44.30968552705683,
+              "observations": 55308
+            },
+            {
+              "step": 5,
+              "mae": 30.237854127749756,
+              "rmse": 48.425921900885875,
+              "observations": 55306
+            },
+            {
+              "step": 6,
+              "mae": 33.09379114589514,
+              "rmse": 51.80126208189768,
+              "observations": 55305
+            },
+            {
+              "step": 7,
+              "mae": 35.616710853493885,
+              "rmse": 54.68373031079308,
+              "observations": 55304
+            },
+            {
+              "step": 8,
+              "mae": 38.024150526053894,
+              "rmse": 57.276829202608454,
+              "observations": 55303
+            },
+            {
+              "step": 9,
+              "mae": 40.217032326534856,
+              "rmse": 59.72119563121145,
+              "observations": 55302
+            },
+            {
+              "step": 10,
+              "mae": 42.182232147026134,
+              "rmse": 61.839027559191685,
+              "observations": 55301
+            },
+            {
+              "step": 11,
+              "mae": 43.82861660899987,
+              "rmse": 63.600920128849666,
+              "observations": 55276
+            },
+            {
+              "step": 12,
+              "mae": 45.21924504004385,
+              "rmse": 65.06163631205224,
+              "observations": 55310
+            }
+          ]
+        },
+        "standardized": {
+          "mae": 0.4339114847738776,
+          "mse": 0.4862348847668747,
+          "rmse": 0.6973054458175949,
+          "mape_pct": 264.653820687792,
+          "mape_observations": 663692,
+          "mape_valid_fraction": 1.0,
+          "wape_pct": 58.403358973523716,
+          "observations": 663692,
+          "by_horizon": [
+            {
+              "step": 1,
+              "mae": 0.15725381590784743,
+              "rmse": 0.30096468200569354,
+              "observations": 55328
+            },
+            {
+              "step": 2,
+              "mae": 0.23658902445701943,
+              "rmse": 0.4276114139191492,
+              "observations": 55326
+            },
+            {
+              "step": 3,
+              "mae": 0.30472166613709273,
+              "rmse": 0.5252126078120278,
+              "observations": 55323
+            },
+            {
+              "step": 4,
+              "mae": 0.36056963526416824,
+              "rmse": 0.5978618524073975,
+              "observations": 55308
+            },
+            {
+              "step": 5,
+              "mae": 0.40646507277188954,
+              "rmse": 0.6540056296532631,
+              "observations": 55306
+            },
+            {
+              "step": 6,
+              "mae": 0.4449147771259716,
+              "rmse": 0.6998631912435854,
+              "observations": 55305
+            },
+            {
+              "step": 7,
+              "mae": 0.47884918303407686,
+              "rmse": 0.7389523580148056,
+              "observations": 55304
+            },
+            {
+              "step": 8,
+              "mae": 0.5113621127882877,
+              "rmse": 0.7747340022063146,
+              "observations": 55303
+            },
+            {
+              "step": 9,
+              "mae": 0.5409825685114189,
+              "rmse": 0.8079167326057717,
+              "observations": 55302
+            },
+            {
+              "step": 10,
+              "mae": 0.567373563948149,
+              "rmse": 0.8361539871723075,
+              "observations": 55301
+            },
+            {
+              "step": 11,
+              "mae": 0.5896220537166328,
+              "rmse": 0.8597933234058915,
+              "observations": 55276
+            },
+            {
+              "step": 12,
+              "mae": 0.6085557806059665,
+              "rmse": 0.87958521367063,
+              "observations": 55310
+            }
+          ]
+        }
+      },
+      "evaluation_protocol": "raw-target-v2",
+      "layout": "late_contiguous",
+      "graph_precision": "float32"
+    },
+    "solar": {
+      "status": "complete",
+      "dataset": "solar",
+      "variant": "routed",
+      "seed": 42,
+      "context": 24,
+      "horizon": 3,
+      "parameters": {
+        "total": 21349382,
+        "trainable": 113286,
+        "registered_real_dof": 21349382,
+        "active_real_dof": null,
+        "trainable_real_dof": 113286,
+        "complex_counting": "all parameters real",
+        "point_loss_active_trainable_real_dof": 110994,
+        "note": "Trainable tensor count; median/horizon-only loss may not update all head rows. Frozen backbone scalar usage not separately counted"
+      },
+      "checkpoint_sha256": "33648d7be5b33baeb5033573b733131b426169c1e3ff25ee1110e1dcfce8cb5c",
+      "checkpoint_updates": 37950,
+      "training_complete": true,
+      "validation": {
+        "raw": {
+          "mae": 0.5045713194156348,
+          "mse": 2.3566027091257773,
+          "rmse": 1.5351230273583214,
+          "mape_pct": 28.487636326508134,
+          "mape_observations": 959958,
+          "mape_valid_fraction": 0.4445497208939175,
+          "wape_pct": 7.746418029113168,
+          "observations": 2159394,
+          "by_horizon": [
+            {
+              "step": 1,
+              "mae": 0.3274922361942959,
+              "rmse": 1.112991442527823,
+              "observations": 719798
+            },
+            {
+              "step": 2,
+              "mae": 0.5214988626591514,
+              "rmse": 1.5569074632041826,
+              "observations": 719798
+            },
+            {
+              "step": 3,
+              "mae": 0.6647228593934572,
+              "rmse": 1.8458324212279635,
+              "observations": 719798
+            }
+          ]
+        },
+        "standardized": {
+          "mae": 0.05148931680807519,
+          "mse": 0.019063154831563185,
+          "rmse": 0.1380693841210396,
+          "mape_pct": 45.709598698948,
+          "mape_observations": 2159394,
+          "mape_valid_fraction": 1.0,
+          "wape_pct": 6.05128898145581,
+          "observations": 2159394,
+          "by_horizon": [
+            {
+              "step": 1,
+              "mae": 0.03284797700568736,
+              "rmse": 0.09580192696162455,
+              "observations": 719798
+            },
+            {
+              "step": 2,
+              "mae": 0.053221573817257686,
+              "rmse": 0.13958507078181848,
+              "observations": 719798
+            },
+            {
+              "step": 3,
+              "mae": 0.06839839960128052,
+              "rmse": 0.16890074985021183,
+              "observations": 719798
+            }
+          ]
+        }
+      },
+      "test": {
+        "raw": {
+          "mae": 0.4198359399302486,
+          "mse": 1.752755069756342,
+          "rmse": 1.3239165644995692,
+          "mape_pct": 39.377209974790546,
+          "mape_observations": 1639644,
+          "mape_valid_fraction": 0.37958148999562463,
+          "wape_pct": 8.637218611232502,
+          "observations": 4319610,
+          "by_horizon": [
+            {
+              "step": 1,
+              "mae": 0.2595568318947906,
+              "rmse": 0.9063435357095666,
+              "observations": 1439870
+            },
+            {
+              "step": 2,
+              "mae": 0.4310318072158369,
+              "rmse": 1.3267566710502405,
+              "observations": 1439870
+            },
+            {
+              "step": 3,
+              "mae": 0.5689191806801184,
+              "rmse": 1.6360083558375218,
+              "observations": 1439870
+            }
+          ]
+        },
+        "standardized": {
+          "mae": 0.04317801160436829,
+          "mse": 0.014702572191401574,
+          "rmse": 0.12125416360439577,
+          "mape_pct": 54.63106172068352,
+          "mape_observations": 4319610,
+          "mape_valid_fraction": 1.0,
+          "wape_pct": 5.52440172134877,
+          "observations": 4319610,
+          "by_horizon": [
+            {
+              "step": 1,
+              "mae": 0.026217982557015147,
+              "rmse": 0.0788759557674493,
+              "observations": 1439870
+            },
+            {
+              "step": 2,
+              "mae": 0.04430587585738138,
+              "rmse": 0.12087832322614314,
+              "observations": 1439870
+            },
+            {
+              "step": 3,
+              "mae": 0.05901017639870833,
+              "rmse": 0.15256058190113253,
+              "observations": 1439870
+            }
+          ]
+        }
+      },
+      "evaluation_protocol": "raw-target-v2",
+      "layout": "late_contiguous",
+      "graph_precision": "float32"
+    }
+  },
+  "final_selection": {
+    "selection_split": "validation",
+    "sealed_at": 1792053010.3330934,
+    "jobs": {
+      "metr_la": {
+        "checkpoint_sha256": "7c3e3957d9a9fded1cff5302db775ef1bbc156c8e9dbcf97f26b07eb671beee9",
+        "validation_raw_mae": 3.2724996365709145,
+        "updates": 24771,
+        "epochs": 69,
+        "training_complete": true,
+        "parameters": {
+          "total": 21349382,
+          "trainable": 113286,
+          "registered_real_dof": 21349382,
+          "active_real_dof": null,
+          "trainable_real_dof": 113286,
+          "complex_counting": "all parameters real",
+          "point_loss_active_trainable_real_dof": 111030,
+          "note": "Trainable tensor count; median/horizon-only loss may not update all head rows. Frozen backbone scalar usage not separately counted"
+        },
+        "stop_reason": "early_stopping"
+      },
+      "electricity": {
+        "checkpoint_sha256": "07d150fb8de140d6b3d57d12a1d617aac16ca53d54ded801297122a769493beb",
+        "validation_raw_mae": 260.2346852262157,
+        "updates": 28800,
+        "epochs": 100,
+        "training_complete": true,
+        "parameters": {
+          "total": 21349382,
+          "trainable": 113286,
+          "registered_real_dof": 21349382,
+          "active_real_dof": null,
+          "trainable_real_dof": 113286,
+          "complex_counting": "all parameters real",
+          "point_loss_active_trainable_real_dof": 111014,
+          "note": "Trainable tensor count; median/horizon-only loss may not update all head rows. Frozen backbone scalar usage not separately counted"
+        },
+        "stop_reason": "max_epochs"
+      },
+      "pems_bay": {
+        "checkpoint_sha256": "9b178609844d82685ca48cec3c2516b5f53210eccd207a6862380ba31478fd1b",
+        "validation_raw_mae": 1.1940243758071636,
+        "updates": 33630,
+        "epochs": 59,
+        "training_complete": true,
+        "parameters": {
+          "total": 21349382,
+          "trainable": 113286,
+          "registered_real_dof": 21349382,
+          "active_real_dof": null,
+          "trainable_real_dof": 113286,
+          "complex_counting": "all parameters real",
+          "point_loss_active_trainable_real_dof": 110994,
+          "note": "Trainable tensor count; median/horizon-only loss may not update all head rows. Frozen backbone scalar usage not separately counted"
+        },
+        "stop_reason": "early_stopping"
+      },
+      "aqi": {
+        "checkpoint_sha256": "3ffc9711b3a389dd1109f2f2093e5611dbd21b587fff181677c40819815862bc",
+        "validation_raw_mae": 23.26045693467932,
+        "updates": 3552,
+        "epochs": 37,
+        "training_complete": true,
+        "parameters": {
+          "total": 21349382,
+          "trainable": 113286,
+          "registered_real_dof": 21349382,
+          "active_real_dof": null,
+          "trainable_real_dof": 113286,
+          "complex_counting": "all parameters real",
+          "point_loss_active_trainable_real_dof": 111006,
+          "note": "Trainable tensor count; median/horizon-only loss may not update all head rows. Frozen backbone scalar usage not separately counted"
+        },
+        "stop_reason": "early_stopping"
+      },
+      "aqi_36": {
+        "checkpoint_sha256": "5e4de122e7909b953c66c55349495c51b031620076049a83173286891c99c9c3",
+        "validation_raw_mae": 40.80720326676302,
+        "updates": 2784,
+        "epochs": 29,
+        "training_complete": true,
+        "parameters": {
+          "total": 21349382,
+          "trainable": 113286,
+          "registered_real_dof": 21349382,
+          "active_real_dof": null,
+          "trainable_real_dof": 113286,
+          "complex_counting": "all parameters real",
+          "point_loss_active_trainable_real_dof": 111030,
+          "note": "Trainable tensor count; median/horizon-only loss may not update all head rows. Frozen backbone scalar usage not separately counted"
+        },
+        "stop_reason": "early_stopping"
+      },
+      "solar": {
+        "checkpoint_sha256": "33648d7be5b33baeb5033573b733131b426169c1e3ff25ee1110e1dcfce8cb5c",
+        "validation_raw_mae": 0.5045713194156348,
+        "updates": 46575,
+        "epochs": 81,
+        "training_complete": true,
+        "parameters": {
+          "total": 21349382,
+          "trainable": 113286,
+          "registered_real_dof": 21349382,
+          "active_real_dof": null,
+          "trainable_real_dof": 113286,
+          "complex_counting": "all parameters real",
+          "point_loss_active_trainable_real_dof": 110994,
+          "note": "Trainable tensor count; median/horizon-only loss may not update all head rows. Frozen backbone scalar usage not separately counted"
+        },
+        "stop_reason": "early_stopping"
+      }
+    }
+  },
+  "activity": {
+    "spent_seconds": 9306.23988525942,
+    "worker": null
+  },
+  "budget": {
+    "spent_seconds": 9224.02591935359,
+    "scopes": {
+      "preflight/metr_la": 5.217075735330582,
+      "train/metr_la": 1351.1673263693228,
+      "train/electricity": 2360.0725703369826,
+      "train/pems_bay": 2806.752329301089,
+      "train/aqi": 503.18667012266815,
+      "train/aqi_36": 59.18467327579856,
+      "train/solar": 2077.737366224639,
+      "evaluate/metr_la": 4.458449089899659,
+      "evaluate/electricity": 5.685703428462148,
+      "evaluate/pems_bay": 9.153103861026466,
+      "evaluate/aqi": 2.6938745817169547,
+      "evaluate/aqi_36": 1.254737976938486,
+      "evaluate/solar": 4.682010205462575,
+      "diagnose/metr_la": 3.164895470254123,
+      "diagnose/electricity": 17.824055620469153,
+      "diagnose/pems_bay": 5.538594678044319,
+      "diagnose/aqi": 1.9589157085865736,
+      "diagnose/aqi_36": 1.2077121082693338,
+      "diagnose/solar": 3.085855258628726
+    },
+    "active_scope": null
+  },
+  "failures": {}
+}
+
