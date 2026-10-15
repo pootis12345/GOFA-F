@@ -1,0 +1,552 @@
+{
+  "state": "complete",
+  "selection": {
+    "selection_split": "validation",
+    "stage6_baseline": 3.1413617665640574,
+    "qualification_threshold": 3.12565,
+    "step12_ceiling": 3.79606,
+    "candidates": {
+      "t1_sketch": {
+        "validation_raw_mae": 3.1366631119470583,
+        "validation_step12_mae": 3.7877525489638697,
+        "training_complete": true,
+        "updates": 24771
+      },
+      "t2_correlated": {
+        "validation_raw_mae": 3.0783439033134705,
+        "validation_step12_mae": 3.6831616007344037,
+        "training_complete": true,
+        "updates": 22976
+      }
+    },
+    "both_candidates_valid": true,
+    "selected": "t2_correlated"
+  },
+  "final_selection": {
+    "selection_split": "validation",
+    "sealed_at": 1792083959.962952,
+    "selected": "t2_correlated",
+    "jobs": {
+      "t1_sketch": {
+        "checkpoint_sha256": "ae89b76b7bc713a4270f1c14e30c89e6702c390ea4988ff15136962b03a812cb",
+        "validation_raw_mae": 3.1366631119470583,
+        "validation_step12_mae": 3.7877525489638697,
+        "updates": 24771,
+        "epochs": 69,
+        "training_complete": true,
+        "stop_reason": "early_stopping",
+        "parameters": {
+          "total": 21351174,
+          "trainable": 115078,
+          "registered_real_dof": 21351174,
+          "active_real_dof": null,
+          "trainable_real_dof": 115078,
+          "complex_counting": "all parameters real",
+          "point_loss_active_trainable_real_dof": 112822,
+          "note": "Trainable tensor count; median/horizon-only loss may not update all head rows. Frozen backbone scalar usage not separately counted"
+        }
+      },
+      "t2_correlated": {
+        "checkpoint_sha256": "1cd967855747ca3729267a5a55e2a5cce0284e99ca75da596b1bee700c0051ca",
+        "validation_raw_mae": 3.0783439033134705,
+        "validation_step12_mae": 3.6831616007344037,
+        "updates": 22976,
+        "epochs": 64,
+        "training_complete": true,
+        "stop_reason": "early_stopping",
+        "parameters": {
+          "total": 21351174,
+          "trainable": 115078,
+          "registered_real_dof": 21351174,
+          "active_real_dof": null,
+          "trainable_real_dof": 115078,
+          "complex_counting": "all parameters real",
+          "point_loss_active_trainable_real_dof": 112822,
+          "note": "Trainable tensor count; median/horizon-only loss may not update all head rows. Frozen backbone scalar usage not separately counted"
+        }
+      }
+    }
+  },
+  "results": {
+    "t1_sketch": null,
+    "t2_correlated": {
+      "status": "complete",
+      "variant": "t2_correlated",
+      "seed": 42,
+      "parameters": {
+        "total": 21351174,
+        "trainable": 115078,
+        "registered_real_dof": 21351174,
+        "active_real_dof": null,
+        "trainable_real_dof": 115078,
+        "complex_counting": "all parameters real",
+        "point_loss_active_trainable_real_dof": 112822,
+        "note": "Trainable tensor count; median/horizon-only loss may not update all head rows. Frozen backbone scalar usage not separately counted"
+      },
+      "checkpoint_sha256": "1cd967855747ca3729267a5a55e2a5cce0284e99ca75da596b1bee700c0051ca",
+      "checkpoint_updates": 17591,
+      "validation": {
+        "raw": {
+          "mae": 3.0783439033134705,
+          "mse": 39.87393245999131,
+          "rmse": 6.3145809409644365,
+          "mape_pct": 8.77672198459651,
+          "mape_observations": 7892981,
+          "mape_valid_fraction": 1.0,
+          "wape_pct": 5.225281775973222,
+          "observations": 7892981,
+          "by_horizon": [
+            {
+              "step": 1,
+              "mae": 2.1855405520554356,
+              "rmse": 3.860959103269196,
+              "observations": 657759
+            },
+            {
+              "step": 2,
+              "mae": 2.458649532246717,
+              "rmse": 4.674165672356641,
+              "observations": 657757
+            },
+            {
+              "step": 3,
+              "mae": 2.658168045026645,
+              "rmse": 5.240615384573471,
+              "observations": 657752
+            },
+            {
+              "step": 4,
+              "mae": 2.826137651961233,
+              "rmse": 5.666260134448742,
+              "observations": 657747
+            },
+            {
+              "step": 5,
+              "mae": 2.9715917482383114,
+              "rmse": 6.016993644314576,
+              "observations": 657744
+            },
+            {
+              "step": 6,
+              "mae": 3.1008711723647093,
+              "rmse": 6.331067615153229,
+              "observations": 657743
+            },
+            {
+              "step": 7,
+              "mae": 3.215623590165318,
+              "rmse": 6.6051833401288675,
+              "observations": 657743
+            },
+            {
+              "step": 8,
+              "mae": 3.321482756188943,
+              "rmse": 6.842922658166628,
+              "observations": 657744
+            },
+            {
+              "step": 9,
+              "mae": 3.4167497945179175,
+              "rmse": 7.0568426855939395,
+              "observations": 657746
+            },
+            {
+              "step": 10,
+              "mae": 3.5078996678829832,
+              "rmse": 7.252286750075564,
+              "observations": 657747
+            },
+            {
+              "step": 11,
+              "mae": 3.5942772781814036,
+              "rmse": 7.427326710751053,
+              "observations": 657748
+            },
+            {
+              "step": 12,
+              "mae": 3.6831616007344037,
+              "rmse": 7.606708256141879,
+              "observations": 657751
+            }
+          ]
+        },
+        "standardized": {
+          "mae": 0.34103941138168026,
+          "mse": 0.4530956161876448,
+          "rmse": 0.6731237747900789,
+          "mape_pct": 223.19235602397714,
+          "mape_observations": 7892705,
+          "mape_valid_fraction": 0.9999650322229333,
+          "wape_pct": 47.35430140292419,
+          "observations": 7892981,
+          "by_horizon": [
+            {
+              "step": 1,
+              "mae": 0.2587445614338047,
+              "rmse": 0.4703650839332813,
+              "observations": 657759
+            },
+            {
+              "step": 2,
+              "mae": 0.2841592889971585,
+              "rmse": 0.5378604735968692,
+              "observations": 657757
+            },
+            {
+              "step": 3,
+              "mae": 0.3025932434550842,
+              "rmse": 0.585518129410448,
+              "observations": 657752
+            },
+            {
+              "step": 4,
+              "mae": 0.31800041189109496,
+              "rmse": 0.6213763137294595,
+              "observations": 657747
+            },
+            {
+              "step": 5,
+              "mae": 0.33134820458662656,
+              "rmse": 0.6509688575616855,
+              "observations": 657744
+            },
+            {
+              "step": 6,
+              "mae": 0.3432209517291243,
+              "rmse": 0.6770745370278678,
+              "observations": 657743
+            },
+            {
+              "step": 7,
+              "mae": 0.3536871631170667,
+              "rmse": 0.6995461300978519,
+              "observations": 657743
+            },
+            {
+              "step": 8,
+              "mae": 0.3633350284995627,
+              "rmse": 0.7189024623295173,
+              "observations": 657744
+            },
+            {
+              "step": 9,
+              "mae": 0.3721681062370291,
+              "rmse": 0.7370873174633457,
+              "observations": 657746
+            },
+            {
+              "step": 10,
+              "mae": 0.3804476698299634,
+              "rmse": 0.7530723834334977,
+              "observations": 657747
+            },
+            {
+              "step": 11,
+              "mae": 0.38837920860328623,
+              "rmse": 0.7670181787243827,
+              "observations": 657748
+            },
+            {
+              "step": 12,
+              "mae": 0.39639154303254376,
+              "rmse": 0.7813888895326574,
+              "observations": 657751
+            }
+          ]
+        }
+      },
+      "test": {
+        "raw": {
+          "mae": 3.4062673395574996,
+          "mse": 46.09625026166148,
+          "rmse": 6.7894219386970995,
+          "mape_pct": 9.696487165088113,
+          "mape_observations": 14940228,
+          "mape_valid_fraction": 1.0,
+          "wape_pct": 5.897439874174224,
+          "observations": 14940228,
+          "by_horizon": [
+            {
+              "step": 1,
+              "mae": 2.3588792603711433,
+              "rmse": 4.111303458434937,
+              "observations": 1245052
+            },
+            {
+              "step": 2,
+              "mae": 2.6735058420758873,
+              "rmse": 4.986095759438396,
+              "observations": 1245046
+            },
+            {
+              "step": 3,
+              "mae": 2.901712487259316,
+              "rmse": 5.578456627469221,
+              "observations": 1245040
+            },
+            {
+              "step": 4,
+              "mae": 3.095904509659708,
+              "rmse": 6.034042472412428,
+              "observations": 1245034
+            },
+            {
+              "step": 5,
+              "mae": 3.267544905031899,
+              "rmse": 6.416272024335673,
+              "observations": 1245028
+            },
+            {
+              "step": 6,
+              "mae": 3.425608937835416,
+              "rmse": 6.773377813733961,
+              "observations": 1245022
+            },
+            {
+              "step": 7,
+              "mae": 3.5647999632564566,
+              "rmse": 7.0834948097733825,
+              "observations": 1245016
+            },
+            {
+              "step": 8,
+              "mae": 3.694086114838673,
+              "rmse": 7.362992888441507,
+              "observations": 1245010
+            },
+            {
+              "step": 9,
+              "mae": 3.8093147985512594,
+              "rmse": 7.61186709431223,
+              "observations": 1245004
+            },
+            {
+              "step": 10,
+              "mae": 3.9213224353132,
+              "rmse": 7.846608886793794,
+              "observations": 1244998
+            },
+            {
+              "step": 11,
+              "mae": 4.026216951013167,
+              "rmse": 8.047082200922139,
+              "observations": 1244992
+            },
+            {
+              "step": 12,
+              "mae": 4.136417531622438,
+              "rmse": 8.256101403418437,
+              "observations": 1244986
+            }
+          ]
+        },
+        "standardized": {
+          "mae": 0.36740764170333495,
+          "mse": 0.48049391852942896,
+          "rmse": 0.6931766863718289,
+          "mape_pct": 250.25157424462924,
+          "mape_observations": 14939462,
+          "mape_valid_fraction": 0.9999487290287672,
+          "wape_pct": 51.83876445017464,
+          "observations": 14940228,
+          "by_horizon": [
+            {
+              "step": 1,
+              "mae": 0.2744749989961421,
+              "rmse": 0.48941613398219336,
+              "observations": 1245052
+            },
+            {
+              "step": 2,
+              "mae": 0.30291940625985636,
+              "rmse": 0.5579484780654257,
+              "observations": 1245046
+            },
+            {
+              "step": 3,
+              "mae": 0.3231885569143836,
+              "rmse": 0.6043903294466373,
+              "observations": 1245040
+            },
+            {
+              "step": 4,
+              "mae": 0.3402854425266855,
+              "rmse": 0.6390531308092313,
+              "observations": 1245034
+            },
+            {
+              "step": 5,
+              "mae": 0.3553795051446697,
+              "rmse": 0.6679797801298131,
+              "observations": 1245028
+            },
+            {
+              "step": 6,
+              "mae": 0.36928088542339443,
+              "rmse": 0.6951494259721742,
+              "observations": 1245022
+            },
+            {
+              "step": 7,
+              "mae": 0.3815327079966884,
+              "rmse": 0.7180979861329204,
+              "observations": 1245016
+            },
+            {
+              "step": 8,
+              "mae": 0.3927750690456389,
+              "rmse": 0.7391205719642819,
+              "observations": 1245010
+            },
+            {
+              "step": 9,
+              "mae": 0.40290513048678583,
+              "rmse": 0.7577815215809106,
+              "observations": 1245004
+            },
+            {
+              "step": 10,
+              "mae": 0.4127559535946758,
+              "rmse": 0.775649794720869,
+              "observations": 1244998
+            },
+            {
+              "step": 11,
+              "mae": 0.42192256567242825,
+              "rmse": 0.7903381746393255,
+              "observations": 1244992
+            },
+            {
+              "step": 12,
+              "mae": 0.43148078570848475,
+              "rmse": 0.8059446155103255,
+              "observations": 1244986
+            }
+          ]
+        }
+      },
+      "evaluation_protocol": "raw-target-v2"
+    }
+  },
+  "protocol_audit": {
+    "prepared_rows": 34272,
+    "nodes": 207,
+    "train_end": 23990,
+    "val_end": 27417,
+    "split_ratios": [
+      0.6999883286647992,
+      0.09999416433239963,
+      0.20001750700280113
+    ],
+    "windows": {
+      "train": {
+        "count": 22969,
+        "first_origin": 12,
+        "last_origin": 23978,
+        "first_target": 12,
+        "last_target": 23989
+      },
+      "val": {
+        "count": 3281,
+        "first_origin": 23990,
+        "last_origin": 27405,
+        "first_target": 23990,
+        "last_target": 27416
+      },
+      "test": {
+        "count": 6313,
+        "first_origin": 27417,
+        "last_origin": 34260,
+        "first_target": 27417,
+        "last_target": 34271
+      }
+    },
+    "prepared_fields": [
+      "values",
+      "mask",
+      "segments"
+    ],
+    "graph_arrays": {
+      "adjacency": [
+        207,
+        207
+      ],
+      "node_ids": [
+        207
+      ]
+    },
+    "clock_shape": [
+      34272,
+      2
+    ],
+    "clock_known_counts": [
+      34272,
+      34272
+    ],
+    "sensor_order": "verified exact original HDF columns = prepared array columns = graph node IDs",
+    "source_hdf_sha256": "e00a068ca5ec0abcf225b5a044bf962cc1c32c4fef31bad8187c04f342ef0990",
+    "zero_observed_targets": 0,
+    "mask_rule": "prepared mask AND finite; original zeros retained only if prepared mask says observed",
+    "normalization": "per sensor, observed training prefix only; missing filled after normalization",
+    "target_rule": "all forecast targets inside their own chronological split; prior split history allowed",
+    "step12_rule": "original-unit masked MAE on raw target at origin+11",
+    "titan_alignment": "12-to-12 and nominal 70/10/20 only; official sensor order, exact zeros, window and metric code unavailable",
+    "titan_step12_external_mae": 3.08,
+    "comparison": "cross-implementation reference, not a strict reproduction",
+    "correlation_graph": {
+      "file_sha256": "d25fb015fb887d5fae60411af29cd20315fec31f8d635b4a965f07708312e8d0",
+      "prepared_sha256": "c5437fe6e78659915b8d30c6cc34acc9076353712a203b38d1d838c18e4c2119",
+      "train_end": 23990,
+      "k": 8,
+      "min_overlap": 24,
+      "physical_directed_edges": 1515,
+      "correlation_directed_edges": 2296,
+      "new_directed_edges": 1678,
+      "construction": "pairwise-complete absolute Pearson on observed training prefix; symmetrized top-8"
+    }
+  },
+  "activity": {
+    "spent_seconds": 2756.9038801016286,
+    "worker": null
+  },
+  "budget": {
+    "spent_seconds": 2728.4328238228336,
+    "scopes": {
+      "preflight/t1_sketch": 1.500268873758614,
+      "train/t1_sketch": 1423.5066744247451,
+      "train/t2_correlated": 1298.9375817775726,
+      "evaluate/t2_correlated": 4.488298746757209
+    },
+    "active_scope": null
+  },
+  "memory": {
+    "t1_sketch": {
+      "phases": {
+        "train": {
+          "peak_allocated": 2397598720,
+          "peak_reserved": 2858418176,
+          "attempts": 3
+        }
+      },
+      "peak_allocated": 2397598720,
+      "peak_reserved": 2858418176
+    },
+    "t2_correlated": {
+      "phases": {
+        "train": {
+          "peak_allocated": 2397265408,
+          "peak_reserved": 2860515328,
+          "attempts": 3
+        },
+        "evaluate": {
+          "peak_allocated": 680396288,
+          "peak_reserved": 757071872,
+          "attempts": 1
+        }
+      },
+      "peak_allocated": 2397265408,
+      "peak_reserved": 2860515328
+    }
+  },
+  "failures": {}
+}

@@ -1,5 +1,11 @@
 # 运行交接记录
 
+## Stage8 已完成，Stage9 已预注册并完成专项CPU验证（2026-10-16，Asia/Shanghai）
+
+Stage8 `launcher/status=complete`，等待器2837909与worker2848602已退出，无失败。T1验证全步/第12步3.136663/3.787753未过全步门槛，未测试；T2验证3.078344/3.683162通过，锁定后测试全步3.406267、第12步4.136418。相较Stage6改善，但距TITAN外部参照3.08仍有1.056418差距。完整结果见 `docs/STAGE8_RESULTS.md` 与机器可读副本；勿重复启动Stage8。
+
+用户授权持续迭代至北京时间2026-10-16 10:58。Stage9仅增有序段内偏差/掩码，保留T2的物理和相关图，以锁定T2为对照，从预训练权重重训。门槛为验证全步≤3.062952183796903且第12步≤3.6831616007344037，仅合格者锁定后测试。独立协议 `docs/STAGE9_ORDERED_PROTOCOL.md`。C禁CUDA、OMP/MKL各2线程的8项新增专项测试（含真实权重与恢复）通过，准备全仓库回归和固定快照部署；尚无Stage9GPU结果。严格空闲准入、40GiB/16GiB余量、运行中别人加入不退出继续有效。下方Stage8部署记录为历史。
+
 ## Stage8 METR-LA 细粒度历史图上下文等待 GPU（2026-10-15 23:50，Asia/Shanghai）
 
 固定源码 `62f56fabe7c5e68ff8b0bbc3a6ad976b4ab3aecb`，C 快照 `/home/dcg/dcg_data/GOFA-F-runs/stage8-metr-temporal-v1`，输出在 C 开发仓库 `outputs/stage8-metr-temporal-v1/`、日志同级 `.log`、启动身份记录同级 `.launch.json`。B/GitHub/C 已同步代码，固定快照工作区干净。C 禁用 CUDA 的快照回归181通过、11跳过；清单核对10个输入哈希。相关图 SHA `d25fb015fb887d5fae60411af29cd20315fec31f8d635b4a965f07708312e8d0`，新增1,678条有向非自环动态候选边。
