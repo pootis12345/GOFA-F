@@ -1,5 +1,16 @@
 # 运行交接记录
 
+## Stage5 等待器已部署（2026-10-15 12:46，Asia/Shanghai）
+
+固定代码 `5d68ef3caaba0f8f7b6460b8301782ee8f87cb68`，快照
+`/home/dcg/dcg_data/GOFA-F-runs/stage5-titan-six-v1`，输出开发仓库 `outputs/stage5-titan-six-v1/`。
+日志同级 `.log`，启动记录同级 `.launch.json`。首次PID2403369/start_ticks596063576；使用前重新核对。
+12:46:15启动，12:46:56只读确认等待器存活、waiting_for_idle、连续空闲0、活动0；尚无GPUworker/机制或精度。
+首次窗口固定：2026-10-16 00:31:15停止训练进入锁定评价，00:46:15硬截止，不顺延。
+每GPU子任务启动/恢复前确认空闲；运行中他人加入不退出，低显存余量保留进程暂停更新，40GiB上限保留。
+每小时跟进 `gofa-f` 已恢复，仅通知终止/异常，终止交付后暂停。旧Stage4不重启，不编辑运行快照。
+下文“准备部署”是代码核验阶段的历史记录。
+
 ## Stage5 已完成代码/CPU核验，准备部署（2026-10-15）
 
 用户批准完整TITAN启发架构直接六集，seed42/late_contiguous/原图与既定L→H，固定原始MAE/AdamW，不搜索。
