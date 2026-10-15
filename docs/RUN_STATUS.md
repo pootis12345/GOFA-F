@@ -1,12 +1,12 @@
 # 运行交接记录
 
-## Stage6 METR-LA 长步预测：代码及 CPU 核验完成，GPU 尚未启动（2026-10-15）
+## Stage6 METR-LA 长步预测：严格空闲等待器已启动（2026-10-15 18:32，Asia/Shanghai）
 
 新候选 C1（六维源时钟）和 C2（再加共享节点直接预测残差头）已实现；两者均从预训练 Bolt-mini 重新初始化，固定 seed42、12→12、late_contiguous `[1,2]`。选择仅看完整验证集 12 步原始 MAE，合格时才训练相应自环控制，所有检查点 SHA 锁定后才评测测试集。独立配置与协议见 `configs/stage6_metr_long.yaml`、`docs/STAGE6_METR_LONG_PROTOCOL.md`。
 
-C 禁 CUDA、OMP/MKL 双线程：仓库 CPU 测试 170 通过/11 可选依赖跳过；真实 Bolt 权重 C1/C2 初始预测与原生完全一致、缓存预测和梯度一致、骨干冻结，无测试目标加载。源 HDF 的 207 个传感器列与物理图节点顺序及准备数组逐值一致，零值按既有协议掩码；12→12 时间划分约 70/10/20。TITAN 官方模型代码仍为占位，因此 3.08 仅作跨实现外部参照。核验记录见 `docs/results/stage6-protocol-audit.json`、`docs/results/stage6-cpu-verification.json`。
+C 禁 CUDA、OMP/MKL 双线程：仓库 CPU 测试 171 通过/11 可选依赖跳过；真实 Bolt 权重 C1/C2 初始预测与原生完全一致、缓存预测和梯度一致、骨干冻结，无测试目标加载。源 HDF 的 207 个传感器列与物理图节点顺序及准备数组逐值一致，零值按既有协议掩码；12→12 时间划分约 70/10/20。TITAN 官方模型代码仍为占位，因此 3.08 仅作跨实现外部参照。核验记录见 `docs/results/stage6-protocol-audit.json`、`docs/results/stage6-cpu-verification.json`。
 
-下一步：同步最终脚本，创建独立固定快照 `stage6-metr-long-v1`；核对现有进程后启动 CPU 严格空闲等待器，首次启动时登记含等待的六小时窗口。尚无 Stage6 GPU 机制或精度结果，旧快照及结果不重启。
+固定快照 `/home/dcg/dcg_data/GOFA-F-runs/stage6-metr-long-v1` 使用代码 `bcdc74a2213ef0179706a11386d68468fcf50461`，源码保持干净。C 开发输出 `outputs/stage6-metr-long-v1/`，日志同级 `.log`。首次启动 CPU 等待器 PID 2611046/start_ticks 598142343；使用前重新核对身份与存活，禁止重复启动。六小时窗口从 2026-10-15 18:32:44 起算；2026-10-16 00:17:44 停止训练并锁定评价，00:32:44 硬截止，不因等待顺延。首次只读状态 `waiting_for_idle`、连续空闲1、活动秒数0；尚无 Stage6 GPU 机制或精度结果。每个新GPU子任务须三次间隔30秒确认完全空闲；运行中他人加入不退出，余量不足暂停更新，40 GiB 自身上限、16 GiB 共享余量。旧快照及结果不重启。
 
 ## 最新状态：Stage5 六集完整训练已完成（2026-10-15 16:43，Asia/Shanghai）
 
