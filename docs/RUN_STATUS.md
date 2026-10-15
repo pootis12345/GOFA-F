@@ -1,5 +1,9 @@
 # 运行交接记录
 
+## 最新状态：Stage7 单检查点迁移评价已完成（2026-10-15 21:32，Asia/Shanghai）
+
+固定代码 `2c9ba946882cf22787bce22602289bc9c77361fa` 的快照 `stage7-locked-transfer-v1` 已完成六集验证与测试；`launcher.json` 和 `status.json` 均为 `complete`，`failures` 为空，CPU 等待器 PID 2715356 及其 GPU 子进程已退出。METR-LA 源任务准确复现 Stage5 MAE；其余五集锁定检查点的测试 MAE 均高于各集单独训练的同架构模型。PeMS-BAY 差 13%，AQI-437/AQI-36 分别为 2.34/1.86 倍，Electricity/Solar-Energy 约为 6.82/6.77 倍。六集完整指标、逐步误差、显存、账本与局限见 `docs/STAGE7_RESULTS.md` 及 `docs/results/stage7-locked-transfer-v1.json`；B 已下载小型原始输出。监督器活动累计 55.905 秒，所有目标权重更新数均为0。本阶段不得重复启动 GPU 作业；每小时跟进在交付终止结果后暂停。下文等待器部署是历史记录。
+
 ## 最新状态：Stage7 单检查点六集迁移评价等待 GPU（2026-10-15 21:02，Asia/Shanghai）
 
 固定快照 `stage7-locked-transfer-v1`、代码 `2c9ba946882cf22787bce22602289bc9c77361fa` 已与 GitHub、B、C 同步。C 禁用 CUDA、OMP/MKL 各两线程的六数据集真实 Bolt 权重前向检查通过；源 Stage5 METR-LA 检查点 SHA `7c3e3957d9a9fded1cff5302db775ef1bbc156c8e9dbcf97f26b07eb671beee9` 与锁定记录一致，快照清单的 22 个输入哈希核验通过。协议见 `docs/STAGE7_TRANSFER_PROTOCOL.md`。
