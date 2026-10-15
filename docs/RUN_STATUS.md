@@ -1,5 +1,11 @@
 # 运行交接记录
 
+## Stage11 固定快照和严格空闲等待器已部署（2026-10-16 04:05，Asia/Shanghai）
+
+运行源码 `171b188f8af93174b2d64916f2e0f369e8bc1848`，快照 `/home/dcg/dcg_data/GOFA-F-runs/stage11-metr-lagged-v1`，输出 C 开发仓库 `outputs/stage11-metr-lagged-v1/`、日志同级 `.log`、身份同级 `.launch.json`。C禁CUDA、OMP/MKL各2线程：202项CPU通过/11可选依赖跳过；快照13个输入哈希核验通过，Stage10旧等待器及worker退出后才部署。
+
+CPU等待器首次北京时间2026-10-16 04:05:18启动，PID3028018/start_ticks601577812，使用前重新核对身份，禁止重复启动。绝对训练截止10:43、硬截止10:58不变；所有新GPU子任务须三次间隔30秒完全空闲准入，运行中他人加入不退出，40GiB/Torch38GiB/16GiB余量有效。唯一l1_lagged用原T2加lag1/2/3有向关联图（新增97边），门槛相对锁定Stage8T2，详见 `docs/STAGE11_LAGGED_PROTOCOL.md`。部署时尚无Stage11GPU机制或精度结果，10:58前继续按验证信息顺序迭代。下方准备与旧阶段记录为历史。
+
 ## Stage10 未合格，Stage11 滞后相关支持已预注册（2026-10-16，Asia/Shanghai）
 
 Stage10 `no_eligible_variant`，等待器2984281/worker2986445已退出，无失败。验证全步3.0878077061、第12步3.7064949538，两项均未通过，未测试；现有合格模型仍是Stage8T2。结果见 `docs/STAGE10_RESULTS.md` 与机器可读副本，勿重启旧阶段。
