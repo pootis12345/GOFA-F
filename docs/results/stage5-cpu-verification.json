@@ -1,0 +1,150 @@
+{
+  "date": "2026-10-15",
+  "status": "cpu_verified_gpu_pending",
+  "unique_passed": 173,
+  "uncovered_skipped": [],
+  "suites": [
+    {
+      "report": "pytest.xml",
+      "passed": 162,
+      "skipped": 11
+    },
+    {
+      "report": "pytest_ufg.xml",
+      "passed": 12,
+      "skipped": 0
+    }
+  ],
+  "audit": {
+    "passed": true,
+    "cuda_initialized": false,
+    "records": [
+      {
+        "dataset": "metr_la",
+        "history": 12,
+        "horizon": 12,
+        "nodes": 207,
+        "train_windows": 22969,
+        "forward_finite": true,
+        "test_targets_excluded": true,
+        "old_readonly_cache_metadata_compatible": true
+      },
+      {
+        "dataset": "electricity",
+        "history": 8,
+        "horizon": 8,
+        "nodes": 321,
+        "train_windows": 18397,
+        "forward_finite": true,
+        "test_targets_excluded": true,
+        "old_readonly_cache_metadata_compatible": true
+      },
+      {
+        "dataset": "pems_bay",
+        "history": 12,
+        "horizon": 3,
+        "nodes": 325,
+        "train_windows": 36465,
+        "forward_finite": true,
+        "test_targets_excluded": true,
+        "old_readonly_cache_metadata_compatible": true
+      },
+      {
+        "dataset": "aqi",
+        "history": 24,
+        "horizon": 6,
+        "nodes": 437,
+        "train_windows": 6103,
+        "forward_finite": true,
+        "test_targets_excluded": true,
+        "old_readonly_cache_metadata_compatible": true
+      },
+      {
+        "dataset": "aqi_36",
+        "history": 12,
+        "horizon": 12,
+        "nodes": 36,
+        "train_windows": 6108,
+        "forward_finite": true,
+        "test_targets_excluded": true,
+        "old_readonly_cache_metadata_compatible": true
+      },
+      {
+        "dataset": "solar",
+        "history": 24,
+        "horizon": 3,
+        "nodes": 137,
+        "train_windows": 36766,
+        "forward_finite": true,
+        "test_targets_excluded": true,
+        "old_readonly_cache_metadata_compatible": true
+      }
+    ],
+    "bound_input_hashes": {
+      "metr_la": {
+        "data/processed/metr_la.npz": "c5437fe6e78659915b8d30c6cc34acc9076353712a203b38d1d838c18e4c2119",
+        "data/graphs/protocol-v2/metr_la.npz": "a73a1a34b897bcc53e3ea4afc7f01bfd82ad9f6d3ab7fce0c97cd2bacd5b1d92",
+        "data/graphs/protocol-v2/metr_la.metadata.json": "dd0e264e04934ba94210c6fdfac76fef219c02b8d4f5651cab02fb36190b2d6b"
+      },
+      "electricity": {
+        "data/processed/electricity.npz": "0c27687bb3e5c5cb5d532e4d370e2eb902813777501b8c08f951f72bf490e604"
+      },
+      "pems_bay": {
+        "data/processed/pems_bay.npz": "40b4af01d93e23aaa4cb7a0ddee70fa2d64b91b99425c780654586fae7dd8803",
+        "data/graphs/protocol-v2/pems_bay.npz": "6c26aa9412a69841271be2156b27519b222b1036c5e37a4c96b7af54bec44bdb",
+        "data/graphs/protocol-v2/pems_bay.metadata.json": "627c9c4861eee292e14880e1ad567c0370a679afe18e3f9b9515cacc20935124"
+      },
+      "aqi": {
+        "data/processed/aqi.npz": "aef0d6c8689b67cf9d4fe65d7a61bcb8886ecc871d81fab7c5066a9ee244c5f2",
+        "data/graphs/protocol-v2/aqi.npz": "7a943bdaa3f67fda32ef6d3869e4e4dac265188fcddad3812b24f6f65c2ff08e",
+        "data/graphs/protocol-v2/aqi.metadata.json": "bc3b3d5e995cd08965fc52ba9a921793508cfc4f85f248e9da80410888d07552"
+      },
+      "aqi_36": {
+        "data/processed/aqi_36.npz": "5435bda4b127fd495c161f38d01a2cfa8e0c1d9df73a3a9737fe02d9b2a09b00",
+        "data/graphs/protocol-v2/aqi_36.npz": "dc7384c7bb6fa0744b2c19d38b8b89711b427a5d25c1f15bc7d4e6ce46a25353",
+        "data/graphs/protocol-v2/aqi_36.metadata.json": "4bc0b067311d627b39960c5f9966e36bfb23737c14834dd839c9f4a5fe34518b"
+      },
+      "solar": {
+        "data/processed/solar.npz": "9fa963a6f9cec9c53ca321d6dbc38bbb2606b9d1f767af9e789492453ed80566"
+      }
+    },
+    "historical_checkpoint_sha256": {
+      "metr_la/g2_values": "dd914e2cb49790a9a414a9f5a5caacf9f66bff78a452699ad88a89b0c3b381db",
+      "metr_la/ufg_s": "7367030df32bc74893b167cc526dfd2397da4367575f83d70c28ffbd3c92056e",
+      "metr_la/ufg_a": "bd4358f8f7f7e49345562b741c28d2442a6a85c4319a802759a9027de387236d",
+      "electricity/g2_values": "a98c6420a8abe84577a4028362f8172643c1850e73e08203ba2192e77fd6ac78",
+      "electricity/ufg_s": "cc201a3646d9187eada946e7b955168dd43c9159b02bd4c206d02ef0563b9ebc",
+      "electricity/ufg_a": "e989098b403ede36c8fedc5099aad791756878e9122635b0e7dcb59246b5c738",
+      "pems_bay/g2_values": "0a889e68347c4bf475f515c33a73fb10bacf2cf10dfb8cbb264b262f5c300b97",
+      "pems_bay/ufg_s": "4df8b170e9d789ed73d50711d82077442b7b2d8ecc9d2b8f8f168f5e01d540a4",
+      "pems_bay/ufg_a": "fd95dcc62c1d506cab68972cae4bc9af7266b205857989db808de772458a3760",
+      "aqi/g2_values": "c350e66b602cc365f86ee2262cc5b4d64cc874d66a0b03a2ee2de40f5c28d3e1",
+      "aqi/ufg_s": "4ccecfa1afacbf7afe4aa0a3e91a7e6e06c9325f8394b99fb393db43897ac1ad",
+      "aqi/ufg_a": "c2e1e66973ef22fb424e1ff4ea0f5d04522cc13c3ee04346dbf2b4eab147146c",
+      "aqi_36/g2_values": "66d4fafbf5362e7f9303002bd7cefa5e8b4bb1dd8e0996a244a2d8caf3694bd5",
+      "aqi_36/ufg_s": "afb1bcb2e95c8110b6e9e870897375347aa6821d97646abfff04e6703b7ef953",
+      "aqi_36/ufg_a": "99c2f0c33d1033102cf19e646d67a4ada31b5e1bf5f0484e5e396e9e631bb4fd",
+      "solar/g2_values": "6c492eb1d7025ddbdc15ad81f4e63bb6ea697abc705ac351ba7be74bfd71e500",
+      "solar/ufg_s": "6572856e02fd4d722a4206b34889bb369eba2fde050a2e1f67da095bb95f5c15",
+      "solar/ufg_a": "8e2764b57ceccf30e6985c62083cfa77ac09e47291f35effd9b7b6291a7ec85c"
+    },
+    "versions": {
+      "python": "3.11.17 (main, Oct  1 2026, 20:17:42) [GCC 14.3.0]",
+      "packages": {
+        "torch": "2.6.0+cu124",
+        "transformers": "4.46.3",
+        "chronos-forecasting": "2.3.2"
+      },
+      "all_packages_sha256": "c37c832bc70821bbbe4f6d30e1e08e430faa5eea45b60d99366207c6cf4258ff"
+    },
+    "code_lf_sha256": {
+      "src/gofa_f/routed_stage.py": "b0ead0b6e48a32aec2cb671fabcfb5eec6169a7a1e6f0c332116fc078959d535",
+      "src/gofa_f/routed_task.py": "15b356a32a2608a206aa73d64ca0947474443b0b26c2dbb49458d8a474d29fde",
+      "src/gofa_f/prefix_cache.py": "9fb6b7177ed604dcd4bec6f06300dec76b140ef845701e95efcdbd7fa1fcbefb",
+      "configs/stage5_routed.yaml": "d78b07a38f94e603e109ce21ebd161bd33d74006e9b781731852c4a343e31119",
+      "/mnt/sevenT/dcg_data/GOFA-F/.remote/stage5-cpu-v1/scripts/check_stage5_cpu.py": "bf97c5b9dfb75716d524828b63af1556962c411d496f426224bf70af2b799b27"
+    },
+    "reference_summary_sha256": "e834e355d09cdcbbdf91fc7cd306af1e298ac42f18ea115ddca834fd075132f3"
+  },
+  "resource_policy": "idle admission per GPU task; never yield because another user joins; pause updates for low free memory; cap40GiB; hard12h"
+}

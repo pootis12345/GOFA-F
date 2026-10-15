@@ -153,6 +153,16 @@ def resource_breach(gpu, worker_pid, cap_gib, reserve_gib):
         gpu["total_mib"] - gpu["used_mib"] < reserve_gib*1024
 
 
+def own_cap_breach(gpu, worker_pid, cap_gib):
+    """Admission-only policy: foreign users' allocations never trigger our exit."""
+    if gpu is None or cap_gib is None:
+        return False
+    memory = gpu.get("process_used_mib", {})
+    owned = set(gpu["pids"]) & own_gpu_pids(worker_pid)
+    known = [memory.get(pid) for pid in owned]
+    return all(value is not None for value in known) and sum(known) > cap_gib*1024
+
+
 class ActivityLedger:
     def __init__(self, path, total, state=None):
         self.path, self.total = Path(path), total
@@ -164,10 +174,14 @@ class ActivityLedger:
         self.state["worker"] = {"pid": pid, "start_ticks": process_identity(pid), "last_monotonic": self.last}
         self.save()
 
-    def tick(self):
+    def tick(self, charge=None):
         now = time.monotonic()
         if self.last is not None:
-            self.state["spent_seconds"] += max(0, now - self.last)
+            if charge is None:
+                charge = self.state["worker"].get("charging", True)
+            if charge:
+                self.state["spent_seconds"] += max(0, now - self.last)
+            self.state["worker"]["charging"] = charge
             self.state["worker"]["last_monotonic"] = now
             self.last = now
         self.save()
@@ -191,7 +205,8 @@ def read_status(output):
     return json.loads(path.read_text()) if path.exists() else {}
 
 
-def launch(output, command, total=14400, wall_deadline=None, memory_cap_gib=None, leave_free_gib=16):
+def launch(output, command, total=14400, wall_deadline=None, memory_cap_gib=None, leave_free_gib=16,
+           yield_on_foreign=True, worker_wait_state=None):
     if total is None and wall_deadline is None:
         raise ValueError("Unlimited activity still requires an absolute wall deadline")
     if memory_cap_gib is not None and (memory_cap_gib > 40 or memory_cap_gib < 1 or leave_free_gib < 16):
@@ -217,6 +232,8 @@ def launch(output, command, total=14400, wall_deadline=None, memory_cap_gib=None
         "watchdog_interval_seconds": 10,
         "idle_max_used_mib": 256,
     }
+    if not yield_on_foreign or worker_wait_state is not None:
+        manifest.update(yield_on_foreign=yield_on_foreign, worker_wait_state=worker_wait_state)
     manifest_path = output / "launcher_manifest.json"
     if manifest_path.exists() and json.loads(manifest_path.read_text()) != manifest:
         raise ValueError("Launcher resume requires the identical command, snapshot and policy")
@@ -312,7 +329,8 @@ def launch(output, command, total=14400, wall_deadline=None, memory_cap_gib=None
         status("running", worker_pid=child.pid)
         next_probe, stop_deadline, reason = time.monotonic(), None, None
         while child.poll() is None:
-            ledger.tick()
+            waiting = worker_wait_state is not None and read_status(output).get("state") == worker_wait_state
+            ledger.tick(charge=not waiting)
             now = time.monotonic()
             if stop_deadline is None:
                 if stop[0] or ledger.remaining <= 60 or wall_remaining(wall_deadline) <= 60:
@@ -323,10 +341,12 @@ def launch(output, command, total=14400, wall_deadline=None, memory_cap_gib=None
                         gpu = query_gpu()
                     except (OSError, ValueError, RuntimeError, subprocess.TimeoutExpired, ET.ParseError):
                         gpu = None
-                    if foreign_task(gpu, child.pid, gate.uuid):
+                    if yield_on_foreign and foreign_task(gpu, child.pid, gate.uuid):
                         reason = "yielded_for_other_users"
-                    elif resource_breach(gpu, child.pid, memory_cap_gib, leave_free_gib):
+                    elif yield_on_foreign and resource_breach(gpu, child.pid, memory_cap_gib, leave_free_gib):
                         reason = "yielded_for_resource_margin"
+                    elif not yield_on_foreign and own_cap_breach(gpu, child.pid, memory_cap_gib):
+                        reason = "own_memory_cap_exceeded"
                     next_probe = now + 10
                 if reason:
                     status(reason, worker_pid=child.pid)

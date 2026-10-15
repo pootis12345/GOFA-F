@@ -1,0 +1,24 @@
+extends: titan_inspired.yaml
+protocol: native-v7-routed-six
+status: executable
+datasets: [metr_la, electricity, pems_bay, aqi, aqi_36, solar]
+stage5:
+  max_epochs: 100
+  patience: 15
+  milestones: [10, 30, 100]
+  graph_lr: 0.001
+  adapter_lr: 0.0001
+  optimizer: adamw
+  loss: raw_mae
+  final_evaluation_reserve_seconds: 900
+  native_python: .venv-native/bin/python
+  reference_summary: docs/results/stage4-pure-graph-v2.json
+  reference_output: outputs/stage4-pure-graph-v2
+resources:
+  yield_on_foreign: false
+  admission_per_gpu_task: true
+  effective_batch_size: 64
+  microbatch_candidates: [64, 32, 16, 8, 4, 2, 1]
+  allow_tf32: true
+  omp_threads: 2
+  mkl_threads: 2

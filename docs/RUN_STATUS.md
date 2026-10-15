@@ -1,5 +1,15 @@
 # 运行交接记录
 
+## Stage5 已完成代码/CPU核验，准备部署（2026-10-15）
+
+用户批准完整TITAN启发架构直接六集，seed42/late_contiguous/原图与既定L→H，固定原始MAE/AdamW，不搜索。
+独立入口 `scripts/run_routed_stage.sh`，固定快照拟名 `stage5-titan-six-v1`，新输出同名。
+C禁CUDA覆盖173个独立CPU用例，六集真实入口前向有限/测试目标排除，18旧检查点SHA与六个旧缓存格式核对通过。
+配置、恢复、12小时首次启动窗口、里程碑10/30/100、全局锁定后评价和分阶段峰值记录均接入。
+最新资源要求：每个GPU子任务启动/恢复前严格空闲准入，运行中他人加入不退出；低显存余量保留进程暂停更新。
+40GiB上限、12小时硬截止保留。旧阶段不重启、不重训GNN。GPU机制尚未执行。
+细则 `docs/STAGE5_PROTOCOL.md`，CPU证据 `docs/results/stage5-cpu-verification.json`。
+
 ## TITAN 启发架构已实现并通过 CPU 验证（2026-10-15）
 
 新增 `bolt-prior-routed-v1`：late_contiguous `[1,2]` 上的先验约束动态图注意力和节点级门控，

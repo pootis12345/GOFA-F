@@ -18,15 +18,17 @@ def atomic_json(path, value):
 
 
 class PrefixCache:
-    def __init__(self, directory):
+    def __init__(self, directory, read_only=False):
         self.directory = Path(directory)
+        self.read_only = read_only
         self.metadata = json.loads((self.directory / "metadata.json").read_text())
         if not self.metadata["complete"]:
             raise ValueError("Incomplete prefix cache")
-        self.hidden = np.load(self.directory / "hidden.npy", mmap_mode="r+")
-        self.mask = np.load(self.directory / "mask.npy", mmap_mode="r+")
-        self.loc = np.load(self.directory / "loc.npy", mmap_mode="r+")
-        self.scale = np.load(self.directory / "scale.npy", mmap_mode="r+")
+        mode = "r" if read_only else "r+"
+        self.hidden = np.load(self.directory / "hidden.npy", mmap_mode=mode)
+        self.mask = np.load(self.directory / "mask.npy", mmap_mode=mode)
+        self.loc = np.load(self.directory / "loc.npy", mmap_mode=mode)
+        self.scale = np.load(self.directory / "scale.npy", mmap_mode=mode)
 
     @classmethod
     def build(cls, directory, key, model, batches, count, check_budget):
@@ -76,6 +78,8 @@ class PrefixCache:
 
     @torch.no_grad()
     def upgrade(self, model, microbatch, check_budget):
+        if self.read_only:
+            raise ValueError("Cannot upgrade a historical read-only cache")
         if self.metadata["prefix_layers"] == 2:
             return
         if min(model.graph_layers) < 1:
@@ -96,6 +100,8 @@ class PrefixCache:
         atomic_json(self.directory / "metadata.json", self.metadata)
 
     def close(self, delete=False):
+        if delete and self.read_only:
+            raise ValueError("Cannot delete a historical read-only cache")
         for name in ("hidden", "mask", "loc", "scale"):
             array = getattr(self, name)
             array._mmap.close()

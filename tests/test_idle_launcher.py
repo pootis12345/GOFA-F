@@ -83,6 +83,64 @@ def test_waiting_is_not_charged_and_resume_keeps_activity(tmp_path, monkeypatch)
     assert resumed.state["spent_seconds"] == 20
 
 
+def test_cpu_wait_inside_orchestrator_does_not_consume_activity(tmp_path, monkeypatch):
+    clock = [0.]
+    monkeypatch.setattr(idle.time, "monotonic", lambda: clock[0])
+    monkeypatch.setattr(idle, "process_identity", lambda _: "start")
+    ledger = idle.ActivityLedger(tmp_path/"ledger.json", None)
+    ledger.start(123)
+    clock[0] += 10
+    ledger.tick(charge=True)
+    clock[0] += 600
+    ledger.tick(charge=False)
+    clock[0] += 100
+    ledger.stop()
+    assert ledger.state["spent_seconds"] == 10
+
+
+@pytest.mark.parametrize("query_fails", [False, True])
+def test_admission_only_policy_keeps_running_when_foreign_task_joins(tmp_path, monkeypatch, query_fails):
+    clock, children, signals = [0.], [], []
+    output = tmp_path/"run"
+    monkeypatch.setattr(idle.time, "monotonic", lambda: clock[0])
+    monkeypatch.setattr(idle.time, "sleep", lambda n: clock.__setitem__(0, clock[0]+n))
+    monkeypatch.setattr(idle, "process_identity", lambda _: "start")
+    monkeypatch.setattr(idle, "own_gpu_pids", lambda pid: {pid})
+    monkeypatch.setattr(idle.subprocess, "check_output", lambda *a, **k: "fixed")
+    monkeypatch.setattr(idle.os, "killpg", lambda *a: signals.append(a))
+    class Child:
+        pid = 800
+        returncode = None
+        def __init__(self, *a, **k):
+            children.append(self)
+            self.polls = 0
+        def poll(self):
+            self.polls += 1
+            if self.polls > 15:
+                self.returncode = 0
+                idle.atomic_json(output/"status.json", {"state": "complete"})
+            return self.returncode
+    def query():
+        if children and query_fails:
+            raise RuntimeError("query unavailable during admitted task")
+        return idle.parse_gpu_xml(xml([800, 999], used=75000, utilization=90) if children else xml())
+    monkeypatch.setattr(idle, "query_gpu", query)
+    monkeypatch.setattr(idle.subprocess, "Popen", Child)
+    idle.launch(output, ["worker"], total=None, wall_deadline=10**15, memory_cap_gib=40,
+                leave_free_gib=16, yield_on_foreign=False, worker_wait_state="waiting_for_idle")
+    assert len(children) == 1 and not signals
+    assert idle.read_status(output)["state"] == "complete"
+
+
+def test_admission_only_cap_counts_our_group_without_other_users(monkeypatch):
+    monkeypatch.setattr(idle, "own_gpu_pids", lambda _: {100, 101})
+    gpu = {"pids": [100, 101, 999], "process_used_mib": {100: 1024, 101: 1024, 999: 70000}}
+    assert not idle.own_cap_breach(gpu, 100, 40)
+    gpu["process_used_mib"][101] = 40*1024
+    assert idle.own_cap_breach(gpu, 100, 40)
+    assert not idle.own_cap_breach(None, 100, 40)
+
+
 @pytest.mark.parametrize("query_fails", [False, True])
 def test_watchdog_saves_yields_waits_and_resumes_own_worker_only(tmp_path, monkeypatch, query_fails):
     clock = [0.0]
