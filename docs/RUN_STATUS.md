@@ -1,5 +1,9 @@
 # 运行交接记录
 
+## Stage8 代码和 CPU 审计完成，等待固定快照部署（2026-10-15）
+
+METR-LA 12→12、seed42 的 T1 四段历史图摘要与 T2 训练前缀 top-8 相关边已写入独立 Stage8 入口。C 上禁用 CUDA、OMP/MKL 各两线程的全仓库 CPU 回归为181通过、11项可选依赖跳过；真实 Bolt 权重与 METR-LA 前向、缓存一致性和精确恢复检查通过。真实协议审计确认训练前缀23,990行、207传感器及原物理图；相关图 SHA `d25fb015fb887d5fae60411af29cd20315fec31f8d635b4a965f07708312e8d0`，相对于物理图增加1,678条有向非自环动态候选边。本节部署前状态：尚无 Stage8 GPU 机制或精度结果，不得据此推断改进。细则见 `docs/STAGE8_METR_TEMPORAL_PROTOCOL.md`。下方 Stage7 完成状态为历史记录。
+
 ## 最新状态：Stage7 单检查点迁移评价已完成（2026-10-15 21:32，Asia/Shanghai）
 
 固定代码 `2c9ba946882cf22787bce22602289bc9c77361fa` 的快照 `stage7-locked-transfer-v1` 已完成六集验证与测试；`launcher.json` 和 `status.json` 均为 `complete`，`failures` 为空，CPU 等待器 PID 2715356 及其 GPU 子进程已退出。METR-LA 源任务准确复现 Stage5 MAE；其余五集锁定检查点的测试 MAE 均高于各集单独训练的同架构模型。PeMS-BAY 差 13%，AQI-437/AQI-36 分别为 2.34/1.86 倍，Electricity/Solar-Energy 约为 6.82/6.77 倍。六集完整指标、逐步误差、显存、账本与局限见 `docs/STAGE7_RESULTS.md` 及 `docs/results/stage7-locked-transfer-v1.json`；B 已下载小型原始输出。监督器活动累计 55.905 秒，所有目标权重更新数均为0。本阶段不得重复启动 GPU 作业；每小时跟进在交付终止结果后暂停。下文等待器部署是历史记录。

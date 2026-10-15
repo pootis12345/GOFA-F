@@ -1,0 +1,28 @@
+extends: stage5_routed.yaml
+protocol: native-v9-metr-temporal
+datasets: [metr_la]
+architecture:
+  graph_feature_dim: 19
+stage8:
+  variants: [t1_sketch, t2_correlated]
+  baseline_validation_mae: 3.1413617665640574
+  baseline_validation_step12_mae: 3.79605641157295
+  maximum_validation_mae: 3.12565
+  maximum_validation_step12_mae: 3.79606
+  simpler_tie_tolerance: 0.005
+  max_epochs: 100
+  patience: 15
+  milestones: [10, 30, 100]
+  graph_lr: 0.001
+  adapter_lr: 0.0001
+  loss: raw_mae
+  optimizer: adamw
+  sidecar: data/features/context-v1/metr_la.npz
+  native_python: .venv-native/bin/python
+  stage6_result: docs/results/stage6-metr-long-v1.json
+  stage5_cache: outputs/stage5-titan-six-v1/cache/metr_la
+  correlation_k: 8
+  correlation_min_overlap: 24
+  final_evaluation_reserve_seconds: 900
+resources:
+  wall_window_hours: 12
