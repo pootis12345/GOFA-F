@@ -47,8 +47,8 @@ class LongHorizonBolt(NativeBolt):
                 raise ValueError("Causal residual inputs are required")
             loc, scale = prefix[2:]
             delta = self.temporal_residual(history, history_mask, graph_features[:, 0, 5:], loc, scale)
-            quantiles = quantiles + delta.transpose(1, 2)[:, :, None, :].to(quantiles.dtype)
-        return quantiles if return_quantiles else quantiles[:, :, self.median_index].transpose(1, 2)
+            quantiles = quantiles + delta.transpose(1, 2)[:, None, :, :].to(quantiles.dtype)
+        return quantiles if return_quantiles else quantiles[:, self.median_index]
 
     def forward(self, x, mask, graph_features=None, return_quantiles=False):
         layers = min(self.graph_layers) + 1

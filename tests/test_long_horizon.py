@@ -93,8 +93,8 @@ def test_real_model_zero_increment_cache_and_frozen_native(residual):
     model.zero_grad(set_to_none=True)
     quantiles = model.from_prefix(model.prefix(x, mask, 2), 2,
         return_quantiles=True, graph_features=features, history=x, history_mask=mask)
-    assert quantiles.shape == (2, 12, 3, 3)
-    (quantiles[:, :, 1]**2).mean().backward()
+    assert quantiles.shape == (2, 3, 12, 3)
+    (quantiles[:, 1]**2).mean().backward()
     assert all(p.grad is None for p in native.parameters())
     assert all(p.grad is None or torch.isfinite(p.grad).all() for p in model.parameters())
 
@@ -122,7 +122,7 @@ def test_residual_training_resume_preserves_optimizer_rng_and_cursor(tmp_path):
 
     class Budget:
         def remaining(self):
-            return float("inf")
+            return 3600.
         def tick(self, force=False):
             pass
 
