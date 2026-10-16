@@ -1,5 +1,11 @@
 # 运行交接记录
 
+## 自主窗口结束：Stage15验证合格、测试未获准入（2026-10-16 11:02，Asia/Shanghai）
+
+绝对自主窗口10:58已结束，不再启动GPU或Stage16。Stage15训练满100epoch/35,900更新，验证全步3.0626643915、第12步3.6691021727，通过预定门槛；最佳31,592更新的SHA `160eeaf6074a287d8d7380cee66b78dadd4531ffc6d1c2f19e9dc30dd06baf61` 已在09:46锁定。最终评价持续等GPU空闲，未获准入，10:57:02监督器wall_deadline退出，等待器3215096/worker3215767均已核实退出，failures为空。测试指标留空，禁止为补测延长窗口或自动重启。
+
+最近已有测试仍Stage8T2；Stage15验证合格不代表测试差距缩小，0.509%全步验证收益也仅略过门槛。结果 `docs/STAGE15_RESULTS.md`、完整账本/CPU导出已有逐步验证JSON已保存；全夜汇总 `docs/OVERNIGHT_20261016_RESULTS.md`。Stage8–15共10候选/280,020更新，监督器活动合计4.445小时（含Stage8在自主窗口前启动部分）。截止后只读/CPU汇总，随后停止本条跟进；保留C锁定检查点，后续须有新运行授权窗口才能评价。下方部署记录均为历史。
+
 ## Stage15 REG路线rank6固定快照和等待器已部署（2026-10-16 09:08，Asia/Shanghai）
 
 运行源码 `42b64818a9874ac12832a9e57a6ed0c4b59093f8`，快照 `/home/dcg/dcg_data/GOFA-F-runs/stage15-metr-reg6-v1`，C开发输出 `outputs/stage15-metr-reg6-v1/`、日志同级 `.log`、身份同级 `.launch.json`。B/C/GitHub同步，C禁CUDA/OMP/MKL各2线程229通过/11可选依赖跳过，固定快照12输入核验通过，旧Stage14进程已退出。
