@@ -109,7 +109,7 @@ remain blank. Language bypass preservation does not establish graph-grounded
 explanations or single-checkpoint transfer. LLaMA-2 requires a later independent
 stage. Notify only on terminal states, exceptions or required user action.
 
-Deployment: fixed source `483a876c10b94430409c1d1fc0f882980b77e331`, artifact
+Original deployment (superseded deadline): fixed source `483a876c10b94430409c1d1fc0f882980b77e331`, artifact
 `stage16-chattime-metr-v3`. The scientific protocol ID remains v1. Preparation-only
 v1/v2 artifacts retain the missing-protobuf and prompt-blank-line failures; neither
 started a GPU window. v3 passed270 CPU cases (41 new), with11 old optional skips,
@@ -118,3 +118,23 @@ and real7B BF16 CPU mechanisms. It starts the only11-hour window at2026-10-16
 See `RUN_STATUS.md` and `results/stage16-cpu-verification.json`. These CPU results
 do not establish CUDA mechanisms or accuracy. Full prefix estimate is
 2,999,480,985,963bytes, exceeding the disk cap; the RAM LRU stays at64GiB.
+
+User deadline amendment,2026-10-16: hard stop is now **2026-10-16 23:30:00
+Asia/Shanghai**, training stop21:30:00, retaining two hours for locked evaluation.
+The original16:03:02 start is retained; the11-hour setting is an upper bound,
+not permission to extend this shorter absolute deadline. Source
+`0d73f05c34dbff3452acb6ed4f80d2a0b1d1c928`, artifact
+`stage16-chattime-metr-v5`, adopts only the stopped v3 CPU waiter with zero GPU
+activity and matching immutable inputs. Source-window and manifest hashes are
+recorded in `window.json/adopted_from`; resume retains the shortened cutoff.
+v4 safely rejected CPU-generated zero-coverage summaries before creating a
+window; this infrastructure check was corrected without changing the model,
+data, tolerances or evaluation. Earlier snapshots remain unchanged. The current
+deadline and process identities in `RUN_STATUS.md` take precedence over the
+original deployment times above.
+
+The v5 CPU recheck passed280 tests (51 new) with11 existing optional skips and
+real7B mechanisms. Effective persisted start/training/hard times were verified;
+see `results/stage16-deadline-v5.json` and
+`results/stage16-cpu-verification-v5.json`. Deployment state is waiting for idle,
+not a CUDA mechanism or accuracy result.

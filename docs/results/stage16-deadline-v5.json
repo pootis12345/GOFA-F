@@ -1,0 +1,69 @@
+{
+  "reason": "User explicitly shortened hard cutoff to 2026-10-16 23:30 Asia/Shanghai",
+  "recorded_at": 1792141247.8324134,
+  "source": "0d73f05c34dbff3452acb6ed4f80d2a0b1d1c928",
+  "snapshot": "/home/dcg/dcg_data/GOFA-F-runs/stage16-chattime-metr-v5",
+  "output": "/home/dcg/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v5",
+  "window": {
+    "started_at": 1792137782.8795292,
+    "training_deadline": 1792157400.0,
+    "wall_deadline": 1792164600.0,
+    "window_seconds": 26817.120470762253,
+    "adopted_from": {
+      "output": "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v3",
+      "window_sha256": "09f8cddd1267acc4dfda6c31c39e18325ccf306c0b67ae275d11acad15d24a2f",
+      "manifest_sha256": "6be22c30e58474ce70759fc4c27e134f6b608633a2dd1c1d463e9b75a8e1f6ec",
+      "started_at": 1792137782.8795292,
+      "original_wall_deadline": 1792177382.8795292,
+      "gpu_activity_seconds": 0
+    },
+    "launch_fingerprint": "1cb63eeca79c031f327045c7c09249d8ec34c260913ca012c23fa85beea8d7a4"
+  },
+  "previous_window": {
+    "started_at": 1792137782.8795292,
+    "training_deadline": 1792170182.8795292,
+    "wall_deadline": 1792177382.8795292,
+    "window_seconds": 39600,
+    "launch_fingerprint": "aafe6e945ed82f968e35c399feb79dfd38fe79923a966621ea1aab3f1f834b6b"
+  },
+  "bootstrap": {
+    "state": "idle_waiter_deployed",
+    "pid": 3932279,
+    "start_ticks": 606212644,
+    "updated_at": 1792141179.1650946,
+    "snapshot": "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v5",
+    "launcher_pid": 3935816,
+    "launcher_start_ticks": 606223992
+  },
+  "launcher": {
+    "state": "waiting_for_idle",
+    "pid": 3935816,
+    "spent_seconds": 0.0,
+    "updated_at": 1792141227.5231733,
+    "consecutive_idle": 0,
+    "query_error": null
+  },
+  "active_budget": {
+    "spent_seconds": 0.0,
+    "worker": null
+  },
+  "launch": {
+    "pid": 3935816,
+    "start_ticks": 606223992,
+    "snapshot": "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v5",
+    "output": "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v5",
+    "spawned_at": 1792141179.1649451,
+    "command": [
+      "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v5/.venv-chat/bin/python",
+      "-u",
+      "-m",
+      "gofa_f.chattime_stage",
+      "--output",
+      "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v5",
+      "--hard-deadline",
+      "2026-10-16T23:30:00+08:00",
+      "--adopt-waiting-window",
+      "/home/dcg/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v3"
+    ]
+  }
+}

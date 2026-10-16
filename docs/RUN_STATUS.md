@@ -1,5 +1,17 @@
 # 运行交接记录
 
+## Stage16 用户将硬截止提前到2026-10-16 23:30（Asia/Shanghai）
+
+本条覆盖下方旧的10月17日截止记录。用户要求硬截止改为**今天10月16日23:30**，保留两小时锁定评价，因此训练截止**21:30**；原始起算仍为**16:03:02**，接续或恢复不得重置时钟。模型、数据、图、优化器及候选范围不变。
+
+旧v3 CPU等待器3824577/start_ticks605883460及准备控制器3819503已核实退出；停止时GPU活动0、worker为空、没有检查点或预测文件。新入口只允许接续已退出、零GPU活动且不可变输入一致的CPU等待记录，拒绝真实训练/预测产物，并记录来源窗口/清单SHA。CPU汇总产生的零完成评价记录不视为训练产物。v4在这项判断过严时安全停止，未创建窗口或GPU作业，失败记录保留。
+
+接续运行源码 `0d73f05c34dbff3452acb6ed4f80d2a0b1d1c928`，快照 `/home/dcg/dcg_data/GOFA-F-runs/stage16-chattime-metr-v5`，C开发输出 `outputs/stage16-chattime-metr-v5/`、日志同级 `.log`、身份同级 `.launch.json`。CPU准备控制器PID3932279/start_ticks606212644；新等待器PID3935816/start_ticks606223992，使用前核对。C禁CUDA/OMP/MKL各2线程280项回归通过、11旧可选跳过，新增51项全覆盖，真实7B CPU机制复核通过；32项截止/接续专项及真实v3输入/退出身份核验通过。每小时跟进 `gofa-f-stage16` 已更新。
+
+已只读核对v5 `window.json`：原起算16:03:02.879529保留，训练截止21:30:00、硬截止23:30:00均为2026-10-16北京时间；接续来源包含原窗口/清单哈希。新等待器状态waiting_for_idle，GPU活动0、worker为空。证据 `docs/results/stage16-deadline-v5.json` 和 `docs/results/stage16-cpu-verification-v5.json`；此时尚无GPU机制或精度结果。
+
+截止前60秒开始保存退出；新GPU子任务三次间隔30秒严格空闲准入、运行中他人加入不退出、40GiB/Torch38GiB/16GiB余量等共享策略保持。下方v3原窗口和更早阶段均为历史，禁止按旧03:03截止重启。
+
 ## Stage16 ChatTime 两组已部署，等待 GPU 空闲（2026-10-16 16:05，Asia/Shanghai）
 
 本轮有新的用户授权，仅运行 METR-LA 12→12、seed42 的原生 ChatTime 和 GOFA-F(ChatTime)，不启动 LLaMA-2、其他数据集或新 GNN。运行源码 `483a876c10b94430409c1d1fc0f882980b77e331`，固定快照 `/home/dcg/dcg_data/GOFA-F-runs/stage16-chattime-metr-v3`，C 开发输出 `outputs/stage16-chattime-metr-v3/`，日志同级 `.log`，等待器身份同级 `.launch.json`，CPU 准备控制器记录同级 `.bootstrap.launch.json`。协议见 `docs/STAGE16_CHATTIME_PROTOCOL.md`。
