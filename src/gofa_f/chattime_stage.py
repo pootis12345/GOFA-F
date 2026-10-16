@@ -13,7 +13,8 @@ import xml.etree.ElementTree as ET
 
 import yaml
 
-from gofa_f.idle_launcher import IdleGate, atomic_json, launch as idle_launch, query_gpu
+from gofa_f.idle_launcher import (IdleGate, atomic_json, launch as idle_launch,
+    parse_deadline, process_identity, query_gpu)
 
 STOP = False
 PROTOCOL = "stage16-chattime-metr-v1"
@@ -67,27 +68,75 @@ def code_files():
     return {str(p): digest(p) for p in paths}
 
 
-def bind_window(output, resume=False, now=None, launch_fingerprint=None):
+def bind_window(output, resume=False, now=None, launch_fingerprint=None, hard_deadline=None,
+                adopted_from=None):
     path = Path(output)/"window.json"
     old = read(path)
     if old is not None:
         if not resume:
             raise ValueError("Existing Stage16 window requires --resume")
-        if old["window_seconds"] != 11*3600 or old["wall_deadline"]-old["started_at"] != 11*3600 \
+        if not 2*3600 < old["window_seconds"] <= 11*3600 \
+                or old["wall_deadline"]-old["started_at"] != old["window_seconds"] \
                 or old["training_deadline"] != old["wall_deadline"]-2*3600:
             raise ValueError("Saved absolute window changed")
+        if hard_deadline is not None and hard_deadline != old["wall_deadline"]:
+            raise ValueError("Resume must retain the saved shortened deadline")
         if launch_fingerprint is not None and old.get("launch_fingerprint") != launch_fingerprint:
             raise ValueError("Saved launch identity changed")
         return old
     if resume:
         raise ValueError("Missing persisted Stage16 window")
     now = time.time() if now is None else now
-    result = {"started_at": now, "training_deadline": now+9*3600,
-              "wall_deadline": now+11*3600, "window_seconds": 11*3600}
+    hard_deadline = now+11*3600 if hard_deadline is None else hard_deadline
+    if not now+2*3600 < hard_deadline <= now+11*3600:
+        raise ValueError("An explicit deadline can only shorten the eleven-hour maximum")
+    result = {"started_at": now, "training_deadline": hard_deadline-2*3600,
+              "wall_deadline": hard_deadline, "window_seconds": hard_deadline-now}
+    if adopted_from is not None:
+        result["adopted_from"] = adopted_from
     if launch_fingerprint is not None:
         result["launch_fingerprint"] = launch_fingerprint
     atomic_json(path, result)
     return result
+
+
+def adopt_waiting_window(previous, config, prepared, identity=process_identity):
+    """Move only an exited CPU waiter with zero GPU activity; never migrate training."""
+    previous = Path(previous).resolve()
+    launcher = read(previous/"launcher.json", {})
+    ledger = read(previous/"active_budget.json", {})
+    budget = read(previous/"budget.json", {})
+    if launcher.get("state") != "stopped_by_user" or ledger.get("spent_seconds") != 0 \
+            or ledger.get("worker") is not None or budget.get("spent_seconds", 0) != 0:
+        raise ValueError("Only an explicitly stopped, zero-activity CPU waiter can be adopted")
+    for suffix in (".launch.json", ".bootstrap.launch.json"):
+        record = read(previous.parent/(previous.name+suffix), {})
+        if not record.get("pid") or record.get("start_ticks") is None:
+            raise ValueError("Missing previous process identity")
+        actual = identity(record["pid"])
+        if actual is not None and str(actual) == str(record["start_ticks"]):
+            raise ValueError("Previous CPU controller/waiter is still alive")
+    if (previous/"status.json").exists() or (previous/"mechanisms.json").exists() \
+            or (previous/"gofa_chattime").exists() or (previous/"native_chattime").exists():
+        raise ValueError("GPU stage artifacts prohibit waiting-only adoption")
+    original = read(previous/"manifest.json", {})
+    if original.get("config") != config:
+        raise ValueError("Only deadline/source infrastructure may change, not the experiment")
+    def inputs(record, output):
+        return {("local_correlation_graph" if Path(k).resolve() == output/"correlation_graph.npz" else k): v
+                for k, v in record.items()}
+    old_inputs = original.get("inputs", {})
+    if not old_inputs or old_inputs != {p: digest(p) for p in old_inputs}:
+        raise ValueError("Previous immutable inputs changed")
+    current_output = Path(prepared["output"]).resolve()
+    if inputs(old_inputs, previous) != inputs(prepared["inputs"], current_output):
+        raise ValueError("Waiting adoption changed data, weights, features or graph")
+    window = read(previous/"window.json")
+    if not window or original.get("window") != window:
+        raise ValueError("Previous window binding differs")
+    return {"output": str(previous), "window_sha256": digest(previous/"window.json"),
+        "manifest_sha256": digest(previous/"manifest.json"), "started_at": window["started_at"],
+        "original_wall_deadline": window["wall_deadline"], "gpu_activity_seconds": 0}
 
 
 def bind(path, expected, resume):
@@ -336,6 +385,8 @@ def main():
     parser.add_argument("--prepare-only", action="store_true")
     parser.add_argument("--report-only", action="store_true")
     parser.add_argument("--resume", action="store_true")
+    parser.add_argument("--hard-deadline", help="Explicit timezone; may shorten but never extend the original window")
+    parser.add_argument("--adopt-waiting-window", help="Exited CPU-only output whose original start time must be retained")
     parser.add_argument("--worker", action="store_true", help=argparse.SUPPRESS)
     args = parser.parse_args()
     config, output = config_file(args.config), Path(args.output).resolve()
@@ -373,7 +424,17 @@ def main():
         raise ValueError("Current CPU preflight required before starting the clock")
     expected = manifest(config, output, None)
     fingerprint = hashlib.sha256(json.dumps(expected, sort_keys=True).encode()).hexdigest()
-    window = bind_window(output, args.resume, launch_fingerprint=fingerprint)
+    cutoff = parse_deadline(args.hard_deadline)
+    adopted = None
+    if args.adopt_waiting_window:
+        if args.resume or (output/"window.json").exists() or cutoff is None:
+            raise ValueError("Adoption requires a fresh output and an explicit shortened deadline")
+        prepared = {**read(output/"preparation.json"), "output": str(output)}
+        adopted = adopt_waiting_window(args.adopt_waiting_window, config, prepared)
+        if cutoff > adopted["original_wall_deadline"]:
+            raise ValueError("Adoption cannot extend the original deadline")
+    window = bind_window(output, args.resume, launch_fingerprint=fingerprint, hard_deadline=cutoff,
+        now=adopted["started_at"] if adopted else None, adopted_from=adopted)
     if time.time() >= window["wall_deadline"]-60:
         atomic_json(output/"launcher.json", {"state": "wall_deadline"})
         if (output/"manifest.json").exists():

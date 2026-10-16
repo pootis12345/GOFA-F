@@ -7,7 +7,7 @@ import torch
 from torch import nn
 
 from gofa_f.chattime import HistoryCodec
-from gofa_f.chattime_stage import bind, bind_window, config_file, digest, seal
+from gofa_f.chattime_stage import adopt_waiting_window, bind, bind_window, config_file, digest, seal
 from gofa_f.chattime_task import (apply_validation, available_metric, initial_state,
     load_window, native_window, optimizer_update, summarize_split, write_window, GuardGeneration)
 from gofa_f.metrics import Metrics
@@ -29,6 +29,61 @@ def test_initial_window_crash_keeps_launch_identity(tmp_path):
     assert bind_window(tmp_path, resume=True, now=5000., launch_fingerprint="same-inputs") == first
     with pytest.raises(ValueError):
         bind_window(tmp_path, resume=True, launch_fingerprint="changed-code")
+
+
+def test_shortened_window_keeps_start_and_two_hour_evaluation(tmp_path):
+    first = bind_window(tmp_path, now=1000., hard_deadline=1000+7.5*3600,
+                        launch_fingerprint="shortened")
+    assert first["started_at"] == 1000
+    assert first["training_deadline"] == first["wall_deadline"]-7200
+    assert first["window_seconds"] == 7.5*3600
+    assert bind_window(tmp_path, resume=True, now=20000.,
+        hard_deadline=first["wall_deadline"], launch_fingerprint="shortened") == first
+    with pytest.raises(ValueError, match="shortened deadline"):
+        bind_window(tmp_path, resume=True, hard_deadline=first["wall_deadline"]+1)
+
+
+@pytest.mark.parametrize("seconds", [7200, 39601])
+def test_explicit_window_cannot_remove_evaluation_or_extend(tmp_path, seconds):
+    with pytest.raises(ValueError):
+        bind_window(tmp_path, now=1000., hard_deadline=1000.+seconds)
+    assert not (tmp_path/"window.json").exists()
+
+
+@pytest.mark.parametrize("refusal", [None, "live", "activity", "graph", "gpu_artifacts"])
+def test_adoption_requires_exited_zero_activity_waiter(tmp_path, refusal):
+    from gofa_f.prefix_cache import atomic_json
+    previous, current = tmp_path/"previous", tmp_path/"current"
+    previous.mkdir()
+    current.mkdir()
+    for folder in (previous, current):
+        (folder/"correlation_graph.npz").write_bytes(b"locked graph")
+    weight = tmp_path/"weights"
+    weight.write_bytes(b"same weights")
+    config = {"protocol": "same", "seed": 42}
+    original = bind_window(previous, now=1000.)
+    old_inputs = {str(weight): digest(weight), str(previous/"correlation_graph.npz"): digest(previous/"correlation_graph.npz")}
+    atomic_json(previous/"manifest.json", {"window": original, "config": config, "inputs": old_inputs})
+    atomic_json(previous/"launcher.json", {"state": "stopped_by_user"})
+    atomic_json(previous/"active_budget.json", {"spent_seconds": 1 if refusal == "activity" else 0, "worker": None})
+    for suffix in (".launch.json", ".bootstrap.launch.json"):
+        atomic_json(tmp_path/(previous.name+suffix), {"pid": 123, "start_ticks": 45})
+    if refusal == "graph":
+        (current/"correlation_graph.npz").write_bytes(b"changed graph")
+    if refusal == "gpu_artifacts":
+        (previous/"gofa_chattime").mkdir()
+    inputs = {str(weight): digest(weight), str(current/"correlation_graph.npz"): digest(current/"correlation_graph.npz")}
+    prepared = {"output": str(current), "inputs": inputs}
+    def identity(pid):
+        return "45" if refusal == "live" else None
+    if refusal:
+        with pytest.raises(ValueError):
+            adopt_waiting_window(previous, config, prepared, identity=identity)
+    else:
+        record = adopt_waiting_window(previous, config, prepared, identity=identity)
+        result = bind_window(current, now=record["started_at"], hard_deadline=28000., adopted_from=record)
+        assert result["started_at"] == original["started_at"] and result["wall_deadline"] == 28000.
+        assert result["adopted_from"]["gpu_activity_seconds"] == 0
 
 
 def test_resume_binding_rejects_changes(tmp_path):

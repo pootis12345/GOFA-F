@@ -54,7 +54,8 @@ def downloaders(target):
     return matches
 
 
-def bootstrap(root, output, official_manifest, resume=False, run=subprocess.run, popen=subprocess.Popen):
+def bootstrap(root, output, official_manifest, resume=False, run=subprocess.run, popen=subprocess.Popen,
+              hard_deadline=None, adopt_waiting_window=None):
     root, output, official_manifest = Path(root).resolve(), Path(output).resolve(), Path(official_manifest).resolve()
     output.mkdir(parents=True, exist_ok=True)
     cpu_env = dict(os.environ, CUDA_VISIBLE_DEVICES="", OMP_NUM_THREADS="2", MKL_NUM_THREADS="2",
@@ -119,6 +120,10 @@ def bootstrap(root, output, official_manifest, resume=False, run=subprocess.run,
             raise ValueError("Cannot resume without the original successful CPU preflight")
         status("starting_idle_waiter", window_started=bool(window))
         command = [str(python), "-u", "-m", "gofa_f.chattime_stage", "--output", str(output)]
+        if hard_deadline is not None:
+            command += ["--hard-deadline", hard_deadline]
+        if adopt_waiting_window is not None and not window:
+            command += ["--adopt-waiting-window", str(adopt_waiting_window)]
         if window:
             command.append("--resume")
         with (output.parent/(output.name+".log")).open("a") as log:
@@ -150,8 +155,11 @@ def main():
     parser.add_argument("--output", required=True)
     parser.add_argument("--official-manifest", required=True)
     parser.add_argument("--resume", action="store_true")
+    parser.add_argument("--hard-deadline")
+    parser.add_argument("--adopt-waiting-window")
     args = parser.parse_args()
-    bootstrap(Path(__file__).resolve().parents[1], args.output, args.official_manifest, args.resume)
+    bootstrap(Path(__file__).resolve().parents[1], args.output, args.official_manifest, args.resume,
+              hard_deadline=args.hard_deadline, adopt_waiting_window=args.adopt_waiting_window)
 
 
 if __name__ == "__main__":

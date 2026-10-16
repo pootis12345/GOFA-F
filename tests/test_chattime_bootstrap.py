@@ -49,7 +49,8 @@ def test_real_cpu_pass_is_required_before_clock(module, tmp_path):
     assert len(calls) == 2 and not (output/"window.json").exists()
 
 
-def test_successful_preparation_launches_only_registered_waiter(module, tmp_path):
+@pytest.mark.parametrize("shortened", [False, True])
+def test_successful_preparation_launches_only_registered_waiter(module, tmp_path, shortened):
     output = tmp_path/"out"
     calls, launched = [], []
 
@@ -73,7 +74,12 @@ def test_successful_preparation_launches_only_registered_waiter(module, tmp_path
         launched.append(command)
         return Child()
 
-    module.bootstrap(tmp_path, output, tmp_path/"official.json", run=run, popen=launch)
+    kwargs = {"hard_deadline": "2026-10-16T23:30:00+08:00",
+              "adopt_waiting_window": tmp_path/"previous"} if shortened else {}
+    module.bootstrap(tmp_path, output, tmp_path/"official.json", run=run, popen=launch, **kwargs)
     assert len(launched) == 1 and not (output/"window.json").exists()
     # The bootstrap never creates the timer; the admitted stage supervisor does.
     assert json.loads((output/"bootstrap.json").read_text())["state"] == "incomplete"
+    if shortened:
+        assert launched[0][launched[0].index("--hard-deadline")+1] == kwargs["hard_deadline"]
+        assert launched[0][launched[0].index("--adopt-waiting-window")+1] == str(kwargs["adopt_waiting_window"])
