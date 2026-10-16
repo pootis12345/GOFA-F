@@ -91,6 +91,7 @@ def main():
     observed = data.series.mask[origin-12:origin, :3][None]
     encoded = codec.encode(raw, observed, data.mean.numpy()[:3])
     mechanisms = check_model(model, encoded, batch["graph_features"][:, :3])
+    assert mechanisms["native_prefill_shared_prediction_and_gradient"]
     parameters = counts(model)
     assert parameters["trainable_real_dof"] == 1120914
     full_tokens = codec.encode(data.series.values[origin-12:origin][None],
@@ -99,6 +100,10 @@ def main():
     assert cache_estimate > config["cache"]["disk_limit_gib"]*2**30
     assert not torch.cuda.is_initialized()
     runtime = {"python": sys.version, "executable": sys.executable, "packages": packages,
+        "sys_path": sys.path,
+        "isolated_environment_paths": {str(path): path.read_text()
+            for path in (Path(sys.prefix)/"pyvenv.cfg",
+                         Path(sys.prefix)/"lib/python3.11/site-packages/native_read_only.pth") if path.exists()},
         "modules": {name: {"path": module.__file__, "sha256": digest(module.__file__)}
                     for name, module in (("torch", torch), ("transformers", transformers),
                                          ("numpy", np), ("sklearn", sklearn))},

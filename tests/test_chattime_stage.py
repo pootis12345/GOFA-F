@@ -9,7 +9,7 @@ from torch import nn
 from gofa_f.chattime import HistoryCodec
 from gofa_f.chattime_stage import bind, bind_window, config_file, digest, seal
 from gofa_f.chattime_task import (apply_validation, available_metric, initial_state,
-    load_window, native_window, optimizer_update, summarize_split, write_window)
+    load_window, native_window, optimizer_update, summarize_split, write_window, GuardGeneration)
 from gofa_f.metrics import Metrics
 from gofa_f.native_stage import StopRequested
 from test_chattime import Tokenizer
@@ -22,6 +22,13 @@ def test_window_includes_wait_and_never_extends(tmp_path):
     assert bind_window(tmp_path, resume=True, now=99999.) == first
     with pytest.raises(ValueError):
         bind_window(tmp_path)
+
+
+def test_initial_window_crash_keeps_launch_identity(tmp_path):
+    first = bind_window(tmp_path, now=1000., launch_fingerprint="same-inputs")
+    assert bind_window(tmp_path, resume=True, now=5000., launch_fingerprint="same-inputs") == first
+    with pytest.raises(ValueError):
+        bind_window(tmp_path, resume=True, launch_fingerprint="changed-code")
 
 
 def test_resume_binding_rejects_changes(tmp_path):
@@ -93,6 +100,9 @@ def test_no_valid_generation_is_not_fabricated():
 class Data:
     def __init__(self):
         self.windows = {"test": type("Windows", (), {"origins": [12, 13], "__len__": lambda self: 2})()}
+        values = np.zeros((30, 2), dtype=np.float32)
+        values[:, 1] = 2
+        self.series = type("Series", (), {"values": values, "mask": np.ones_like(values, bool)})()
 
     def batch(self, split, indices):
         values = torch.zeros(1, 12, 2)
@@ -149,6 +159,33 @@ def test_native_resume_inside_window(tmp_path):
     fresh = native_window(Generator(), codec, encoded, clean, 0, lambda: None, node_micro=1)
     for a, b in zip(resumed, fresh):
         np.testing.assert_array_equal(a, b)
+
+
+def test_greedy_stops_only_after_requested_complete_values():
+    tokenizer = Tokenizer()
+    stop = GuardGeneration(lambda: None, tokenizer, prefix_length=3)
+    assert not bool(stop(torch.ones(1, 3, dtype=torch.long), None)[0])
+    assert bool(stop(torch.ones(1, 5, dtype=torch.long), None)[0])
+
+
+def test_native_window_prefill_reuse_with_empty_node(tmp_path):
+    from test_chattime import tiny
+    from dataclasses import replace
+    model, _, features, codec = tiny.__wrapped__()
+    raw = np.repeat(np.arange(12, dtype=np.float32)[None, :, None], 3, axis=2)
+    encoded = codec.encode(raw, np.ones_like(raw, bool), np.zeros(3), padding_side="left")
+    assert encoded.attention_mask.all()
+    present = encoded.present.clone()
+    present[0, 0] = False
+    encoded = replace(encoded, present=present)
+    with torch.no_grad():
+        model.head.weight.fill_(.001)
+        for graph in model.graph.values():
+            graph.gate.fill_(.1)
+    native = native_window(model.native, codec, encoded, tmp_path, 0, lambda: None, return_prefix=True)
+    shared = model.from_prefix(native[2], encoded, features)
+    separate = model(encoded, features)
+    torch.testing.assert_close(shared, separate, rtol=1e-6, atol=1e-6)
 
 
 def test_seal_rejects_changed_checkpoint(tmp_path):
@@ -232,3 +269,59 @@ def test_gpu_phase_order_and_test_seal(tmp_path, monkeypatch, mechanism_failure)
         stage.stage("configs/stage16_chattime.yaml", tmp_path, True)
         assert phases == ["preflight", "train", "evaluate"]
         assert stage.read(tmp_path/"status.json")["state"] == "complete"
+
+
+def test_training_full_windows_validation_and_restart(tmp_path):
+    from types import SimpleNamespace
+    from gofa_f.chattime_task import train
+    from test_chattime import tiny
+    model, _, _, codec = tiny.__wrapped__()
+    values = np.arange(60*3, dtype=np.float32).reshape(60, 3)/10
+    masks = np.ones_like(values, dtype=bool)
+    masks[12, 0] = False
+    seen = []
+
+    class Windows:
+        def __init__(self, origins):
+            self.origins = origins
+
+        def __len__(self):
+            return len(self.origins)
+
+    class TrainingData:
+        windows = {"train": Windows([12, 13]), "val": Windows([25])}
+        series = SimpleNamespace(values=values, mask=masks)
+        mean = torch.zeros(3)
+
+        def batch(self, split, indices):
+            assert split != "test"
+            if split == "train":
+                seen.extend(indices)
+            origin = self.windows[split].origins[indices[0]]
+            return {"origins": torch.tensor([origin]), "graph_features": torch.ones(1, 3, 19),
+                "y_raw": torch.from_numpy(values[origin:origin+12])[None],
+                "y_mask": torch.from_numpy(masks[origin:origin+12])[None]}
+
+    class GPU:
+        device = torch.device("cpu")
+        epochs = 1
+
+        def check(self, budget):
+            history = tmp_path/"gofa_chattime/history.json"
+            if history.exists() and len(__import__('json').loads(history.read_text())) >= self.epochs:
+                raise StopRequested()
+
+    gpu = GPU()
+    with pytest.raises(StopRequested):
+        train({}, tmp_path, model, codec, TrainingData(), gpu, None, "same-binding")
+    assert seen[0] == 0 and sorted(seen[1:]) == [0, 1]  # first access estimates cache capacity
+    progress = __import__('json').loads((tmp_path/"gofa_chattime/progress.json").read_text())
+    assert progress["epoch"] == 1 and progress["updates"] == 1
+    seen.clear()
+    gpu.epochs = 2
+    with pytest.raises(StopRequested):
+        train({}, tmp_path, model, codec, TrainingData(), gpu, None, "same-binding")
+    assert seen[0] == 0 and sorted(seen[1:]) == [0, 1]
+    progress = __import__('json').loads((tmp_path/"gofa_chattime/progress.json").read_text())
+    assert progress["epoch"] == 2 and progress["updates"] == 2
+    assert len(list((tmp_path/"gofa_chattime/validations").glob("*.json"))) == 2

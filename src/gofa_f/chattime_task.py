@@ -3,6 +3,7 @@ import argparse
 import gc
 import hashlib
 import importlib.metadata
+import importlib
 import json
 import os
 from pathlib import Path
@@ -143,7 +144,7 @@ def initial_state():
     return {"epoch": 0, "offset": 0, "updates": 0, "stale": 0, "best_mae": None,
         "best_updates": None, "phase": "train", "pending_windows": 0, "pending_count": 0,
         "pending_loss": 0., "validation_offset": 0, "validation_metrics": {},
-        "last_validated_key": None, "suffix_checkpointing": False, "prefix_node_chunk": 64}
+        "last_validated_key": None, "suffix_checkpointing": False, "prefix_node_chunk": 256}
 
 
 def save_checkpoint(directory, model, optimizer, state, binding):
@@ -199,6 +200,7 @@ def train(config, output, model, codec, data, gpu, budget, binding):
     (directory/"validations").mkdir(exist_ok=True)
     optimizer = make_optimizer(model)
     state = load_checkpoint(directory, model, optimizer, binding)
+    state.pop("stop_reason", None)
     probe = encoded_batch(codec, data, data.batch("train", [0]), torch.device("cpu"))
     estimate = len(data.windows["train"])*probe.input_ids.numel()*(model.native.config.hidden_size*2+1)
     disk = Path(output)/"cache" if estimate <= 128*2**30 else None
@@ -228,7 +230,7 @@ def train(config, output, model, codec, data, gpu, budget, binding):
                     encoded = encoded_batch(codec, data, batch, gpu.device)
                     before_rng, before_grad = rng_state(), gradients(model)
                     try:
-                        with torch.autocast("cuda", dtype=torch.bfloat16):
+                        with torch.autocast(gpu.device.type, dtype=torch.bfloat16, enabled=gpu.device.type == "cuda"):
                             prediction = model(encoded, batch["graph_features"].to(gpu.device), cache,
                                                state["prefix_node_chunk"], guard)
                         mask, target = batch["y_mask"].to(gpu.device), batch["y_raw"].to(gpu.device)
@@ -282,7 +284,8 @@ def train(config, output, model, codec, data, gpu, budget, binding):
                     guard()
                     batch = data.batch("val", [state["validation_offset"]])
                     encoded = encoded_batch(codec, data, batch, gpu.device)
-                    with torch.no_grad(), torch.autocast("cuda", dtype=torch.bfloat16):
+                    with torch.no_grad(), torch.autocast(gpu.device.type, dtype=torch.bfloat16,
+                                                         enabled=gpu.device.type == "cuda"):
                         prediction = model(encoded, batch["graph_features"].to(gpu.device), cache,
                                            state["prefix_node_chunk"], guard)
                     metric.update(prediction.cpu(), batch["y_raw"], batch["y_mask"])
@@ -325,20 +328,31 @@ def train(config, output, model, codec, data, gpu, budget, binding):
 
 
 class GuardGeneration(StoppingCriteria):
-    def __init__(self, check):
+    def __init__(self, check, tokenizer=None, prefix_length=0):
         self.check = check
+        self.tokenizer, self.prefix_length = tokenizer, prefix_length
 
     def __call__(self, input_ids, scores, **kwargs):
         self.check()
+        if self.tokenizer is not None:
+            length = input_ids.shape[1]-self.prefix_length
+            if length > 0 and length % 2 == 0:
+                import re
+                texts = self.tokenizer.batch_decode(input_ids[:, self.prefix_length:], skip_special_tokens=False)
+                return torch.tensor([len(re.findall(r"###(.*?)###", text)) >= 12 for text in texts],
+                                    dtype=torch.bool, device=input_ids.device)
         return torch.zeros(len(input_ids), dtype=torch.bool, device=input_ids.device)
 
 
-def native_window(native, codec, encoded, directory, index, check, node_micro=64):
+def native_window(native, codec, encoded, directory, index, check, node_micro=256, return_prefix=False):
     directory = Path(directory)
     partial = directory/"partial.pt"
     rows = len(encoded.input_ids)
+    capture = return_prefix and node_micro >= rows
     predictions = np.repeat(encoded.last.cpu().numpy().reshape(-1, 1), 12, axis=1)
     valid = np.zeros((rows, 12), dtype=bool)
+    prefix_rows = torch.zeros(rows, encoded.input_ids.shape[1], native.config.hidden_size,
+                              dtype=native.dtype) if capture else None
     cursor = 0
     if partial.exists():
         old = torch.load(partial, map_location="cpu", weights_only=False)
@@ -351,36 +365,67 @@ def native_window(native, codec, encoded, directory, index, check, node_micro=64
             if old["rows"] != rows:
                 raise ValueError("Native evaluation node count changed")
             cursor, predictions, valid, node_micro = old["cursor"], old["prediction"], old["valid"], old["node_micro"]
+            capture = capture and node_micro >= rows
+            if capture:
+                if "prefix" in old:
+                    prefix_rows = old["prefix"]
+                else:
+                    cursor = 0  # No reusable prefill in an older interrupted call.
     while cursor < rows:
         check()
         end = min(rows, cursor+node_micro)
-        ids, mask = encoded.input_ids[cursor:end], encoded.attention_mask[cursor:end]
+        # Sharing uses exactly the same full node batch as GOFA's prefix, including
+        # empty nodes. Otherwise omit empty-history generation and use its fallback.
+        active = torch.arange(end-cursor, device=encoded.input_ids.device) if capture else \
+            encoded.present.reshape(-1)[cursor:end].nonzero().flatten()
+        ids, mask = encoded.input_ids[cursor:end][active], encoded.attention_mask[cursor:end][active]
         try:
-            with torch.no_grad(), torch.autocast(encoded.input_ids.device.type, dtype=torch.bfloat16):
-                generated = native.generate(input_ids=ids, attention_mask=mask,
-                    do_sample=False, max_new_tokens=64, use_cache=True,
-                    temperature=1.0, top_p=1.0,
-                    pad_token_id=codec.tokenizer.eos_token_id, eos_token_id=codec.tokenizer.eos_token_id,
-                    stopping_criteria=StoppingCriteriaList([GuardGeneration(check)]))
-            texts = codec.tokenizer.batch_decode(generated[:, ids.shape[1]:], skip_special_tokens=False)
+            if len(active):
+                with torch.no_grad(), torch.autocast(encoded.input_ids.device.type, dtype=torch.bfloat16,
+                                                     enabled=encoded.input_ids.device.type == "cuda"):
+                    generated = native.generate(input_ids=ids, attention_mask=mask,
+                        do_sample=False, max_new_tokens=64, use_cache=True,
+                        temperature=1.0, top_p=1.0,
+                        pad_token_id=codec.tokenizer.eos_token_id, eos_token_id=codec.tokenizer.eos_token_id,
+                        return_dict_in_generate=capture, output_hidden_states=capture,
+                        stopping_criteria=StoppingCriteriaList([GuardGeneration(check, codec.tokenizer, ids.shape[1])]))
+                sequences = generated.sequences if capture else generated
+                texts = codec.tokenizer.batch_decode(sequences[:, ids.shape[1]:], skip_special_tokens=False)
+                if capture:
+                    # First PREFILL, after frozen block29, before any generated value.
+                    boundary = native.config.num_hidden_layers-2
+                    prefix_rows[cursor+active.cpu()] = generated.hidden_states[0][boundary].detach().cpu()
+                del generated, sequences
+            else:
+                texts = []
         except torch.OutOfMemoryError:
             gc.collect()
             torch.cuda.empty_cache()
+            if capture:
+                capture, prefix_rows = False, None
+                continue  # Retrying without retained hidden states preserves greedy outputs.
             if node_micro == 1:
                 raise RuntimeError("Native generation OOM at node microbatch1")
             node_micro = max(1, node_micro//2)
             continue
-        for row, text in enumerate(texts, cursor):
+        for local_row, text in zip(active.cpu().tolist(), texts):
+            row = cursor+local_row
             predictions[row], valid[row] = codec.parse(text, encoded.inverse_scale[row],
                 encoded.inverse_offset[row], float(encoded.last.reshape(-1)[row]))
             if not bool(encoded.present.reshape(-1)[row]):
                 predictions[row] = float(encoded.last.reshape(-1)[row])
                 valid[row] = False
         cursor = end
-        atomic_torch(partial, {"index": index, "rows": rows, "cursor": cursor,
-            "prediction": predictions, "valid": valid, "node_micro": node_micro})
+        if not return_prefix or cursor < rows:
+            state = {"index": index, "rows": rows, "cursor": cursor,
+                     "prediction": predictions, "valid": valid, "node_micro": node_micro}
+            if capture:
+                state["prefix"] = prefix_rows
+            atomic_torch(partial, state)
     b, n = encoded.shape
-    return predictions.reshape(b, n, 12).transpose(0, 2, 1), valid.reshape(b, n, 12).transpose(0, 2, 1)
+    result = (predictions.reshape(b, n, 12).transpose(0, 2, 1), valid.reshape(b, n, 12).transpose(0, 2, 1))
+    shared = (prefix_rows, encoded.attention_mask.cpu()) if capture else None
+    return (*result, shared) if return_prefix else result
 
 
 def atomic_npz(path, **values):
@@ -394,10 +439,10 @@ def prediction_path(output, variant, split, index):
     return Path(output)/variant/"predictions"/split/f"{index:06d}.npz"
 
 
-def write_window(output, variant, split, index, origin, prediction, valid, binding):
+def write_window(output, variant, split, index, origin, prediction, valid, binding, shared_prefix=False):
     path = prediction_path(output, variant, split, index)
     path.parent.mkdir(parents=True, exist_ok=True)
-    atomic_npz(path, prediction=prediction, valid=valid, origin=origin, binding=binding)
+    atomic_npz(path, prediction=prediction, valid=valid, origin=origin, binding=binding, shared_prefix=shared_prefix)
     partial = path.parent/"partial.pt"
     if partial.exists():
         partial.unlink()
@@ -415,18 +460,22 @@ def load_window(path, origin, binding):
 
 def summarize_split(output, variant, split, data, binding):
     raw, generated = Metrics(12), Metrics(12)
-    completed, fallback, total_forecasts = 0, 0, 0
+    completed, fallback, total_forecasts, shared = 0, 0, 0, 0
     for i, origin in enumerate(data.windows[split].origins):
         path = prediction_path(output, variant, split, i)
         if not path.exists():
             continue
         prediction, valid = load_window(path, origin, binding)
-        batch = data.batch(split, [i])
+        with np.load(path, allow_pickle=False) as saved:
+            shared += int(saved["shared_prefix"]) if "shared_prefix" in saved else 0
+        # Metrics need raw targets only, not another 19-feature history pass.
+        target = torch.from_numpy(data.series.values[origin:origin+12])[None]
+        target_mask = torch.from_numpy(data.series.mask[origin:origin+12])[None]
         p, v = torch.from_numpy(prediction), torch.from_numpy(valid)
-        raw.update(p, batch["y_raw"], batch["y_mask"])
-        generated.update(p, batch["y_raw"], batch["y_mask"] & v)
+        raw.update(p, target, target_mask)
+        generated.update(p, target, target_mask & v)
         completed += 1
-        fallback += int((batch["y_mask"] & ~v).sum())
+        fallback += int((target_mask & ~v).sum())
         total_forecasts += valid.size
     progress = {"completed_windows": completed, "total_windows": len(data.windows[split]),
                 "complete": completed == len(data.windows[split])}
@@ -435,7 +484,7 @@ def summarize_split(output, variant, split, data, binding):
     result = {"raw": raw.result(), "valid_generation": available_metric(generated),
               "observed_fallback_fraction": fallback/int(raw.count.sum()),
               "observed_valid_generation_fraction": int(generated.count.sum())/int(raw.count.sum()),
-              "total_forecast_points": total_forecasts, "complete": True}
+              "total_forecast_points": total_forecasts, "shared_native_prefix_windows": shared, "complete": True}
     if variant == "gofa_chattime":
         result.pop("valid_generation")
     return progress, result
@@ -479,6 +528,8 @@ def evaluate(config, output, model, codec, data, gpu, budget, binding):
             raise ValueError("Best checkpoint source binding differs")
         model.load_trainable(saved["model"])
     model.eval()
+    policy_path = Path(output)/"evaluation_runtime.json"
+    sharing_allowed = read(policy_path, {}).get("sharing_allowed", True)
 
     def guard():
         gpu.check(budget)
@@ -486,7 +537,9 @@ def evaluate(config, output, model, codec, data, gpu, budget, binding):
     try:
         for split in ("val", "test"):
             for i, origin in enumerate(data.windows[split].origins):
-                variants = ("native_chattime",) if split == "val" else ("gofa_chattime", "native_chattime")
+                variants = ("native_chattime",) if split == "val" else ("native_chattime", "gofa_chattime")
+                shared_prefix = None
+                shared_encoded = None
                 for variant in variants:
                     if variant == "gofa_chattime" and not locked.get("gofa"):
                         continue
@@ -501,14 +554,28 @@ def evaluate(config, output, model, codec, data, gpu, budget, binding):
                         history = np.asarray(data.windows[split].origins)[[i]][:, None]+np.arange(-12, 0)
                         encoded = codec.encode(data.series.values[history], data.series.mask[history],
                                                data.mean.numpy(), padding_side="left").to(gpu.device)
-                        prediction, valid = native_window(model.native, codec, encoded, path.parent,
-                                                         i, guard)
+                        can_share = sharing_allowed and split == "test" and bool(locked.get("gofa")) and bool(encoded.attention_mask.all()) \
+                            and not prediction_path(output, "gofa_chattime", split, i).exists()
+                        native_result = native_window(model.native, codec, encoded, path.parent, i, guard,
+                                                      return_prefix=can_share)
+                        prediction, valid = native_result[:2]
+                        if can_share:
+                            shared_prefix, shared_encoded = native_result[2], encoded
+                            if shared_prefix is None:
+                                sharing_allowed = False
+                                atomic_json(policy_path, {"sharing_allowed": False,
+                                    "reason": "retaining native prefill exceeded shared memory; unretained greedy path preserved"})
                     else:
-                        encoded = encoded_batch(codec, data, batch, gpu.device)
+                        encoded = shared_encoded if shared_prefix is not None else encoded_batch(codec, data, batch, gpu.device)
                         with torch.no_grad(), torch.autocast("cuda", dtype=torch.bfloat16):
-                            prediction = model(encoded, batch["graph_features"].to(gpu.device), check=guard).cpu().numpy()
+                            if shared_prefix is not None:
+                                prediction = model.from_prefix(tuple(v.to(gpu.device) for v in shared_prefix),
+                                    encoded, batch["graph_features"].to(gpu.device)).cpu().numpy()
+                            else:
+                                prediction = model(encoded, batch["graph_features"].to(gpu.device), check=guard).cpu().numpy()
                         valid = np.ones_like(prediction, dtype=bool)
-                    write_window(output, variant, split, i, origin, prediction, valid, binding)
+                    write_window(output, variant, split, i, origin, prediction, valid, binding,
+                                 shared_prefix=variant == "gofa_chattime" and shared_prefix is not None)
                 if (i+1) % 32 == 0:
                     # Cheap cursor progress; aggregate metrics only at completion/release.
                     for variant in variants:
@@ -528,6 +595,8 @@ def mechanisms(config, output, model, codec, data, gpu, budget, binding):
     encoded = encoded_batch(codec, data, batch, gpu.device)
     result = check_model(model, encoded, batch["graph_features"].to(gpu.device),
                          check=lambda: gpu.check(budget), gpu=True, binding=binding)
+    if not result["native_prefill_shared_prediction_and_gradient"]:
+        raise AssertionError("Native-generation frozen-prefix reuse was not exercised")
     atomic_json(Path(output)/"mechanisms.json", {"passed": True, **result})
 
 
@@ -557,6 +626,11 @@ def run(args):
         versions = {name: importlib.metadata.version(name) for name in ("torch", "transformers", "numpy")}
         if versions != {k: manifest["runtime"]["packages"][k] for k in versions}:
             raise ValueError("Actual task dependencies differ from CPU-verified environment")
+        for name in ("torch", "transformers", "numpy"):
+            module = importlib.import_module(name)
+            expected = manifest["runtime"]["modules"][name]
+            if Path(module.__file__).resolve() != Path(expected["path"]).resolve() or digest(module.__file__) != expected["sha256"]:
+                raise ValueError("Actual imported runtime module differs from CPU verification")
         seed()
         native = LlamaForCausalLM.from_pretrained(config["weights"]["directory"], local_files_only=True,
             torch_dtype=torch.bfloat16, attn_implementation="sdpa").to(gpu.device).requires_grad_(False).eval()

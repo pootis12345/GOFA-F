@@ -221,7 +221,7 @@ class ChatTimeGOFA(nn.Module):
             cache_position=positions, position_embeddings=rotary)[0]
 
     @torch.no_grad()
-    def prefix(self, encoded, node_chunk=64, check=lambda: None):
+    def prefix(self, encoded, node_chunk=256, check=lambda: None):
         hidden_chunks = []
         for start in range(0, len(encoded.input_ids), node_chunk):
             check()
@@ -272,7 +272,7 @@ class ChatTimeGOFA(nn.Module):
         raw = encoded.last[..., None]+encoded.scale[..., None]*delta
         return raw.transpose(1, 2)
 
-    def forward(self, encoded, features, cache=None, node_chunk=64, check=lambda: None):
+    def forward(self, encoded, features, cache=None, node_chunk=256, check=lambda: None):
         key = cache.key(encoded) if cache is not None else None
         prefix = cache.get(key, encoded.input_ids.device) if cache is not None else None
         if prefix is None:

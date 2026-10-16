@@ -36,7 +36,7 @@ training:
 native_decoding:
   do_sample: false
   max_new_tokens: 64
-  node_microbatch: 64
+  node_microbatch: 256
 cache:
   disk_limit_gib: 128
   ram_limit_gib: 64

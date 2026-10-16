@@ -49,7 +49,7 @@ def config_file(path):
         "max_epochs": 100, "patience": 15, "graph_lr": .001, "head_lr": .0001,
         "weight_decay": .0001, "gradient_clip": 1., "loss": "raw_mae", "checkpoint_seconds": 30}
     if config["training"] != training or config["native_decoding"] != {
-            "do_sample": False, "max_new_tokens": 64, "node_microbatch": 64}:
+            "do_sample": False, "max_new_tokens": 64, "node_microbatch": 256}:
         raise ValueError("Unregistered optimization or decoding")
     r = config["resources"]
     if r["wall_window_hours"] != 11 or r["evaluation_reserve_hours"] != 2 or \
@@ -67,7 +67,7 @@ def code_files():
     return {str(p): digest(p) for p in paths}
 
 
-def bind_window(output, resume=False, now=None):
+def bind_window(output, resume=False, now=None, launch_fingerprint=None):
     path = Path(output)/"window.json"
     old = read(path)
     if old is not None:
@@ -76,12 +76,16 @@ def bind_window(output, resume=False, now=None):
         if old["window_seconds"] != 11*3600 or old["wall_deadline"]-old["started_at"] != 11*3600 \
                 or old["training_deadline"] != old["wall_deadline"]-2*3600:
             raise ValueError("Saved absolute window changed")
+        if launch_fingerprint is not None and old.get("launch_fingerprint") != launch_fingerprint:
+            raise ValueError("Saved launch identity changed")
         return old
     if resume:
         raise ValueError("Missing persisted Stage16 window")
     now = time.time() if now is None else now
     result = {"started_at": now, "training_deadline": now+9*3600,
               "wall_deadline": now+11*3600, "window_seconds": 11*3600}
+    if launch_fingerprint is not None:
+        result["launch_fingerprint"] = launch_fingerprint
     atomic_json(path, result)
     return result
 
@@ -198,6 +202,8 @@ def write_report(output):
     if launcher in ("wall_deadline", "failed") and state != "complete":
         state = launcher
     results = {name: read(output/name/"result.json") for name in ("native_chattime", "gofa_chattime")}
+    if all(record and record.get("complete") for record in results.values()):
+        state = "complete"
     progress = {name: read(output/name/"evaluation_progress.json", {}) for name in results}
     archived = read("docs/results/stage4-pure-graph-v2.json", {})
     old = archived.get("historical_reference", {}).get("metr_la", {})
@@ -338,6 +344,19 @@ def main():
         prepare(config, output)
         return
     if args.report_only:
+        if (output/"final_selection.json").exists() and (output/"manifest.json").exists():
+            # Aggregate only already-written forecasts. This path never loads weights
+            # or creates a CUDA context, even after the wall deadline.
+            os.environ["CUDA_VISIBLE_DEVICES"] = ""
+            os.environ["OMP_NUM_THREADS"] = "2"
+            os.environ["MKL_NUM_THREADS"] = "2"
+            from gofa_f.chattime_task import data_for, finalize_evaluation
+            manifest_record = read(output/"manifest.json")
+            if manifest_record["inputs"] != {p: digest(p) for p in manifest_record["inputs"]}:
+                raise ValueError("Immutable data/source changed before CPU aggregation")
+            binding = hashlib.sha256(json.dumps(manifest_record, sort_keys=True).encode()).hexdigest()
+            data, _ = data_for(config, evaluation=True)
+            finalize_evaluation(output, data, binding, read(output/"final_selection.json"))
         write_report(output)
         return
     if args.worker:
@@ -353,7 +372,8 @@ def main():
     if not cpu.get("passed") or cpu.get("code_files") != code_files():
         raise ValueError("Current CPU preflight required before starting the clock")
     expected = manifest(config, output, None)
-    window = bind_window(output, args.resume)
+    fingerprint = hashlib.sha256(json.dumps(expected, sort_keys=True).encode()).hexdigest()
+    window = bind_window(output, args.resume, launch_fingerprint=fingerprint)
     if time.time() >= window["wall_deadline"]-60:
         atomic_json(output/"launcher.json", {"state": "wall_deadline"})
         if (output/"manifest.json").exists():
@@ -361,8 +381,10 @@ def main():
         write_report(output)
         return
     expected["window"] = window
-    bind(output/"launch_binding.json", expected, args.resume)
-    bind(output/"manifest.json", expected, args.resume)
+    # A crash immediately after window creation may leave no other bindings.
+    # The persisted fingerprint permits their reconstruction without a new timer.
+    bind(output/"launch_binding.json", expected, args.resume and (output/"launch_binding.json").exists())
+    bind(output/"manifest.json", expected, args.resume and (output/"manifest.json").exists())
     command = [sys.executable, "-u", "-m", "gofa_f.chattime_stage", "--worker", "--config", args.config,
                "--output", str(output), "--resume"]
     idle_launch(output, command, total=None, wall_deadline=window["wall_deadline"], memory_cap_gib=40,

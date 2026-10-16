@@ -55,10 +55,15 @@ def tiny():
     return model, encoded, features, codec
 
 
-def test_manual_causal_path_cache_freeze_text_and_pending_resume(tiny):
+@pytest.mark.parametrize("all_valid_tokens", [False, True])
+def test_manual_causal_path_cache_freeze_text_and_pending_resume(tiny, all_valid_tokens):
     model, encoded, features, _ = tiny
+    if all_valid_tokens:
+        encoded = replace(encoded, attention_mask=torch.ones_like(encoded.attention_mask))
     record = check_model(model, encoded, features)
     assert record["initial_persistence"] and record["text_bypass_exact"]
+    if all_valid_tokens:
+        assert record["native_prefill_shared_prediction_and_gradient"]
 
 
 @pytest.mark.parametrize("values", [np.arange(12.)/7, np.full(12, 3.5),

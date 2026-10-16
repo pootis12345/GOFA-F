@@ -71,6 +71,25 @@ def check_model(model, encoded, features, check=lambda: None, gpu=False, binding
     graph_active = any(float(value.abs().sum()) > 0 for name, value in grads[0].items() if name.startswith("graph."))
     assert graph_active
     assert all(p.grad is None for p in model.native.parameters())
+    shared_native_prefill = False
+    if bool(encoded.attention_mask.all()):
+        check()
+        with torch.no_grad():
+            generated = model.native.generate(input_ids=encoded.input_ids, attention_mask=encoded.attention_mask,
+                do_sample=False, temperature=1., top_p=1., max_new_tokens=1, use_cache=True,
+                pad_token_id=model.native.config.eos_token_id, return_dict_in_generate=True,
+                output_hidden_states=True)
+            native_prefix = (generated.hidden_states[0][model.graph_layers[0]+1], encoded.attention_mask)
+        model.zero_grad(set_to_none=True)
+        shared_prediction = model.from_prefix(native_prefix, encoded, features)
+        shared_prediction.square().mean().backward()
+        torch.testing.assert_close(shared_prediction, results[0], **tolerance)
+        shared_gradients = gradients(model)
+        assert shared_gradients.keys() == grads[0].keys()
+        for name in shared_gradients:
+            torch.testing.assert_close(shared_gradients[name], grads[0][name], **tolerance)
+        shared_native_prefill = True
+        del generated, native_prefix, shared_prediction, shared_gradients
 
     # Missing nodes cannot send or receive a graph delta, including all-empty neighborhoods.
     with torch.no_grad():
@@ -124,4 +143,5 @@ def check_model(model, encoded, features, check=lambda: None, gpu=False, binding
         "cached_prediction_and_gradients": True, "graph_gradient_active": graph_active,
         "batch_graph_isolation": True, "empty_nodes": True, "pending_gradient_resume_exact": True,
         "optimizer_resume_exact": True, "native_weights_unchanged": True, "text_bypass_exact": True,
+        "native_prefill_shared_prediction_and_gradient": shared_native_prefill,
         "numeric_tolerance": tolerance, "checkpoint_state_tolerance": "exact"}
