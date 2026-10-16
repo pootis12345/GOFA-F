@@ -20,7 +20,7 @@ REPO = "ChengsenWang/ChatTime-1-7B-Chat"
 REVISION = "20baa88d6ab838b34abbd1d2b1f4cea57c8ff870"
 SOURCE_REVISION = "8c2d4c209302d2b2bd6cc3c154586842341e3247"
 PROMPT = ("You are a helpful assistant that performs time series prediction. "
-          "The user will provide a sequence and you will predict the sequence.\n"
+          "The user will provide a sequence and you will predict the sequence.\n\n"
           "### Instruction:\nPlease predict the following sequence carefully.\n\n"
           "### Input:\n{}\n\n### Response:\n")
 

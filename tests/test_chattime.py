@@ -91,6 +91,17 @@ def test_empty_constant_and_invalid_generation():
     np.testing.assert_allclose(prediction[:3], last)
 
 
+def test_official_prompt_blank_line_boundaries():
+    codec = HistoryCodec(Tokenizer())
+    text, *_ = codec.serialize(np.arange(12.), np.ones(12, bool), 0.)
+    system, instruction, input_section, response = text.split("\n\n")
+    assert system == ("You are a helpful assistant that performs time series prediction. "
+                      "The user will provide a sequence and you will predict the sequence.")
+    assert instruction == "### Instruction:\nPlease predict the following sequence carefully."
+    assert input_section.startswith("### Input:\n###")
+    assert response == "### Response:\n"
+
+
 def test_raw_zero_is_an_observation_when_mask_says_so():
     codec = HistoryCodec(Tokenizer())
     text, _, _, present, _, _ = codec.serialize(np.zeros(12), np.ones(12, bool), 9.)
