@@ -1,0 +1,123 @@
+{
+  "checked_at": 1792156637.4231498,
+  "source_code": "30943b9acccd5d73c3f0a6a9000b7730e537ecdf",
+  "source_to_target_checkpoint_audit": "exact_except_implementation_binding",
+  "cuda_initialized": false,
+  "source_processes_exited": {
+    "4135772": true,
+    "4140814": true,
+    "4143990": true,
+    "4150553": true
+  },
+  "bootstrap": {
+    "state": "idle_waiter_deployed",
+    "pid": 134316,
+    "start_ticks": 607430843,
+    "updated_at": 1792156334.452901,
+    "snapshot": "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v8",
+    "launcher_pid": 176180,
+    "launcher_start_ticks": 607739521
+  },
+  "launcher": {
+    "state": "running",
+    "pid": 176180,
+    "spent_seconds": 9908.55239078775,
+    "updated_at": 1792156414.382401,
+    "worker_pid": 177359
+  },
+  "status": {
+    "state": "waiting_for_shared_capacity",
+    "pid": 177359,
+    "updated_at": 1792156634.5628328,
+    "phase": "preflight",
+    "consecutive_idle": 0
+  },
+  "progress": {
+    "epoch": 0,
+    "offset": 10737,
+    "updates": 167,
+    "stale": 0,
+    "best_mae": null,
+    "best_updates": null,
+    "phase": "train",
+    "pending_windows": 49,
+    "pending_count": 117586,
+    "pending_loss": 431256.71337890625,
+    "validation_offset": 0,
+    "last_validated_key": null,
+    "suffix_checkpointing": false,
+    "prefix_node_chunk": 256,
+    "last_gradient_norm": 4.410202503204346,
+    "last_training_raw_mae": 3.858170493746622,
+    "stop_reason": "training_deadline_or_signal",
+    "updated_at": 1792156317.989897,
+    "checkpoint_sha256": "37f95b03172e610a609d11ac1dd6a8865b051cca03dbdeac782e0e5b801c538a"
+  },
+  "migration": {
+    "source": {
+      "kind": "training_continuation",
+      "output": "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v6",
+      "source_binding": "13040e34bc35ef71d0cccd565f6a3925a938d1dc157deec4a73dde222e04d9a3",
+      "window_sha256": "6dd25e7aa957a6a8d84836f18787ffd17713767ac12e7d3af1eca88fa60b6174",
+      "manifest_sha256": "fe48fcefa73fb9cf44a448b9f0a4b4273fb6959151722af2e5aec54e99ac5126",
+      "checkpoint_sha256": "2315a930296ca3ddb7fe561c3bb7cb2e5e3db53efcbb1ac3b9244c4a310ebddb",
+      "started_at": 1792137782.8795292,
+      "original_wall_deadline": 1792164600.0,
+      "gpu_activity_seconds": 9908.55239078775,
+      "updates": 167,
+      "offset": 10737,
+      "pending_windows": 49,
+      "pending_count": 117586
+    },
+    "target_binding": "b8c10faa823cbb3fb31b98350521cfb0bba0a782f21901f2b89bba61e2d9047c",
+    "target_checkpoint_sha256": "37f95b03172e610a609d11ac1dd6a8865b051cca03dbdeac782e0e5b801c538a",
+    "state_restore": "exact",
+    "cache": "ephemeral caches rebuilt; old caches not modified",
+    "original_deadline_retained": true
+  },
+  "window": {
+    "started_at": 1792137782.8795292,
+    "training_deadline": 1792157400.0,
+    "wall_deadline": 1792164600.0,
+    "window_seconds": 26817.120470762253,
+    "adopted_from": {
+      "kind": "training_continuation",
+      "output": "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v6",
+      "source_binding": "13040e34bc35ef71d0cccd565f6a3925a938d1dc157deec4a73dde222e04d9a3",
+      "window_sha256": "6dd25e7aa957a6a8d84836f18787ffd17713767ac12e7d3af1eca88fa60b6174",
+      "manifest_sha256": "fe48fcefa73fb9cf44a448b9f0a4b4273fb6959151722af2e5aec54e99ac5126",
+      "checkpoint_sha256": "2315a930296ca3ddb7fe561c3bb7cb2e5e3db53efcbb1ac3b9244c4a310ebddb",
+      "started_at": 1792137782.8795292,
+      "original_wall_deadline": 1792164600.0,
+      "gpu_activity_seconds": 9908.55239078775,
+      "updates": 167,
+      "offset": 10737,
+      "pending_windows": 49,
+      "pending_count": 117586
+    },
+    "admission_policy": "shared_memory",
+    "fixed_prompt_kv": true,
+    "launch_fingerprint": "e691ef62dd847ec3e9eb3662f808a3c370af2db3ebf38d8a0ec0741e104cf5d1"
+  },
+  "active_budget": {
+    "spent_seconds": 9916.711961082183,
+    "worker": {
+      "pid": 177359,
+      "start_ticks": "607747514",
+      "last_monotonic": 6077697.712037077,
+      "charging": false
+    }
+  },
+  "budget": {
+    "spent_seconds": 9873.570450450294,
+    "scopes": {
+      "preflight": 7.736452373676002,
+      "train": 9865.833998076618
+    },
+    "active_scope": null
+  },
+  "mechanisms": null,
+  "failures": null,
+  "gpu_query": "47727 MiB, 33363 MiB, 100 %, Default",
+  "note": "Other task started during switch; waiting for shared capacity. CUDA cache equivalence and speed are not established."
+}

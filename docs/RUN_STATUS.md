@@ -1,5 +1,19 @@
 # 运行交接记录
 
+## Stage16 固定文本 KV 加速已实现并精确接续，等待共享余量（2026-10-16 21:15，Asia/Shanghai）
+
+用户授权加速第1项：仅缓存冻结前30层中47个固定文本token的KV及边界隐藏状态，继续计算30个动态token并重建完整77位置；图位置、后缀、原生生成、微批量1、有效batch64和科学协议不变。源码 `30943b9acccd5d73c3f0a6a9000b7730e537ecdf`，固定快照 `/home/dcg/dcg_data/GOFA-F-runs/stage16-chattime-metr-v8`，输出 `outputs/stage16-chattime-metr-v8/`。协议 `docs/STAGE16_FIXED_PROMPT_KV.md`。
+
+C禁CUDA/OMP/MKL各2线程306通过、11旧可选跳过（XML317条含跳过），Stage16专项70项，真实7B BF16缓存/原路径预测及梯度最大差均0。v7短形状预填充的CPU数值失败保留，改为原始完整形状预填充一次后通过，未放宽容差。GPU必须另行通过fresh及实际continued checkpoint两项缓存预测/梯度检查，才允许训练；尚不能声称加速已在GPU生效。
+
+21:12核实身份后合作停止v6监督器，bootstrap4135772/launcher4140814/worker4143990/GPU4150553均已退出。最后保存167次更新、epoch0 offset10737/22969（约46.7%）、未完成累积49窗口/117586有效标签。模型、优化器、梯度、Python/NumPy/Torch RNG、游标、验证日志及账本精确接续，监督活动9908.55239078775秒保留；旧结果不覆盖。源checkpoint SHA `2315a930296ca3ddb7fe561c3bb7cb2e5e3db53efcbb1ac3b9244c4a310ebddb`；migration明确state_restore=exact，来源/目标绑定及SHA均保存。
+
+v8 CPU控制器PID134316/start_ticks607430843；监督器PID176180/start_ticks607739521；CPU调度workerPID177359，使用前重新核对。外层共享准入已完成，内层GPU机制检查仍等待；切换期间另一任务占用约30GiB，本项目尚未创建新CUDA上下文。实际free≥56GiB/Default连续三次30秒的共享门槛、40GiB/Torch38GiB/16GiB余量不变，不操作对方任务。
+
+原起算16:03:02、**今天21:30训练截止/23:30硬截止**保留，不因接续/等待延长。当前没有完成epoch或完整验证，不能锁定最佳精度或填GOFA正式测试表。每小时跟进 `gofa-f-stage16` 已更新指向v8。证据 `docs/results/stage16-cpu-verification-v8.json`、`stage16-fixed-kv-migration-v8.json`、`stage16-fixed-kv-window-v8.json`。以下v6与更早部署均为历史，禁止重复启动。
+
+21:17追加禁CUDA实际源/目标检查点逐项审计：除实现binding外完全一致，所有旧进程确实退出。当前另一任务用显存约46.6GiB，实际free33363MiB（约32.6GiB）不足56GiB门槛，v8仍仅CPU等待，未启动GPU机制/训练。证据 `docs/results/stage16-fixed-kv-deployment-v8.json`；等待期间不累计GPU活动，不能给出新加速倍率。
+
 ## Stage16 改为显存余量共享准入（2026-10-16，Asia/Shanghai）
 
 用户提供当前pi05_libero推理服务器代码并授权：若不要求功能性独占，则不再等待GPU完全空闲。脚本无独占模式要求，实测约20.3GiB占用/58.8GiB实际空闲，允许共享；共享可能影响对方推理延迟，不保证原80ms耗时或实时性能。判断依据及资源协议 `docs/STAGE16_SHARED_GPU.md`。

@@ -147,3 +147,15 @@ artifact `stage16-chattime-metr-v6`, retaining16:03:02 start,21:30 training cuto
 and23:30 hard cutoff. See `STAGE16_SHARED_GPU.md`. Memory caps/margin, CPU/GPU
 checks, scientific protocol and failure tolerances are unchanged. Concurrent
 training may increase the other inference server's latency.
+
+User-authorized acceleration item1 continues v6 in immutable artifact
+`stage16-chattime-metr-v8`, source `30943b9acccd5d73c3f0a6a9000b7730e537ecdf`.
+Only the frozen first30 layers' fixed47-token textual KV is reused, with full
+original-shape warm-up and lossless native BF16 storage. Scientific settings,
+full inputs, language generation and trainable suffix remain unchanged. Source
+checkpoint/optimizer/pending gradients/RNG/cursor/activity migrate exactly after
+the old verified supervisor and children exit. Full CPU and separate fresh plus
+continued-checkpoint CUDA prediction/gradient checks must pass unchanged
+tolerances. The original16:03:02 start and21:30/23:30 cutoffs do not move.
+See `STAGE16_FIXED_PROMPT_KV.md` and the current `RUN_STATUS.md`; v7 CPU numerical
+failure is retained and did not start a GPU task.
