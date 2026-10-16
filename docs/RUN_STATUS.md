@@ -1,5 +1,11 @@
 # 运行交接记录
 
+## Stage14未合格，Stage15 REG路线与rank6组合准备部署（2026-10-16，Asia/Shanghai）
+
+Stage14已no_eligible_variant，等待器3145789/worker3146463退出，无失败。M1验证全步/第12步3.0803319922/3.6877857832，M2为3.0667078433/3.6651309559；M2改善约0.378%未过0.5%门槛，均未测试，合格对照仍T2。结果 `docs/STAGE14_RESULTS.md` 和机器可读副本保存，旧阶段不重启。
+
+Stage15固定唯一r1_reg_rank6，检验Stage14 M2路线与预算固定rank6的互补性，从预训练重新初始化，不加其他候选。预注册 `docs/STAGE15_REG_CAPACITY_PROTOCOL.md`，相同验证门槛及10:58绝对截止；准备C禁CUDA回归和独立部署。下方Stage14记录为历史。
+
 ## Stage14 token角色固定快照与等待器已部署（2026-10-16 07:08，Asia/Shanghai）
 
 运行源码 `38c1643eb698a6dba42be30e132a7f51c6d0e265`，快照 `/home/dcg/dcg_data/GOFA-F-runs/stage14-metr-tokens-v1`，C开发输出 `outputs/stage14-metr-tokens-v1/`，日志同级 `.log`、身份同级 `.launch.json`。B/C/GitHub同步，C禁CUDA/OMP/MKL各2线程223通过/11可选依赖跳过，固定快照12项输入清单核验通过；Stage13旧等待器和worker退出后才部署。
