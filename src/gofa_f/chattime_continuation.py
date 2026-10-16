@@ -11,7 +11,7 @@ from gofa_f.idle_launcher import process_identity
 from gofa_f.prefix_cache import atomic_json
 
 
-def source_record(previous, config, prepared, identity=process_identity):
+def source_record(previous, config, prepared, identity=process_identity, allow_failed_preflight=False):
     previous = Path(previous).resolve()
     ledger = read(previous/"active_budget.json", {})
     budget = read(previous/"budget.json", {})
@@ -19,7 +19,10 @@ def source_record(previous, config, prepared, identity=process_identity):
     missed_deadline = launcher_state == "incomplete" \
         and read(previous/"status.json", {}).get("reason") == "mechanisms missed training deadline" \
         and not read(previous/"mechanisms.json", {}).get("passed")
-    if (launcher_state != "stopped_by_user" and not missed_deadline) \
+    failed_preflight = allow_failed_preflight and launcher_state == "failed" \
+        and set(read(previous/"failures.json", {})) == {"preflight"} \
+        and not read(previous/"mechanisms.json", {}).get("passed")
+    if (launcher_state != "stopped_by_user" and not missed_deadline and not failed_preflight) \
             or ledger.get("worker") is not None or budget.get("active_scope") is not None:
         raise ValueError("Continuation requires a stopped and fully saved source")
     for suffix in (".launch.json", ".bootstrap.launch.json"):
@@ -54,12 +57,19 @@ def source_record(previous, config, prepared, identity=process_identity):
         raise ValueError("Source final checkpoint binding/hash differs")
     if saved["state"].get("stop_reason") != "training_deadline_or_signal":
         raise ValueError("Source is not an interrupted training checkpoint")
-    return {"kind": "training_continuation", "output": str(previous), "source_binding": source_binding,
+    if failed_preflight and read(previous/"migration.json", {}).get("target_checkpoint_sha256") != digest(path):
+        raise ValueError("Failed preflight changed the saved training state")
+    result = {"kind": "training_continuation", "output": str(previous), "source_binding": source_binding,
         "window_sha256": digest(previous/"window.json"), "manifest_sha256": digest(previous/"manifest.json"),
         "checkpoint_sha256": digest(path), "started_at": window["started_at"],
         "original_wall_deadline": window["wall_deadline"], "gpu_activity_seconds": ledger["spent_seconds"],
         "updates": saved["state"]["updates"], "offset": saved["state"]["offset"],
         "pending_windows": saved["state"]["pending_windows"], "pending_count": saved["state"]["pending_count"]}
+    if window.get("deadline_amendment"):
+        result["deadline_amendment"] = window["deadline_amendment"]
+    if failed_preflight:
+        result["repaired_failure"] = "preflight only; saved checkpoint unchanged; no predictions"
+    return result
 
 
 def copy_continuation(record, output, target_binding):

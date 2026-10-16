@@ -108,6 +108,22 @@ def test_extension_rejects_missing_source_and_reset_start(tmp_path):
                     deadline_amendment=amendment)
 
 
+def test_saved_user_amendment_is_inherited_by_repair_without_a_further_extension(tmp_path):
+    original = {"kind": "training_continuation", "started_at": 1000.,
+                "original_wall_deadline": 28000., "window_sha256": "original-window"}
+    amendment = deadline_extension(original, 70000.)
+    repaired = {"kind": "training_continuation", "started_at": 1000.,
+                "original_wall_deadline": 70000., "window_sha256": "failed-window", "deadline_amendment": amendment}
+    carried = deadline_extension(repaired, 70000.)
+    assert carried == amendment
+    window = bind_window(tmp_path, now=1000., hard_deadline=70000., adopted_from=repaired,
+                         deadline_amendment=carried, idle_interval_seconds=10)
+    assert bind_window(tmp_path, resume=True, idle_interval_seconds=10) == window
+    assert window["training_deadline"] == 62800. and window["started_at"] == 1000.
+    with pytest.raises(ValueError):
+        bind_window(tmp_path, resume=True, hard_deadline=70001., idle_interval_seconds=10)
+
+
 @pytest.mark.parametrize("refusal", [None, "cpu_summary", "live", "activity", "graph", "gpu_artifacts"])
 def test_adoption_requires_exited_zero_activity_waiter(tmp_path, refusal):
     from gofa_f.prefix_cache import atomic_json

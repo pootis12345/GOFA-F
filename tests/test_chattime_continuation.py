@@ -87,6 +87,31 @@ def test_arbitrary_incomplete_source_is_not_a_deadline_continuation(continued):
         source_record(source, config, prepared, identity=lambda _: None)
 
 
+@pytest.mark.parametrize("change", [None, "training_failure", "changed_checkpoint", "prediction"])
+def test_failed_preflight_repair_requires_explicit_flag_and_unchanged_unseen_state(continued, change):
+    source, _, config, prepared, _ = continued
+    atomic_json(source/"launcher.json", {"state": "failed"})
+    atomic_json(source/"failures.json", {"preflight": {"returncode": 1}})
+    checksum = digest(source/"gofa_chattime/last.pt")
+    atomic_json(source/"migration.json", {"target_checkpoint_sha256": checksum})
+    with pytest.raises(ValueError):
+        source_record(source, config, prepared, identity=lambda _: None)
+    if change == "training_failure":
+        atomic_json(source/"failures.json", {"train": {"returncode": 1}})
+    elif change == "changed_checkpoint":
+        atomic_json(source/"migration.json", {"target_checkpoint_sha256": "changed"})
+    elif change == "prediction":
+        folder = source/"native_chattime/predictions/test"
+        folder.mkdir(parents=True)
+        (folder/"000000.npz").write_bytes(b"prediction")
+    if change is None:
+        record = source_record(source, config, prepared, identity=lambda _: None, allow_failed_preflight=True)
+        assert record["updates"] == 79 and record["pending_windows"] == 49 and record["repaired_failure"]
+    else:
+        with pytest.raises(ValueError):
+            source_record(source, config, prepared, identity=lambda _: None, allow_failed_preflight=True)
+
+
 @pytest.mark.parametrize("bad", ["live", "config", "prediction", "active"])
 def test_continuation_rejects_incompatible_or_active_source(continued, bad):
     source, _, config, prepared, _ = continued

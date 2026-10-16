@@ -603,7 +603,7 @@ def mechanisms(config, output, model, codec, data, gpu, budget, binding):
     if original_cache is not None:
         result["fixed_prompt_fresh"] = check_fixed_prompt(model, encoded,
             batch["graph_features"].to(gpu.device), prompt_token_ids(codec.tokenizer),
-            check=lambda: gpu.check(budget))
+            check=lambda: gpu.check(budget), diagnostics_path=Path(output)/"fixed_prompt_fresh.json")
         assert result["fixed_prompt_fresh"]["optimized_exercised"]
         path = Path(output)/"gofa_chattime/last.pt"
         if path.exists():
@@ -613,7 +613,7 @@ def mechanisms(config, output, model, codec, data, gpu, budget, binding):
             model.load_trainable(checkpoint["model"])
             result["fixed_prompt_continued"] = check_fixed_prompt(model, encoded,
                 batch["graph_features"].to(gpu.device), prompt_token_ids(codec.tokenizer),
-                check=lambda: gpu.check(budget))
+                check=lambda: gpu.check(budget), diagnostics_path=Path(output)/"fixed_prompt_continued.json")
             assert result["fixed_prompt_continued"]["optimized_exercised"]
     model.prompt_prefix = original_cache
     if not result["native_prefill_shared_prediction_and_gradient"]:

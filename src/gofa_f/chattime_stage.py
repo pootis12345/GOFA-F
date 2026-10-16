@@ -70,6 +70,14 @@ def code_files():
 
 def deadline_extension(adopted_from, hard_deadline):
     """Record an explicit user amendment separately from an ordinary resume."""
+    inherited = (adopted_from or {}).get("deadline_amendment")
+    if inherited is not None and hard_deadline == adopted_from["original_wall_deadline"]:
+        if adopted_from.get("kind") != "training_continuation" or not adopted_from.get("window_sha256") \
+                or inherited.get("authorization") != "explicit_user_request" or not inherited.get("source_window_sha256") \
+                or inherited.get("new_wall_deadline") != hard_deadline \
+                or inherited.get("previous_wall_deadline", hard_deadline) >= hard_deadline:
+            raise ValueError("Inherited deadline authorization changed")
+        return inherited
     if not adopted_from or adopted_from.get("kind") != "training_continuation" \
             or not adopted_from.get("window_sha256") \
             or hard_deadline is None or hard_deadline <= adopted_from["original_wall_deadline"]:
@@ -452,11 +460,14 @@ def main():
     parser.add_argument("--idle-check-seconds", type=int, default=30)
     parser.add_argument("--authorized-deadline-extension", action="store_true",
                         help="Explicit user amendment; fresh continuation only, never an ordinary resume")
+    parser.add_argument("--repair-failed-preflight", action="store_true")
     parser.add_argument("--continue-training-from", help="Stopped checkpoint to migrate without resetting training or time")
     parser.add_argument("--worker", action="store_true", help=argparse.SUPPRESS)
     args = parser.parse_args()
     if args.authorized_deadline_extension and (args.resume or not args.continue_training_from):
         raise ValueError("A user deadline extension requires a fresh training continuation")
+    if args.repair_failed_preflight and (args.resume or not args.continue_training_from):
+        raise ValueError("Preflight repair requires a fresh saved-state continuation")
     config, output = config_file(args.config), Path(args.output).resolve()
     output.mkdir(parents=True, exist_ok=True)
     if args.prepare_only:
@@ -514,10 +525,13 @@ def main():
             raise ValueError("Cache continuation requires a fresh output and explicit cutoff")
         from gofa_f.chattime_continuation import source_record
         prepared = {**read(output/"preparation.json"), "output": str(output)}
-        adopted = source_record(args.continue_training_from, config, prepared)
+        adopted = source_record(args.continue_training_from, config, prepared,
+                                allow_failed_preflight=args.repair_failed_preflight)
         if cutoff > adopted["original_wall_deadline"] and not args.authorized_deadline_extension:
             raise ValueError("Continuation cannot extend the original deadline")
         if args.authorized_deadline_extension:
+            amendment = deadline_extension(adopted, cutoff)
+        elif adopted.get("deadline_amendment"):
             amendment = deadline_extension(adopted, cutoff)
     window = bind_window(output, args.resume, launch_fingerprint=fingerprint, hard_deadline=cutoff,
         now=adopted["started_at"] if adopted else None, adopted_from=adopted,

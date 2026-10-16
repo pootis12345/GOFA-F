@@ -1,4 +1,5 @@
 from dataclasses import replace
+import json
 
 import pytest
 import torch
@@ -91,3 +92,41 @@ def test_warmup_history_never_changes_shared_text_states(tiny):
     expected = model._full_prefix(changed)
     torch.testing.assert_close(reused[0], expected[0], rtol=1e-6, atol=1e-6)
     assert cache.builds == 1
+
+
+def test_cached_attention_retains_full_native_query_shape_and_causal_dispatch(tiny, monkeypatch):
+    from gofa_f import chattime_prompt_cache as module
+    model, encoded, _, _ = tiny
+    encoded = replace(encoded, attention_mask=torch.ones_like(encoded.attention_mask))
+    observations = []
+    original = module.F.scaled_dot_product_attention
+    def attention(query, key, value, *args, **kwargs):
+        observations.append((query.shape, key.shape, query.stride(), kwargs.get("attn_mask"), kwargs.get("is_causal")))
+        return original(query, key, value, *args, **kwargs)
+    monkeypatch.setattr(module.F, "scaled_dot_product_attention", attention)
+    expected = model._full_prefix(encoded)
+    native = observations.copy()
+    observations.clear()
+    model.prompt_prefix = FixedPromptPrefix(encoded.input_ids[0, :3].tolist(), "test")
+    actual = model.prefix(encoded)
+    layers = model.graph_layers[0]+1
+    assert len(observations) == layers*2  # one warm-up, one history computation
+    for reference, cached in zip(native, observations[layers:]):
+        assert reference[:3] == cached[:3]
+        assert cached[3] is None and cached[4] is True
+    torch.testing.assert_close(actual[0], expected[0], rtol=1e-6, atol=1e-6)
+
+
+def test_failed_cache_check_records_diagnostics_without_relaxing_tolerance(tiny, monkeypatch, tmp_path):
+    from gofa_f import chattime_prompt_cache as module
+    model, encoded, features, _ = tiny
+    encoded = replace(encoded, attention_mask=torch.ones_like(encoded.attention_mask))
+    original = module.padded_causal_layer
+    monkeypatch.setattr(module, "padded_causal_layer", lambda *args: original(*args)+1.)
+    path = tmp_path/"failure.json"
+    with pytest.raises(AssertionError):
+        check_fixed_prompt(model, encoded, features, encoded.input_ids[0, :3].tolist(), diagnostics_path=path)
+    diagnostic = json.loads(path.read_text())
+    assert not diagnostic["passed"] and diagnostic["tolerance"] == {"rtol": 1e-6, "atol": 1e-6}
+    assert diagnostic["prefix"]["max_abs"] > 0 and model.prompt_prefix is None
+    assert all(p.grad is None for p in model.parameters())
