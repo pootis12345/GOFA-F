@@ -108,3 +108,13 @@ reference. Historical UFG/HSD/Bolt scores stay separate; Stage15 unperformed tes
 remain blank. Language bypass preservation does not establish graph-grounded
 explanations or single-checkpoint transfer. LLaMA-2 requires a later independent
 stage. Notify only on terminal states, exceptions or required user action.
+
+Deployment: fixed source `483a876c10b94430409c1d1fc0f882980b77e331`, artifact
+`stage16-chattime-metr-v3`. The scientific protocol ID remains v1. Preparation-only
+v1/v2 artifacts retain the missing-protobuf and prompt-blank-line failures; neither
+started a GPU window. v3 passed270 CPU cases (41 new), with11 old optional skips,
+and real7B BF16 CPU mechanisms. It starts the only11-hour window at2026-10-16
+16:03:02 Asia/Shanghai; training ends2026-10-17 01:03:02 and hard stop03:03:02.
+See `RUN_STATUS.md` and `results/stage16-cpu-verification.json`. These CPU results
+do not establish CUDA mechanisms or accuracy. Full prefix estimate is
+2,999,480,985,963bytes, exceeding the disk cap; the RAM LRU stays at64GiB.

@@ -1,0 +1,88 @@
+{
+  "recorded_at": 1792137853.519662,
+  "source": "483a876c10b94430409c1d1fc0f882980b77e331",
+  "snapshot": "/home/dcg/dcg_data/GOFA-F-runs/stage16-chattime-metr-v3",
+  "output": "/home/dcg/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v3",
+  "automation_id": "gofa-f-stage16",
+  "bootstrap": {
+    "state": "idle_waiter_deployed",
+    "pid": 3819503,
+    "start_ticks": 605872007,
+    "updated_at": 1792137773.8386497,
+    "snapshot": "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v3",
+    "launcher_pid": 3824577,
+    "launcher_start_ticks": 605883460
+  },
+  "window": {
+    "started_at": 1792137782.8795292,
+    "training_deadline": 1792170182.8795292,
+    "wall_deadline": 1792177382.8795292,
+    "window_seconds": 39600,
+    "launch_fingerprint": "aafe6e945ed82f968e35c399feb79dfd38fe79923a966621ea1aab3f1f834b6b"
+  },
+  "launcher": {
+    "state": "waiting_for_idle",
+    "pid": 3824577,
+    "spent_seconds": 0.0,
+    "updated_at": 1792137843.2734716,
+    "consecutive_idle": 0,
+    "query_error": null
+  },
+  "active_budget": {
+    "spent_seconds": 0.0,
+    "worker": null
+  },
+  "launch": {
+    "pid": 3824577,
+    "start_ticks": 605883460,
+    "snapshot": "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v3",
+    "output": "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v3",
+    "spawned_at": 1792137773.8385086,
+    "command": [
+      "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v3/.venv-chat/bin/python",
+      "-u",
+      "-m",
+      "gofa_f.chattime_stage",
+      "--output",
+      "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v3"
+    ]
+  },
+  "bootstrap.launch": {
+    "pid": 3819503,
+    "start_ticks": 605872007,
+    "snapshot": "/home/dcg/dcg_data/GOFA-F-runs/stage16-chattime-metr-v3",
+    "code": "483a876c10b94430409c1d1fc0f882980b77e331",
+    "output": "/home/dcg/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v3",
+    "spawned_at": 1792137659.305969,
+    "command": [
+      "/home/dcg/dcg_data/GOFA-F-runs/stage16-chattime-metr-v3/.venv-chat/bin/python",
+      "-u",
+      "/home/dcg/dcg_data/GOFA-F-runs/stage16-chattime-metr-v3/scripts/bootstrap_chattime_stage.py",
+      "--output",
+      "/home/dcg/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v3",
+      "--official-manifest",
+      "/home/dcg/dcg_data/GOFA-F/.remote/chattime-official-snapshot.json"
+    ]
+  },
+  "preparation_failures": {
+    "stage16-chattime-metr-v1": {
+      "state": "failed",
+      "pid": 3789919,
+      "start_ticks": 605773701,
+      "updated_at": 1792136725.420592,
+      "snapshot": "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v1",
+      "error": "Real-weight CPU preflight failed; GPU launch prohibited",
+      "window_started": false
+    },
+    "stage16-chattime-metr-v2": {
+      "state": "failed",
+      "pid": 3813722,
+      "start_ticks": 605854267,
+      "updated_at": 1792137529.8869271,
+      "snapshot": "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v2",
+      "error": "Real-weight CPU preflight failed; GPU launch prohibited",
+      "window_started": false
+    }
+  },
+  "scope": "Deployment observation only; no GPU mechanism or accuracy claim"
+}

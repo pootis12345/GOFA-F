@@ -1,5 +1,17 @@
 # 运行交接记录
 
+## Stage16 ChatTime 两组已部署，等待 GPU 空闲（2026-10-16 16:05，Asia/Shanghai）
+
+本轮有新的用户授权，仅运行 METR-LA 12→12、seed42 的原生 ChatTime 和 GOFA-F(ChatTime)，不启动 LLaMA-2、其他数据集或新 GNN。运行源码 `483a876c10b94430409c1d1fc0f882980b77e331`，固定快照 `/home/dcg/dcg_data/GOFA-F-runs/stage16-chattime-metr-v3`，C 开发输出 `outputs/stage16-chattime-metr-v3/`，日志同级 `.log`，等待器身份同级 `.launch.json`，CPU 准备控制器记录同级 `.bootstrap.launch.json`。协议见 `docs/STAGE16_CHATTIME_PROTOCOL.md`。
+
+官方代码及三个权重分片均按固定版本下载并通过官方 SHA256 核验。C 新建 `.venv-chat`，复用原环境依赖只读，新增 sklearn1.5.2/protobuf5.28.3；旧环境、数据和快照未修改。禁 CUDA、OMP/MKL各2线程：270项CPU回归通过、11项旧可选依赖跳过，新增41项全部通过；真实7B权重3节点机制通过，包括原生隐藏状态、Persistence初始预测、缓存/非缓存预测及梯度、图梯度、冻结、纯文本绕过、累积梯度和优化器精确恢复。CPU证据 `docs/results/stage16-cpu-verification.json`，不是GPU机制或精度结论。
+
+CPU准备控制器PID3819503/start_ticks605872007，CPU等待器PID3824577/start_ticks605883460，使用前重新核对身份。首次窗口北京时间 **2026-10-16 16:03:02**，训练截止 **2026-10-17 01:03:02**，硬截止 **03:03:02**；包含等待、恢复不顺延，截止前60秒保存退出。部署观测 `waiting_for_idle`、活动0，GPU已用20837MiB，未获准入、尚无GPU机制/训练/评价结果。新GPU子任务仍连续三次间隔30秒空闲准入；运行中他人加入不退出，低余量暂停更新；40GiB/Torch38GiB/16GiB余量，不设置独占模式、不操作他人进程。
+
+本轮新增可训练1,120,914（图/路由1,071,750，连续头49,164），总注册6,821,464,722；历史UFG-A不再参数匹配。完整前缀缓存估算2,999,480,985,963字节，禁用全盘缓存，使用按需前缀和最多64GiB内存LRU。先完整验证选最佳、锁定SHA后才测试；原生贪心生成与失败点Persistence回退分别报告，未完成全集不填正式测试表。Stage15未完成测试继续留空。
+
+v1缺protobuf、v2发现官方提示模板少一个空行，均在CPU阶段安全停止，未创建窗口；已修复并保留两版日志/快照。v3 CPU通过后才启动本次11小时窗口，部署证据 `docs/results/stage16-deployment-v3.json`。每小时跟进 `gofa-f-stage16` 已启用，仅终止/异常通知；旧 `gofa-f` 已不存在，未重复创建同名任务。本轮结束不自动进入LLaMA-2。以下均为历史记录。
+
 ## 自主窗口结束：Stage15验证合格、测试未获准入（2026-10-16 11:02，Asia/Shanghai）
 
 绝对自主窗口10:58已结束，不再启动GPU或Stage16。Stage15训练满100epoch/35,900更新，验证全步3.0626643915、第12步3.6691021727，通过预定门槛；最佳31,592更新的SHA `160eeaf6074a287d8d7380cee66b78dadd4531ffc6d1c2f19e9dc30dd06baf61` 已在09:46锁定。最终评价持续等GPU空闲，未获准入，10:57:02监督器wall_deadline退出，等待器3215096/worker3215767均已核实退出，failures为空。测试指标留空，禁止为补测延长窗口或自动重启。
