@@ -13,7 +13,7 @@ import xml.etree.ElementTree as ET
 
 import yaml
 
-from gofa_f.idle_launcher import (IdleGate, atomic_json, launch as idle_launch,
+from gofa_f.idle_launcher import (IdleGate, SharedGate, atomic_json, launch as idle_launch,
     parse_deadline, process_identity, query_gpu)
 
 STOP = False
@@ -69,7 +69,7 @@ def code_files():
 
 
 def bind_window(output, resume=False, now=None, launch_fingerprint=None, hard_deadline=None,
-                adopted_from=None):
+                adopted_from=None, shared_admission=False):
     path = Path(output)/"window.json"
     old = read(path)
     if old is not None:
@@ -81,6 +81,8 @@ def bind_window(output, resume=False, now=None, launch_fingerprint=None, hard_de
             raise ValueError("Saved absolute window changed")
         if hard_deadline is not None and hard_deadline != old["wall_deadline"]:
             raise ValueError("Resume must retain the saved shortened deadline")
+        if old.get("admission_policy", "idle") != ("shared_memory" if shared_admission else "idle"):
+            raise ValueError("Resume must retain the saved GPU admission policy")
         if launch_fingerprint is not None and old.get("launch_fingerprint") != launch_fingerprint:
             raise ValueError("Saved launch identity changed")
         return old
@@ -94,6 +96,8 @@ def bind_window(output, resume=False, now=None, launch_fingerprint=None, hard_de
               "wall_deadline": hard_deadline, "window_seconds": hard_deadline-now}
     if adopted_from is not None:
         result["adopted_from"] = adopted_from
+    if shared_admission:
+        result["admission_policy"] = "shared_memory"
     if launch_fingerprint is not None:
         result["launch_fingerprint"] = launch_fingerprint
     atomic_json(path, result)
@@ -232,9 +236,12 @@ def manifest(config, output, window):
         raise ValueError("CPU preflight is missing or no longer matches the code")
     if prepared["inputs"] != {p: digest(p) for p in prepared["inputs"]}:
         raise ValueError("Prepared immutable input changed")
-    return {"config": config, "window": window, "inputs": prepared["inputs"],
+    result = {"config": config, "window": window, "inputs": prepared["inputs"],
         "code_files": code_files(), "cpu_preflight_sha256": digest(Path(output)/"cpu_preflight.json"),
         "runtime": cpu["runtime"], "git_revision": subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()}
+    if window and window.get("admission_policy") == "shared_memory":
+        result["admission_policy"] = "shared_memory"
+    return result
 
 
 def seal(output):
@@ -310,11 +317,12 @@ def write_report(output):
 def stage(config_path, output, resume):
     global STOP
     if os.environ.get("GOFA_IDLE_ADMITTED") != "1":
-        raise RuntimeError("Strict idle launcher required")
+        raise RuntimeError("Registered GPU admission launcher required")
     for sig in (signal.SIGTERM, signal.SIGINT):
         signal.signal(sig, lambda *_: globals().__setitem__("STOP", True))
     config, output = config_file(config_path), Path(output)
     window = read(output/"window.json")
+    shared = window.get("admission_policy") == "shared_memory"
     expected = manifest(config, output, window)
     if read(output/"launch_binding.json") != expected:
         raise ValueError("Launch binding differs")
@@ -326,7 +334,7 @@ def stage(config_path, output, resume):
 
     def task(phase):
         boundary = window["wall_deadline"] if phase == "evaluate" else window["training_deadline"]
-        gate = IdleGate()
+        gate = SharedGate(40, 16) if shared else IdleGate()
         while time.time() < boundary-60:
             if STOP or os.getppid() != int(os.environ["GOFA_SUPERVISOR_PID"]):
                 raise InterruptedError("Supervisor released")
@@ -335,7 +343,8 @@ def stage(config_path, output, resume):
             except (OSError, ValueError, RuntimeError, subprocess.TimeoutExpired, ET.ParseError):
                 gpu = None
             admitted = gate.observe(gpu) and gpu["uuid"] == os.environ.get("GOFA_GPU_UUID")
-            status("waiting_for_idle", phase=phase, consecutive_idle=gate.consecutive)
+            status("waiting_for_shared_capacity" if shared else "waiting_for_idle",
+                   phase=phase, consecutive_idle=gate.consecutive)
             if admitted:
                 break
             for _ in range(30):
@@ -400,6 +409,7 @@ def main():
     parser.add_argument("--resume", action="store_true")
     parser.add_argument("--hard-deadline", help="Explicit timezone; may shorten but never extend the original window")
     parser.add_argument("--adopt-waiting-window", help="Exited CPU-only output whose original start time must be retained")
+    parser.add_argument("--shared-gpu", action="store_true", help="Admit other applications with at least56GiB actually free")
     parser.add_argument("--worker", action="store_true", help=argparse.SUPPRESS)
     args = parser.parse_args()
     config, output = config_file(args.config), Path(args.output).resolve()
@@ -436,6 +446,8 @@ def main():
     if not cpu.get("passed") or cpu.get("code_files") != code_files():
         raise ValueError("Current CPU preflight required before starting the clock")
     expected = manifest(config, output, None)
+    if args.shared_gpu:
+        expected["admission_policy"] = "shared_memory"
     fingerprint = hashlib.sha256(json.dumps(expected, sort_keys=True).encode()).hexdigest()
     cutoff = parse_deadline(args.hard_deadline)
     adopted = None
@@ -447,7 +459,8 @@ def main():
         if cutoff > adopted["original_wall_deadline"]:
             raise ValueError("Adoption cannot extend the original deadline")
     window = bind_window(output, args.resume, launch_fingerprint=fingerprint, hard_deadline=cutoff,
-        now=adopted["started_at"] if adopted else None, adopted_from=adopted)
+        now=adopted["started_at"] if adopted else None, adopted_from=adopted,
+        shared_admission=args.shared_gpu)
     if time.time() >= window["wall_deadline"]-60:
         atomic_json(output/"launcher.json", {"state": "wall_deadline"})
         if (output/"manifest.json").exists():
@@ -462,7 +475,9 @@ def main():
     command = [sys.executable, "-u", "-m", "gofa_f.chattime_stage", "--worker", "--config", args.config,
                "--output", str(output), "--resume"]
     idle_launch(output, command, total=None, wall_deadline=window["wall_deadline"], memory_cap_gib=40,
-                leave_free_gib=16, yield_on_foreign=False, worker_wait_state="waiting_for_idle")
+                leave_free_gib=16, yield_on_foreign=False,
+                worker_wait_state="waiting_for_shared_capacity" if args.shared_gpu else "waiting_for_idle",
+                shared_admission=args.shared_gpu)
     if (output/"manifest.json").exists():
         seal(output)
     write_report(output)

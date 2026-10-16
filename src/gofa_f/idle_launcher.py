@@ -76,6 +76,8 @@ def parse_gpu_xml(text):
         "used_mib": integer_field(gpu.findtext("fb_memory_usage/used")),
         "total_mib": integer_field(gpu.findtext("fb_memory_usage/total"))
             if gpu.findtext("fb_memory_usage/total") else None,
+        "free_mib": integer_field(gpu.findtext("fb_memory_usage/free"))
+            if gpu.findtext("fb_memory_usage/free") else None,
         "process_used_mib": process_memory,
         "utilization": integer_field(gpu.findtext("utilization/gpu_util")),
     }
@@ -105,6 +107,27 @@ class IdleGate:
             and gpu["compute_mode"] == "Default"
         )
         self.consecutive = self.consecutive + 1 if idle else 0
+        return self.consecutive >= 3
+
+
+class SharedGate:
+    """Admit concurrent applications only with room for our full cap plus margin."""
+    def __init__(self, memory_cap_gib=40, leave_free_gib=16):
+        if not 1 <= memory_cap_gib <= 40 or leave_free_gib < 16:
+            raise ValueError("Unsafe shared admission budget")
+        self.required_free_mib = (memory_cap_gib+leave_free_gib)*1024
+        self.consecutive, self.uuid = 0, None
+
+    def observe(self, gpu):
+        if gpu is None or (self.uuid is not None and gpu["uuid"] != self.uuid):
+            self.consecutive = 0
+            return False
+        self.uuid = gpu["uuid"]
+        free, total = gpu.get("free_mib"), gpu.get("total_mib")
+        enough = (gpu.get("compute_mode") == "Default" and free is not None and total is not None
+                  and self.required_free_mib <= free <= total and 0 <= gpu["used_mib"] <= total
+                  and free+gpu["used_mib"] <= total)
+        self.consecutive = self.consecutive+1 if enough else 0
         return self.consecutive >= 3
 
 
@@ -206,11 +229,13 @@ def read_status(output):
 
 
 def launch(output, command, total=14400, wall_deadline=None, memory_cap_gib=None, leave_free_gib=16,
-           yield_on_foreign=True, worker_wait_state=None):
+           yield_on_foreign=True, worker_wait_state=None, shared_admission=False):
     if total is None and wall_deadline is None:
         raise ValueError("Unlimited activity still requires an absolute wall deadline")
     if memory_cap_gib is not None and (memory_cap_gib > 40 or memory_cap_gib < 1 or leave_free_gib < 16):
         raise ValueError("Unsafe shared memory policy")
+    if shared_admission and (memory_cap_gib is None or yield_on_foreign):
+        raise ValueError("Shared admission requires a cap and continued coexistence")
     output = Path(output).resolve()
     output.mkdir(parents=True, exist_ok=True)
     # Hold both locks even while waiting, preventing duplicate project launchers.
@@ -234,6 +259,9 @@ def launch(output, command, total=14400, wall_deadline=None, memory_cap_gib=None
     }
     if not yield_on_foreign or worker_wait_state is not None:
         manifest.update(yield_on_foreign=yield_on_foreign, worker_wait_state=worker_wait_state)
+    if shared_admission:
+        manifest.pop("idle_max_used_mib")
+        manifest.update(admission_policy="shared_memory", admission_min_free_mib=(memory_cap_gib+leave_free_gib)*1024)
     manifest_path = output / "launcher_manifest.json"
     if manifest_path.exists() and json.loads(manifest_path.read_text()) != manifest:
         raise ValueError("Launcher resume requires the identical command, snapshot and policy")
@@ -286,7 +314,9 @@ def launch(output, command, total=14400, wall_deadline=None, memory_cap_gib=None
             ledger.state["spent_seconds"] += 5  # Conservative unrecorded crash tail.
             ledger.state["worker"] = None
             ledger.save()
-    gate = IdleGate()
+    def new_gate():
+        return SharedGate(memory_cap_gib, leave_free_gib) if shared_admission else IdleGate()
+    gate = new_gate()
     while not stop[0]:
         worker_status = read_status(output).get("state")
         if worker_status in TERMINAL:
@@ -304,7 +334,8 @@ def launch(output, command, total=14400, wall_deadline=None, memory_cap_gib=None
         except (OSError, ValueError, RuntimeError, subprocess.TimeoutExpired, ET.ParseError) as exc:
             gpu, error = None, str(exc)
         if not gate.observe(gpu):
-            status("waiting_for_idle", consecutive_idle=gate.consecutive, query_error=error)
+            status("waiting_for_shared_capacity" if shared_admission else "waiting_for_idle",
+                   consecutive_idle=gate.consecutive, query_error=error)
             for _ in range(30):
                 if stop[0]:
                     break
@@ -372,7 +403,7 @@ def launch(output, command, total=14400, wall_deadline=None, memory_cap_gib=None
         if child.returncode not in (0, 75) and reason is None:
             status("failed", worker_returncode=child.returncode)
             return
-        gate = IdleGate()
+        gate = new_gate()
     status("stopped_by_user")
 
 

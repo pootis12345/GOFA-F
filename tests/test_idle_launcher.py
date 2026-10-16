@@ -41,6 +41,65 @@ def test_three_idle_samples_and_busy_or_error_resets_gate():
     assert not gate.observe(idle.parse_gpu_xml(xml().replace("Default", "Exclusive_Process")))
 
 
+def test_shared_admission_accepts_active_server_with_full_budget_and_margin():
+    gpu = {"uuid": "GPU-test", "pids": [999], "utilization": 100, "compute_mode": "Default",
+           "used_mib": 20837, "total_mib": 81559, "free_mib": 60253}
+    gate = idle.SharedGate(40, 16)
+    assert not gate.observe(gpu)
+    assert not gate.observe(gpu)
+    assert gate.observe(gpu)
+    assert not gate.observe({**gpu, "free_mib": 56*1024-1})
+    assert not gate.observe(gpu)
+    assert not gate.observe(None)
+    assert not gate.observe(gpu)
+    assert not gate.observe(gpu)
+    assert gate.observe(gpu)
+
+
+@pytest.mark.parametrize("change", [{"free_mib": None}, {"total_mib": None},
+    {"free_mib": 56000}, {"free_mib": 90000}, {"compute_mode": "Exclusive_Process"}])
+def test_shared_admission_fails_closed_for_unknown_or_insufficient_actual_free(change):
+    # Driver reservations mean total-used may exceed actually usable free memory.
+    gpu = {"uuid": "GPU-test", "pids": [999], "utilization": 80, "compute_mode": "Default",
+           "used_mib": 20837, "total_mib": 81559, "free_mib": 60253}
+    gate = idle.SharedGate(40, 16)
+    for _ in range(5):
+        assert not gate.observe({**gpu, **change})
+
+
+def test_shared_admission_launcher_coexists_without_signalling_other_processes(tmp_path, monkeypatch):
+    clock, children, signals = [0.], [], []
+    output = tmp_path/"run"
+    monkeypatch.setattr(idle.time, "monotonic", lambda: clock[0])
+    monkeypatch.setattr(idle.time, "sleep", lambda n: clock.__setitem__(0, clock[0]+n))
+    monkeypatch.setattr(idle, "process_identity", lambda _: "start")
+    monkeypatch.setattr(idle, "own_gpu_pids", lambda pid: {pid})
+    monkeypatch.setattr(idle.subprocess, "check_output", lambda *a, **k: "fixed")
+    monkeypatch.setattr(idle.os, "killpg", lambda *a: signals.append(a))
+    gpu = {"uuid": "GPU-test", "pids": [999], "utilization": 80, "compute_mode": "Default",
+           "used_mib": 20837, "total_mib": 81559, "free_mib": 60253, "process_used_mib": {}}
+    monkeypatch.setattr(idle, "query_gpu", lambda: gpu)
+    class Child:
+        pid = 800
+        returncode = None
+        def __init__(self, command, env, start_new_session):
+            assert clock[0] >= 60 and env["GOFA_IDLE_ADMITTED"] == "1"
+            children.append(self)
+            self.polls = 0
+        def poll(self):
+            self.polls += 1
+            if self.polls > 3:
+                self.returncode = 0
+                idle.atomic_json(output/"status.json", {"state": "complete"})
+            return self.returncode
+    monkeypatch.setattr(idle.subprocess, "Popen", Child)
+    idle.launch(output, ["worker"], total=None, wall_deadline=10**15, memory_cap_gib=40,
+                leave_free_gib=16, yield_on_foreign=False, shared_admission=True)
+    record = json.loads((output/"launcher_manifest.json").read_text())
+    assert record["admission_policy"] == "shared_memory" and record["admission_min_free_mib"] == 56*1024
+    assert len(children) == 1 and not signals and "idle_max_used_mib" not in record
+
+
 @pytest.mark.parametrize(
     "text",
     [

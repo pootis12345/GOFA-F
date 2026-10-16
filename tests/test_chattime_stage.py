@@ -43,6 +43,14 @@ def test_shortened_window_keeps_start_and_two_hour_evaluation(tmp_path):
         bind_window(tmp_path, resume=True, hard_deadline=first["wall_deadline"]+1)
 
 
+def test_shared_admission_is_bound_to_original_start_and_deadline(tmp_path):
+    window = bind_window(tmp_path, now=1000., hard_deadline=28000., shared_admission=True)
+    assert window["admission_policy"] == "shared_memory" and window["started_at"] == 1000.
+    assert bind_window(tmp_path, resume=True, now=20000., shared_admission=True) == window
+    with pytest.raises(ValueError, match="admission policy"):
+        bind_window(tmp_path, resume=True, shared_admission=False)
+
+
 @pytest.mark.parametrize("seconds", [7200, 39601])
 def test_explicit_window_cannot_remove_evaluation_or_extend(tmp_path, seconds):
     with pytest.raises(ValueError):
@@ -271,13 +279,16 @@ def test_cpu_supervisor_does_not_import_torch():
 
 
 @pytest.mark.parametrize("mechanism_failure", [False, True])
-def test_gpu_phase_order_and_test_seal(tmp_path, monkeypatch, mechanism_failure):
+@pytest.mark.parametrize("shared", [False, True])
+def test_gpu_phase_order_and_test_seal(tmp_path, monkeypatch, mechanism_failure, shared):
     import os
     import time
     from gofa_f import chattime_stage as stage
     from gofa_f.prefix_cache import atomic_json
     config = config_file("configs/stage16_chattime.yaml")
     window = {"wall_deadline": time.time()+4000, "training_deadline": time.time()+2000}
+    if shared:
+        window["admission_policy"] = "shared_memory"
     expected = {"window": window, "inputs": {}}
     atomic_json(tmp_path/"window.json", window)
     atomic_json(tmp_path/"launch_binding.json", expected)
@@ -294,7 +305,14 @@ def test_gpu_phase_order_and_test_seal(tmp_path, monkeypatch, mechanism_failure)
         def observe(self, gpu):
             return True
 
-    monkeypatch.setattr(stage, "IdleGate", Gate)
+    if shared:
+        monkeypatch.setattr(stage, "IdleGate", lambda: pytest.fail("Shared child must not wait for complete idleness"))
+        def shared_gate(cap, reserve):
+            assert cap == 40 and reserve == 16
+            return Gate()
+        monkeypatch.setattr(stage, "SharedGate", shared_gate)
+    else:
+        monkeypatch.setattr(stage, "IdleGate", Gate)
     phases = []
 
     class Process:
