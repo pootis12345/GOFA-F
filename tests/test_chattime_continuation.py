@@ -8,7 +8,7 @@ import torch
 
 from gofa_f.chattime_checks import assert_tree_equal
 from gofa_f.chattime_continuation import copy_continuation, source_record
-from gofa_f.chattime_stage import bind_window, digest
+from gofa_f.chattime_stage import bind_window, deadline_extension, digest
 from gofa_f.prefix_cache import atomic_json
 
 
@@ -61,6 +61,30 @@ def test_continuation_preserves_every_training_state_and_cost(continued):
     torch.save(actual, target/"gofa_chattime/last.pt")
     copy_continuation(record, target, "new-source-binding")
     assert torch.load(target/"gofa_chattime/last.pt", weights_only=False)["state"]["updates"] == 80
+
+
+def test_deadline_missed_without_gpu_or_predictions_can_continue_with_user_amendment(continued):
+    source, target, config, prepared, _ = continued
+    atomic_json(source/"launcher.json", {"state": "incomplete"})
+    atomic_json(source/"status.json", {"reason": "mechanisms missed training deadline"})
+    atomic_json(source/"final_selection.json", {"gofa": None, "updates": 79})
+    record = source_record(source, config, prepared, identity=lambda _: None)
+    amendment = deadline_extension(record, 70000.)
+    bind_window(target, now=record["started_at"], hard_deadline=70000., adopted_from=record,
+                deadline_amendment=amendment)
+    migrated = copy_continuation(record, target, "new-binding")
+    assert migrated["original_start_retained"] and not migrated["original_deadline_retained"]
+    assert migrated["deadline_amendment"] == amendment
+    assert not (target/"final_selection.json").exists()
+    assert json.loads((target/"active_budget.json").read_text())["spent_seconds"] == 8000.
+
+
+def test_arbitrary_incomplete_source_is_not_a_deadline_continuation(continued):
+    source, _, config, prepared, _ = continued
+    atomic_json(source/"launcher.json", {"state": "incomplete"})
+    atomic_json(source/"status.json", {"reason": "other failure"})
+    with pytest.raises(ValueError, match="stopped and fully saved"):
+        source_record(source, config, prepared, identity=lambda _: None)
 
 
 @pytest.mark.parametrize("bad", ["live", "config", "prediction", "active"])

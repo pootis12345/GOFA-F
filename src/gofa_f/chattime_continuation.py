@@ -15,7 +15,11 @@ def source_record(previous, config, prepared, identity=process_identity):
     previous = Path(previous).resolve()
     ledger = read(previous/"active_budget.json", {})
     budget = read(previous/"budget.json", {})
-    if read(previous/"launcher.json", {}).get("state") != "stopped_by_user" \
+    launcher_state = read(previous/"launcher.json", {}).get("state")
+    missed_deadline = launcher_state == "incomplete" \
+        and read(previous/"status.json", {}).get("reason") == "mechanisms missed training deadline" \
+        and not read(previous/"mechanisms.json", {}).get("passed")
+    if (launcher_state != "stopped_by_user" and not missed_deadline) \
             or ledger.get("worker") is not None or budget.get("active_scope") is not None:
         raise ValueError("Continuation requires a stopped and fully saved source")
     for suffix in (".launch.json", ".bootstrap.launch.json"):
@@ -107,8 +111,13 @@ def copy_continuation(record, output, target_binding):
     if ledger["worker"] is not None:
         raise ValueError("Source GPU worker must have exited")
     atomic_json(output/"active_budget.json", ledger)
+    window = read(output/"window.json", {})
     result = {"source": record, "target_binding": target_binding,
               "target_checkpoint_sha256": digest(target/"last.pt"), "state_restore": "exact",
-              "cache": "ephemeral caches rebuilt; old caches not modified", "original_deadline_retained": True}
+              "cache": "ephemeral caches rebuilt; old caches not modified",
+              "original_start_retained": window.get("started_at", record["started_at"]) == record["started_at"],
+              "original_deadline_retained": window.get("wall_deadline", record["original_wall_deadline"]) == record["original_wall_deadline"]}
+    if window.get("deadline_amendment"):
+        result["deadline_amendment"] = window["deadline_amendment"]
     atomic_json(marker, result)
     return result

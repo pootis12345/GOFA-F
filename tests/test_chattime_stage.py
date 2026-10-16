@@ -7,7 +7,7 @@ import torch
 from torch import nn
 
 from gofa_f.chattime import HistoryCodec
-from gofa_f.chattime_stage import adopt_waiting_window, bind, bind_window, config_file, digest, seal
+from gofa_f.chattime_stage import adopt_waiting_window, bind, bind_window, config_file, deadline_extension, digest, seal
 from gofa_f.chattime_task import (apply_validation, available_metric, initial_state,
     load_window, native_window, optimizer_update, summarize_split, write_window, GuardGeneration)
 from gofa_f.metrics import Metrics
@@ -74,6 +74,38 @@ def test_explicit_window_cannot_remove_evaluation_or_extend(tmp_path, seconds):
     with pytest.raises(ValueError):
         bind_window(tmp_path, now=1000., hard_deadline=1000.+seconds)
     assert not (tmp_path/"window.json").exists()
+
+
+def test_explicit_user_extension_keeps_start_and_cannot_extend_again_on_resume(tmp_path):
+    source = {"kind": "training_continuation", "started_at": 1000.,
+              "original_wall_deadline": 28000., "window_sha256": "verified-source-sha"}
+    cutoff = 1000.+19*3600
+    amendment = deadline_extension(source, cutoff)
+    window = bind_window(tmp_path, now=1000., hard_deadline=cutoff, adopted_from=source,
+                         deadline_amendment=amendment, idle_interval_seconds=10)
+    assert window["started_at"] == 1000. and window["training_deadline"] == cutoff-7200
+    assert window["deadline_amendment"] == amendment
+    assert bind_window(tmp_path, resume=True, now=99999., idle_interval_seconds=10) == window
+    with pytest.raises(ValueError, match="shortened deadline"):
+        bind_window(tmp_path, resume=True, hard_deadline=cutoff+1, idle_interval_seconds=10)
+    with pytest.raises(ValueError, match="cannot create"):
+        bind_window(tmp_path, resume=True, deadline_amendment=amendment, idle_interval_seconds=10)
+    window["deadline_amendment"]["new_wall_deadline"] += 1
+    from gofa_f.prefix_cache import atomic_json
+    atomic_json(tmp_path/"window.json", window)
+    with pytest.raises(ValueError, match="amendment changed"):
+        bind_window(tmp_path, resume=True, idle_interval_seconds=10)
+
+
+def test_extension_rejects_missing_source_and_reset_start(tmp_path):
+    with pytest.raises(ValueError, match="saved continuation"):
+        deadline_extension(None, 70000.)
+    source = {"kind": "training_continuation", "started_at": 1000.,
+              "original_wall_deadline": 28000., "window_sha256": "verified-source-sha"}
+    amendment = deadline_extension(source, 70000.)
+    with pytest.raises(ValueError, match="original start"):
+        bind_window(tmp_path, now=2000., hard_deadline=70000., adopted_from=source,
+                    deadline_amendment=amendment)
 
 
 @pytest.mark.parametrize("refusal", [None, "cpu_summary", "live", "activity", "graph", "gpu_artifacts"])

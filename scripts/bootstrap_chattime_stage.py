@@ -56,7 +56,10 @@ def downloaders(target):
 
 def bootstrap(root, output, official_manifest, resume=False, run=subprocess.run, popen=subprocess.Popen,
               hard_deadline=None, adopt_waiting_window=None, shared_gpu=False,
-              fixed_prompt_kv=False, continue_training_from=None, idle_check_seconds=30):
+              fixed_prompt_kv=False, continue_training_from=None, idle_check_seconds=30,
+              authorized_deadline_extension=False):
+    if authorized_deadline_extension and (resume or continue_training_from is None):
+        raise ValueError("A user deadline extension requires a fresh training continuation")
     root, output, official_manifest = Path(root).resolve(), Path(output).resolve(), Path(official_manifest).resolve()
     output.mkdir(parents=True, exist_ok=True)
     cpu_env = dict(os.environ, CUDA_VISIBLE_DEVICES="", OMP_NUM_THREADS="2", MKL_NUM_THREADS="2",
@@ -148,6 +151,8 @@ def bootstrap(root, output, official_manifest, resume=False, run=subprocess.run,
             command.append("--fixed-prompt-kv")
         if idle_check_seconds != 30:
             command += ["--idle-check-seconds", str(idle_check_seconds)]
+        if authorized_deadline_extension:
+            command.append("--authorized-deadline-extension")
         if continue_training_from is not None and not window:
             command += ["--continue-training-from", str(continue_training_from)]
         if window:
@@ -186,12 +191,14 @@ def main():
     parser.add_argument("--shared-gpu", action="store_true")
     parser.add_argument("--fixed-prompt-kv", action="store_true")
     parser.add_argument("--idle-check-seconds", type=int, default=30)
+    parser.add_argument("--authorized-deadline-extension", action="store_true")
     parser.add_argument("--continue-training-from")
     args = parser.parse_args()
     bootstrap(Path(__file__).resolve().parents[1], args.output, args.official_manifest, args.resume,
               hard_deadline=args.hard_deadline, adopt_waiting_window=args.adopt_waiting_window,
               shared_gpu=args.shared_gpu, fixed_prompt_kv=args.fixed_prompt_kv,
-              continue_training_from=args.continue_training_from, idle_check_seconds=args.idle_check_seconds)
+              continue_training_from=args.continue_training_from, idle_check_seconds=args.idle_check_seconds,
+              authorized_deadline_extension=args.authorized_deadline_extension)
 
 
 if __name__ == "__main__":

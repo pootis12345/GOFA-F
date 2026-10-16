@@ -109,8 +109,16 @@ def test_continuation_waits_for_source_to_save_and_exit(module, tmp_path, monkey
         assert not alive[0] and "--fixed-prompt-kv" in command
         assert "--shared-gpu" not in command
         assert command[command.index("--idle-check-seconds")+1] == "10"
+        assert "--authorized-deadline-extension" in command
         assert command[command.index("--continue-training-from")+1] == str(source)
         return Child()
     module.bootstrap(tmp_path, output, tmp_path/"official.json", run=run, popen=launch,
         hard_deadline="2099-10-16T23:30:00+08:00", continue_training_from=source, fixed_prompt_kv=True,
-        idle_check_seconds=10)
+        idle_check_seconds=10, authorized_deadline_extension=True)
+
+
+@pytest.mark.parametrize("resume,source", [(True, "source"), (False, None)])
+def test_extension_is_an_explicit_fresh_continuation_only(module, tmp_path, resume, source):
+    with pytest.raises(ValueError, match="fresh training continuation"):
+        module.bootstrap(tmp_path, tmp_path/"out", tmp_path/"official.json", resume=resume,
+                         continue_training_from=source, authorized_deadline_extension=True)

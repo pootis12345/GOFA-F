@@ -168,3 +168,16 @@ running tasks still coexist if another user joins. The interval is bound into th
 window and both outer and per-task admission; recovery cannot silently change it.
 A fresh immutable continuation retains optimizer/pending gradients/RNG/cursor,
 activity and the existing16:03:02/21:30/23:30 times. Old snapshots are not edited.
+
+Latest deadline amendment from the user: "将硬截止时间改为明天早上11：00",
+issued2026-10-16 Asia/Shanghai. The new absolute hard stop is
+**2026-10-17 11:00:00+08:00**, with training ending09:00 and two hours reserved
+for sealed evaluation. The original2026-10-16 16:03:02 start is retained, so this
+explicit request supersedes the earlier11-hour maximum and23:30 hard stop.
+Only a fresh, saved-state continuation with an explicit authorized amendment may
+extend; ordinary resumes retain the amended deadline and never reset the clock.
+The source window SHA, previous/new deadlines and authorization are bound into
+the new window and migration. v9 ended incomplete before any new GPU mechanism
+or predictions because its old training cutoff had passed. Its checkpoint is
+retained. Strict complete-idle admission every10seconds, three samples,40GiB/
+38GiB/16GiB limits and all scientific settings remain unchanged.

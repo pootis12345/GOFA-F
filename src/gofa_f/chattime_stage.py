@@ -68,8 +68,19 @@ def code_files():
     return {str(p): digest(p) for p in paths}
 
 
+def deadline_extension(adopted_from, hard_deadline):
+    """Record an explicit user amendment separately from an ordinary resume."""
+    if not adopted_from or adopted_from.get("kind") != "training_continuation" \
+            or not adopted_from.get("window_sha256") \
+            or hard_deadline is None or hard_deadline <= adopted_from["original_wall_deadline"]:
+        raise ValueError("An authorized extension requires a saved continuation and a later absolute deadline")
+    return {"authorization": "explicit_user_request", "source_window_sha256": adopted_from["window_sha256"],
+            "previous_wall_deadline": adopted_from["original_wall_deadline"], "new_wall_deadline": hard_deadline}
+
+
 def bind_window(output, resume=False, now=None, launch_fingerprint=None, hard_deadline=None,
-                adopted_from=None, shared_admission=False, fixed_prompt_kv=False, idle_interval_seconds=30):
+                adopted_from=None, shared_admission=False, fixed_prompt_kv=False, idle_interval_seconds=30,
+                deadline_amendment=None):
     if not isinstance(idle_interval_seconds, int) or not 1 <= idle_interval_seconds <= 60:
         raise ValueError("GPU admission interval must be an integer from1 to60 seconds")
     path = Path(output)/"window.json"
@@ -77,10 +88,17 @@ def bind_window(output, resume=False, now=None, launch_fingerprint=None, hard_de
     if old is not None:
         if not resume:
             raise ValueError("Existing Stage16 window requires --resume")
-        if not 2*3600 < old["window_seconds"] <= 11*3600 \
+        amendment = old.get("deadline_amendment")
+        if amendment is not None and amendment != deadline_extension(old.get("adopted_from"), old["wall_deadline"]):
+            raise ValueError("Saved deadline amendment changed")
+        if not 2*3600 < old["window_seconds"] or (old["window_seconds"] > 11*3600 and amendment is None) \
                 or old["wall_deadline"]-old["started_at"] != old["window_seconds"] \
                 or old["training_deadline"] != old["wall_deadline"]-2*3600:
             raise ValueError("Saved absolute window changed")
+        if amendment is not None and old["started_at"] != old["adopted_from"]["started_at"]:
+            raise ValueError("An amended window must preserve its original start")
+        if deadline_amendment is not None:
+            raise ValueError("Resume cannot create a new deadline amendment")
         if hard_deadline is not None and hard_deadline != old["wall_deadline"]:
             raise ValueError("Resume must retain the saved shortened deadline")
         if old.get("admission_policy", "idle") != ("shared_memory" if shared_admission else "idle"):
@@ -96,12 +114,17 @@ def bind_window(output, resume=False, now=None, launch_fingerprint=None, hard_de
         raise ValueError("Missing persisted Stage16 window")
     now = time.time() if now is None else now
     hard_deadline = now+11*3600 if hard_deadline is None else hard_deadline
-    if not now+2*3600 < hard_deadline <= now+11*3600:
+    if deadline_amendment is not None:
+        if deadline_amendment != deadline_extension(adopted_from, hard_deadline) or now != adopted_from["started_at"]:
+            raise ValueError("Deadline amendment must retain the exact source window and original start")
+    if not now+2*3600 < hard_deadline or (hard_deadline > now+11*3600 and deadline_amendment is None):
         raise ValueError("An explicit deadline can only shorten the eleven-hour maximum")
     result = {"started_at": now, "training_deadline": hard_deadline-2*3600,
               "wall_deadline": hard_deadline, "window_seconds": hard_deadline-now}
     if adopted_from is not None:
         result["adopted_from"] = adopted_from
+    if deadline_amendment is not None:
+        result["deadline_amendment"] = deadline_amendment
     if shared_admission:
         result["admission_policy"] = "shared_memory"
     if idle_interval_seconds != 30:
@@ -427,9 +450,13 @@ def main():
     parser.add_argument("--shared-gpu", action="store_true", help="Admit other applications with at least56GiB actually free")
     parser.add_argument("--fixed-prompt-kv", action="store_true")
     parser.add_argument("--idle-check-seconds", type=int, default=30)
+    parser.add_argument("--authorized-deadline-extension", action="store_true",
+                        help="Explicit user amendment; fresh continuation only, never an ordinary resume")
     parser.add_argument("--continue-training-from", help="Stopped checkpoint to migrate without resetting training or time")
     parser.add_argument("--worker", action="store_true", help=argparse.SUPPRESS)
     args = parser.parse_args()
+    if args.authorized_deadline_extension and (args.resume or not args.continue_training_from):
+        raise ValueError("A user deadline extension requires a fresh training continuation")
     config, output = config_file(args.config), Path(args.output).resolve()
     output.mkdir(parents=True, exist_ok=True)
     if args.prepare_only:
@@ -473,6 +500,7 @@ def main():
     fingerprint = hashlib.sha256(json.dumps(expected, sort_keys=True).encode()).hexdigest()
     cutoff = parse_deadline(args.hard_deadline)
     adopted = None
+    amendment = None
     if args.adopt_waiting_window:
         if args.resume or (output/"window.json").exists() or cutoff is None:
             raise ValueError("Adoption requires a fresh output and an explicit shortened deadline")
@@ -487,12 +515,14 @@ def main():
         from gofa_f.chattime_continuation import source_record
         prepared = {**read(output/"preparation.json"), "output": str(output)}
         adopted = source_record(args.continue_training_from, config, prepared)
-        if cutoff > adopted["original_wall_deadline"]:
+        if cutoff > adopted["original_wall_deadline"] and not args.authorized_deadline_extension:
             raise ValueError("Continuation cannot extend the original deadline")
+        if args.authorized_deadline_extension:
+            amendment = deadline_extension(adopted, cutoff)
     window = bind_window(output, args.resume, launch_fingerprint=fingerprint, hard_deadline=cutoff,
         now=adopted["started_at"] if adopted else None, adopted_from=adopted,
         shared_admission=args.shared_gpu, fixed_prompt_kv=args.fixed_prompt_kv,
-        idle_interval_seconds=args.idle_check_seconds)
+        idle_interval_seconds=args.idle_check_seconds, deadline_amendment=amendment)
     if time.time() >= window["wall_deadline"]-60:
         atomic_json(output/"launcher.json", {"state": "wall_deadline"})
         if (output/"manifest.json").exists():
