@@ -1,0 +1,126 @@
+{
+  "checked_at": 1792157323.1593382,
+  "source_code": "e9407b3f39ad92dd02c067f2b1419f8203fd9f4a",
+  "bootstrap": {
+    "state": "idle_waiter_deployed",
+    "pid": 187208,
+    "start_ticks": 607814364,
+    "updated_at": 1792157242.190425,
+    "snapshot": "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v9",
+    "launcher_pid": 189376,
+    "launcher_start_ticks": 607830295
+  },
+  "launcher": {
+    "state": "waiting_for_idle",
+    "pid": 189376,
+    "spent_seconds": 9916.711961082183,
+    "updated_at": 1792157322.4109967,
+    "consecutive_idle": 0,
+    "query_error": null
+  },
+  "launcher_manifest": {
+    "command": [
+      "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v9/.venv-chat/bin/python",
+      "-u",
+      "-m",
+      "gofa_f.chattime_stage",
+      "--worker",
+      "--config",
+      "configs/stage16_chattime.yaml",
+      "--output",
+      "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v9",
+      "--resume"
+    ],
+    "cwd": "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v9",
+    "total_seconds": null,
+    "wall_deadline": 1792164600.0,
+    "memory_cap_gib": 40,
+    "leave_free_gib": 16,
+    "git_revision": "e9407b3f39ad92dd02c067f2b1419f8203fd9f4a",
+    "idle_samples": 3,
+    "idle_interval_seconds": 10,
+    "watchdog_interval_seconds": 10,
+    "idle_max_used_mib": 256,
+    "yield_on_foreign": false,
+    "worker_wait_state": "waiting_for_idle"
+  },
+  "window": {
+    "started_at": 1792137782.8795292,
+    "training_deadline": 1792157400.0,
+    "wall_deadline": 1792164600.0,
+    "window_seconds": 26817.120470762253,
+    "adopted_from": {
+      "kind": "training_continuation",
+      "output": "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v8",
+      "source_binding": "b8c10faa823cbb3fb31b98350521cfb0bba0a782f21901f2b89bba61e2d9047c",
+      "window_sha256": "d93cdc1a4e2958e1b24082607fd8596d02f7748cc5056c6b300f2d159c238645",
+      "manifest_sha256": "15ba7a14eaa054880d390739f84224569595227e6427f522e84dacfd0f99a945",
+      "checkpoint_sha256": "37f95b03172e610a609d11ac1dd6a8865b051cca03dbdeac782e0e5b801c538a",
+      "started_at": 1792137782.8795292,
+      "original_wall_deadline": 1792164600.0,
+      "gpu_activity_seconds": 9916.711961082183,
+      "updates": 167,
+      "offset": 10737,
+      "pending_windows": 49,
+      "pending_count": 117586
+    },
+    "idle_interval_seconds": 10,
+    "fixed_prompt_kv": true,
+    "launch_fingerprint": "92727c3c0a6ef021c37b7cb6635ed9be4aa016ad90dcb55b39540f0edebc9191"
+  },
+  "migration": {
+    "source": {
+      "kind": "training_continuation",
+      "output": "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v8",
+      "source_binding": "b8c10faa823cbb3fb31b98350521cfb0bba0a782f21901f2b89bba61e2d9047c",
+      "window_sha256": "d93cdc1a4e2958e1b24082607fd8596d02f7748cc5056c6b300f2d159c238645",
+      "manifest_sha256": "15ba7a14eaa054880d390739f84224569595227e6427f522e84dacfd0f99a945",
+      "checkpoint_sha256": "37f95b03172e610a609d11ac1dd6a8865b051cca03dbdeac782e0e5b801c538a",
+      "started_at": 1792137782.8795292,
+      "original_wall_deadline": 1792164600.0,
+      "gpu_activity_seconds": 9916.711961082183,
+      "updates": 167,
+      "offset": 10737,
+      "pending_windows": 49,
+      "pending_count": 117586
+    },
+    "target_binding": "64d14d22c4efe11bf40287ae5424541bd56edb768f701c5019e03049f60a8820",
+    "target_checkpoint_sha256": "73aa3eddaf3763db7fc641dd2ff748931d6c4bb7aeea75cf785f55af1ef216c0",
+    "state_restore": "exact",
+    "cache": "ephemeral caches rebuilt; old caches not modified",
+    "original_deadline_retained": true
+  },
+  "progress": {
+    "epoch": 0,
+    "offset": 10737,
+    "updates": 167,
+    "stale": 0,
+    "best_mae": null,
+    "best_updates": null,
+    "phase": "train",
+    "pending_windows": 49,
+    "pending_count": 117586,
+    "pending_loss": 431256.71337890625,
+    "validation_offset": 0,
+    "last_validated_key": null,
+    "suffix_checkpointing": false,
+    "prefix_node_chunk": 256,
+    "last_gradient_norm": 4.410202503204346,
+    "last_training_raw_mae": 3.858170493746622,
+    "stop_reason": "training_deadline_or_signal",
+    "updated_at": 1792156317.989897,
+    "checkpoint_sha256": "73aa3eddaf3763db7fc641dd2ff748931d6c4bb7aeea75cf785f55af1ef216c0"
+  },
+  "mechanisms": null,
+  "failures": null,
+  "active_budget": {
+    "spent_seconds": 9916.711961082183,
+    "worker": null
+  },
+  "source_processes_exited": {
+    "134316": true,
+    "176180": true,
+    "177359": true
+  },
+  "gpu_query": "47131 MiB, 33959 MiB, 100 %, Default"
+}

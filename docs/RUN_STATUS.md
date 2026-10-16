@@ -1,5 +1,15 @@
 # 运行交接记录
 
+## Stage16 用户恢复完全空闲准入、10秒检测（2026-10-16，Asia/Shanghai）
+
+本条覆盖以下共享显存准入：新GPU子任务必须连续三次、每10秒确认无计算/图形应用、利用率0%、已用显存≤256MiB、Default模式。查询失败或状态未知重置计数继续等待。外层等待器与每个GPU子任务均采用10秒，间隔写入window/manifest和launcher_manifest并在恢复时校验。运行中他人加入不退出、低显存暂停、40GiB/Torch38GiB/16GiB余量及不操作他人进程保持。
+
+旧v8监督器176180在确认preflight仅CPU等待、active_scope为空后合作停止；bootstrap134316/worker177359也已核实退出，没有新GPU机制、更新或预测。167更新、offset10737、pending49窗口117586标签的检查点及活动账本保留。新固定源码 `e9407b3f39ad92dd02c067f2b1419f8203fd9f4a`，快照 `/home/dcg/dcg_data/GOFA-F-runs/stage16-chattime-metr-v9`，输出 `outputs/stage16-chattime-metr-v9/`。不修改旧快照或清单。
+
+CPU准备控制器北京时间21:24:42启动，PID187208/start_ticks607814364，使用前核对。B静态/C Ruff通过；C禁CUDA/OMP/MKL各2线程308回归通过、11旧可选跳过，正在完成真实权重CPU复核后自动部署；GPU仍需实际机制验证。跟进 `gofa-f-stage16` 已指向v9与完全空闲10秒策略。原始16:03:02起算及**今天21:30训练截止/23:30硬截止**均不延长。以下均为历史。
+
+21:28部署核验：真实7B BF16 CPU固定缓存预测/梯度差均0，CUDA未初始化；CPU共319条XML记录（308通过/11跳过）、Stage16专项71项。新监督器PID189376/start_ticks607830295已进入waiting_for_idle，window和launcher_manifest检测间隔均10秒，idle_samples=3、idle_max_used_mib=256、yield_on_foreign=false。v8检查点/账本精确迁移，167更新与pending49窗口保留；当前GPU有他人任务，未启动GPU机制/训练。证据 `docs/results/stage16-cpu-verification-v9.json` 和 `docs/results/stage16-idle10-deployment-v9.json`。
+
 ## Stage16 固定文本 KV 加速已实现并精确接续，等待共享余量（2026-10-16 21:15，Asia/Shanghai）
 
 用户授权加速第1项：仅缓存冻结前30层中47个固定文本token的KV及边界隐藏状态，继续计算30个动态token并重建完整77位置；图位置、后缀、原生生成、微批量1、有效batch64和科学协议不变。源码 `30943b9acccd5d73c3f0a6a9000b7730e537ecdf`，固定快照 `/home/dcg/dcg_data/GOFA-F-runs/stage16-chattime-metr-v8`，输出 `outputs/stage16-chattime-metr-v8/`。协议 `docs/STAGE16_FIXED_PROMPT_KV.md`。

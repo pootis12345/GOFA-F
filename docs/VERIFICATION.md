@@ -1,5 +1,13 @@
 # 远程验证记录
 
+## Stage16 完全空闲10秒准入回归（2026-10-16）
+
+源码 `e9407b3f39ad92dd02c067f2b1419f8203fd9f4a`：B静态/C Ruff通过，C禁CUDA/OMP/MKL各2线程308回归通过、11旧可选跳过。模拟实际监督器查询时刻为0/10/20秒后才允许启动；三次连续计数、忙碌/未知/图形进程/利用率/256MiB边界/Default模式校验继续通过。窗口恢复拒绝把10秒改回30秒；准备控制器向后续阶段正确传递10秒且不传shared-gpu。
+
+本次只改准入政策及检测间隔，模型、训练、KV和截止不变。旧v8仅CPU等待时已合作退出，新增v9需完整真实权重CPU复核后才自动进入严格空闲等待；CPU回归不是GPU机制/提速/精度结果。
+
+真实7B BF16 CPU复核已通过，固定KV预测/梯度差均0，CUDA未初始化；共319条XML记录含11跳过，Stage16专项71项。21:28实际window/launcher_manifest均确认10秒、三次、256MiB，状态waiting_for_idle，原始起点与21:30/23:30不变、checkpoint恢复exact。证据 `results/stage16-cpu-verification-v9.json`、`results/stage16-idle10-deployment-v9.json`，不是GPU检查已通过。
+
 ## Stage16 固定文本KV及训练状态接续（2026-10-16）
 
 固定源码 `30943b9acccd5d73c3f0a6a9000b7730e537ecdf`，C禁CUDA/OMP/MKL各2线程306通过、11原有可选依赖跳过（317条XML记录含跳过），Stage16专项70项。真实7B BF16 CPU固定47token缓存与原路径预测/梯度最大差均0，实际走缓存复用；缓存单份23,486,464字节。覆盖只读KV、token/padding回退、因果历史隔离、原始RoPE位置、失效条件、缓存不注册为参数、冻结、共同权重、原语言通路及精确恢复。

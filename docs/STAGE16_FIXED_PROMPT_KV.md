@@ -78,3 +78,10 @@ another GPU task entered during the transition. GPU cache checks and actual
 training acceleration are not established by the CPU checks or migration.
 Actual activation, counters and any ordinary-training speed observation belong
 in `RUN_STATUS.md`. Neither a full validation score nor test result exists yet.
+
+Subsequent user amendment restores complete-idle admission with observations
+10seconds apart, still three consecutive samples and still no exit on foreign
+tasks joining after launch. v8 was cooperatively stopped while CPU-only waiting;
+the same checkpoint is continued in v9 without changing the cache or training.
+See the latest entry in `RUN_STATUS.md`; the earlier shared56GiB admission
+description above records history rather than the current launch policy.
