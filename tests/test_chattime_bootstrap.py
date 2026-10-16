@@ -84,3 +84,30 @@ def test_successful_preparation_launches_only_registered_waiter(module, tmp_path
         assert "--shared-gpu" in launched[0]
         assert launched[0][launched[0].index("--hard-deadline")+1] == kwargs["hard_deadline"]
         assert launched[0][launched[0].index("--adopt-waiting-window")+1] == str(kwargs["adopt_waiting_window"])
+
+
+def test_continuation_waits_for_source_to_save_and_exit(module, tmp_path, monkeypatch):
+    output = tmp_path/"new"
+    source = tmp_path/"old"
+    source.mkdir()
+    for suffix in (".launch.json", ".bootstrap.launch.json"):
+        (tmp_path/(source.name+suffix)).write_text('{"pid":123,"start_ticks":45}')
+    alive = [True]
+    monkeypatch.setattr(module, "identity", lambda pid: 45 if pid == 123 and alive[0] else None)
+    monkeypatch.setattr(module.time, "sleep", lambda _: alive.__setitem__(0, False))
+    def run(command, **kwargs):
+        if "check_chattime_cpu.py" in str(command):
+            (output/"cpu_preflight.json").write_text('{"passed":true}')
+        if "--report-only" in command:
+            (output/"report.json").write_text('{"state":"incomplete"}')
+        return SimpleNamespace(returncode=0)
+    class Child:
+        pid = 99999999
+        def wait(self):
+            return 0
+    def launch(command, **kwargs):
+        assert not alive[0] and "--fixed-prompt-kv" in command
+        assert command[command.index("--continue-training-from")+1] == str(source)
+        return Child()
+    module.bootstrap(tmp_path, output, tmp_path/"official.json", run=run, popen=launch,
+        hard_deadline="2099-10-16T23:30:00+08:00", continue_training_from=source, fixed_prompt_kv=True)

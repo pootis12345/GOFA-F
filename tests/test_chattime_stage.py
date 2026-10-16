@@ -51,6 +51,15 @@ def test_shared_admission_is_bound_to_original_start_and_deadline(tmp_path):
         bind_window(tmp_path, resume=True, shared_admission=False)
 
 
+def test_fixed_prompt_policy_is_bound_on_resume(tmp_path):
+    window = bind_window(tmp_path, now=1000., hard_deadline=28000.,
+                         shared_admission=True, fixed_prompt_kv=True)
+    assert window["fixed_prompt_kv"]
+    assert bind_window(tmp_path, resume=True, shared_admission=True, fixed_prompt_kv=True) == window
+    with pytest.raises(ValueError, match="cache policy"):
+        bind_window(tmp_path, resume=True, shared_admission=True, fixed_prompt_kv=False)
+
+
 @pytest.mark.parametrize("seconds", [7200, 39601])
 def test_explicit_window_cannot_remove_evaluation_or_extend(tmp_path, seconds):
     with pytest.raises(ValueError):

@@ -32,6 +32,7 @@ def main():
     from transformers import LlamaForCausalLM, LlamaTokenizer
     from gofa_f.chattime import ChatTimeGOFA, HistoryCodec
     from gofa_f.chattime_checks import check_model
+    from gofa_f.chattime_prompt_cache import check_fixed_prompt, prompt_token_ids
     from gofa_f.chattime_stage import code_files, config_file, digest, prepare
     from gofa_f.chattime_task import counts, data_for, seed
     from gofa_f.graphs import build_graph
@@ -94,6 +95,8 @@ def main():
     encoded = codec.encode(raw, observed, data.mean.numpy()[:3])
     mechanisms = check_model(model, encoded, batch["graph_features"][:, :3])
     assert mechanisms["native_prefill_shared_prediction_and_gradient"]
+    fixed_prompt = check_fixed_prompt(model, encoded, batch["graph_features"][:, :3], prompt_token_ids(tokenizer))
+    assert fixed_prompt["optimized_exercised"]
     parameters = counts(model)
     assert parameters["trainable_real_dof"] == 1120914
     full_tokens = codec.encode(data.series.values[origin-12:origin][None],
@@ -116,6 +119,7 @@ def main():
         "optional_skipped": sum(c.find("skipped") is not None for c in cases),
         "official_codec_examples": len(examples), "real_model_mechanisms": mechanisms,
         "real_model_nodes": 3, "parameters": parameters, "estimated_full_cache_bytes": cache_estimate,
+        "fixed_prompt_mechanisms": fixed_prompt,
         "cuda_initialized": False, "scope": "CPU verification only; no GPU accuracy or mechanism claim"}
     atomic_json(output/"cpu_preflight.json", report)
     print(json.dumps({"passed": True, "cases": len(cases), "stage16_cases": len(chat_cases),

@@ -155,6 +155,8 @@ def save_checkpoint(directory, model, optimizer, state, binding):
     public = {k: v for k, v in state.items() if k != "validation_metrics"}
     public.update({"updated_at": time.time(), "checkpoint_sha256": digest(directory/"last.pt")})
     atomic_json(directory/"progress.json", public)
+    if model.prompt_prefix is not None:
+        atomic_json(directory.parent/"fixed_prompt_cache.json", model.prompt_prefix.stats())
 
 
 def load_checkpoint(directory, model, optimizer, binding):
@@ -591,10 +593,29 @@ def evaluate(config, output, model, codec, data, gpu, budget, binding):
 
 def mechanisms(config, output, model, codec, data, gpu, budget, binding):
     from gofa_f.chattime_checks import check_model
+    from gofa_f.chattime_prompt_cache import check_fixed_prompt, prompt_token_ids
     batch = data.batch("train", [0])
     encoded = encoded_batch(codec, data, batch, gpu.device)
+    original_cache = model.prompt_prefix
+    model.prompt_prefix = None
     result = check_model(model, encoded, batch["graph_features"].to(gpu.device),
                          check=lambda: gpu.check(budget), gpu=True, binding=binding)
+    if original_cache is not None:
+        result["fixed_prompt_fresh"] = check_fixed_prompt(model, encoded,
+            batch["graph_features"].to(gpu.device), prompt_token_ids(codec.tokenizer),
+            check=lambda: gpu.check(budget))
+        assert result["fixed_prompt_fresh"]["optimized_exercised"]
+        path = Path(output)/"gofa_chattime/last.pt"
+        if path.exists():
+            checkpoint = torch.load(path, map_location="cpu", weights_only=False)
+            if checkpoint["binding"] != binding:
+                raise ValueError("Continuation mechanism checkpoint binding differs")
+            model.load_trainable(checkpoint["model"])
+            result["fixed_prompt_continued"] = check_fixed_prompt(model, encoded,
+                batch["graph_features"].to(gpu.device), prompt_token_ids(codec.tokenizer),
+                check=lambda: gpu.check(budget))
+            assert result["fixed_prompt_continued"]["optimized_exercised"]
+    model.prompt_prefix = original_cache
     if not result["native_prefill_shared_prediction_and_gradient"]:
         raise AssertionError("Native-generation frozen-prefix reuse was not exercised")
     atomic_json(Path(output)/"mechanisms.json", {"passed": True, **result})
@@ -639,6 +660,9 @@ def run(args):
         # Construction of test windows/targets is prohibited until the seal exists.
         data, settings = data_for(config, evaluation=args.phase == "evaluate")
         model = new_model(native, data, settings, output).to(gpu.device)
+        if manifest.get("fixed_prompt_kv"):
+            from gofa_f.chattime_prompt_cache import FixedPromptPrefix, prompt_token_ids
+            model.prompt_prefix = FixedPromptPrefix(prompt_token_ids(tokenizer), binding)
         parameters = counts(model)
         if parameters["trainable_real_dof"] != 1120914:
             raise ValueError("Registered trainable parameter count changed")

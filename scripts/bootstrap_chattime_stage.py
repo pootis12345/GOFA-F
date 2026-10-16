@@ -55,7 +55,8 @@ def downloaders(target):
 
 
 def bootstrap(root, output, official_manifest, resume=False, run=subprocess.run, popen=subprocess.Popen,
-              hard_deadline=None, adopt_waiting_window=None, shared_gpu=False):
+              hard_deadline=None, adopt_waiting_window=None, shared_gpu=False,
+              fixed_prompt_kv=False, continue_training_from=None):
     root, output, official_manifest = Path(root).resolve(), Path(output).resolve(), Path(official_manifest).resolve()
     output.mkdir(parents=True, exist_ok=True)
     cpu_env = dict(os.environ, CUDA_VISIBLE_DEVICES="", OMP_NUM_THREADS="2", MKL_NUM_THREADS="2",
@@ -118,6 +119,23 @@ def bootstrap(root, output, official_manifest, resume=False, run=subprocess.run,
                 raise RuntimeError("Real-weight CPU preflight failed; GPU launch prohibited")
         elif not read(output/"cpu_preflight.json", {}).get("passed"):
             raise ValueError("Cannot resume without the original successful CPU preflight")
+        if continue_training_from is not None and not window:
+            previous = Path(continue_training_from).resolve()
+            records = [read(previous.parent/(previous.name+suffix), {})
+                       for suffix in (".launch.json", ".bootstrap.launch.json")]
+            if any(not r.get("pid") or r.get("start_ticks") is None for r in records):
+                raise ValueError("Missing continuation source identities")
+            status("waiting_for_source_checkpoint", window_started=False,
+                   source=str(previous), hard_deadline=hard_deadline)
+            from gofa_f.idle_launcher import parse_deadline
+            deadline = parse_deadline(hard_deadline)
+            if deadline is None:
+                raise ValueError("Continuation must keep an explicit absolute deadline")
+            while any(identity(r["pid"]) == r["start_ticks"] for r in records):
+                if time.time() >= deadline-60:
+                    status("wall_deadline", window_started=False)
+                    return
+                time.sleep(1)
         status("starting_idle_waiter", window_started=bool(window))
         command = [str(python), "-u", "-m", "gofa_f.chattime_stage", "--output", str(output)]
         if hard_deadline is not None:
@@ -126,6 +144,10 @@ def bootstrap(root, output, official_manifest, resume=False, run=subprocess.run,
             command += ["--adopt-waiting-window", str(adopt_waiting_window)]
         if shared_gpu:
             command.append("--shared-gpu")
+        if fixed_prompt_kv:
+            command.append("--fixed-prompt-kv")
+        if continue_training_from is not None and not window:
+            command += ["--continue-training-from", str(continue_training_from)]
         if window:
             command.append("--resume")
         with (output.parent/(output.name+".log")).open("a") as log:
@@ -160,10 +182,13 @@ def main():
     parser.add_argument("--hard-deadline")
     parser.add_argument("--adopt-waiting-window")
     parser.add_argument("--shared-gpu", action="store_true")
+    parser.add_argument("--fixed-prompt-kv", action="store_true")
+    parser.add_argument("--continue-training-from")
     args = parser.parse_args()
     bootstrap(Path(__file__).resolve().parents[1], args.output, args.official_manifest, args.resume,
               hard_deadline=args.hard_deadline, adopt_waiting_window=args.adopt_waiting_window,
-              shared_gpu=args.shared_gpu)
+              shared_gpu=args.shared_gpu, fixed_prompt_kv=args.fixed_prompt_kv,
+              continue_training_from=args.continue_training_from)
 
 
 if __name__ == "__main__":

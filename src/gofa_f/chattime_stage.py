@@ -69,7 +69,7 @@ def code_files():
 
 
 def bind_window(output, resume=False, now=None, launch_fingerprint=None, hard_deadline=None,
-                adopted_from=None, shared_admission=False):
+                adopted_from=None, shared_admission=False, fixed_prompt_kv=False):
     path = Path(output)/"window.json"
     old = read(path)
     if old is not None:
@@ -83,6 +83,8 @@ def bind_window(output, resume=False, now=None, launch_fingerprint=None, hard_de
             raise ValueError("Resume must retain the saved shortened deadline")
         if old.get("admission_policy", "idle") != ("shared_memory" if shared_admission else "idle"):
             raise ValueError("Resume must retain the saved GPU admission policy")
+        if bool(old.get("fixed_prompt_kv")) != bool(fixed_prompt_kv):
+            raise ValueError("Resume must retain the fixed prompt cache policy")
         if launch_fingerprint is not None and old.get("launch_fingerprint") != launch_fingerprint:
             raise ValueError("Saved launch identity changed")
         return old
@@ -98,6 +100,8 @@ def bind_window(output, resume=False, now=None, launch_fingerprint=None, hard_de
         result["adopted_from"] = adopted_from
     if shared_admission:
         result["admission_policy"] = "shared_memory"
+    if fixed_prompt_kv:
+        result["fixed_prompt_kv"] = True
     if launch_fingerprint is not None:
         result["launch_fingerprint"] = launch_fingerprint
     atomic_json(path, result)
@@ -241,6 +245,8 @@ def manifest(config, output, window):
         "runtime": cpu["runtime"], "git_revision": subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()}
     if window and window.get("admission_policy") == "shared_memory":
         result["admission_policy"] = "shared_memory"
+    if window and window.get("fixed_prompt_kv"):
+        result["fixed_prompt_kv"] = True
     return result
 
 
@@ -410,6 +416,8 @@ def main():
     parser.add_argument("--hard-deadline", help="Explicit timezone; may shorten but never extend the original window")
     parser.add_argument("--adopt-waiting-window", help="Exited CPU-only output whose original start time must be retained")
     parser.add_argument("--shared-gpu", action="store_true", help="Admit other applications with at least56GiB actually free")
+    parser.add_argument("--fixed-prompt-kv", action="store_true")
+    parser.add_argument("--continue-training-from", help="Stopped checkpoint to migrate without resetting training or time")
     parser.add_argument("--worker", action="store_true", help=argparse.SUPPRESS)
     args = parser.parse_args()
     config, output = config_file(args.config), Path(args.output).resolve()
@@ -448,6 +456,8 @@ def main():
     expected = manifest(config, output, None)
     if args.shared_gpu:
         expected["admission_policy"] = "shared_memory"
+    if args.fixed_prompt_kv:
+        expected["fixed_prompt_kv"] = True
     fingerprint = hashlib.sha256(json.dumps(expected, sort_keys=True).encode()).hexdigest()
     cutoff = parse_deadline(args.hard_deadline)
     adopted = None
@@ -458,9 +468,18 @@ def main():
         adopted = adopt_waiting_window(args.adopt_waiting_window, config, prepared)
         if cutoff > adopted["original_wall_deadline"]:
             raise ValueError("Adoption cannot extend the original deadline")
+    if args.continue_training_from:
+        if args.resume or args.adopt_waiting_window or (output/"window.json").exists() \
+                or cutoff is None or not args.shared_gpu or not args.fixed_prompt_kv:
+            raise ValueError("Cache continuation requires a fresh output, same shared policy and explicit cutoff")
+        from gofa_f.chattime_continuation import source_record
+        prepared = {**read(output/"preparation.json"), "output": str(output)}
+        adopted = source_record(args.continue_training_from, config, prepared)
+        if cutoff > adopted["original_wall_deadline"]:
+            raise ValueError("Continuation cannot extend the original deadline")
     window = bind_window(output, args.resume, launch_fingerprint=fingerprint, hard_deadline=cutoff,
         now=adopted["started_at"] if adopted else None, adopted_from=adopted,
-        shared_admission=args.shared_gpu)
+        shared_admission=args.shared_gpu, fixed_prompt_kv=args.fixed_prompt_kv)
     if time.time() >= window["wall_deadline"]-60:
         atomic_json(output/"launcher.json", {"state": "wall_deadline"})
         if (output/"manifest.json").exists():
@@ -472,6 +491,11 @@ def main():
     # The persisted fingerprint permits their reconstruction without a new timer.
     bind(output/"launch_binding.json", expected, args.resume and (output/"launch_binding.json").exists())
     bind(output/"manifest.json", expected, args.resume and (output/"manifest.json").exists())
+    continuation = window.get("adopted_from", {})
+    if continuation.get("kind") == "training_continuation":
+        from gofa_f.chattime_continuation import copy_continuation
+        binding = hashlib.sha256(json.dumps(expected, sort_keys=True).encode()).hexdigest()
+        copy_continuation(continuation, output, binding)
     command = [sys.executable, "-u", "-m", "gofa_f.chattime_stage", "--worker", "--config", args.config,
                "--output", str(output), "--resume"]
     idle_launch(output, command, total=None, wall_deadline=window["wall_deadline"], memory_cap_gib=40,

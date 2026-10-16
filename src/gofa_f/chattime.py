@@ -190,6 +190,7 @@ class ChatTimeGOFA(nn.Module):
         nn.init.zeros_(self.head.weight)
         nn.init.zeros_(self.head.bias)
         self.horizon, self.suffix_checkpointing = horizon, False
+        self.prompt_prefix = None
 
     def train(self, mode=True):
         super().train(mode)
@@ -206,22 +207,28 @@ class ChatTimeGOFA(nn.Module):
             raise ValueError("Trainable checkpoint names changed")
         self.load_state_dict(state, strict=False)
 
-    def context(self, hidden, mask):
+    def context(self, hidden, mask, past=None, offset=0):
         model = self.native.model
-        positions = torch.arange(hidden.shape[1], device=hidden.device)
+        positions = torch.arange(offset, offset+hidden.shape[1], device=hidden.device)
         position_ids = positions[None]
-        causal_mask = model._update_causal_mask(mask, hidden, positions, None, False)
+        causal_mask = model._update_causal_mask(mask, hidden, positions, past, False)
         rotary = model.rotary_emb(hidden, position_ids)
         return causal_mask, positions, position_ids, rotary
 
-    def layer(self, index, hidden, context):
+    def layer(self, index, hidden, context, past=None):
         causal, positions, ids, rotary = context
         return self.native.model.layers[index](hidden, attention_mask=causal,
-            position_ids=ids, past_key_value=None, output_attentions=False, use_cache=False,
+            position_ids=ids, past_key_value=past, output_attentions=False, use_cache=False,
             cache_position=positions, position_embeddings=rotary)[0]
 
     @torch.no_grad()
     def prefix(self, encoded, node_chunk=256, check=lambda: None):
+        if self.prompt_prefix is not None:
+            return self.prompt_prefix.compute(self, encoded, node_chunk, check)
+        return self._full_prefix(encoded, node_chunk, check)
+
+    @torch.no_grad()
+    def _full_prefix(self, encoded, node_chunk=256, check=lambda: None):
         hidden_chunks = []
         for start in range(0, len(encoded.input_ids), node_chunk):
             check()
