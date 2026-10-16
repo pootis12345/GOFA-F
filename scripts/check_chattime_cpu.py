@@ -24,6 +24,7 @@ def main():
     import sklearn
     import torch
     import transformers
+    import google.protobuf as protobuf
     import transformers.models.llama.modeling_llama as llama_source
     import transformers.modeling_attn_mask_utils as mask_source
     import transformers.generation.utils as generation_source
@@ -45,8 +46,9 @@ def main():
     torch.set_num_interop_threads(2)
     assert not torch.cuda.is_initialized()
     packages = {"torch": torch.__version__, "transformers": transformers.__version__,
-                "numpy": np.__version__, "scikit-learn": sklearn.__version__}
-    if packages != {"torch": "2.6.0+cu124", "transformers": "4.46.3", "numpy": "1.26.4", "scikit-learn": "1.5.2"}:
+                "numpy": np.__version__, "scikit-learn": sklearn.__version__, "protobuf": protobuf.__version__}
+    if packages != {"torch": "2.6.0+cu124", "transformers": "4.46.3", "numpy": "1.26.4", "scikit-learn": "1.5.2",
+                     "protobuf": "5.28.3"}:
         raise ValueError("Unregistered runtime: "+str(packages))
     prepare(config, output)
     command = [sys.executable, "-m", "pytest", "-q", "--junitxml="+str(output/"cpu-tests.xml")]
@@ -106,9 +108,9 @@ def main():
                          Path(sys.prefix)/"lib/python3.11/site-packages/native_read_only.pth") if path.exists()},
         "modules": {name: {"path": module.__file__, "sha256": digest(module.__file__)}
                     for name, module in (("torch", torch), ("transformers", transformers),
-                                         ("numpy", np), ("sklearn", sklearn))},
+                                         ("numpy", np), ("sklearn", sklearn), ("protobuf", protobuf))},
         "critical_files": {module.__file__: digest(module.__file__)
-                           for module in (llama_source, mask_source, generation_source, tokenizer_source)}}
+                           for module in (llama_source, mask_source, generation_source, tokenizer_source, protobuf)}}
     report = {"passed": True, "code_files": code_files(), "runtime": runtime,
         "cpu_test_cases": len(cases), "stage16_cases": len(chat_cases),
         "optional_skipped": sum(c.find("skipped") is not None for c in cases),

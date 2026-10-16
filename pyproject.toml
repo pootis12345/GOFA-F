@@ -18,7 +18,7 @@ dependencies = [
 dev = ["pytest>=8,<9", "ruff==0.11.13"]
 data = ["tables>=3.9", "openpyxl>=3.1"]
 native = ["chronos-forecasting==2.3.2"]
-chat = ["scikit-learn==1.5.2"]
+chat = ["scikit-learn==1.5.2", "protobuf==5.28.3"]
 
 [project.scripts]
 gofa-train = "gofa_f.train:main"
