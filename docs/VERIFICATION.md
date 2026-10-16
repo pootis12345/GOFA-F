@@ -1,5 +1,13 @@
 # 远程验证记录
 
+## Stage16 方形因果注意力修复CPU验证（2026-10-16）
+
+源码 `9bb224f70f3fc06ef5062a94b9a520d4f6ba5bb7`：B静态/C Ruff通过，94专项通过，完整禁CUDA/OMP/MKL各2线程321通过、11旧可选跳过。覆盖缓存注意力查询完整形状与因果dispatch、只读KV、历史因果隔离、梯度诊断失败仍严格报错、原容差保持、preflight-only失败修复必须显式授权且原训练SHA未变化，以及已授权09:00/11:00窗口跨修复继承而不重置或再延长。
+
+新fixed_prompt_kv_v2仅修正缓存实现的注意力形状/布局，不改科学模型或精度；真实7B CPU及CUDA检查以v11实际记录为准。必须分别通过fresh和真实continued检查点的GPU预测/梯度，不能把v10 CPU通过或本次回归读成CUDA修复成功。
+
+v11实际真实7B BF16 CPU复核通过：边界状态最大差0且changed_elements=0、预测/梯度最大差均0，CUDA未初始化；332 XML条目含11跳过、Stage16专项84项。独立CPU比对源/目标真实检查点除实现binding外完全一致，原始起点与10月17日09:00/11:00保留，累计9956.406928363256秒未清零。外层严格空闲10秒等待正常，没有GPU新机制结果。证据 `results/stage16-cpu-verification-v11.json`、`results/stage16-kv-repair-v11.json`。
+
 ## Stage16 实际CUDA验收失败（2026-10-16）
 
 固定源码 `0c2cce771447127dc14b6e11f201e46f711cb1f6` 的v10在21:56:39 GPU preflight/fixed_prompt_fresh比较训练梯度失败：一个262144元素张量中11个超出不变的BF16 rtol/atol2e-3判定，异常最大绝对差0.010773658752441406、最大相对差0.024507351219654083。此前CPU314通过/11跳过及真实7B 3节点预测梯度差0不能替代真实207节点GPU检查。实际continued checkpoint的缓存检查未执行，未生成passed机制记录，GPU优化提速尚未验证。没有放宽容差或失败后重启。

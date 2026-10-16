@@ -1,0 +1,161 @@
+{
+  "checked_at": 1792166294.4958668,
+  "source_code": "9bb224f70f3fc06ef5062a94b9a520d4f6ba5bb7",
+  "source_state_audit": "source to target exact except implementation binding",
+  "audit_cuda_initialized": false,
+  "bootstrap": {
+    "state": "idle_waiter_deployed",
+    "pid": 316422,
+    "start_ticks": 608709160,
+    "updated_at": 1792166187.7825954,
+    "snapshot": "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v11",
+    "launcher_pid": 318760,
+    "launcher_start_ticks": 608724854
+  },
+  "launcher": {
+    "state": "waiting_for_idle",
+    "pid": 318760,
+    "spent_seconds": 9956.406928363256,
+    "updated_at": 1792166289.2636478,
+    "consecutive_idle": 0,
+    "query_error": null
+  },
+  "status": null,
+  "window": {
+    "started_at": 1792137782.8795292,
+    "training_deadline": 1792198800.0,
+    "wall_deadline": 1792206000.0,
+    "window_seconds": 68217.12047076225,
+    "adopted_from": {
+      "kind": "training_continuation",
+      "output": "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v10",
+      "source_binding": "7600437ecd8c4840c147a795f469443129c04c91f4502a0e087a7f58c3a12665",
+      "window_sha256": "35103c7231d5cbdf972b4761ce0b7e8660e91ac2746b52e6c603437c3a2fe898",
+      "manifest_sha256": "1a2933609bfeb8e00d2259f63e23dec46043d2897e0c530657b6a2b5fafe68fb",
+      "checkpoint_sha256": "791ca1e2f06fd3a727687e010324e7d96bb21724d461fe3f53dccfdad2e7161d",
+      "started_at": 1792137782.8795292,
+      "original_wall_deadline": 1792206000.0,
+      "gpu_activity_seconds": 9956.406928363256,
+      "updates": 167,
+      "offset": 10737,
+      "pending_windows": 49,
+      "pending_count": 117586,
+      "deadline_amendment": {
+        "authorization": "explicit_user_request",
+        "source_window_sha256": "ecfe1540e17a6316be683376a24d6637a10fd4e5de8b9861ed4d61bbfd15e21b",
+        "previous_wall_deadline": 1792164600.0,
+        "new_wall_deadline": 1792206000.0
+      },
+      "repaired_failure": "preflight only; saved checkpoint unchanged; no predictions"
+    },
+    "deadline_amendment": {
+      "authorization": "explicit_user_request",
+      "source_window_sha256": "ecfe1540e17a6316be683376a24d6637a10fd4e5de8b9861ed4d61bbfd15e21b",
+      "previous_wall_deadline": 1792164600.0,
+      "new_wall_deadline": 1792206000.0
+    },
+    "idle_interval_seconds": 10,
+    "fixed_prompt_kv": true,
+    "launch_fingerprint": "b77f9ae20bc3f1ef95466d1220818c40ad41a3db044d74f8d25097eae1492a91"
+  },
+  "launcher_manifest": {
+    "command": [
+      "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v11/.venv-chat/bin/python",
+      "-u",
+      "-m",
+      "gofa_f.chattime_stage",
+      "--worker",
+      "--config",
+      "configs/stage16_chattime.yaml",
+      "--output",
+      "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v11",
+      "--resume"
+    ],
+    "cwd": "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v11",
+    "total_seconds": null,
+    "wall_deadline": 1792206000.0,
+    "memory_cap_gib": 40,
+    "leave_free_gib": 16,
+    "git_revision": "9bb224f70f3fc06ef5062a94b9a520d4f6ba5bb7",
+    "idle_samples": 3,
+    "idle_interval_seconds": 10,
+    "watchdog_interval_seconds": 10,
+    "idle_max_used_mib": 256,
+    "yield_on_foreign": false,
+    "worker_wait_state": "waiting_for_idle"
+  },
+  "migration": {
+    "source": {
+      "kind": "training_continuation",
+      "output": "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v10",
+      "source_binding": "7600437ecd8c4840c147a795f469443129c04c91f4502a0e087a7f58c3a12665",
+      "window_sha256": "35103c7231d5cbdf972b4761ce0b7e8660e91ac2746b52e6c603437c3a2fe898",
+      "manifest_sha256": "1a2933609bfeb8e00d2259f63e23dec46043d2897e0c530657b6a2b5fafe68fb",
+      "checkpoint_sha256": "791ca1e2f06fd3a727687e010324e7d96bb21724d461fe3f53dccfdad2e7161d",
+      "started_at": 1792137782.8795292,
+      "original_wall_deadline": 1792206000.0,
+      "gpu_activity_seconds": 9956.406928363256,
+      "updates": 167,
+      "offset": 10737,
+      "pending_windows": 49,
+      "pending_count": 117586,
+      "deadline_amendment": {
+        "authorization": "explicit_user_request",
+        "source_window_sha256": "ecfe1540e17a6316be683376a24d6637a10fd4e5de8b9861ed4d61bbfd15e21b",
+        "previous_wall_deadline": 1792164600.0,
+        "new_wall_deadline": 1792206000.0
+      },
+      "repaired_failure": "preflight only; saved checkpoint unchanged; no predictions"
+    },
+    "target_binding": "9a5384f8106af964a8877c117d64e129e1484b392730896cf9cc40fa081b42f8",
+    "target_checkpoint_sha256": "4a262c97c0a813032f15e885ca74d2b98cffd27654d74582c30ba23cff3cc1d1",
+    "state_restore": "exact",
+    "cache": "ephemeral caches rebuilt; old caches not modified",
+    "original_start_retained": true,
+    "original_deadline_retained": true,
+    "deadline_amendment": {
+      "authorization": "explicit_user_request",
+      "source_window_sha256": "ecfe1540e17a6316be683376a24d6637a10fd4e5de8b9861ed4d61bbfd15e21b",
+      "previous_wall_deadline": 1792164600.0,
+      "new_wall_deadline": 1792206000.0
+    }
+  },
+  "progress": {
+    "epoch": 0,
+    "offset": 10737,
+    "updates": 167,
+    "stale": 0,
+    "best_mae": null,
+    "best_updates": null,
+    "phase": "train",
+    "pending_windows": 49,
+    "pending_count": 117586,
+    "pending_loss": 431256.71337890625,
+    "validation_offset": 0,
+    "last_validated_key": null,
+    "suffix_checkpointing": false,
+    "prefix_node_chunk": 256,
+    "last_gradient_norm": 4.410202503204346,
+    "last_training_raw_mae": 3.858170493746622,
+    "stop_reason": "training_deadline_or_signal",
+    "updated_at": 1792156317.989897,
+    "checkpoint_sha256": "4a262c97c0a813032f15e885ca74d2b98cffd27654d74582c30ba23cff3cc1d1"
+  },
+  "mechanisms": null,
+  "fixed_prompt_fresh": null,
+  "fixed_prompt_continued": null,
+  "failures": null,
+  "active_budget": {
+    "spent_seconds": 9956.406928363256,
+    "worker": null
+  },
+  "budget": {
+    "spent_seconds": 9882.842370609753,
+    "scopes": {
+      "preflight": 17.008372533135116,
+      "train": 9865.833998076618
+    },
+    "active_scope": null
+  },
+  "gpu_query": "36521 MiB, 44570 MiB, 27 %, Default"
+}

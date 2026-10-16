@@ -1,5 +1,15 @@
 # 运行交接记录
 
+## Stage16 用户请求修复，v11完整CPU检查中（2026-10-16，Asia/Shanghai）
+
+用户在v10失败通知后明确请求“能否修复”，已接续修复工作。新方案保持原生方形因果SDPA的完整77位置查询形状和张量布局，固定文本Q置零并丢弃其输出，仅动态30token做投影/MLP；模型、权重、图、头、优化器和BF16容差不变。旧短查询/显式掩码与原路径不同是已核实的实现差异，但是否为GPU误差根因仍待实测。协议 `docs/STAGE16_KV_REPAIR.md`，旧v10失败报告和快照完整保留。
+
+源码 `9bb224f70f3fc06ef5062a94b9a520d4f6ba5bb7`，固定快照 `/home/dcg/dcg_data/GOFA-F-runs/stage16-chattime-metr-v11`，输出 `outputs/stage16-chattime-metr-v11/`。CPU控制器2026-10-16 23:53:50启动，PID316422/start_ticks608709160，使用前核对。94项专项CPU、B静态/C Ruff通过；C禁CUDA/OMP/MKL各2线程完整回归321通过、11旧可选跳过，真实7B复核正在进行，通过后自动部署。跟进 `gofa-f-stage16` 已重新启用，仅终止/异常通知。
+
+只接续已退出的preflight单阶段失败且源checkpoint与原migration SHA相同、无预测的v10；167更新/offset10737/未完成49窗口117586标签和所有恢复状态/账本不重置，不复制旧final_selection。继承已授权deadline_amendment，原始2026-10-16 16:03:02起算、**10月17日09:00训练截止/11:00硬截止**保持，不再次延长。GPU仍完全空闲三次每10秒，40GiB/Torch38GiB/16GiB余量不变；GPU检查须fresh和actual continued两项通过才训练，失败仍停止不放宽或自动重试。新增 `fixed_prompt_fresh.json`、`fixed_prompt_continued.json` 保存命名梯度及边界差异诊断，CPU通过不代表修复已在GPU成立。以下v10终止及更早记录均为历史。
+
+23:58部署核验：真实7B BF16 CPU预测/梯度最大差0，完整边界隐藏状态max_abs=0/changed_elements=0，实际走fixed_prompt_kv_v2复用；332条XML记录（321通过/11跳过）、Stage16专项84项。监督器PID318760/start_ticks608724854正常waiting_for_idle。禁CUDA独立比对实际v10/v11检查点，除实现binding外全部值完全一致，账本9956.406928363256秒保留；原始起点/09:00/11:00及10秒/三次/256MiB准入均已核实。尚无新GPU机制结果，GPU有其他任务，不宣称CUDA修复或提速已成功。证据 `docs/results/stage16-cpu-verification-v11.json` 和 `docs/results/stage16-kv-repair-v11.json`。
+
 ## Stage16 终止：固定文本KV未通过GPU梯度一致性（2026-10-16 23:33，Asia/Shanghai）
 
 v10已在21:56:39因preflight/fixed_prompt_fresh失败退出，不能再把下方waiting_for_idle当实时状态。GPU梯度比较失败张量11/262144元素不满足预注册BF16 rtol/atol2e-3，异常最大绝对差0.010773658752441406；未放宽、未重启。CPU314通过/11旧可选跳过、真实7B 3节点CPU预测梯度差0，不构成207节点CUDA通过。实际continued缓存检查未执行，缓存提速未成立。

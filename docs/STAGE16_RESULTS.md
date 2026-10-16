@@ -1,5 +1,7 @@
 # Stage16 ChatTime：GPU 缓存机制失败终止
 
+本报告记录v10的终止结果。用户随后明确请求修复，v11已通过完整和真实权重CPU复核，正在等GPU完全空闲验证；当前接续状态见 `RUN_STATUS.md`，修复协议 `STAGE16_KV_REPAIR.md`。以下失败与零精度记录保持原样，不代表新接续已失败或已成功。
+
 2026-10-16 23:33（Asia/Shanghai）复核：`stage16-chattime-metr-v10` 已于 **21:56:39** 因 GPU 机制检查失败停止，状态 `failed`。GPU 作业、CPU 调度 worker、监督器及准备控制器均已退出；没有自动重启、放宽容差或补跑评价。用户授权的截止仍为2026-10-17训练09:00、硬截止11:00，本次提前失败不是墙钟耗尽。
 
 固定源码 `0c2cce771447127dc14b6e11f201e46f711cb1f6`，快照 `/home/dcg/dcg_data/GOFA-F-runs/stage16-chattime-metr-v10`，输出 `/home/dcg/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v10`。终止证据 [JSON](results/stage16-chattime-metr-v10-terminal.json) 保留完整报告、异常、来源迁移和活动账本；官方权重、旧快照和共享数据未修改。
