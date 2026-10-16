@@ -50,3 +50,25 @@ B static checks and94 targeted CPU cases on C passed before the full real-weight
 preflight. Full regression, deployed source and actual CPU/GPU observations are
 recorded in RUN_STATUS.md and results JSON. Do not claim a repaired CUDA path or
 resumed training solely from the code and CPU tests.
+
+## Overnight authorization amendment,2026-10-17 Asia/Shanghai
+
+The user explicitly authorized autonomous repair and redeployment if this run
+fails while they sleep. A failed GPU child still exits and retains its evidence;
+the agent may then diagnose and fix the implementation, validate on C with CUDA
+disabled, commit/synchronize, create the next immutable version and re-enter
+strict idle admission. Do not retry unchanged code indefinitely, suppress failed
+checks, widen tolerances, reset state/cost, or add model/hyperparameter candidates.
+Training/validation/evaluation failures require their corresponding safe state
+and journal recovery; an evaluation with test forecasts cannot return to training.
+Every redeployment first verifies that the previous owned processes exited.
+
+This authorization does not change the original start,09:00 training cutoff,
+11:00 hard stop or10-second complete-idle resource policy. Repairs after09:00
+cannot add training; after11:00 only CPU aggregation is allowed. When safe repair
+is not feasible in the remaining window, retain the failure and report it.
+The existing hourly monitor continues through safely repairable intermediate
+failures and is updated to the actual new version after deployment. Routine
+waiting/training and controlled repair stay quiet; final results, unrecoverable
+conditions or required user action are notified. Do not end monitoring merely
+because an intermediate version failed and is being safely repaired.
