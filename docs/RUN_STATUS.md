@@ -1,5 +1,11 @@
 # 运行交接记录
 
+## Stage15 REG路线rank6固定快照和等待器已部署（2026-10-16 09:08，Asia/Shanghai）
+
+运行源码 `42b64818a9874ac12832a9e57a6ed0c4b59093f8`，快照 `/home/dcg/dcg_data/GOFA-F-runs/stage15-metr-reg6-v1`，C开发输出 `outputs/stage15-metr-reg6-v1/`、日志同级 `.log`、身份同级 `.launch.json`。B/C/GitHub同步，C禁CUDA/OMP/MKL各2线程229通过/11可选依赖跳过，固定快照12输入核验通过，旧Stage14进程已退出。
+
+CPU等待器首次北京时间2026-10-16 09:08:48启动，PID3215096/start_ticks603398801，使用前核对身份，禁止重复启动。绝对训练截止10:43、硬截止10:58不顺延。唯一r1_reg_rank6组合REG-only消息与rank6私有头，可训练119,302自由度，协议 `docs/STAGE15_REG_CAPACITY_PROTOCOL.md`；部署时尚无GPU精度。每个新GPU子任务严格空闲准入、40GiB/Torch38GiB/16GiB余量、运行中他人加入不退出仍有效。10:58前仅据验证机制持续顺序迭代。下方准备和旧阶段为历史。
+
 ## Stage14未合格，Stage15 REG路线与rank6组合准备部署（2026-10-16，Asia/Shanghai）
 
 Stage14已no_eligible_variant，等待器3145789/worker3146463退出，无失败。M1验证全步/第12步3.0803319922/3.6877857832，M2为3.0667078433/3.6651309559；M2改善约0.378%未过0.5%门槛，均未测试，合格对照仍T2。结果 `docs/STAGE14_RESULTS.md` 和机器可读副本保存，旧阶段不重启。
