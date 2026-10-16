@@ -1,0 +1,150 @@
+{
+  "source": "145789cc218cc5b9f9071ef92ad1ad1a3993909d",
+  "recorded_at": 1792146445.9189684,
+  "snapshot": "/home/dcg/dcg_data/GOFA-F-runs/stage16-chattime-metr-v6",
+  "output": "/home/dcg/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v6",
+  "window": {
+    "started_at": 1792137782.8795292,
+    "training_deadline": 1792157400.0,
+    "wall_deadline": 1792164600.0,
+    "window_seconds": 26817.120470762253,
+    "adopted_from": {
+      "output": "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v5",
+      "window_sha256": "4509de936de7d00d06b13eaeea8f3854a14110b343e132a72febe22543167339",
+      "manifest_sha256": "a976cfa1f9fe1f43ad4c9e0368bf302de8946bef4fe8aab73652e22832cbbd1e",
+      "started_at": 1792137782.8795292,
+      "original_wall_deadline": 1792164600.0,
+      "gpu_activity_seconds": 0
+    },
+    "admission_policy": "shared_memory",
+    "launch_fingerprint": "4a14b2c0da1447f54a5897061ed32e874be4251bc392f3df0d4b51968c5183a9"
+  },
+  "launcher": {
+    "state": "running",
+    "pid": 4140814,
+    "spent_seconds": 0.0,
+    "updated_at": 1792146293.1711369,
+    "worker_pid": 4143990
+  },
+  "launcher_manifest": {
+    "command": [
+      "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v6/.venv-chat/bin/python",
+      "-u",
+      "-m",
+      "gofa_f.chattime_stage",
+      "--worker",
+      "--config",
+      "configs/stage16_chattime.yaml",
+      "--output",
+      "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v6",
+      "--resume"
+    ],
+    "cwd": "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v6",
+    "total_seconds": null,
+    "wall_deadline": 1792164600.0,
+    "memory_cap_gib": 40,
+    "leave_free_gib": 16,
+    "git_revision": "145789cc218cc5b9f9071ef92ad1ad1a3993909d",
+    "idle_samples": 3,
+    "idle_interval_seconds": 30,
+    "watchdog_interval_seconds": 10,
+    "yield_on_foreign": false,
+    "worker_wait_state": "waiting_for_shared_capacity",
+    "admission_policy": "shared_memory",
+    "admission_min_free_mib": 57344
+  },
+  "status": {
+    "state": "running",
+    "pid": 4143990,
+    "updated_at": 1792146441.7743855,
+    "phase": "train"
+  },
+  "active_budget": {
+    "spent_seconds": 31.414829787798226,
+    "worker": {
+      "pid": 4143990,
+      "start_ticks": "606735393",
+      "last_monotonic": 6067506.162146432,
+      "charging": true
+    }
+  },
+  "budget": {
+    "spent_seconds": 7.736452373676002,
+    "scopes": {
+      "preflight": 7.736452373676002
+    },
+    "active_scope": null
+  },
+  "mechanisms": {
+    "passed": true,
+    "initial_persistence": true,
+    "zero_graph_native_hidden": true,
+    "cached_prediction_and_gradients": true,
+    "graph_gradient_active": true,
+    "batch_graph_isolation": true,
+    "empty_nodes": true,
+    "pending_gradient_resume_exact": true,
+    "optimizer_resume_exact": true,
+    "native_weights_unchanged": true,
+    "text_bypass_exact": true,
+    "native_prefill_shared_prediction_and_gradient": true,
+    "numeric_tolerance": {
+      "rtol": 0.002,
+      "atol": 0.002
+    },
+    "checkpoint_state_tolerance": "exact"
+  },
+  "cuda_memory": {
+    "phases": {
+      "preflight": {
+        "peak_allocated": 32319703552,
+        "peak_reserved": 37589352448,
+        "attempts": 1
+      }
+    },
+    "peak_allocated": 32319703552,
+    "peak_reserved": 37589352448
+  },
+  "launch": {
+    "pid": 4140814,
+    "start_ticks": 606727598,
+    "snapshot": "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v6",
+    "output": "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v6",
+    "spawned_at": 1792146215.2169929,
+    "command": [
+      "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v6/.venv-chat/bin/python",
+      "-u",
+      "-m",
+      "gofa_f.chattime_stage",
+      "--output",
+      "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v6",
+      "--hard-deadline",
+      "2026-10-16T23:30:00+08:00",
+      "--adopt-waiting-window",
+      "/home/dcg/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v5",
+      "--shared-gpu"
+    ]
+  },
+  "bootstrap_launch": {
+    "pid": 4135772,
+    "start_ticks": 606715582,
+    "snapshot": "/home/dcg/dcg_data/GOFA-F-runs/stage16-chattime-metr-v6",
+    "code": "145789cc218cc5b9f9071ef92ad1ad1a3993909d",
+    "output": "/home/dcg/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v6",
+    "spawned_at": 1792146095.0581028,
+    "command": [
+      "/home/dcg/dcg_data/GOFA-F-runs/stage16-chattime-metr-v6/.venv-chat/bin/python",
+      "-u",
+      "/home/dcg/dcg_data/GOFA-F-runs/stage16-chattime-metr-v6/scripts/bootstrap_chattime_stage.py",
+      "--output",
+      "/home/dcg/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v6",
+      "--official-manifest",
+      "/home/dcg/dcg_data/GOFA-F/.remote/chattime-official-snapshot.json",
+      "--hard-deadline",
+      "2026-10-16T23:30:00+08:00",
+      "--adopt-waiting-window",
+      "/home/dcg/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v5",
+      "--shared-gpu"
+    ]
+  }
+}

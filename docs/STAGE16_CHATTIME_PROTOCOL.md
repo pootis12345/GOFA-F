@@ -138,3 +138,12 @@ real7B mechanisms. Effective persisted start/training/hard times were verified;
 see `results/stage16-deadline-v5.json` and
 `results/stage16-cpu-verification-v5.json`. Deployment state is waiting for idle,
 not a CUDA mechanism or accuracy result.
+
+Latest user resource amendment,2026-10-16: use `--shared-gpu` for v6 with
+three checks30seconds apart of actual free memory>=56GiB and Default mode;
+other applications and nonzero utilization are allowed. This supersedes strict
+idleness for this run only. Source `145789cc218cc5b9f9071ef92ad1ad1a3993909d`,
+artifact `stage16-chattime-metr-v6`, retaining16:03:02 start,21:30 training cutoff
+and23:30 hard cutoff. See `STAGE16_SHARED_GPU.md`. Memory caps/margin, CPU/GPU
+checks, scientific protocol and failure tolerances are unchanged. Concurrent
+training may increase the other inference server's latency.

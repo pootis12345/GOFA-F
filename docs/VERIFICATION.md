@@ -1,5 +1,13 @@
 # 远程验证记录
 
+## Stage16 共享GPU准入验证（2026-10-16）
+
+源码 `145789cc218cc5b9f9071ef92ad1ad1a3993909d`，C禁CUDA/OMP/MKL各2线程290通过、11旧可选跳过，新增54项全部通过，真实7B CPU机制复核通过。共享准入模拟覆盖其他应用活跃时允许启动、实际free而非total-used、三次连续余量、查询未知/低余量/非Default拒绝、只操作自建进程组、内外两层准入和恢复政策/截止一致；旧完全空闲默认行为回归通过。
+
+检查不改变科学模型或数值容差。新阶段 `stage16-chattime-metr-v6` 保留16:03:02起算、今天21:30训练截止/23:30硬截止，window/manifest/launcher_manifest均绑定shared_memory；CPU证据 `docs/results/stage16-cpu-verification-v6.json`。GPU机制及训练仍由实际准入之后的状态记录确认，CPU通过不代表CUDA通过。
+
+18:27补充真实CUDA验证：完整207节点通过initial Persistence、zero-graph native hidden、缓存/非缓存及原生prefill共享预测/梯度、图梯度有限、冻结、缺失、批图隔离、纯文本精确绕过、未完成累积与优化器精确恢复；BF16预测/梯度2e-3及状态精确要求均保持。preflight峰值allocated30.1GiB/reserved35.0GiB，活动约7.74秒。已进入train阶段，其他用户推理服务仍运行。证据 `docs/results/stage16-shared-v6.json`，不代表已产生完整验证/测试精度。
+
 ## Stage16 提前截止及保留起算时间验证（2026-10-16）
 
 运行源码 `0d73f05c34dbff3452acb6ed4f80d2a0b1d1c928`，C禁CUDA/OMP/MKL各2线程280通过、11旧可选跳过，新增51项全部通过；真实7B CPU机制复核通过，状态精确恢复和预注册BF16容差不变。32项专项覆盖短窗口保留两小时评价、恢复不能延长、拒绝仍存活/有GPU活动/有训练产物/输入变化的接续，以及允许CPU零完成汇总。
