@@ -50,7 +50,7 @@ def test_explicit_window_cannot_remove_evaluation_or_extend(tmp_path, seconds):
     assert not (tmp_path/"window.json").exists()
 
 
-@pytest.mark.parametrize("refusal", [None, "live", "activity", "graph", "gpu_artifacts"])
+@pytest.mark.parametrize("refusal", [None, "cpu_summary", "live", "activity", "graph", "gpu_artifacts"])
 def test_adoption_requires_exited_zero_activity_waiter(tmp_path, refusal):
     from gofa_f.prefix_cache import atomic_json
     previous, current = tmp_path/"previous", tmp_path/"current"
@@ -72,11 +72,17 @@ def test_adoption_requires_exited_zero_activity_waiter(tmp_path, refusal):
         (current/"correlation_graph.npz").write_bytes(b"changed graph")
     if refusal == "gpu_artifacts":
         (previous/"gofa_chattime").mkdir()
+        (previous/"gofa_chattime/best.pt").write_bytes(b"trained model")
+    if refusal == "cpu_summary":
+        for variant in ("gofa_chattime", "native_chattime"):
+            (previous/variant).mkdir()
+            atomic_json(previous/variant/"evaluation_progress.json",
+                        {"test": {"completed_windows": 0, "complete": False}})
     inputs = {str(weight): digest(weight), str(current/"correlation_graph.npz"): digest(current/"correlation_graph.npz")}
     prepared = {"output": str(current), "inputs": inputs}
     def identity(pid):
         return "45" if refusal == "live" else None
-    if refusal:
+    if refusal not in (None, "cpu_summary"):
         with pytest.raises(ValueError):
             adopt_waiting_window(previous, config, prepared, identity=identity)
     else:

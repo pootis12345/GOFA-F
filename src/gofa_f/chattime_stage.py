@@ -116,9 +116,22 @@ def adopt_waiting_window(previous, config, prepared, identity=process_identity):
         actual = identity(record["pid"])
         if actual is not None and str(actual) == str(record["start_ticks"]):
             raise ValueError("Previous CPU controller/waiter is still alive")
-    if (previous/"status.json").exists() or (previous/"mechanisms.json").exists() \
-            or (previous/"gofa_chattime").exists() or (previous/"native_chattime").exists():
+    if any((previous/name).exists() for name in ("status.json", "mechanisms.json", "parameters.json")):
         raise ValueError("GPU stage artifacts prohibit waiting-only adoption")
+    for variant in ("gofa_chattime", "native_chattime"):
+        directory = previous/variant
+        # CPU --report-only creates these empty summary records even when no
+        # CUDA child was ever admitted. They contain no predictions or training.
+        files = [p for p in directory.rglob("*") if p.is_file()]
+        if any(p != directory/"evaluation_progress.json" for p in files):
+            raise ValueError("Checkpoint/prediction artifacts prohibit waiting-only adoption")
+        summaries = read(directory/"evaluation_progress.json", {})
+        if any(row.get("complete", False) or row.get("completed_windows", 0) != 0
+               for row in summaries.values()):
+            raise ValueError("Completed evaluation prohibits waiting-only adoption")
+    selection = read(previous/"final_selection.json", {})
+    if selection.get("gofa") is not None or selection.get("updates", 0) != 0:
+        raise ValueError("A trained selection prohibits waiting-only adoption")
     original = read(previous/"manifest.json", {})
     if original.get("config") != config:
         raise ValueError("Only deadline/source infrastructure may change, not the experiment")
