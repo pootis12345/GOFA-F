@@ -1,6 +1,8 @@
 import hashlib
 import json
+import random
 
+import numpy as np
 import pytest
 import torch
 
@@ -34,7 +36,9 @@ def continued(tmp_path):
     folder.mkdir()
     saved = {"binding": binding, "model": {"head.weight": torch.arange(12.)},
         "optimizer": {"state": {0: {"step": torch.tensor(79.), "exp_avg": torch.arange(12.)/10}}},
-        "gradients": {"head.weight": torch.arange(12.)/7}, "rng": {"torch": torch.get_rng_state()},
+        "gradients": {"head.weight": torch.arange(12.)/7},
+        "rng": {"torch": torch.get_rng_state(), "numpy": np.random.get_state(),
+                "python": random.getstate(), "cuda": [torch.arange(64, dtype=torch.uint8)]},
         "state": {"updates": 79, "offset": 5105, "pending_windows": 49, "pending_count": 118985,
                   "pending_loss": 389512.1462402344, "stop_reason": "training_deadline_or_signal"}}
     torch.save(saved, folder/"last.pt")

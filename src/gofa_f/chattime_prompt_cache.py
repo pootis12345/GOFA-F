@@ -50,19 +50,22 @@ class FixedPromptPrefix:
             return model._full_prefix(encoded, node_chunk, check)
         if model.native.training or any(p.requires_grad for p in model.native.parameters()):
             raise ValueError("Fixed prompt caching requires an eval-mode frozen native model")
-        signature = (model.graph_layers, self.ids,
+        signature = (model.graph_layers, self.ids, tuple(ids.shape), node_chunk,
             tuple((p.data_ptr(), p._version, p.dtype, p.device) for p in model.native.parameters()))
         if signature != self.signature:
             check()
-            hidden = model.native.model.embed_tokens(wanted[None])
-            context = model.context(hidden, torch.ones_like(wanted[None], dtype=torch.bool))
+            # Warm with the original query/batch shape once. Only causal states
+            # before the history are retained, independent of the warm-up tail.
+            hidden = model.native.model.embed_tokens(ids[:node_chunk])
+            context = model.context(hidden, mask[:node_chunk])
             cache = DynamicCache()
             for index in range(model.graph_layers[0]+1):
                 hidden = model.layer(index, hidden, context, past=cache)
             # Dynamic tails must never append into this shared cache.
-            self.pairs = tuple((key.detach(), value.detach())
+            self.pairs = tuple((key[:1, :, :length].detach().clone(), value[:1, :, :length].detach().clone())
                                for key, value in zip(cache.key_cache, cache.value_cache))
-            self.boundary = hidden.detach()
+            self.boundary = hidden[:1, :length].detach().clone()
+            del cache, hidden
             self.signature = signature
             self.builds += 1
         readonly = ReadOnlyPrefixKV(self.pairs)

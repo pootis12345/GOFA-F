@@ -2,6 +2,7 @@
 from dataclasses import replace
 import tempfile
 
+import numpy as np
 import torch
 
 from gofa_f.chattime import PrefixLRU
@@ -10,6 +11,8 @@ from gofa_f.chattime import PrefixLRU
 def assert_tree_equal(first, second):
     if torch.is_tensor(first):
         assert torch.equal(first.cpu(), second.cpu())
+    elif isinstance(first, np.ndarray):
+        assert first.dtype == second.dtype and np.array_equal(first, second)
     elif isinstance(first, dict):
         assert first.keys() == second.keys()
         for key in first:

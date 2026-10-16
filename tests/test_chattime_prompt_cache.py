@@ -77,3 +77,17 @@ def test_static_cache_rejects_unfrozen_backbone(tiny):
     model.native.model.embed_tokens.weight.requires_grad_(True)
     with pytest.raises(ValueError, match="frozen"):
         model.prefix(encoded)
+
+
+def test_warmup_history_never_changes_shared_text_states(tiny):
+    model, encoded, _, _ = tiny
+    cache = FixedPromptPrefix(encoded.input_ids[0, :3].tolist(), "test")
+    model.prompt_prefix = cache
+    model.prefix(encoded)
+    ids = encoded.input_ids.clone()
+    ids[:, 3:] = (ids[:, 3:]+7) % model.native.config.vocab_size
+    changed = replace(encoded, input_ids=ids)
+    reused = model.prefix(changed)
+    expected = model._full_prefix(changed)
+    torch.testing.assert_close(reused[0], expected[0], rtol=1e-6, atol=1e-6)
+    assert cache.builds == 1
