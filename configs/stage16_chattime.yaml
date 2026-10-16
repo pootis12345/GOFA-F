@@ -1,0 +1,55 @@
+protocol: stage16-chattime-metr-v1
+seed: 42
+datasets: [metr_la]
+models: [native_chattime, gofa_chattime]
+weights:
+  repo: ChengsenWang/ChatTime-1-7B-Chat
+  revision: 20baa88d6ab838b34abbd1d2b1f4cea57c8ff870
+  directory: data/weights/chattime-7b-20baa88
+  source_revision: 8c2d4c209302d2b2bd6cc3c154586842341e3247
+  source_directory: external/ChatTime
+architecture:
+  graph_layers: [29, 30]
+  rank: 64
+  attention_rank: 16
+  feature_dim: 19
+  prior_floor: 0.5
+  head: linear_4096_to_12_zero
+data:
+  benchmark: configs/benchmark.yaml
+  calendar: data/features/context-v1/metr_la.npz
+  correlation: outputs/stage8-metr-temporal-v1/correlation_graph.npz
+  correlation_sha256: d25fb015fb887d5fae60411af29cd20315fec31f8d635b4a965f07708312e8d0
+training:
+  context: 12
+  horizon: 12
+  effective_batch_size: 64
+  microbatch: 1
+  max_epochs: 100
+  patience: 15
+  graph_lr: 0.001
+  head_lr: 0.0001
+  weight_decay: 0.0001
+  gradient_clip: 1.0
+  loss: raw_mae
+  checkpoint_seconds: 30
+native_decoding:
+  do_sample: false
+  max_new_tokens: 64
+  node_microbatch: 64
+cache:
+  disk_limit_gib: 128
+  ram_limit_gib: 64
+  prefix_layers: 30
+resources:
+  python: .venv-chat/bin/python
+  memory_cap_gib: 40
+  torch_cap_gib: 38
+  leave_free_gib: 16
+  wall_window_hours: 11
+  evaluation_reserve_hours: 2
+  yield_on_foreign: false
+  admission_per_gpu_task: true
+  allow_tf32: true
+  omp_threads: 2
+  mkl_threads: 2

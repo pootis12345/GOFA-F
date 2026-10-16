@@ -5,6 +5,7 @@ __pycache__/
 .venv/
 .venv-native/
 .venv-ufg/
+.venv-chat/
 *.egg-info/
 data/
 outputs/
