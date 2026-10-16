@@ -1,5 +1,17 @@
 # 运行交接记录
 
+## Stage16 用户延期至2026-10-17 11:00（Asia/Shanghai）
+
+用户明确要求“将硬截止时间改为明天早上11：00”：硬截止改为**2026-10-17 11:00**，沿用两小时锁定评价，训练截止**09:00**。原始2026-10-16 16:03:02起算和累计活动不重置；本次明确授权覆盖旧11小时上限及10月16日21:30/23:30截止，后续普通恢复不能再次延长。完全空闲、三次连续、10秒检测及40GiB/Torch38GiB/16GiB余量保持。
+
+旧v9于21:35因mechanisms missed training deadline标记incomplete退出；bootstrap187208/launcher189376/worker195814均已核实退出，没有新版GPU机制或预测。167更新、offset10737/22969、未完成49窗口117586标签的模型/优化器/梯度/RNG完整保留。新接续只接受已退出、完整保存、无预测的过期检查点，不复制旧final_selection。
+
+运行源码 `0c2cce771447127dc14b6e11f201e46f711cb1f6`，固定快照 `/home/dcg/dcg_data/GOFA-F-runs/stage16-chattime-metr-v10`，输出 `outputs/stage16-chattime-metr-v10/`。CPU控制器北京时间21:46:24启动，PID204084/start_ticks607944509；使用前核对。B静态/C Ruff通过，C禁CUDA/OMP/MKL各2线程314回归通过、11旧可选跳过，真实权重复核正在进行，通过后自动部署。跟进 `gofa-f-stage16` 已指向v10及10月17日09:00/11:00截止。
+
+延期通过显式fresh continuation授权，来源window SHA、原/新截止写入window.deadline_amendment；恢复拒绝改变已登记截止。migration.original_deadline_retained=false表示本次已授权延期，并非丢失状态；original_start_retained和state_restore=exact必须通过。以下均为历史，旧阶段不重启。
+
+21:50实际部署核验：v10真实7B BF16 CPU固定缓存预测/梯度差均0，CUDA未初始化；325条XML记录（314通过/11跳过），Stage16专项77项。监督器PID206214/start_ticks607959440已waiting_for_idle，window训练截止1792198800（10月17日09:00）、硬截止1792206000（11:00）、原start1792137782.879529均正确；外层检测10秒/三次/256MiB并保持yield_on_foreign=false。模型/优化器/梯度/RNG/游标exact，账本9925.884896796197秒保留，v9旧final_selection未复制。来源三个进程均退出；当前另有GPU任务，尚无新GPU机制或精度结果。证据 `docs/results/stage16-cpu-verification-v10.json` 和 `docs/results/stage16-morning-deployment-v10.json`。
+
 ## Stage16 用户恢复完全空闲准入、10秒检测（2026-10-16，Asia/Shanghai）
 
 本条覆盖以下共享显存准入：新GPU子任务必须连续三次、每10秒确认无计算/图形应用、利用率0%、已用显存≤256MiB、Default模式。查询失败或状态未知重置计数继续等待。外层等待器与每个GPU子任务均采用10秒，间隔写入window/manifest和launcher_manifest并在恢复时校验。运行中他人加入不退出、低显存暂停、40GiB/Torch38GiB/16GiB余量及不操作他人进程保持。

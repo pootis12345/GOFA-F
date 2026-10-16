@@ -1,0 +1,149 @@
+{
+  "checked_at": 1792158614.6060793,
+  "source_code": "0c2cce771447127dc14b6e11f201e46f711cb1f6",
+  "user_authorization": "2026-10-16: 将硬截止时间改为明天早上11：00",
+  "bootstrap": {
+    "state": "idle_waiter_deployed",
+    "pid": 204084,
+    "start_ticks": 607944509,
+    "updated_at": 1792158533.6407561,
+    "snapshot": "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v10",
+    "launcher_pid": 206214,
+    "launcher_start_ticks": 607959440
+  },
+  "launcher": {
+    "state": "waiting_for_idle",
+    "pid": 206214,
+    "spent_seconds": 9925.884896796197,
+    "updated_at": 1792158613.8528583,
+    "consecutive_idle": 0,
+    "query_error": null
+  },
+  "status": null,
+  "window": {
+    "started_at": 1792137782.8795292,
+    "training_deadline": 1792198800.0,
+    "wall_deadline": 1792206000.0,
+    "window_seconds": 68217.12047076225,
+    "adopted_from": {
+      "kind": "training_continuation",
+      "output": "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v9",
+      "source_binding": "64d14d22c4efe11bf40287ae5424541bd56edb768f701c5019e03049f60a8820",
+      "window_sha256": "ecfe1540e17a6316be683376a24d6637a10fd4e5de8b9861ed4d61bbfd15e21b",
+      "manifest_sha256": "778ec42df6c9aa1eca5dcf1b4261999f2247036cd7f757a9ee6045f418ca222d",
+      "checkpoint_sha256": "73aa3eddaf3763db7fc641dd2ff748931d6c4bb7aeea75cf785f55af1ef216c0",
+      "started_at": 1792137782.8795292,
+      "original_wall_deadline": 1792164600.0,
+      "gpu_activity_seconds": 9925.884896796197,
+      "updates": 167,
+      "offset": 10737,
+      "pending_windows": 49,
+      "pending_count": 117586
+    },
+    "deadline_amendment": {
+      "authorization": "explicit_user_request",
+      "source_window_sha256": "ecfe1540e17a6316be683376a24d6637a10fd4e5de8b9861ed4d61bbfd15e21b",
+      "previous_wall_deadline": 1792164600.0,
+      "new_wall_deadline": 1792206000.0
+    },
+    "idle_interval_seconds": 10,
+    "fixed_prompt_kv": true,
+    "launch_fingerprint": "dacab78adbf0a8f2500173bf1d688e7741452ea12f7afcbda10b2c084ddcda55"
+  },
+  "launcher_manifest": {
+    "command": [
+      "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v10/.venv-chat/bin/python",
+      "-u",
+      "-m",
+      "gofa_f.chattime_stage",
+      "--worker",
+      "--config",
+      "configs/stage16_chattime.yaml",
+      "--output",
+      "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v10",
+      "--resume"
+    ],
+    "cwd": "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v10",
+    "total_seconds": null,
+    "wall_deadline": 1792206000.0,
+    "memory_cap_gib": 40,
+    "leave_free_gib": 16,
+    "git_revision": "0c2cce771447127dc14b6e11f201e46f711cb1f6",
+    "idle_samples": 3,
+    "idle_interval_seconds": 10,
+    "watchdog_interval_seconds": 10,
+    "idle_max_used_mib": 256,
+    "yield_on_foreign": false,
+    "worker_wait_state": "waiting_for_idle"
+  },
+  "migration": {
+    "source": {
+      "kind": "training_continuation",
+      "output": "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v9",
+      "source_binding": "64d14d22c4efe11bf40287ae5424541bd56edb768f701c5019e03049f60a8820",
+      "window_sha256": "ecfe1540e17a6316be683376a24d6637a10fd4e5de8b9861ed4d61bbfd15e21b",
+      "manifest_sha256": "778ec42df6c9aa1eca5dcf1b4261999f2247036cd7f757a9ee6045f418ca222d",
+      "checkpoint_sha256": "73aa3eddaf3763db7fc641dd2ff748931d6c4bb7aeea75cf785f55af1ef216c0",
+      "started_at": 1792137782.8795292,
+      "original_wall_deadline": 1792164600.0,
+      "gpu_activity_seconds": 9925.884896796197,
+      "updates": 167,
+      "offset": 10737,
+      "pending_windows": 49,
+      "pending_count": 117586
+    },
+    "target_binding": "7600437ecd8c4840c147a795f469443129c04c91f4502a0e087a7f58c3a12665",
+    "target_checkpoint_sha256": "791ca1e2f06fd3a727687e010324e7d96bb21724d461fe3f53dccfdad2e7161d",
+    "state_restore": "exact",
+    "cache": "ephemeral caches rebuilt; old caches not modified",
+    "original_start_retained": true,
+    "original_deadline_retained": false,
+    "deadline_amendment": {
+      "authorization": "explicit_user_request",
+      "source_window_sha256": "ecfe1540e17a6316be683376a24d6637a10fd4e5de8b9861ed4d61bbfd15e21b",
+      "previous_wall_deadline": 1792164600.0,
+      "new_wall_deadline": 1792206000.0
+    }
+  },
+  "progress": {
+    "epoch": 0,
+    "offset": 10737,
+    "updates": 167,
+    "stale": 0,
+    "best_mae": null,
+    "best_updates": null,
+    "phase": "train",
+    "pending_windows": 49,
+    "pending_count": 117586,
+    "pending_loss": 431256.71337890625,
+    "validation_offset": 0,
+    "last_validated_key": null,
+    "suffix_checkpointing": false,
+    "prefix_node_chunk": 256,
+    "last_gradient_norm": 4.410202503204346,
+    "last_training_raw_mae": 3.858170493746622,
+    "stop_reason": "training_deadline_or_signal",
+    "updated_at": 1792156317.989897,
+    "checkpoint_sha256": "791ca1e2f06fd3a727687e010324e7d96bb21724d461fe3f53dccfdad2e7161d"
+  },
+  "active_budget": {
+    "spent_seconds": 9925.884896796197,
+    "worker": null
+  },
+  "budget": {
+    "spent_seconds": 9873.570450450294,
+    "scopes": {
+      "preflight": 7.736452373676002,
+      "train": 9865.833998076618
+    },
+    "active_scope": null
+  },
+  "mechanisms": null,
+  "failures": null,
+  "source_processes_exited": {
+    "187208": true,
+    "189376": true,
+    "195814": true
+  },
+  "gpu_query": "47131 MiB, 33959 MiB, 100 %, Default"
+}

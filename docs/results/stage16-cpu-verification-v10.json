@@ -1,0 +1,189 @@
+{
+  "passed": true,
+  "code_files": {
+    "src/gofa_f/__init__.py": "0235e8b50b55a723a79451f6b13ed496f65bf4a40b8000974ca6246b01dfcaed",
+    "src/gofa_f/adaptation_stage.py": "13e6314c1c1a35520ec02c8d2106c10efe5426378cefac1595508d6838d11de9",
+    "src/gofa_f/baseline.py": "6e93ec1ac84eb25706467feabb6d8f80ceb6d8c576be8011fc220827ec821f59",
+    "src/gofa_f/benchmark.py": "c7df6da6f631df2fc71574f460dd5cd3bc56451fc65aa094fbd610ba1549dcd2",
+    "src/gofa_f/chattime.py": "73ef5dfaeda8eed019e885fb3ba24912806bf812ab6dc650706ec4b0f734f5e9",
+    "src/gofa_f/chattime_checks.py": "b563e71dd7d44a10cec0a59eb1e99a9609e193dd3c149b728b6aadfe5cb6f5e4",
+    "src/gofa_f/chattime_continuation.py": "dc5faa7f4858780af27e52a2d976626f56e366b0a62602d8fe6c90a06b1393b2",
+    "src/gofa_f/chattime_prompt_cache.py": "e98f60ce7325cd320f757b7758b211939e075d438dc51802a5d25294d8408d5b",
+    "src/gofa_f/chattime_stage.py": "bf6897058b39aab310a7c8064346ec83161e7d557e514b61aa8536adc35e45b1",
+    "src/gofa_f/chattime_task.py": "e1dcbcabffc5a82d628839b0202026ce5a5c08af404447d32a59d66492911330",
+    "src/gofa_f/contrast_context.py": "6fa77a1e1218282d8205ac7833c53dbbb0e76659f2da7d2cffb34df37b9d8626",
+    "src/gofa_f/contrast_stage.py": "1654108c73694acba6707f2dd858e20c367047d01415ec4d505d3bc10871b360",
+    "src/gofa_f/contrast_task.py": "6b4a362a479e30aead40428a0f332baf88fbc62f45e2b7e70cd5829c52282254",
+    "src/gofa_f/data.py": "b5b9a164cab4e396bd3183711829b4b4847927deb1ac51f43a19df6ce7de66ba",
+    "src/gofa_f/encoded_context.py": "07e5b4175ff3463bbf547790be3a4b2992be873ea6e89124815f0d4c02e4ef38",
+    "src/gofa_f/encoded_stage.py": "cd65f59d9485d19f64f242117826c86a3608cf5cd68b2b2f71d4b565f469fd96",
+    "src/gofa_f/encoded_task.py": "caff1db8aaefd3cb8f0c85cb52af99d611aa9587090053c517e5adf32a9dd902",
+    "src/gofa_f/graph_context.py": "64a6d9a89e62b8bf2f6ca0cb5e6881bcfcd8694fec054915d2c8ed57c0a8a042",
+    "src/gofa_f/graphs.py": "4778f7d72e13827498f02b2829a53fe32f04ff3b46a5d320cd138754861d2b58",
+    "src/gofa_f/head_capacity.py": "27b504a5f5f05e75022db8cc3cecfd71252fa19dd9c746d86bb22dc6641b0276",
+    "src/gofa_f/head_stage.py": "7721250739e78d35d59d82c33924f949ffd4985aa1f9f06b8134169dbaa73620",
+    "src/gofa_f/head_task.py": "d6133b6147e9780b579599372852cfbcd82190a3c7912a16737d3f6c21fd9214",
+    "src/gofa_f/idle_launcher.py": "9bb287810c549200643ec01066ccaff744fe983c8cda0947767547ddb2c473ab",
+    "src/gofa_f/lagged_context.py": "c7276fd699fdbff954a6270c40205fadfdce14e4f578055c5c93da0bba8b2083",
+    "src/gofa_f/lagged_stage.py": "b91acbc24abd85503c11bd2512ab1091c222bae8c9c007bda06caa00688f3ff3",
+    "src/gofa_f/lagged_task.py": "fae1a880acc62a7d58fdeb5384508ebf83105541fa2d1c13ef3031ce198769d8",
+    "src/gofa_f/long_horizon.py": "de31af08a7011a518868b996712fe172346de5e94efdc63f72cfca033122387d",
+    "src/gofa_f/long_stage.py": "9958d1878aade39bb76361dc580d8e0d0e482e03462745297c1be5f671f6d34a",
+    "src/gofa_f/long_task.py": "7a378b65c340ef7abcc8bbc61084663c0230d06f58d297cc7f5f95a8769abfcc",
+    "src/gofa_f/metrics.py": "8dfa900844372ca5ea138bb0e178fabddc0e26516f74677d17f8659e7bd2c348",
+    "src/gofa_f/models.py": "6bf7ffc4d9e80c05ed445f607245c7306f588b5a05202347caa8e95fee0e875c",
+    "src/gofa_f/native.py": "879322c8d383e5863f165f5ab420f4c27f659239cf4a4b31f7766a9bb3fea98e",
+    "src/gofa_f/native_progress.py": "35e49046d92b8b9e164ad94c0a059edca7f26b15c65aac8fbbf81ae73e401a95",
+    "src/gofa_f/native_stage.py": "4ac3eaaa96c5603203ad0a93d6e63712c8e5d5f3a687e1108187709a87ab770d",
+    "src/gofa_f/ordered_context.py": "6e05da0cde1ccb351f44a032978eb30ef966644ceb0da616d4ef9e589e75a82f",
+    "src/gofa_f/ordered_stage.py": "92530ead592e70a6a2273a770108c924a68bf0ed83b82200633865bd911773ae",
+    "src/gofa_f/ordered_task.py": "fa1c7b9cee943fffb5e98f832452f4786f543cb5e319e2cc4a1703e76c212350",
+    "src/gofa_f/prefix_cache.py": "9fb6b7177ed604dcd4bec6f06300dec76b140ef845701e95efcdbd7fa1fcbefb",
+    "src/gofa_f/prepare.py": "2325c745c118eeb8f9aeda7da1ef156e8545358bf82fbc257993548dbd52a8d5",
+    "src/gofa_f/progress.py": "fa667a80647bd659c9c61c8c40f1488c6190523c24e8dcef2dfb5a96ecb15992",
+    "src/gofa_f/pure_graph_stage.py": "4a42e0532282a59d5634cf4a608aa3f9af521e4d4186407c43bd2854a79bd340",
+    "src/gofa_f/pure_graph_task.py": "0128124ac49d917416e5b95ce8569f7cbf7ebbf0f049ffcecc6e9963c8e6eeee",
+    "src/gofa_f/reg_capacity.py": "fad94ab7e6c76318bf9a5bbe1ebd9bed93454d3b4f0344b0fd2a7cef5ef674e6",
+    "src/gofa_f/reg_capacity_stage.py": "ec101b7130aaf8c42e9fd7d8ed4675054b0f16a2541c53d603fad21ba54a39bb",
+    "src/gofa_f/reg_capacity_task.py": "6c357269dd056c0575c7c39575064227b02ec18f0b80f69c891024d291e51e44",
+    "src/gofa_f/report.py": "529ad3951023532f2423c0d93c846887fa14c18fdbb8ba48f21958b8d6ee9214",
+    "src/gofa_f/routed_graph.py": "0d2620281befae655fe9c21516ea3bdc72c54939c66fb37051c511dd31ec9825",
+    "src/gofa_f/routed_stage.py": "b0ead0b6e48a32aec2cb671fabcfb5eec6169a7a1e6f0c332116fc078959d535",
+    "src/gofa_f/routed_task.py": "15b356a32a2608a206aa73d64ca0947474443b0b26c2dbb49458d8a474d29fde",
+    "src/gofa_f/stage_budget.py": "428334d4a29bf2c4d6c13f6baf7e5385d33114d2e2061cb5a3ea9fce5e999e32",
+    "src/gofa_f/temporal_context.py": "35c01f6bbb2904cc174724bdee76f95796b0e20137733a43485a9ae4dc8aa7f3",
+    "src/gofa_f/temporal_stage.py": "d2f1484da799f202d4e2fcfe4a8a15977853f5defe801dab8c951077d9611886",
+    "src/gofa_f/temporal_task.py": "401b78277185ea13923f7db83b594e7f93125966162c7d8f71c0906bcb755941",
+    "src/gofa_f/token_exchange.py": "dbc993c67be2f32e1be3d84f165599852c3c652655781fd3e1c4f068c1591b99",
+    "src/gofa_f/token_stage.py": "9e999f0cfd9cc2a87546ae6a34f0db6da0e9cc3ccc549b6c8b5acca4fcadf20e",
+    "src/gofa_f/token_task.py": "9417f289e3775c6333d8af5f6769a250106a867d6f3a9b7e2a8eb1ee1b8f72e3",
+    "src/gofa_f/train.py": "5eaac58ea47f9c5e75919bfec702d096fcd7276aa3d197cc93ad4a455a6f7b3d",
+    "src/gofa_f/transfer_stage.py": "d5aa9c6e8bad28e0511b3215d8a37541787c6dc1622a2d42d00a44a4ecc001fc",
+    "src/gofa_f/transfer_task.py": "47b6b80f61eb826a63563cea27c8806eddcd569b1cd8884d49d27e67bed85d98",
+    "src/gofa_f/tune.py": "096d6fa903a28fc761c62b015545fa9fcd47a38efa9aed84201357181bd0194a",
+    "src/gofa_f/ufg.py": "c309ec0542ab73447d21b3fafbcad3bc5b72f0ccee6df43abf2521d7adb23147",
+    "configs/stage16_chattime.yaml": "e1cda5a6dbe1348a4e094d005dd39bf20a6fc57b6a287b4aeda75eb18aa81d73",
+    "scripts/check_chattime_cpu.py": "aa21d1e05bffaf075c582f4cb9c594a19f6699700d1133beff6398ceb499776f",
+    "tests/test_chattime.py": "43f7ea460a269760fd83c71e011ff1bed7798a1e6bcee2231e4a3567337d0e66",
+    "tests/test_chattime_bootstrap.py": "16e47099d896ab64b8f98bd026b1c88a8c79b7544648d87b61614318152505e9",
+    "tests/test_chattime_continuation.py": "21d5ebe1bc5b4dae0fd6f4945e02ce052fcf70705458418497da1122dbd3ec78",
+    "tests/test_chattime_prompt_cache.py": "63382e29015e2af786928f0c963117ee15d7e68649fcd7e04127515f489bb9cd",
+    "tests/test_chattime_stage.py": "fd53630ca39098a4b0b14d6d0d1843f34064a8863406b5d39e49be3ee6427860"
+  },
+  "runtime": {
+    "python": "3.11.17 (main, Oct  1 2026, 20:17:42) [GCC 14.3.0]",
+    "executable": "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v10/.venv-chat/bin/python",
+    "packages": {
+      "torch": "2.6.0+cu124",
+      "transformers": "4.46.3",
+      "numpy": "1.26.4",
+      "scikit-learn": "1.5.2",
+      "protobuf": "5.28.3"
+    },
+    "sys_path": [
+      "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v10/scripts",
+      "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages",
+      "/home/dcg/dcg_data/GOFA-F/.venv-native/lib/python3.11/site-packages",
+      "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages",
+      "/home/dcg/dcg_data/GOFA-F/.venv-native/lib/python3.11/site-packages",
+      "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v10/src",
+      "/home/dcg/dcg_data/miniconda3/envs/gofaf/lib/python311.zip",
+      "/home/dcg/dcg_data/miniconda3/envs/gofaf/lib/python3.11",
+      "/home/dcg/dcg_data/miniconda3/envs/gofaf/lib/python3.11/lib-dynload",
+      "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v10/.venv-chat/lib/python3.11/site-packages",
+      "/home/dcg/dcg_data/miniconda3/envs/gofaf/lib/python3.11/site-packages",
+      "/mnt/sevenT/dcg_data/GOFA-F/src",
+      "/tmp/tmpjgio2758",
+      "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages/setuptools/_vendor"
+    ],
+    "isolated_environment_paths": {
+      "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v10/.venv-chat/pyvenv.cfg": "home = /home/dcg/dcg_data/miniconda3/envs/gofaf/bin\ninclude-system-site-packages = true\nversion = 3.11.17\nexecutable = /mnt/sevenT/dcg_data/miniconda3/envs/gofaf/bin/python3.11\ncommand = /home/dcg/dcg_data/GOFA-F/.venv-native/bin/python -m venv --system-site-packages /home/dcg/dcg_data/GOFA-F/.venv-chat\n",
+      "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v10/.venv-chat/lib/python3.11/site-packages/native_read_only.pth": "import sys; sys.path.insert(0, '/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages'); sys.path.insert(1, '/home/dcg/dcg_data/GOFA-F/.venv-native/lib/python3.11/site-packages')\n"
+    },
+    "modules": {
+      "torch": {
+        "path": "/home/dcg/dcg_data/miniconda3/envs/gofaf/lib/python3.11/site-packages/torch/__init__.py",
+        "sha256": "5a190666c3853aa236c4d48ed64e2d4bbcd23bd32c21e64c0867646a6852e43f"
+      },
+      "transformers": {
+        "path": "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages/transformers/__init__.py",
+        "sha256": "71a729a440bba6c0c9d1f9209c6edd61edb21380c89154461be00063d86bc829"
+      },
+      "numpy": {
+        "path": "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages/numpy/__init__.py",
+        "sha256": "22cd1535fa14d74ef6f457cca149ffdc80875f460be313b8f895273f78bc402e"
+      },
+      "sklearn": {
+        "path": "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v10/.venv-chat/lib/python3.11/site-packages/sklearn/__init__.py",
+        "sha256": "cfc20835d0434f1ced9e6c5fd32e836c150d2202bcaa7983be60539a627bbc5a"
+      },
+      "protobuf": {
+        "path": "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v10/.venv-chat/lib/python3.11/site-packages/google/protobuf/__init__.py",
+        "sha256": "0d2fe5e532a35a7a7f3b447125d00bfbfa555112ce8ca20c3fd909bd5c85ea6b"
+      }
+    },
+    "critical_files": {
+      "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages/transformers/models/llama/modeling_llama.py": "733e7625fec5abcfa416ab9b866cb91875d41007f2e31c3e90d2ae0111ae98f7",
+      "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages/transformers/modeling_attn_mask_utils.py": "6b48608887ba16712929165d8c05bde9c136b1d5cac19acfde68a5435a570cce",
+      "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages/transformers/generation/utils.py": "24e719be0942a06f1956cadd469a100a455012ea6f808cca894a3e94edb06bf3",
+      "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages/transformers/models/llama/tokenization_llama.py": "e77968e24ccfc4e92af9e33221b790477b4d264cb889baebbf3eb4dc7c9356d3",
+      "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v10/.venv-chat/lib/python3.11/site-packages/google/protobuf/__init__.py": "0d2fe5e532a35a7a7f3b447125d00bfbfa555112ce8ca20c3fd909bd5c85ea6b"
+    }
+  },
+  "cpu_test_cases": 325,
+  "stage16_cases": 77,
+  "optional_skipped": 11,
+  "official_codec_examples": 3,
+  "real_model_mechanisms": {
+    "initial_persistence": true,
+    "zero_graph_native_hidden": true,
+    "cached_prediction_and_gradients": true,
+    "graph_gradient_active": true,
+    "batch_graph_isolation": true,
+    "empty_nodes": true,
+    "pending_gradient_resume_exact": true,
+    "optimizer_resume_exact": true,
+    "native_weights_unchanged": true,
+    "text_bypass_exact": true,
+    "native_prefill_shared_prediction_and_gradient": true,
+    "numeric_tolerance": {
+      "rtol": 0.002,
+      "atol": 0.002
+    },
+    "checkpoint_state_tolerance": "exact"
+  },
+  "real_model_nodes": 3,
+  "parameters": {
+    "registered_real_dof": 6821464722,
+    "trainable_real_dof": 1120914,
+    "continuous_forward_module_real_dof": 6649428626,
+    "native_registered_real_dof": 6820343808,
+    "new_graph_and_router": 1071750,
+    "new_continuous_head": 49164,
+    "note": "Forward module count excludes original unused LM head; embedding tensor counted in full. Frozen parameters and compute are not matched to historical UFG-A."
+  },
+  "estimated_full_cache_bytes": 2999480985963,
+  "fixed_prompt_mechanisms": {
+    "passed": true,
+    "prediction_max_abs": 0.0,
+    "gradient_max_abs": 0.0,
+    "tolerance": {
+      "rtol": 0.002,
+      "atol": 0.002
+    },
+    "cache": {
+      "enabled": true,
+      "format": "fixed_prompt_kv_v1",
+      "binding": "mechanism-check",
+      "tokens": 47,
+      "builds": 1,
+      "reused_rows": 3,
+      "fallback_rows": 0,
+      "single_copy_bytes": 23486464,
+      "precision": "native dtype, lossless storage; no input truncation"
+    },
+    "optimized_exercised": true
+  },
+  "cuda_initialized": false,
+  "scope": "CPU verification only; no GPU accuracy or mechanism claim"
+}
