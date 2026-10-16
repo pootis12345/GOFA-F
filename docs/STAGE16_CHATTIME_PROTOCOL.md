@@ -159,3 +159,12 @@ continued-checkpoint CUDA prediction/gradient checks must pass unchanged
 tolerances. The original16:03:02 start and21:30/23:30 cutoffs do not move.
 See `STAGE16_FIXED_PROMPT_KV.md` and the current `RUN_STATUS.md`; v7 CPU numerical
 failure is retained and did not start a GPU task.
+
+Latest user amendment,2026-10-16: new GPU tasks again require complete idleness:
+no compute or graphics applications, utilization0%, used memory<=256MiB and
+Default mode for three consecutive observations, now **10seconds apart**.
+Unknown queries reset the count and wait. This supersedes shared-memory admission;
+running tasks still coexist if another user joins. The interval is bound into the
+window and both outer and per-task admission; recovery cannot silently change it.
+A fresh immutable continuation retains optimizer/pending gradients/RNG/cursor,
+activity and the existing16:03:02/21:30/23:30 times. Old snapshots are not edited.

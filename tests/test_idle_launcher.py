@@ -41,6 +41,34 @@ def test_three_idle_samples_and_busy_or_error_resets_gate():
     assert not gate.observe(idle.parse_gpu_xml(xml().replace("Default", "Exclusive_Process")))
 
 
+def test_strict_idle_launcher_observes_every_ten_seconds(tmp_path, monkeypatch):
+    clock, queries, signals = [0.], [], []
+    output = tmp_path/"run"
+    monkeypatch.setattr(idle.time, "monotonic", lambda: clock[0])
+    monkeypatch.setattr(idle.time, "sleep", lambda n: clock.__setitem__(0, clock[0]+n))
+    monkeypatch.setattr(idle, "process_identity", lambda _: "start")
+    monkeypatch.setattr(idle.subprocess, "check_output", lambda *a, **k: "fixed")
+    monkeypatch.setattr(idle.os, "killpg", lambda *a: signals.append(a))
+    def query():
+        queries.append(clock[0])
+        return idle.parse_gpu_xml(xml())
+    monkeypatch.setattr(idle, "query_gpu", query)
+    class Child:
+        pid = 800
+        returncode = 0
+        def __init__(self, command, env, start_new_session):
+            assert queries == [0., 10., 20.]
+            idle.atomic_json(output/"status.json", {"state": "complete"})
+        def poll(self):
+            return 0
+    monkeypatch.setattr(idle.subprocess, "Popen", Child)
+    idle.launch(output, ["worker"], total=None, wall_deadline=10**15, memory_cap_gib=40,
+                yield_on_foreign=False, idle_interval_seconds=10)
+    record = json.loads((output/"launcher_manifest.json").read_text())
+    assert record["idle_interval_seconds"] == 10 and record["idle_samples"] == 3
+    assert record["idle_max_used_mib"] == 256 and not signals
+
+
 def test_shared_admission_accepts_active_server_with_full_budget_and_margin():
     gpu = {"uuid": "GPU-test", "pids": [999], "utilization": 100, "compute_mode": "Default",
            "used_mib": 20837, "total_mib": 81559, "free_mib": 60253}

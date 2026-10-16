@@ -229,7 +229,9 @@ def read_status(output):
 
 
 def launch(output, command, total=14400, wall_deadline=None, memory_cap_gib=None, leave_free_gib=16,
-           yield_on_foreign=True, worker_wait_state=None, shared_admission=False):
+           yield_on_foreign=True, worker_wait_state=None, shared_admission=False, idle_interval_seconds=30):
+    if not isinstance(idle_interval_seconds, int) or not 1 <= idle_interval_seconds <= 60:
+        raise ValueError("GPU admission interval must be an integer from1 to60 seconds")
     if total is None and wall_deadline is None:
         raise ValueError("Unlimited activity still requires an absolute wall deadline")
     if memory_cap_gib is not None and (memory_cap_gib > 40 or memory_cap_gib < 1 or leave_free_gib < 16):
@@ -253,7 +255,7 @@ def launch(output, command, total=14400, wall_deadline=None, memory_cap_gib=None
            if memory_cap_gib is not None else {}),
         "git_revision": subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(),
         "idle_samples": 3,
-        "idle_interval_seconds": 30,
+        "idle_interval_seconds": idle_interval_seconds,
         "watchdog_interval_seconds": 10,
         "idle_max_used_mib": 256,
     }
@@ -336,7 +338,7 @@ def launch(output, command, total=14400, wall_deadline=None, memory_cap_gib=None
         if not gate.observe(gpu):
             status("waiting_for_shared_capacity" if shared_admission else "waiting_for_idle",
                    consecutive_idle=gate.consecutive, query_error=error)
-            for _ in range(30):
+            for _ in range(idle_interval_seconds):
                 if stop[0]:
                     break
                 if wall_remaining(wall_deadline) <= 60:

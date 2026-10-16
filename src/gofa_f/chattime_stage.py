@@ -69,7 +69,9 @@ def code_files():
 
 
 def bind_window(output, resume=False, now=None, launch_fingerprint=None, hard_deadline=None,
-                adopted_from=None, shared_admission=False, fixed_prompt_kv=False):
+                adopted_from=None, shared_admission=False, fixed_prompt_kv=False, idle_interval_seconds=30):
+    if not isinstance(idle_interval_seconds, int) or not 1 <= idle_interval_seconds <= 60:
+        raise ValueError("GPU admission interval must be an integer from1 to60 seconds")
     path = Path(output)/"window.json"
     old = read(path)
     if old is not None:
@@ -85,6 +87,8 @@ def bind_window(output, resume=False, now=None, launch_fingerprint=None, hard_de
             raise ValueError("Resume must retain the saved GPU admission policy")
         if bool(old.get("fixed_prompt_kv")) != bool(fixed_prompt_kv):
             raise ValueError("Resume must retain the fixed prompt cache policy")
+        if old.get("idle_interval_seconds", 30) != idle_interval_seconds:
+            raise ValueError("Resume must retain the saved admission interval")
         if launch_fingerprint is not None and old.get("launch_fingerprint") != launch_fingerprint:
             raise ValueError("Saved launch identity changed")
         return old
@@ -100,6 +104,8 @@ def bind_window(output, resume=False, now=None, launch_fingerprint=None, hard_de
         result["adopted_from"] = adopted_from
     if shared_admission:
         result["admission_policy"] = "shared_memory"
+    if idle_interval_seconds != 30:
+        result["idle_interval_seconds"] = idle_interval_seconds
     if fixed_prompt_kv:
         result["fixed_prompt_kv"] = True
     if launch_fingerprint is not None:
@@ -247,6 +253,8 @@ def manifest(config, output, window):
         result["admission_policy"] = "shared_memory"
     if window and window.get("fixed_prompt_kv"):
         result["fixed_prompt_kv"] = True
+    if window and window.get("idle_interval_seconds", 30) != 30:
+        result["idle_interval_seconds"] = window["idle_interval_seconds"]
     return result
 
 
@@ -329,6 +337,7 @@ def stage(config_path, output, resume):
     config, output = config_file(config_path), Path(output)
     window = read(output/"window.json")
     shared = window.get("admission_policy") == "shared_memory"
+    admission_interval = window.get("idle_interval_seconds", 30)
     expected = manifest(config, output, window)
     if read(output/"launch_binding.json") != expected:
         raise ValueError("Launch binding differs")
@@ -353,7 +362,7 @@ def stage(config_path, output, resume):
                    phase=phase, consecutive_idle=gate.consecutive)
             if admitted:
                 break
-            for _ in range(30):
+            for _ in range(admission_interval):
                 if STOP or time.time() >= boundary-60:
                     break
                 time.sleep(1)
@@ -417,6 +426,7 @@ def main():
     parser.add_argument("--adopt-waiting-window", help="Exited CPU-only output whose original start time must be retained")
     parser.add_argument("--shared-gpu", action="store_true", help="Admit other applications with at least56GiB actually free")
     parser.add_argument("--fixed-prompt-kv", action="store_true")
+    parser.add_argument("--idle-check-seconds", type=int, default=30)
     parser.add_argument("--continue-training-from", help="Stopped checkpoint to migrate without resetting training or time")
     parser.add_argument("--worker", action="store_true", help=argparse.SUPPRESS)
     args = parser.parse_args()
@@ -458,6 +468,8 @@ def main():
         expected["admission_policy"] = "shared_memory"
     if args.fixed_prompt_kv:
         expected["fixed_prompt_kv"] = True
+    if args.idle_check_seconds != 30:
+        expected["idle_interval_seconds"] = args.idle_check_seconds
     fingerprint = hashlib.sha256(json.dumps(expected, sort_keys=True).encode()).hexdigest()
     cutoff = parse_deadline(args.hard_deadline)
     adopted = None
@@ -470,8 +482,8 @@ def main():
             raise ValueError("Adoption cannot extend the original deadline")
     if args.continue_training_from:
         if args.resume or args.adopt_waiting_window or (output/"window.json").exists() \
-                or cutoff is None or not args.shared_gpu or not args.fixed_prompt_kv:
-            raise ValueError("Cache continuation requires a fresh output, same shared policy and explicit cutoff")
+                or cutoff is None or not args.fixed_prompt_kv:
+            raise ValueError("Cache continuation requires a fresh output and explicit cutoff")
         from gofa_f.chattime_continuation import source_record
         prepared = {**read(output/"preparation.json"), "output": str(output)}
         adopted = source_record(args.continue_training_from, config, prepared)
@@ -479,7 +491,8 @@ def main():
             raise ValueError("Continuation cannot extend the original deadline")
     window = bind_window(output, args.resume, launch_fingerprint=fingerprint, hard_deadline=cutoff,
         now=adopted["started_at"] if adopted else None, adopted_from=adopted,
-        shared_admission=args.shared_gpu, fixed_prompt_kv=args.fixed_prompt_kv)
+        shared_admission=args.shared_gpu, fixed_prompt_kv=args.fixed_prompt_kv,
+        idle_interval_seconds=args.idle_check_seconds)
     if time.time() >= window["wall_deadline"]-60:
         atomic_json(output/"launcher.json", {"state": "wall_deadline"})
         if (output/"manifest.json").exists():
@@ -501,7 +514,7 @@ def main():
     idle_launch(output, command, total=None, wall_deadline=window["wall_deadline"], memory_cap_gib=40,
                 leave_free_gib=16, yield_on_foreign=False,
                 worker_wait_state="waiting_for_shared_capacity" if args.shared_gpu else "waiting_for_idle",
-                shared_admission=args.shared_gpu)
+                shared_admission=args.shared_gpu, idle_interval_seconds=args.idle_check_seconds)
     if (output/"manifest.json").exists():
         seal(output)
     write_report(output)

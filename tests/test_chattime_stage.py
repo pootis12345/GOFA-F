@@ -51,6 +51,15 @@ def test_shared_admission_is_bound_to_original_start_and_deadline(tmp_path):
         bind_window(tmp_path, resume=True, shared_admission=False)
 
 
+def test_strict_idle_ten_second_interval_persists_across_resume(tmp_path):
+    window = bind_window(tmp_path, now=1000., hard_deadline=28000., idle_interval_seconds=10)
+    assert window.get("admission_policy", "idle") == "idle"
+    assert window["idle_interval_seconds"] == 10
+    assert bind_window(tmp_path, resume=True, now=25000., idle_interval_seconds=10) == window
+    with pytest.raises(ValueError, match="admission interval"):
+        bind_window(tmp_path, resume=True)
+
+
 def test_fixed_prompt_policy_is_bound_on_resume(tmp_path):
     window = bind_window(tmp_path, now=1000., hard_deadline=28000.,
                          shared_admission=True, fixed_prompt_kv=True)

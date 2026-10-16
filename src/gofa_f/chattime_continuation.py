@@ -40,7 +40,7 @@ def source_record(previous, config, prepared, identity=process_identity):
         if (directory/"result.json").exists() or any((directory/"predictions").rglob("*.npz")):
             raise ValueError("Cannot resume adaptive training after prediction evaluation")
     window = read(previous/"window.json")
-    if not window or original.get("window") != window or window.get("admission_policy") != "shared_memory":
+    if not window or original.get("window") != window or window.get("admission_policy", "idle") not in ("idle", "shared_memory"):
         raise ValueError("Source window/policy differs")
     source_binding = hashlib.sha256(json.dumps(original, sort_keys=True).encode()).hexdigest()
     path = previous/"gofa_chattime/last.pt"
