@@ -167,7 +167,8 @@ class GenerativeGOFA(nn.Module):
                 for layer in native.layers[self.prefix_layers:]:
                     hidden = layer(hidden, attention_mask=causal, position_ids=ids, cache_position=positions,
                         position_embeddings=rotary, use_cache=False, output_attentions=False)[0]
-                output = CausalLMOutputWithPast(logits=self.native.lm_head(native.norm(hidden)).float())
+                # Match the native inference logit dtype; CE explicitly promotes to FP32.
+                output = CausalLMOutputWithPast(logits=self.native.lm_head(native.norm(hidden)))
         finally:
             self._active = None
         if use_cache:

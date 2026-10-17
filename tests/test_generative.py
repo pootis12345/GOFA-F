@@ -119,6 +119,16 @@ def test_batch_isolation_causal_future_and_readout_roles():
         torch.testing.assert_close(original[:, :2], native[:, :2], rtol=0, atol=0)
 
 
+def test_bf16_prefix_keeps_native_dtype_and_tolerance():
+    model, batch = tiny(), tokens()
+    model.native.to(dtype=torch.bfloat16)
+    graphs = [graph(), graph(5, target=2)]
+    full = model(batch, graphs).logits
+    cached = model(batch, graphs, prefix=model.prefix(batch)).logits
+    assert full.dtype == cached.dtype == torch.bfloat16
+    torch.testing.assert_close(cached, full, rtol=2e-3, atol=2e-3)
+
+
 def test_hierarchical_metric_and_near_zero_rule():
     eps = {"a": [1e-6, 1e-6], "b": [1e-6]}
     baseline = {"variable_mae": {"a:0": 0., "a:1": 2., "b:0": 100.}}

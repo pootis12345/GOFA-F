@@ -16,13 +16,21 @@ def mechanisms(model, codec, series, queries, tolerance):
     native_versions = [p._version for p in model.native.parameters()]
     original_grads = {n: p.grad for n, p in model.adapter.named_parameters()}
     results = {"tolerance": tolerance, "graph_layers": list(model.graph_layers),
-               "prefix_layers": model.prefix_layers, "target_queries_used": 0}
+               "prefix_layers": model.prefix_layers, "target_queries_used": 0, "differences": {}}
+    def compare(actual, expected, name, exact=False):
+        results["differences"][name] = float((actual.detach().float()-expected.detach().float()).abs().max())
+        try:
+            torch.testing.assert_close(actual, expected, rtol=0 if exact else tolerance,
+                                       atol=0 if exact else tolerance)
+        except AssertionError as exc:
+            raise AssertionError(f"{name}: {exc}") from exc
     try:
         selected = []
         for length in (10, 12, 14, 48, 192, 288):
             q = next(q for q in queries if q["length"] == length and q["source"] == "pems04")
             selected.append(Query(**q))
         for q in selected:
+            print(f"real-weight {device.type} history={q.length} nodes=307", flush=True)
             source = series[q.source]
             history, response = source.training_record(q)
             batch = codec.batch([codec.record(history, response[:1])]).to(device)
@@ -30,10 +38,9 @@ def mechanisms(model, codec, series, queries, tolerance):
             with torch.no_grad():
                 plain = model(batch).logits
                 graph = model(batch, graphs).logits
-                torch.testing.assert_close(graph, plain, rtol=0, atol=0)
+                compare(graph, plain, f"initial_native_L{q.length}", exact=True)
                 prefix = model.prefix(batch)
-                torch.testing.assert_close(model(batch, graphs, prefix=prefix).logits,
-                                           graph, rtol=tolerance, atol=tolerance)
+                compare(model(batch, graphs, prefix=prefix).logits, graph, f"prefix_L{q.length}")
             if not torch.isfinite(graph).all():
                 raise AssertionError("Nonfinite real-shape logits")
         results["six_real_history_shapes"] = True
@@ -60,10 +67,10 @@ def mechanisms(model, codec, series, queries, tolerance):
         model.zero_grad()
         prefix = model.prefix(batch)
         cached = model(batch, graphs, prefix=prefix).logits
-        torch.testing.assert_close(cached, complete, rtol=tolerance, atol=tolerance)
+        compare(cached, complete, "nonzero_prefix_logits")
         completion_loss(cached, batch.labels)[0].backward()
         for n, p in model.adapter.named_parameters():
-            torch.testing.assert_close(p.grad, gradients[n], rtol=tolerance, atol=tolerance)
+            compare(p.grad, gradients[n], "prefix_gradient:"+n)
         results["nonzero_graph_prefix_predictions_gradients"] = True
         model.zero_grad()
         # Prefill prompt then decode the answer, retaining autograd for equivalence only.
@@ -79,10 +86,10 @@ def mechanisms(model, codec, series, queries, tolerance):
             cache = output.past_key_values
             pieces.append(output.logits)
         incremental = torch.cat(pieces, 1)
-        torch.testing.assert_close(incremental, complete, rtol=tolerance, atol=tolerance)
+        compare(incremental, complete, "incremental_logits")
         completion_loss(incremental, batch.labels)[0].backward()
         for n, p in model.adapter.named_parameters():
-            torch.testing.assert_close(p.grad, gradients[n], rtol=tolerance, atol=tolerance)
+            compare(p.grad, gradients[n], "incremental_gradient:"+n)
         results["incremental_logits_gradients"] = True
         model.mark_updated()
         try:

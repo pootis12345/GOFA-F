@@ -66,7 +66,11 @@ class Progress:
         if force or now-self.last_write >= 5:
             atomic_json(self.path, self.state)
             self.last_write = now
-            print(render({"progress": self.state}), flush=True)
+            activity = self.path.parent/"activity.json"
+            record = {"progress": self.state}
+            if activity.exists():
+                record["activity"] = json.loads(activity.read_text())
+            print(render(record), flush=True)
         return self.state
 
     def evaluation(self, done, total, work_done, work_total, seconds, **fields):
@@ -92,9 +96,9 @@ def inspect(output):
 
 def render(record):
     p = record.get("progress", {})
-    state = record.get("launcher", {}).get("state", record.get("status", {}).get("state", "preparing"))
+    state = record.get("launcher", {}).get("state", record.get("status", {}).get("state", p.get("state", "preparing")))
     lines = [f"state={state} | phase={p.get('state', 'not_started')} | GPU active="
-             f"{duration(record.get('activity', {}).get('spent_seconds', 0))}"]
+             f"{duration(record.get('activity', {}).get('spent_seconds'))}"]
     if p:
         lines.append(f"epoch {p['epoch']}/{p.get('maximum_epochs', 8)} | "
             f"{p['epoch_queries_done']}/{p['epoch_queries_total']} queries | "
