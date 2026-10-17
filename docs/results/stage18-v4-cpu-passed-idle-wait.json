@@ -1,0 +1,229 @@
+{
+  "observed_at": "2026-10-17T21:37:22.075940+08:00",
+  "snapshot": "/home/dcg/dcg_data/GOFA-F-runs/stage18-allnode-chattime-v4",
+  "code_revision": "e92d5937c38210ca2c1c58ed83be091827ec6a14",
+  "launch": {
+    "pid": 1297535,
+    "start_ticks": "616521051",
+    "snapshot": "/mnt/sevenT/dcg_data/GOFA-F-runs/stage18-allnode-chattime-v4",
+    "output": "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage18-allnode-chattime-v4",
+    "command": [
+      "/home/dcg/dcg_data/GOFA-F/.venv-chat/bin/python",
+      "-u",
+      "-m",
+      "gofa_f.allnode_launcher",
+      "--snapshot",
+      "/mnt/sevenT/dcg_data/GOFA-F-runs/stage18-allnode-chattime-v4",
+      "--output",
+      "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage18-allnode-chattime-v4",
+      "--config",
+      "/mnt/sevenT/dcg_data/GOFA-F-runs/stage18-allnode-chattime-v4/configs/stage18_allnode_chattime.yaml"
+    ],
+    "started_at": 1792244149.7503493,
+    "admission_policy": "idle",
+    "admission_samples": 3,
+    "admission_interval_seconds": 10,
+    "activity_limit_seconds": null,
+    "wall_deadline": null
+  },
+  "launcher": {
+    "state": "waiting_for_idle",
+    "pid": 1297535,
+    "start_ticks": "616521051",
+    "spent_seconds": 46.355011691339314,
+    "waiting_seconds": 90.00552095193416,
+    "updated_at": 1792244241.5505192,
+    "query_error": null,
+    "consecutive": 0
+  },
+  "activity": {
+    "worker": null,
+    "spent_seconds": 46.355011691339314,
+    "waiting_seconds": 90.00552095193416,
+    "resource_pause_count": 0,
+    "peak_group_mib": 16848,
+    "inherited_activity": [
+      {
+        "output": "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage18-allnode-chattime-v2",
+        "activity_sha256": "c92d1cf83f7e7de0d388642455ecc528a408095e01c89be19ddd395356ec28b0",
+        "spent_seconds": 12.273592099547386,
+        "worker": null,
+        "waiting_seconds": 0.0,
+        "resource_pause_count": 0,
+        "peak_group_mib": 16848
+      },
+      {
+        "output": "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage18-kv-diagnostic-v1",
+        "activity_sha256": "69ee07b91ee377200155af782d6fcd1a8c5bc1ca6819a050a28dc1589c8bb802",
+        "spent_seconds": 11.45774405170232,
+        "worker": null,
+        "waiting_seconds": 0.0,
+        "resource_pause_count": 0,
+        "peak_group_mib": 0
+      },
+      {
+        "output": "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage18-kv-diagnostic-v2",
+        "activity_sha256": "c8dc1db9afe254c69e5f9f09872228b371005c11697f17d4e00ca3a93d9432c5",
+        "spent_seconds": 11.32005738466978,
+        "worker": null,
+        "waiting_seconds": 0.0,
+        "resource_pause_count": 0,
+        "peak_group_mib": 14572
+      },
+      {
+        "output": "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage18-kv-diagnostic-v3",
+        "activity_sha256": "fd78abbf3e1af105c3b6c21a333a9a01c2120beeca2fc4b7174b5f55909a085a",
+        "spent_seconds": 11.303618155419827,
+        "worker": null,
+        "waiting_seconds": 0.0,
+        "resource_pause_count": 0,
+        "peak_group_mib": 14574
+      }
+    ]
+  },
+  "migration": {
+    "source": "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage18-allnode-chattime-v2",
+    "source_manifest_sha256": "a038a497b80df66f99b409d74faeb16f18b4594bc7ee37247bb467a12230c287",
+    "source_checkpoint_sha256": "e91943aa7b445723618bb538d9231f050854a87f6f538791b4a314fe62e887b4",
+    "new_manifest_sha256": "83ba73568a16d3766541fde96211426f0089845b8508d977c5a16a0900e5c9ae",
+    "source_code": "08da870bb9eeaac45d5710bf50574959fde1a5a7",
+    "new_code": "e92d5937c38210ca2c1c58ed83be091827ec6a14",
+    "formal_updates": 0,
+    "state_restore": "exact_except_manifest_rebinding",
+    "no_predictions_or_selection_imported": true,
+    "reason": "shape_stable_rmsnorm_full_incremental_repair",
+    "resource_policy_amendment": {
+      "authorization": "User: \u672c\u8f6e\u7b49\u5f85GPU\u5b8c\u5168\u7a7a\u95f2",
+      "old": {
+        "admission_policy": "memory_cap_only",
+        "resource_check_seconds": 10,
+        "admission_samples": 1,
+        "memory_cap_gib": 40,
+        "torch_cap_gib": 38,
+        "yield_on_foreign": false,
+        "leave_free_gib": 0,
+        "activity_limit_seconds": null,
+        "wall_deadline": null,
+        "omp_threads": 2,
+        "mkl_threads": 2
+      },
+      "new": {
+        "admission_policy": "idle",
+        "resource_check_seconds": 10,
+        "admission_samples": 3,
+        "memory_cap_gib": 40,
+        "torch_cap_gib": 38,
+        "yield_on_foreign": false,
+        "leave_free_gib": 0,
+        "activity_limit_seconds": null,
+        "wall_deadline": null,
+        "omp_threads": 2,
+        "mkl_threads": 2
+      }
+    },
+    "original_started_at": 1792240712.180914,
+    "activity_sources": [
+      {
+        "output": "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage18-allnode-chattime-v2",
+        "activity_sha256": "c92d1cf83f7e7de0d388642455ecc528a408095e01c89be19ddd395356ec28b0",
+        "spent_seconds": 12.273592099547386,
+        "worker": null,
+        "waiting_seconds": 0.0,
+        "resource_pause_count": 0,
+        "peak_group_mib": 16848
+      },
+      {
+        "output": "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage18-kv-diagnostic-v1",
+        "activity_sha256": "69ee07b91ee377200155af782d6fcd1a8c5bc1ca6819a050a28dc1589c8bb802",
+        "spent_seconds": 11.45774405170232,
+        "worker": null,
+        "waiting_seconds": 0.0,
+        "resource_pause_count": 0,
+        "peak_group_mib": 0
+      },
+      {
+        "output": "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage18-kv-diagnostic-v2",
+        "activity_sha256": "c8dc1db9afe254c69e5f9f09872228b371005c11697f17d4e00ca3a93d9432c5",
+        "spent_seconds": 11.32005738466978,
+        "worker": null,
+        "waiting_seconds": 0.0,
+        "resource_pause_count": 0,
+        "peak_group_mib": 14572
+      },
+      {
+        "output": "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage18-kv-diagnostic-v3",
+        "activity_sha256": "fd78abbf3e1af105c3b6c21a333a9a01c2120beeca2fc4b7174b5f55909a085a",
+        "spent_seconds": 11.303618155419827,
+        "worker": null,
+        "waiting_seconds": 0.0,
+        "resource_pause_count": 0,
+        "peak_group_mib": 14574
+      }
+    ],
+    "migrated_checkpoint_sha256": "97d54de09c3033a1027957119d635774c800eba0a597fd9772856a8486ee596f"
+  },
+  "cpu": {
+    "passed": true,
+    "cases": 431,
+    "skipped": 21,
+    "cuda_disabled": true,
+    "manifest_sha256": "83ba73568a16d3766541fde96211426f0089845b8508d977c5a16a0900e5c9ae",
+    "real_weight_dtype": "float32",
+    "stage17_proof_reused": false,
+    "stage17_baseline_imported": false,
+    "parameters": {
+      "modules": {
+        "exchange_1": 530499,
+        "exchange_2": 530499
+      },
+      "trainable": 1060998,
+      "registered": 6821404806,
+      "forward_parameters": 6821404806,
+      "forward_definition": "full tensors in executed modules, including embedding tables"
+    }
+  },
+  "real_cpu": {
+    "passed": true,
+    "dtype": "torch.float32",
+    "tolerance": 1e-06,
+    "graph_layers": [
+      30,
+      31
+    ],
+    "prefix_layers": 30,
+    "target_queries_used": 0,
+    "state_restore": "exact",
+    "cuda_replay": "same_execution_tolerance_not_cross_dtype_bitwise",
+    "all_six_shapes_nine_nodes": true,
+    "nonzero_diagnostic_updates": 3,
+    "nonzero_three_rolling_views_predictions_gradients": true,
+    "real_two_block_greedy_cuda_required": true,
+    "exact_materialized_state_and_optimizer_replay": true,
+    "parameter_counts": {
+      "modules": {
+        "exchange_1": 530499,
+        "exchange_2": 530499
+      },
+      "trainable": 1060998,
+      "registered": 6821404806,
+      "forward_parameters": 6821404806,
+      "forward_definition": "full tensors in executed modules, including embedding tables"
+    },
+    "forward_added_parameters": 1060998
+  },
+  "real_cpu_reused_from": {
+    "source_output": "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage18-allnode-chattime-v3",
+    "source_manifest_sha256": "fb6092c213df8efa005a5a867cddb7a110c1d8eba1f654a591fade8fb17f8ba1",
+    "source_cpu_proof_sha256": "595b5365620b216c696b3a66158baec48b62510722ee1bbb07e9ce0e87337201"
+  },
+  "old_controllers_exited": {
+    "1281506": true,
+    "1281507": true,
+    "1294987": true
+  },
+  "formal_updates": 0,
+  "source_baseline_queries": 0,
+  "target_predictions": 0,
+  "gpu_mechanisms_complete": false,
+  "gpu": "GPU-1c2c50c3-5cda-1ef1-f1f7-45682de07fd4, Default, 48545, 100"
+}
