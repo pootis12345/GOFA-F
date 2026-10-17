@@ -10,6 +10,11 @@
 
 B静态/C Ruff通过；C禁CUDA、OMP/MKL各2线程108项启动/显存策略/恢复/截止专项通过，覆盖busy/低free即时准入、取消原等待条件、策略在恢复中绑定、原严格/共享模式不变、仅本组显存计数与不操作其他任务。提交后新快照CPU完整及真实权重复核通过即共享启动CUDA机制，fresh/continued两项BF16 rtol/atol2e-3仍必须通过。实际源码/身份/CPU/CUDA结果另行补记，不能以CPU通过声称GPU修复成功。跟进切换v13与新策略，正常准备/训练静默，终止/异常通知；已授权安全自主修复仍受原截止限制。以下均为历史。
 
+12:24共享部署实测：固定源码 `6ca1b2bebccf7e43354b8e91c82a0c0c85854573`，快照 `/home/dcg/dcg_data/GOFA-F-runs/stage16-chattime-metr-v13`，输出 `outputs/stage16-chattime-metr-v13/`。准备控制器PID808190/start_ticks613180484（12:19:04启动），资源监督器PID810198/start_ticks613194901，CPU调度workerPID810503/start_ticks613196924，身份均须使用前复核。全套CPU346通过/11旧可选跳过（357 XML条目）、Stage16专项102项，真实7B CPU差0。窗口/清单/launcher均memory_cap_only、leave_free_gib=0、项目cap40/Torch38、无idle_max_used或admission_min_free门槛；Default有效查询即启动，未等待其他任务退出。
+
+**真实207节点CUDA fresh及actual continued两项均通过**：边界状态、预测、全部命名梯度最大差0，原BF16 rtol/atol2e-3不变，机制passed=true。现已running/train，观测169次更新、offset10844/22969（后续以实际progress为准），新增分支继续学习。观测本项目进程组26028MiB（约25.4GiB）、另有3个其他GPU进程，未操作其他任务；不声称其他用户延迟无影响或CUDA旧误差根因已被证明。没有独立吞吐评测、完整验证或新精度结论。
+
+v12→v13迁移state_restore=exact、original_start_retained/original_deadline_retained均true，原167更新及pending49窗口等状态已保留，初始目标SHA `f262e74d69ab4b5f78f67b4e63f915a94c0ddcfb88d10f22235dff014ee11ae3`；当前检查点已随训练前进，不回退复核。原start和21:30/23:30截止、来源授权修订保留，累计活动从9956.406928363256秒继续增加，未重置。证据 `docs/results/stage16-memory-cap-v13.json`、`docs/results/stage16-cpu-verification-v13.json`。跟进gofa-f-stage16已指向v13实际身份和仅显存上限策略，禁止恢复旧空闲/16GiB余量门槛，正常训练静默。以下均为历史。
 ## Stage16 用户再次授权部署至今晚23:30（2026-10-17，Asia/Shanghai）
 
 用户在v11墙钟截止交付后明确要求：“重新部署，硬截止时间设为今晚23：30”。本次新授权覆盖此前11:00截止和“交付后不自动重启”，新训练截止 **2026-10-17 21:30**、硬截止 **23:30**，仍保留两小时评价。原始2026-10-16 16:03:02起算、9956.406928363256秒活动账本、167更新/offset10737及pending49窗口117586标签均不重置。普通恢复不得再次延期。

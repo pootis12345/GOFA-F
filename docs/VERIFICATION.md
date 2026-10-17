@@ -4,6 +4,9 @@
 
 用户授权memory_cap_only：立即共享准入，不检查空闲率/其他任务/空闲显存阈值，无三次等待，无16GiB运行暂停；项目组40GiB/Torch38GiB、Default模式不变，其他人加入不退出。策略写入window/manifest/launcher并拒绝普通恢复退回idle/shared余量策略；GPU任务实际使用leave_free_gib=0。模型/数据/优化器/KV数学路径不改。B静态、C Ruff、C禁CUDA OMP/MKL2线程108项资源策略/阶段/恢复专项通过，完整与真实权重复核由v13固定快照执行，CUDA原容差验收仍独立必需。v12已合作停止并保留状态，无新版GPU活动。
 
+v13实际验收：346 CPU通过/11旧可选跳过（357 XML条目）、Stage16专项102项，真实7B三节点CPU差0。随后在已有其他GPU任务运行时直接共享准入，真实207节点BF16 fresh和actual continued检查点均passed，prefix max_abs=0/changed_elements=0、预测差0、全部命名梯度max_abs=0且无不匹配，原rtol/atol2e-3不变，mechanisms.json/passed=true。v10失败和v11/v12未获准入的历史保留；当前通路等价性通过不等于证明旧失败的唯一根因。
+
+现已running/train并从167更新前进到169（归档观测），本组26028MiB、其他GPU进程3个；window/manifest/launcher均memory_cap_only，leave_free_gib=0、项目组40GiB/Torch38GiB。没有空闲率或56GiB门槛，没有16GiB运行暂停；不以CPU通过代替GPU验收。恢复marker精确、原start/21:30/23:30均保持，活动从原账本续计；不为独立状态比较回退正在训练的目标文件。证据 `results/stage16-memory-cap-v13.json`、`results/stage16-cpu-verification-v13.json`，尚无完整验证/测试精度。
 ## Stage16 v12 显式延期接续验证（2026-10-17）
 
 新增对wall_deadline且从未获GPU准入的等待源的安全接续，只由明确用户延期标志开启；来源全部退出、无GPU检查/预测/已选模型/失败、继承checkpoint SHA及账本未变化才接受。按新授权保留原start和活动、将截止改为21:30/23:30；新窗口记录来源SHA和原/新截止。模型/KV计算路径未改。B语法与C Ruff通过，C禁CUDA/OMP/MKL各2线程65项恢复/阶段/启动器专项通过；完整回归和真实权重检查由新固定快照bootstrap执行，结果以v12 cpu_preflight.json为准。旧v11无GPU、v10失败证据保留。
