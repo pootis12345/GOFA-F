@@ -92,11 +92,17 @@ def evaluate_sources(model, codec, series, queries, output, label, binding, prog
                 predictions, coverage = forecast_batch(model, codec, histories,
                     batch_queries[0].horizon, graphs, check, update)
             except torch.cuda.OutOfMemoryError:
+                record["active_seconds"] += time.monotonic()-started
+                atomic_json(path, record)
                 if microbatch == 1:
                     raise
                 microbatch = max(1, microbatch//2)
                 torch.cuda.empty_cache()
                 continue
+            except Exception:
+                record["active_seconds"] += time.monotonic()-started
+                atomic_json(path, record)  # unfinished greedy batch is replayed, never scored
+                raise
             for i, q, p, valid in zip(indices, batch_queries, predictions, coverage):
                 values = data[q.source]
                 target = values.values[q.origin:q.origin+q.horizon, q.variable]
@@ -110,4 +116,7 @@ def evaluate_sources(model, codec, series, queries, output, label, binding, prog
             position += len(indices)
     record["complete"] = True
     atomic_json(path, record)
+    progress.evaluation(len(queries), len(queries), total_work, total_work,
+                        record["active_seconds"], evaluation_kind=label,
+                        evaluation_current_step=0, evaluation_current_horizon=0)
     return selection_score(record["errors"], queries, series["epsilons"])

@@ -74,11 +74,13 @@ class Progress:
         return self.state
 
     def evaluation(self, done, total, work_done, work_total, seconds, **fields):
+        native = fields.get("evaluation_kind") == "native"
+        rounds = fields.pop("evaluation_maximum_rounds", 1 if native else self.state["max_updates"]//250)
+        completed = 0 if native else self.state["validation_runs"]
         return self.tick(force=True, evaluation_done=done, evaluation_total=total,
-            evaluation_round=self.state["validation_runs"]+1,
-            evaluation_maximum_rounds=self.state["max_updates"]//250,
-            evaluation_overall_done=self.state["validation_runs"]*total+done,
-            evaluation_overall_total=self.state["max_updates"]//250*total,
+            evaluation_round=completed+1, evaluation_maximum_rounds=rounds,
+            evaluation_overall_done=completed*total+done,
+            evaluation_overall_total=rounds*total,
             evaluation_fraction=done/total if total else 0., evaluation_work_done=work_done,
             evaluation_work_total=work_total, evaluation_eta_seconds=(seconds/work_done*(work_total-work_done)
                 if work_done else None), evaluation_eta_basis="generated_numeric_steps", **fields)
@@ -113,6 +115,8 @@ def render(record):
             if p.get("evaluation_kind") != "native":
                 lines.append(f"validation round {p['evaluation_round']}/{p['evaluation_maximum_rounds']} | "
                     f"overall validation {p['evaluation_overall_done']}/{p['evaluation_overall_total']}")
+            else:
+                lines.append("native baseline pass 1/1; shared fixed source validation queries")
     return "\n".join(lines)
 
 

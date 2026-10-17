@@ -110,6 +110,21 @@ def nasdaq_sessions(frame):
             zip(starts, np.r_[starts[1:], len(frame)])]
 
 
+def verified_nasdaq_session(frame, reference):
+    parts = nasdaq_sessions(frame)
+    expected = np.asarray(reference, float)
+    expected = expected[np.isfinite(expected)]
+    matches = []
+    for i, part in enumerate(parts):
+        values = pd.to_numeric(part["1"], errors="raise").to_numpy()
+        values = values[np.isfinite(values)]
+        if len(values) == len(expected) and np.allclose(values, expected, rtol=1e-8, atol=1e-8):
+            matches.append(i)
+    if len(matches) != 1:
+        raise ValueError("No unique NASDAQ raw session matching the author matrix")
+    return parts[matches[0]], matches[0], len(parts)
+
+
 def provenance_exclusion(source_audit):
     # Identity and observation-period separation is explicit; byte equality alone is insufficient.
     evidence = {
@@ -178,6 +193,17 @@ def prepare_extras(root):
             names = stream.namelist()
             symbol_file = next(n for n in names if n.endswith("full/stock_name.txt"))
             symbols = stream.read(symbol_file).decode().split()
+            matrix_name = next(n for n in names if n.endswith("full/full_non_padding.csv"))
+            matrix = pd.read_csv(io.BytesIO(stream.read(matrix_name)))
+            days = sorted(Path(n).stem.removeprefix("NDX_") for n in names if
+                n.startswith("nasdaq100/full/stock_data_GOOGLE/NDX_") and n.endswith(".csv"))
+            blocks, offset = {}, 0
+            for day in days:
+                size = 211 if day == "2016-11-25" else 391
+                blocks[day] = matrix.iloc[offset:offset+size]
+                offset += size
+            if offset != len(matrix) or list(matrix.columns) != symbols or len(days) != 191:
+                raise ValueError("NASDAQ full author day/variable coverage differs")
             frames, repeated = {}, []
             for symbol in symbols:
                 members = [n for n in names if "/full/stock_data_GOOGLE/" in "/"+n and n.endswith(".csv")
@@ -186,19 +212,14 @@ def prepare_extras(root):
                                 or Path(n).stem == symbol)]
                 if not members:
                     raise ValueError("Original NASDAQ per-timestamp member unavailable: "+symbol)
-                parts, verified_sessions = [], []
+                parts = []
                 for member in sorted(members):
                     frame = pd.read_csv(io.BytesIO(stream.read(member)))
                     day = Path(member).stem.removeprefix(symbol+"_")
-                    sessions = nasdaq_sessions(frame)
-                    for duplicate in sessions[:-1]:
-                        # Some files repeat a complete earlier day. Remove only exact
-                        # minute/close matches to an already verified dated session.
-                        if not any(duplicate[["0", "1"]].equals(old) for old in verified_sessions):
-                            raise ValueError("Unresolved repeated NASDAQ session: "+member)
-                        repeated.append(member)
-                    session = sessions[-1]
-                    verified_sessions.append(session[["0", "1"]])
+                    session, selected, count = verified_nasdaq_session(frame, blocks[day][symbol])
+                    if count > 1:
+                        repeated.append({"member": member, "selected_part": selected, "parts": count,
+                            "evidence": "unique exact close sequence match to author matrix daily block"})
                     parts.append(nasdaq_day(session, day, stock=symbol != "NDX"))
                 frames[symbol] = pd.concat(parts).sort_index()
             if symbols[-1] != "NDX" or len(symbols) != 105:
@@ -209,8 +230,6 @@ def prepare_extras(root):
                 day == pd.Timestamp("2016-11-25") else 390, freq="min").to_numpy() for day in days]))
             index = frames["NDX"].reindex(grid)
             aligned, sessions = align_nasdaq({s: frames[s] for s in symbols[:-1]}, index)
-            matrix_name = next(n for n in names if n.endswith("full/full_non_padding.csv"))
-            matrix = pd.read_csv(io.BytesIO(stream.read(matrix_name)))
             save_series(prepared, "nasdaq100", aligned.to_numpy(), aligned.index, symbols,
                 {"sha256": sha(archive), "source": "author original full archive",
                  "alignment": "join documented relative-minute offsets: stock minute minus1 vs index minute",

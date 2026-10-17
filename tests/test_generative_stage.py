@@ -7,7 +7,8 @@ import pytest
 import torch
 import yaml
 
-from gofa_f.generative_audit import align_nasdaq, geographic_stations, noaa_hourly, nasdaq_day
+from gofa_f.generative_audit import (align_nasdaq, geographic_stations, noaa_hourly, nasdaq_day,
+                                     verified_nasdaq_session)
 from gofa_f.generative_launcher import own_usage
 from gofa_f.generative_progress import Progress
 from gofa_f.generative_stage import (config_check, restore_checkpoint, save_checkpoint, schedule)
@@ -87,6 +88,9 @@ def test_nasdaq_original_minute_offsets_and_short_session():
     aligned, _ = align_nasdaq({"A": s}, i)
     assert aligned["A"].iloc[0] == 6 and np.isnan(aligned["A"].iloc[1])
     assert aligned["A"].iloc[2] == 8  # missing minutes are not compressed or interpolated
+    repeated = pd.concat([stocks, stocks.assign(**{"1": stocks["1"]+10})], ignore_index=True)
+    session, selected, count = verified_nasdaq_session(repeated, stocks["1"])
+    assert selected == 0 and count == 2 and session["1"].iloc[0] == 5
 
 
 def test_frozen_cache_prompt_boundary_binding():
@@ -95,6 +99,38 @@ def test_frozen_cache_prompt_boundary_binding():
     changed = QueryTokens(b.input_ids, b.attention_mask, b.labels, b.prompt_ends+1)
     cache = GenerativePrefixLRU("fixed")
     assert cache.key(b) != cache.key(changed)
+
+
+def test_complete_validation_rejects_duplicate_templates():
+    from gofa_f.generative_data import selection_score, TEMPLATES
+    queries = [dict(source="a", variable=0, length=l, horizon=h) for l, h in TEMPLATES]
+    assert selection_score([1.]*6, queries, {"a": [1e-6]})["variable_mae"]["a:0"] == 1.
+    queries[-1] = queries[0]
+    with pytest.raises(ValueError):
+        selection_score([1.]*6, queries, {"a": [1e-6]})
+
+
+def test_original_origin_graph_is_frozen_under_rolling_teacher_forcing(tmp_path):
+    from gofa_f.generative_data import Query, Series, save_series
+    x = np.arange(120., dtype=float).reshape(40, 3)
+    save_series(tmp_path, "sample", x, pd.date_range("2020-01-01", periods=40, freq="h"),
+                ["a", "b", "c"], {"fixture": True})
+    data = Series(tmp_path/"sample.npz")
+    q = Query("sample", 0, 15, 10, 20, 16)
+    before = data.graph(q)
+    data.values[15:] += 10000
+    after = data.graph(q)
+    assert after.identity == before.identity
+    torch.testing.assert_close(after.history, before.history, rtol=0, atol=0)
+    assert len(data.training_record(q)[0]) == 26  # text, unlike graph, receives preceding real blocks
+
+
+def test_native_progress_pass_and_validation_round(tmp_path):
+    p = Progress(tmp_path)
+    p.evaluation(16, 3396, 32, 160748, 10., evaluation_kind="native")
+    assert p.state["evaluation_maximum_rounds"] == 1 and p.state["evaluation_overall_total"] == 3396
+    p.evaluation(4, 3396, 4, 160748, 1., evaluation_kind="update-000250")
+    assert p.state["evaluation_maximum_rounds"] == 16
 
 
 def test_noaa_selection_uses_only_metadata():

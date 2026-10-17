@@ -267,10 +267,14 @@ def build_pools(series, output, per_source=8192, seed=42):
 
 
 def selection_score(query_mae, validation, epsilons):
-    grouped = {}
+    grouped, templates = {}, {}
     for error, query in zip(query_mae, validation):
-        grouped.setdefault((query["source"], query["variable"]), []).append(float(error))
-    if len(query_mae) != len(validation) or any(len(v) != 6 for v in grouped.values()):
+        key = query["source"], query["variable"]
+        grouped.setdefault(key, []).append(float(error))
+        templates.setdefault(key, []).append((query.get("length"), query.get("horizon")))
+    required = {(s, v) for s, values in epsilons.items() for v in range(len(values))}
+    if len(query_mae) != len(validation) or set(grouped) != required \
+            or any(len(v) != 6 or set(v) != set(TEMPLATES) for v in templates.values()):
         raise ValueError("Only complete six-template validation may select checkpoints")
     values = {source: [] for source in epsilons}
     return {"variable_mae": {f"{s}:{v}": float(np.mean(e, dtype=np.float64)) for (s, v), e in grouped.items()},
