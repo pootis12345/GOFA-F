@@ -71,7 +71,7 @@ class GenerativeCodec(HistoryCodec):
 
 
 class GenerativeGOFA(nn.Module):
-    def __init__(self, native):
+    def __init__(self, native, stable_fp32=False):
         super().__init__()
         self.native = native.requires_grad_(False).eval()
         self.native.gradient_checkpointing_disable()
@@ -83,7 +83,8 @@ class GenerativeGOFA(nn.Module):
         self.parameter_version = 0
         self._active = None
         self._kernel_active = False
-        install_linear_tiles(self.native, lambda: self._kernel_active)
+        self.stable_fp32 = stable_fp32
+        install_linear_tiles(self.native, lambda: self._kernel_active, stable_fp32)
         self._handles = [native.model.layers[index].register_forward_pre_hook(
             self._hook(slot), with_kwargs=True) for slot, index in enumerate(self.graph_layers)]
 

@@ -12,13 +12,13 @@ from torch.nn import functional as F
 from torch.nn.attention import SDPBackend, sdpa_kernel
 
 
-def install_linear_tiles(native, active):
+def install_linear_tiles(native, active, stable_fp32=False):
     for layer in native.modules():
         if not isinstance(layer, torch.nn.Linear):
             continue
         original = layer.forward
         def tiled(x, layer=layer, original=original):
-            if not active() or x.dtype not in (torch.bfloat16, torch.float16):
+            if not active() or (x.dtype not in (torch.bfloat16, torch.float16) and not stable_fp32):
                 return original(x)
             shape = x.shape
             rows = x.reshape(-1, shape[-1])
@@ -34,7 +34,7 @@ def install_linear_tiles(native, active):
 
 @contextmanager
 def stable_attention(owner, positions, mask, prompt_ends):
-    if owner.native.dtype not in (torch.bfloat16, torch.float16):
+    if owner.native.dtype not in (torch.bfloat16, torch.float16) and not owner.stable_fp32:
         yield
         return
     capacity = math.ceil((int(prompt_ends.max())+1+128)/32)*32

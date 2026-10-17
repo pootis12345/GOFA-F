@@ -117,17 +117,17 @@ def prepare(cfg, output):
     return manifest
 
 
-def load_model(cfg, device):
+def load_model(cfg, device, dtype=torch.bfloat16):
     random.seed(cfg["seed"])
     np.random.seed(cfg["seed"])
     torch.manual_seed(cfg["seed"])
     native = LlamaForCausalLM.from_pretrained(cfg["weights"]["directory"],
-        torch_dtype=torch.bfloat16, attn_implementation="sdpa", local_files_only=True)
+        torch_dtype=dtype, attn_implementation="sdpa", local_files_only=True)
     if native.config.num_hidden_layers != 32 or native.config.hidden_size != 4096 \
             or native.config.vocab_size != 42001:
         raise ValueError("Official ChatTime architecture differs")
     tokenizer = LlamaTokenizer.from_pretrained(cfg["weights"]["directory"], local_files_only=True)
-    model = GenerativeGOFA(native).to(device)
+    model = GenerativeGOFA(native, stable_fp32=dtype == torch.float32).to(device)
     return model, GenerativeCodec(tokenizer)
 
 

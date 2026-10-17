@@ -40,9 +40,10 @@ def main():
     atomic_json(output/"cpu_preflight.json", record)
     root = Path(cfg["data"]["directory"])
     series = {name: Series(root/"sources"/(name+".npz")) for name in SOURCES}
-    model, codec = load_model(cfg, "cpu")
+    model, codec = load_model(cfg, "cpu", dtype=torch.float32)
+    record["real_weight_dtype"] = "float32"
     try:
-        record["real_weights"] = mechanisms(model, codec, series, read(root/"validation_queries.json"), 2e-3,
+        record["real_weights"] = mechanisms(model, codec, series, read(root/"validation_queries.json"), 1e-6,
             diagnostic=lambda result: atomic_json(output/"cpu_mechanisms.json", result))
         record["parameters"] = model.parameter_counts()
         record["passed"] = True
