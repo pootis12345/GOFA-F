@@ -232,6 +232,28 @@ def test_parameters_and_pinned_protocol():
             config_check(bad)
 
 
+@pytest.mark.parametrize("dtype", [torch.float32, torch.bfloat16])
+def test_rmsnorm_fixed_rows_chunk_equivalence_and_native_bypass(dtype):
+    from transformers.models.llama.modeling_llama import LlamaRMSNorm
+    from gofa_f.allnode_kernel import install_norm_tiles
+    torch.manual_seed(42)
+    norm = LlamaRMSNorm(4096).to(dtype=dtype)
+    native = deepcopy(norm)
+    enabled = [True]
+    install_norm_tiles(norm, lambda: enabled[0], stable_fp32=True)
+    x = torch.randn(1, 106, 4096, dtype=dtype, requires_grad=True)
+    full = norm(x)
+    incremental = torch.cat([norm(x[:, :103]), *[norm(x[:, i:i+1]) for i in range(103, 106)]], 1)
+    torch.testing.assert_close(full, incremental, rtol=0, atol=0)
+    full.float().square().mean().backward()
+    expected = x.grad.clone()
+    x.grad = None
+    incremental.float().square().mean().backward()
+    torch.testing.assert_close(x.grad, expected, rtol=0, atol=0)
+    enabled[0] = False
+    torch.testing.assert_close(norm(x), native(x), rtol=0, atol=0)
+
+
 def test_best_reference_patience_and_idempotent_commit():
     from gofa_f.allnode_stage import record_validation
     state = dict(best_score=None, early_reference=None, bad_validations=0, last_validated_update=0)

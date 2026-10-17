@@ -1,4 +1,4 @@
-protocol: stage18-allnode-chattime-v2
+protocol: stage18-allnode-chattime-v3
 seed: 42
 weights:
   directory: /home/dcg/dcg_data/GOFA-F/data/weights/chattime-7b-20baa88
@@ -19,7 +19,7 @@ architecture:
   prior_fraction: 0.5
   graph_top_k: 8
   max_subgraph_nodes: 9
-  numerical_execution: bf16_rows128_sdpa_fixed_prompt_capacity_v1
+  numerical_execution: bf16_rows128_rms128_sdpa_fixed_prompt_capacity_v2
   origin_frozen: true
 training:
   max_updates: 4000

@@ -10,6 +10,7 @@ from transformers.modeling_outputs import CausalLMOutputWithPast
 
 from gofa_f.allnode_graph import AllNodeAdapter
 from gofa_f.allnode_codec import PROMPT_SHA
+from gofa_f.allnode_kernel import EXECUTION, install_norm_tiles
 from gofa_f.generative_kernel import install_linear_tiles, stable_attention
 from gofa_f.generative_model import GenerativeGOFA
 
@@ -53,6 +54,7 @@ class AllNodeGOFA(GenerativeGOFA):
         self.stable_fp32 = stable_fp32
         self.origin_executions = []
         install_linear_tiles(native, lambda: self._kernel_active, stable_fp32)
+        install_norm_tiles(native, lambda: self._kernel_active, stable_fp32)
         self._handles = [native.model.layers[index].register_forward_pre_hook(
             self._hook(slot), with_kwargs=True) for slot, index in enumerate(self.graph_layers)]
 
@@ -226,4 +228,4 @@ class AllNodeGOFA(GenerativeGOFA):
 
 def frozen_cache_binding(model, weights_sha):
     return hashlib.sha256(str((weights_sha, PROMPT_SHA, "allnode_v1", model.prefix_layers,
-        model.native.dtype, "before", "bf16_rows128_sdpa_fixed_prompt_capacity_v1")).encode()).hexdigest()
+        model.native.dtype, "before", EXECUTION)).encode()).hexdigest()

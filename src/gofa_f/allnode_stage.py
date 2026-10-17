@@ -24,6 +24,7 @@ from gofa_f.allnode_forecast import evaluate_sources
 from gofa_f.allnode_model import AllNodeGOFA as GenerativeGOFA, frozen_cache_binding
 from gofa_f.allnode_codec import AllNodeCodec as GenerativeCodec, PROMPT_SHA
 from gofa_f.allnode_graph import build_graph
+from gofa_f.allnode_kernel import EXECUTION
 from gofa_f.generative_model import (GenerativePrefixLRU,
                                      completion_loss)
 from gofa_f.allnode_progress import Progress
@@ -50,7 +51,7 @@ def config_check(cfg):
     if any(a[k] != v for k, v in {"graph_width": 64, "attention_rank": 16,
                                   "prior_fraction": .5, "graph_top_k": 8}.items()):
         raise ValueError("Fixed graph architecture changed")
-    if a.get("numerical_execution") != "bf16_rows128_sdpa_fixed_prompt_capacity_v1":
+    if a.get("numerical_execution") != EXECUTION:
         raise ValueError("Shape-stable execution binding changed")
     if a.get("max_subgraph_nodes") != 9 or a.get("origin_frozen") is not True:
         raise ValueError("Nine-node immutable-origin architecture required")
