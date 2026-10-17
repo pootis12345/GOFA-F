@@ -103,7 +103,7 @@ def test_frozen_cache_prompt_boundary_binding():
 
 def test_complete_validation_rejects_duplicate_templates():
     from gofa_f.generative_data import selection_score, TEMPLATES
-    queries = [dict(source="a", variable=0, length=l, horizon=h) for l, h in TEMPLATES]
+    queries = [dict(source="a", variable=0, length=length, horizon=horizon) for length, horizon in TEMPLATES]
     assert selection_score([1.]*6, queries, {"a": [1e-6]})["variable_mae"]["a:0"] == 1.
     queries[-1] = queries[0]
     with pytest.raises(ValueError):
