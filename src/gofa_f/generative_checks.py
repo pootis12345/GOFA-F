@@ -15,6 +15,11 @@ def mechanisms(model, codec, series, queries, tolerance, diagnostic=None, check=
     cuda_rng = torch.cuda.get_rng_state_all() if device.type == "cuda" else None
     native_versions = [p._version for p in model.native.parameters()]
     original_grads = {n: p.grad for n, p in model.adapter.named_parameters()}
+    visited = set()
+    def visited_module(module, *_):
+        visited.update(id(p) for p in module.parameters(recurse=False))
+    handles = [module.register_forward_hook(visited_module) for module in model.modules()
+               if list(module.parameters(recurse=False))]
     results = {"tolerance": tolerance, "graph_layers": list(model.graph_layers),
                "prefix_layers": model.prefix_layers, "target_queries_used": 0, "differences": {}}
     def compare(actual, expected, name, exact=False):
@@ -119,12 +124,19 @@ def mechanisms(model, codec, series, queries, tolerance, diagnostic=None, check=
                for p, old in zip(model.native.parameters(), native_versions)):
             raise AssertionError("Frozen native parameters changed")
         results["native_frozen"] = True
+        model._verified_forward_parameters = sum(p.numel() for p in model.parameters() if id(p) in visited)
+        results["forward_added_parameters"] = sum(p.numel() for p in model.adapter.parameters() if id(p) in visited)
+        if results["forward_added_parameters"] != sum(p.numel() for p in model.adapter.parameters()):
+            raise AssertionError("Registered added parameters belong to an unexecuted module")
+        results["parameter_counts"] = model.parameter_counts()
         results["passed"] = True
         return results
     except Exception as exc:
         results.update(passed=False, error_type=type(exc).__name__, error=str(exc))
         raise
     finally:
+        for handle in handles:
+            handle.remove()
         if diagnostic is not None:
             diagnostic(results)
         model.load_trainable(before)

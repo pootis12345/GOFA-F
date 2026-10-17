@@ -145,21 +145,27 @@ class GraphInteraction(nn.Module):
         results = []
         with torch.autocast(hidden.device.type, enabled=False):
             for row, (z, graph) in enumerate(zip(memories, graphs)):
-                q = self.down(self.norm(hidden[row].float()))+z[graph.target]
                 base, prior = graph.base[graph.target], graph.prior[graph.target]
-                logits = self.query(q) @ self.key(z).T/4
-                logits = logits+base.clamp_min(torch.finfo(torch.float32).tiny).log()
-                logits = logits+self.edge_score(graph.edges[graph.target]).T
                 support = base > 0
-                if support.any():
-                    attention = logits.masked_fill(~support[None], -torch.inf).softmax(-1)
-                else:
-                    attention = torch.zeros_like(logits)
-                values = self.value(z)
-                message = .5*(prior @ values)[None]+.5*(attention @ values)
-                delta = self.gate(q).sigmoid()*self.up(F.gelu(message))
-                delta = delta.masked_fill(~selected[row, :, None], 0)
-                results.append(hidden[row]+delta.to(hidden.dtype))
+                positions = torch.flatnonzero(selected[row])
+                keys, values = self.key(z), self.value(z)
+                prior_message = (prior @ values)[None]
+                score_bias = base.clamp_min(torch.finfo(torch.float32).tiny).log() \
+                    +self.edge_score(graph.edges[graph.target]).squeeze(-1)
+                changed = []
+                # A query is token-local. Keep the same one-row FP32 arithmetic
+                # for full teacher forcing and single-token KV generation.
+                for position in positions.unbind():
+                    value = hidden[row, position:position+1]
+                    q = self.down(self.norm(value.float()))+z[graph.target]
+                    logits = self.query(q) @ keys.T/4+score_bias
+                    attention = logits.masked_fill(~support[None], -torch.inf).softmax(-1) \
+                        if support.any() else torch.zeros_like(logits)
+                    message = .5*prior_message+.5*(attention @ values)
+                    delta = self.gate(q).sigmoid()*self.up(F.gelu(message))
+                    changed.append(value+delta.to(hidden.dtype))
+                results.append(hidden[row].index_copy(0, positions, torch.cat(changed, 0))
+                               if changed else hidden[row])
         return torch.stack(results)
 
 

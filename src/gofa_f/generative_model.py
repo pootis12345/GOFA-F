@@ -188,7 +188,8 @@ class GenerativeGOFA(nn.Module):
              *[(f"interaction_{i+1}", m) for i, m in enumerate(self.adapter.interactions)]]}
         return {"modules": modules, "trainable": sum(modules.values()),
                 "registered": sum(p.numel() for p in self.parameters()),
-                "forward_parameters": sum(p.numel() for p in self.parameters())}
+                "forward_parameters": getattr(self, "_verified_forward_parameters", None),
+                "forward_definition": "full registered tensors in modules observed executing; includes full embedding tables"}
 
 
 def completion_loss(logits, labels):

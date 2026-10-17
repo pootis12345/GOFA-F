@@ -294,7 +294,10 @@ def train(cfg, output, resume):
             atomic_json(output/"mechanisms.json", result)
             memory("mechanisms")
             torch.cuda.reset_peak_memory_stats()
-        atomic_json(output/"parameters.json", model.parameter_counts())
+        parameter_record = model.parameter_counts()
+        if parameter_record["forward_parameters"] is None:
+            parameter_record.update(read(output/"mechanisms.json")["parameter_counts"])
+        atomic_json(output/"parameters.json", parameter_record)
         status("running", phase="native_source_baseline")
         progress.tick("native_source_baseline", force=True)
         baseline = evaluate_sources(model, codec, {"data": series, "epsilons": eps}, validation,
