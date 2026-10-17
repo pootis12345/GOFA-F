@@ -1,0 +1,391 @@
+{
+  "event": "stopped_by_user",
+  "authorization": "explicit_user_stop_current_run",
+  "verified_at": 1792219928.7353206,
+  "verified_at_shanghai": "2026-10-17T14:52:08.735326+08:00",
+  "source_revision": "6ca1b2bebccf7e43354b8e91c82a0c0c85854573",
+  "output": "/home/dcg/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v13",
+  "snapshot": "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v13",
+  "processes": {
+    "808190": null,
+    "810198": null,
+    "810503": null,
+    "810997": null
+  },
+  "snapshot_processes": [],
+  "launcher": {
+    "state": "stopped_by_user",
+    "pid": 810198,
+    "spent_seconds": 18944.781446072273,
+    "updated_at": 1792219896.8540347
+  },
+  "status": {
+    "state": "interrupted",
+    "pid": 810503,
+    "updated_at": 1792219896.6299472
+  },
+  "bootstrap": {
+    "state": "interrupted",
+    "pid": 808190,
+    "start_ticks": 613180484,
+    "updated_at": 1792219908.8392725,
+    "snapshot": "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v13",
+    "launcher_returncode": 0,
+    "window": {
+      "started_at": 1792137782.8795292,
+      "training_deadline": 1792243800.0,
+      "wall_deadline": 1792251000.0,
+      "window_seconds": 113217.12047076225,
+      "adopted_from": {
+        "kind": "training_continuation",
+        "output": "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v12",
+        "source_binding": "b54f9a028d0bfa55371e250f6cdbf5d41c443a3957594187dc5e2c1ff0de0772",
+        "window_sha256": "0565faae9f65748b694c7f1bc9ff2703ef8b60a6deec791145f6655f1f88c02e",
+        "manifest_sha256": "b58fd4204cd6ab79f1f224b768654032143bc78037082dde6bf79a62c5e425ed",
+        "checkpoint_sha256": "7512a8a0d409ab9d3c4f7b69067eb954c0a5addf5ca21eae47e880b3baa7c8a3",
+        "started_at": 1792137782.8795292,
+        "original_wall_deadline": 1792251000.0,
+        "gpu_activity_seconds": 9956.406928363256,
+        "updates": 167,
+        "offset": 10737,
+        "pending_windows": 49,
+        "pending_count": 117586,
+        "deadline_amendment": {
+          "authorization": "explicit_user_request",
+          "source_window_sha256": "fe1e8480c6e6b86fb5f72e8c35bdeb89b3d1cf5cc52500c7f80b52b3462ec22f",
+          "previous_wall_deadline": 1792206000.0,
+          "new_wall_deadline": 1792251000.0
+        }
+      },
+      "deadline_amendment": {
+        "authorization": "explicit_user_request",
+        "source_window_sha256": "fe1e8480c6e6b86fb5f72e8c35bdeb89b3d1cf5cc52500c7f80b52b3462ec22f",
+        "previous_wall_deadline": 1792206000.0,
+        "new_wall_deadline": 1792251000.0
+      },
+      "admission_policy": "memory_cap_only",
+      "leave_free_gib": 0,
+      "idle_interval_seconds": 10,
+      "fixed_prompt_kv": true,
+      "launch_fingerprint": "0b97781d0a555eda0455fc6dd5c0476103291e8c3fafab5e05219cca5da26a56"
+    }
+  },
+  "progress": {
+    "epoch": 1,
+    "offset": 585,
+    "updates": 368,
+    "stale": 0,
+    "best_mae": 3.3769941238516736,
+    "best_updates": 359,
+    "phase": "train",
+    "pending_windows": 9,
+    "pending_count": 19794,
+    "pending_loss": 78882.85382080078,
+    "validation_offset": 0,
+    "last_validated_key": "epoch-001-update-00000359",
+    "suffix_checkpointing": false,
+    "prefix_node_chunk": 256,
+    "last_gradient_norm": 4.479424476623535,
+    "last_training_raw_mae": 3.4808704863446875,
+    "stop_reason": "training_deadline_or_signal",
+    "updated_at": 1792219893.395246,
+    "checkpoint_sha256": "2f917662045e00681b7ef5cdf5bfabab3974687bda4363eac9f3b9802cc1838f"
+  },
+  "best_validation": {
+    "validation": {
+      "raw": {
+        "mae": 3.3769941238516736,
+        "mse": 48.39083948052257,
+        "rmse": 6.956352455168051,
+        "mape_pct": 9.273044528325123,
+        "mape_observations": 7892981,
+        "mape_valid_fraction": 1.0,
+        "wape_pct": 5.7322204429262325,
+        "observations": 7892981,
+        "by_horizon": [
+          {
+            "step": 1,
+            "mae": 2.2713041823741444,
+            "rmse": 3.9545486417339153,
+            "observations": 657759
+          },
+          {
+            "step": 2,
+            "mae": 2.5842742721366894,
+            "rmse": 4.853989004078377,
+            "observations": 657757
+          },
+          {
+            "step": 3,
+            "mae": 2.804778748443598,
+            "rmse": 5.488411604200797,
+            "observations": 657752
+          },
+          {
+            "step": 4,
+            "mae": 3.0073037445275603,
+            "rmse": 6.027938422321852,
+            "observations": 657747
+          },
+          {
+            "step": 5,
+            "mae": 3.189115373744918,
+            "rmse": 6.4713498856628915,
+            "observations": 657744
+          },
+          {
+            "step": 6,
+            "mae": 3.357101518296157,
+            "rmse": 6.875302904858808,
+            "observations": 657743
+          },
+          {
+            "step": 7,
+            "mae": 3.5206226710251958,
+            "rmse": 7.252188716772346,
+            "observations": 657743
+          },
+          {
+            "step": 8,
+            "mae": 3.6747783940163017,
+            "rmse": 7.594916233327465,
+            "observations": 657744
+          },
+          {
+            "step": 9,
+            "mae": 3.819244805152605,
+            "rmse": 7.8928213728448275,
+            "observations": 657746
+          },
+          {
+            "step": 10,
+            "mae": 3.965036109372063,
+            "rmse": 8.191076315167983,
+            "observations": 657747
+          },
+          {
+            "step": 11,
+            "mae": 4.097560034404599,
+            "rmse": 8.42633371654858,
+            "observations": 657748
+          },
+          {
+            "step": 12,
+            "mae": 4.232841832810713,
+            "rmse": 8.67260407729315,
+            "observations": 657751
+          }
+        ]
+      }
+    },
+    "updates": 359,
+    "validation_key": "epoch-001-update-00000359",
+    "checkpoint_sha256": "d9531dd1be3d91d6133556e349a54d90879894fd410be26b0338614f444a024f"
+  },
+  "checkpoints": {
+    "last.pt": {
+      "sha256": "2f917662045e00681b7ef5cdf5bfabab3974687bda4363eac9f3b9802cc1838f",
+      "bytes": 18323150,
+      "path": "/home/dcg/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v13/gofa_chattime/last.pt"
+    },
+    "best.pt": {
+      "sha256": "d9531dd1be3d91d6133556e349a54d90879894fd410be26b0338614f444a024f",
+      "bytes": 4834190,
+      "path": "/home/dcg/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v13/gofa_chattime/best.pt"
+    }
+  },
+  "final_selection": {
+    "selection_split": "complete validation raw MAE",
+    "sealed_at": 1792219896.8544667,
+    "native": {
+      "revision": "20baa88d6ab838b34abbd1d2b1f4cea57c8ff870",
+      "do_sample": false,
+      "max_new_tokens": 64
+    },
+    "gofa": {
+      "validation": {
+        "raw": {
+          "mae": 3.3769941238516736,
+          "mse": 48.39083948052257,
+          "rmse": 6.956352455168051,
+          "mape_pct": 9.273044528325123,
+          "mape_observations": 7892981,
+          "mape_valid_fraction": 1.0,
+          "wape_pct": 5.7322204429262325,
+          "observations": 7892981,
+          "by_horizon": [
+            {
+              "step": 1,
+              "mae": 2.2713041823741444,
+              "rmse": 3.9545486417339153,
+              "observations": 657759
+            },
+            {
+              "step": 2,
+              "mae": 2.5842742721366894,
+              "rmse": 4.853989004078377,
+              "observations": 657757
+            },
+            {
+              "step": 3,
+              "mae": 2.804778748443598,
+              "rmse": 5.488411604200797,
+              "observations": 657752
+            },
+            {
+              "step": 4,
+              "mae": 3.0073037445275603,
+              "rmse": 6.027938422321852,
+              "observations": 657747
+            },
+            {
+              "step": 5,
+              "mae": 3.189115373744918,
+              "rmse": 6.4713498856628915,
+              "observations": 657744
+            },
+            {
+              "step": 6,
+              "mae": 3.357101518296157,
+              "rmse": 6.875302904858808,
+              "observations": 657743
+            },
+            {
+              "step": 7,
+              "mae": 3.5206226710251958,
+              "rmse": 7.252188716772346,
+              "observations": 657743
+            },
+            {
+              "step": 8,
+              "mae": 3.6747783940163017,
+              "rmse": 7.594916233327465,
+              "observations": 657744
+            },
+            {
+              "step": 9,
+              "mae": 3.819244805152605,
+              "rmse": 7.8928213728448275,
+              "observations": 657746
+            },
+            {
+              "step": 10,
+              "mae": 3.965036109372063,
+              "rmse": 8.191076315167983,
+              "observations": 657747
+            },
+            {
+              "step": 11,
+              "mae": 4.097560034404599,
+              "rmse": 8.42633371654858,
+              "observations": 657748
+            },
+            {
+              "step": 12,
+              "mae": 4.232841832810713,
+              "rmse": 8.67260407729315,
+              "observations": 657751
+            }
+          ]
+        }
+      },
+      "updates": 359,
+      "validation_key": "epoch-001-update-00000359",
+      "checkpoint_sha256": "d9531dd1be3d91d6133556e349a54d90879894fd410be26b0338614f444a024f",
+      "path": "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v13/gofa_chattime/best.pt"
+    },
+    "updates": 368,
+    "stop_reason": "training_deadline_or_signal"
+  },
+  "active_budget": {
+    "spent_seconds": 18944.781446072273,
+    "worker": null
+  },
+  "budget": {
+    "spent_seconds": 18835.796970258467,
+    "scopes": {
+      "preflight": 29.30116900242865,
+      "train": 18806.49580125604
+    },
+    "active_scope": null
+  },
+  "memory": {
+    "phases": {
+      "preflight": {
+        "peak_allocated": 32319703552,
+        "peak_reserved": 37593546752,
+        "attempts": 3
+      },
+      "train": {
+        "peak_allocated": 22973716480,
+        "peak_reserved": 26598178816,
+        "attempts": 2
+      }
+    },
+    "peak_allocated": 32319703552,
+    "peak_reserved": 37593546752
+  },
+  "cache": {
+    "estimated_full_bytes": 2999480985963,
+    "disk_enabled": false,
+    "disk_limit_bytes": 137438953472,
+    "ram_limit_bytes": 68719476736,
+    "prefix_layers": 30,
+    "dtype": "bfloat16, lossless",
+    "key_binding": "7addbc0126bbd3669f504be85069f1930eb02a2d853c9cbf0a1673ac83a32d2a",
+    "ram_peak_bytes": 68689407402,
+    "hits": 110,
+    "misses": 15988,
+    "disk_bytes": 0
+  },
+  "fixed_prompt_cache": {
+    "enabled": true,
+    "format": "fixed_prompt_kv_v2",
+    "binding": "7addbc0126bbd3669f504be85069f1930eb02a2d853c9cbf0a1673ac83a32d2a",
+    "tokens": 47,
+    "builds": 1,
+    "reused_rows": 3309516,
+    "fallback_rows": 0,
+    "single_copy_bytes": 23486464,
+    "precision": "native dtype, lossless storage; no input truncation",
+    "attention": "full-length zero-padded queries, native square causal SDPA"
+  },
+  "failures": {},
+  "results": {
+    "native_chattime": null,
+    "gofa_chattime": null
+  },
+  "evaluation_progress": {
+    "native_chattime": {
+      "val": {
+        "completed_windows": 0,
+        "total_windows": 3281,
+        "complete": false
+      },
+      "test": {
+        "completed_windows": 0,
+        "total_windows": 6313,
+        "complete": false
+      }
+    },
+    "gofa_chattime": {
+      "val": {
+        "complete": true,
+        "source": "locked complete validation"
+      },
+      "test": {
+        "completed_windows": 0,
+        "total_windows": 6313,
+        "complete": false
+      }
+    }
+  },
+  "gpu_apps": "",
+  "gpu_summary": "0, 81090, Default",
+  "automation": {
+    "id": "gofa-f-stage16",
+    "deleted": true
+  },
+  "other_users_signalled": false,
+  "new_gpu_evaluation_started": false
+}
