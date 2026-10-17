@@ -1,0 +1,10 @@
+{
+  "passed": false,
+  "cases": 415,
+  "skipped": 21,
+  "cuda_disabled": true,
+  "manifest_sha256": "a038a497b80df66f99b409d74faeb16f18b4594bc7ee37247bb467a12230c287",
+  "real_weight_dtype": "float32",
+  "stage17_proof_reused": false,
+  "stage17_baseline_imported": false
+}

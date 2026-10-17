@@ -1,0 +1,23 @@
+{
+  "pid": 1246835,
+  "start_ticks": "616177294",
+  "code_revision": "08da870bb9eeaac45d5710bf50574959fde1a5a7",
+  "snapshot": "/mnt/sevenT/dcg_data/GOFA-F-runs/stage18-allnode-chattime-v2",
+  "output": "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage18-allnode-chattime-v2",
+  "command": [
+    "/mnt/sevenT/dcg_data/GOFA-F/.venv-chat/bin/python",
+    "-u",
+    "/mnt/sevenT/dcg_data/GOFA-F-runs/stage18-allnode-chattime-v2/scripts/bootstrap_allnode_stage.py",
+    "--snapshot",
+    "/mnt/sevenT/dcg_data/GOFA-F-runs/stage18-allnode-chattime-v2",
+    "--output",
+    "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage18-allnode-chattime-v2",
+    "--config",
+    "/mnt/sevenT/dcg_data/GOFA-F-runs/stage18-allnode-chattime-v2/configs/stage18_allnode_chattime.yaml"
+  ],
+  "started_at": 1792240712.180914,
+  "cpu_cuda_disabled": true,
+  "auto_deploy_only_after_cpu_pass": true,
+  "admission_policy": "memory_cap_only",
+  "supersedes_cpu_only": "stage18-allnode-chattime-v1"
+}

@@ -1,6 +1,17 @@
 # 运行交接记录
 
-## Stage18 资源要求改为共享启动，仅限制本项目显存（2026-10-17 20:57，Asia/Shanghai）
+## Stage18 v2 已部署：共享启动、真实CPU验收中（2026-10-17 20:38，Asia/Shanghai）
+
+固定运行代码`08da870bb9eeaac45d5710bf50574959fde1a5a7`，快照
+`/home/dcg/dcg_data/GOFA-F-runs/stage18-allnode-chattime-v2`，输出
+`/home/dcg/dcg_data/GOFA-F/outputs/stage18-allnode-chattime-v2`。
+CPU控制器20:38:32启动，PID1246835/start_ticks616177294；身份与启动绑定见
+[部署记录](results/stage18-v2-launch.json)。不得重复启动。
+固定快照CPU回归394通过/21旧可选依赖跳过，新增25项均通过；此前开发仓库404通过/11跳过，
+多10项旧可选依赖因快照不含external目录跳过。真实7B FP32六历史全节点验收正在执行，
+目前未完成的[CPU记录](results/stage18-v2-cpu-preflight-pending.json)中passed=false是进行中，非失败结论。
+通过后自动部署共享资源监督器，真实BF16与最大形状检查通过后才进入新基线和源训练；
+目前无Stage18 GPU机制、更新或源精度结果。已恢复每小时跟进`gofa-f-stage18`，仅终止/异常通知。
 
 用户最新明确“不再等待GPU完全空闲”，覆盖下方Stage18及Stage17的完全空闲策略。
 新策略memory_cap_only，一次有效UUID/Default查询后共享启动，不检查其他进程、利用率或空闲显存阈值；
