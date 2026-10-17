@@ -9,6 +9,7 @@ from pathlib import Path
 import random
 import shutil
 import signal
+import subprocess
 import sys
 import time
 
@@ -102,6 +103,10 @@ def prepare(cfg, output):
                          "numpy": np.__version__, "python": sys.version},
         "targets_evaluated": False, "target_evaluation_enabled": False,
         "stop_rule": "4000_updates_or_source_patience_or_unrecoverable_failure"}
+    repository = Path(__file__).resolve().parents[2]
+    revision_file = repository/"CODE_REVISION"
+    manifest["code_revision"] = revision_file.read_text().strip() if revision_file.exists() else \
+        subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=repository, text=True).strip()
     manifest["source_target_exclusion"] = audit["source_exclusion"]
     old = read(output/"manifest.json")
     if old is not None and old != manifest:
@@ -240,7 +245,8 @@ def train(cfg, output, resume):
             from gofa_f.generative_checks import mechanisms
             status("running", phase="gpu_mechanisms")
             progress.tick("gpu_mechanisms", force=True)
-            result = mechanisms(model, codec, series, validation, 2e-3)
+            result = mechanisms(model, codec, series, validation, 2e-3,
+                diagnostic=lambda result: atomic_json(output/"mechanism_diagnostics.json", result), check=check)
             atomic_json(output/"mechanisms.json", result)
             memory("mechanisms")
             torch.cuda.reset_peak_memory_stats()

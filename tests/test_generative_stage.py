@@ -1,5 +1,7 @@
 from copy import deepcopy
 import json
+import subprocess
+import sys
 
 import numpy as np
 import pandas as pd
@@ -138,6 +140,66 @@ def test_directed_road_receiver_rows_preserve_from_to():
     roads = pd.DataFrame({"from": [0, 2], "to": [1, 1], "cost": [4., 5.]})
     a = directed_roads(roads, 3)
     assert a[1, 0] == a[1, 2] == 1 and a[0, 1] == 0
+
+
+def test_stage17_supervisor_is_cpu_only():
+    p = subprocess.run([sys.executable, "-c",
+        'import gofa_f.generative_launcher,sys; assert "torch" not in sys.modules'],
+        capture_output=True, text=True)
+    assert p.returncode == 0, p.stderr
+
+
+@pytest.mark.parametrize("pause", [False, True])
+def test_stage17_unlimited_supervisor_idle_coexistence_and_resource_resume(tmp_path, monkeypatch, pause):
+    import gofa_f.generative_launcher as supervisor
+    cfg = tmp_path/"config.yaml"
+    cfg.write_text(yaml.safe_dump(yaml.safe_load(open("configs/stage17_generative_chattime.yaml")) ))
+    output = tmp_path/"run"
+    clock, probes, launches, signals = [0.], [], [], []
+    gpu = {"uuid": "GPU-test", "pids": [], "utilization": 0, "compute_mode": "Default",
+           "used_mib": 0, "process_used_mib": {}}
+    monkeypatch.setattr(supervisor.time, "monotonic", lambda: clock[0])
+    monkeypatch.setattr(supervisor.time, "sleep", lambda seconds: clock.__setitem__(0, clock[0]+seconds))
+    monkeypatch.setattr(supervisor, "process_identity", lambda _: "ticks")
+    monkeypatch.setattr(supervisor, "own_gpu_pids", lambda _: {800})
+    def query():
+        probes.append(clock[0])
+        if launches and clock[0] <= launches[-1]+2:
+            return {**gpu, "pids": [800, 999], "used_mib": 70000, "utilization": 100,
+                "process_used_mib": {800: 41000 if pause and len(launches) == 1 else 26000, 999: 44000}}
+        return gpu
+    monkeypatch.setattr(supervisor, "query_gpu", query)
+    def terminate(pid, sig):
+        assert pid == 800
+        signals.append((pid, sig))
+    monkeypatch.setattr(supervisor.os, "killpg", terminate)
+    class Child:
+        pid = 800
+        returncode = None
+        def __init__(self, command, cwd, env, start_new_session):
+            launches.append(clock[0])
+            assert start_new_session and env["CUDA_VISIBLE_DEVICES"] == "GPU-test"
+            assert launches[0] == 20
+            self.start = clock[0]
+            self.resource = pause and len(launches) == 1
+        def poll(self):
+            if self.returncode is not None:
+                return self.returncode
+            if clock[0] > self.start+2:
+                self.returncode = 75 if self.resource else 0
+                supervisor.atomic_json(output/"status.json", {"state": "resource_paused" if self.resource else "complete"})
+            return self.returncode
+    monkeypatch.setattr(supervisor.subprocess, "Popen", Child)
+    supervisor.supervise(output, cfg, tmp_path)
+    ledger = json.loads((output/"activity.json").read_text())
+    assert ledger["spent_seconds"] > 0 and ledger["waiting_seconds"] >= 20 and ledger["worker"] is None
+    assert len(launches) == (2 if pause else 1)
+    if pause:
+        assert launches[1]-launches[0] >= 23 and len(signals) == 1
+    else:
+        assert not signals  # foreign task/util100/low global free never triggers exit
+    binding = json.loads((output/"launcher_manifest.json").read_text())
+    assert binding["wall_deadline"] is None and binding["activity_limit_seconds"] is None
 
 
 def test_noaa_selection_uses_only_metadata():

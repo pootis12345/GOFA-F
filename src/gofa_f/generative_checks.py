@@ -7,7 +7,7 @@ from gofa_f.generative_data import Query
 from gofa_f.generative_model import QueryTokens, completion_loss
 
 
-def mechanisms(model, codec, series, queries, tolerance):
+def mechanisms(model, codec, series, queries, tolerance, diagnostic=None, check=lambda: None):
     device = next(model.parameters()).device
     before = model.trainable_state()
     version = model.parameter_version
@@ -30,6 +30,7 @@ def mechanisms(model, codec, series, queries, tolerance):
             q = next(q for q in queries if q["length"] == length and q["source"] == "pems04")
             selected.append(Query(**q))
         for q in selected:
+            check()
             print(f"real-weight {device.type} history={q.length} nodes=307", flush=True)
             source = series[q.source]
             history, response = source.training_record(q)
@@ -52,6 +53,7 @@ def mechanisms(model, codec, series, queries, tolerance):
         graphs = [source.graph(q).to(device)]
         optimizer = torch.optim.AdamW(model.adapter.parameters(), lr=2e-4)
         for _ in range(3):
+            check()
             optimizer.zero_grad()
             completion_loss(model(batch, graphs).logits, batch.labels)[0].backward()
             optimizer.step()
@@ -80,6 +82,7 @@ def mechanisms(model, codec, series, queries, tolerance):
         output = model(part, graphs, use_cache=True)
         pieces, cache = [output.logits], output.past_key_values
         for index in range(cut, batch.input_ids.shape[1]):
+            check()
             part = QueryTokens(batch.input_ids[:, index:index+1], batch.attention_mask[:, :index+1],
                                batch.labels[:, index:index+1], batch.prompt_ends)
             output = model(part, graphs, use_cache=True, cache=cache)
@@ -118,7 +121,12 @@ def mechanisms(model, codec, series, queries, tolerance):
         results["native_frozen"] = True
         results["passed"] = True
         return results
+    except Exception as exc:
+        results.update(passed=False, error_type=type(exc).__name__, error=str(exc))
+        raise
     finally:
+        if diagnostic is not None:
+            diagnostic(results)
         model.load_trainable(before)
         model.parameter_version = version
         for n, p in model.adapter.named_parameters():

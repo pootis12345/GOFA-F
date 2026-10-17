@@ -42,7 +42,8 @@ def main():
     series = {name: Series(root/"sources"/(name+".npz")) for name in SOURCES}
     model, codec = load_model(cfg, "cpu")
     try:
-        record["real_weights"] = mechanisms(model, codec, series, read(root/"validation_queries.json"), 2e-3)
+        record["real_weights"] = mechanisms(model, codec, series, read(root/"validation_queries.json"), 2e-3,
+            diagnostic=lambda result: atomic_json(output/"cpu_mechanisms.json", result))
         record["parameters"] = model.parameter_counts()
         record["passed"] = True
     except Exception as exc:

@@ -110,13 +110,13 @@ def nasdaq_sessions(frame):
             zip(starts, np.r_[starts[1:], len(frame)])]
 
 
-def verified_nasdaq_session(frame, reference):
+def verified_nasdaq_session(frame, reference, reference_offset=0):
     parts = nasdaq_sessions(frame)
     expected = np.asarray(reference, float)
     matches = []
     for i, part in enumerate(parts):
         values = pd.to_numeric(part["1"], errors="raise").to_numpy()
-        minutes = pd.to_numeric(part["0"], errors="raise").fillna(0).to_numpy()
+        minutes = pd.to_numeric(part["0"], errors="raise").fillna(0).to_numpy()+reference_offset
         if np.any(minutes != np.floor(minutes)) or np.any(minutes < 0) or np.any(minutes >= len(expected)):
             continue
         # The provider matrix can fill an absent minute using a later repeated
@@ -219,7 +219,11 @@ def prepare_extras(root):
                 for member in sorted(members):
                     frame = pd.read_csv(io.BytesIO(stream.read(member)))
                     day = Path(member).stem.removeprefix(symbol+"_")
-                    session, selected, count = verified_nasdaq_session(frame, blocks[day][symbol])
+                    try:
+                        session, selected, count = verified_nasdaq_session(frame, blocks[day][symbol],
+                                                                          int(symbol == "NDX"))
+                    except ValueError as exc:
+                        raise ValueError(member+": "+str(exc)) from exc
                     if count > 1:
                         repeated.append({"member": member, "selected_part": selected, "parts": count,
                             "evidence": "unique full-session match at observed raw minute offsets in author day block"})
@@ -241,6 +245,7 @@ def prepare_extras(root):
                  "repeated_sessions_verified_and_removed": repeated,
                  "short_session": "2016-11-25:210 index minutes", "missing_index_minutes": int(index.isna().sum()),
                  "provider_matrix_shifted_again": False,
+                 "provider_index_alignment": "NDX raw minute0 maps to stock minute1; matrix already includes this shift",
                  "matrix_policy": "reconstruct raw minute join; do not shift provider matrix",
                  "lltc": "post-day157 pseudo-zero missing", "interpolation": "none"}, segments=sessions)
 
