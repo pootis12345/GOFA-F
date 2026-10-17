@@ -3,6 +3,7 @@ import hashlib
 import json
 from pathlib import Path
 import shutil
+import time
 
 import torch
 
@@ -11,7 +12,8 @@ from gofa_f.idle_launcher import process_identity
 from gofa_f.prefix_cache import atomic_json
 
 
-def source_record(previous, config, prepared, identity=process_identity, allow_failed_preflight=False):
+def source_record(previous, config, prepared, identity=process_identity, allow_failed_preflight=False,
+                  allow_expired_waiter=False):
     previous = Path(previous).resolve()
     ledger = read(previous/"active_budget.json", {})
     budget = read(previous/"budget.json", {})
@@ -22,7 +24,9 @@ def source_record(previous, config, prepared, identity=process_identity, allow_f
     failed_preflight = allow_failed_preflight and launcher_state == "failed" \
         and set(read(previous/"failures.json", {})) == {"preflight"} \
         and not read(previous/"mechanisms.json", {}).get("passed")
-    if (launcher_state != "stopped_by_user" and not missed_deadline and not failed_preflight) \
+    expired_waiter = allow_expired_waiter and launcher_state == "wall_deadline" \
+        and not (previous/"mechanisms.json").exists() and not read(previous/"failures.json", {})
+    if (launcher_state != "stopped_by_user" and not missed_deadline and not failed_preflight and not expired_waiter) \
             or ledger.get("worker") is not None or budget.get("active_scope") is not None:
         raise ValueError("Continuation requires a stopped and fully saved source")
     for suffix in (".launch.json", ".bootstrap.launch.json"):
@@ -49,6 +53,10 @@ def source_record(previous, config, prepared, identity=process_identity, allow_f
     window = read(previous/"window.json")
     if not window or original.get("window") != window or window.get("admission_policy", "idle") not in ("idle", "shared_memory"):
         raise ValueError("Source window/policy differs")
+    if expired_waiter and (time.time() < window["wall_deadline"]
+            or read(previous/"final_selection.json", {}).get("gofa") is not None
+            or any((previous/name).exists() for name in ("fixed_prompt_fresh.json", "fixed_prompt_continued.json"))):
+        raise ValueError("Expired waiter must have no GPU checks or selected forecast checkpoint")
     source_binding = hashlib.sha256(json.dumps(original, sort_keys=True).encode()).hexdigest()
     path = previous/"gofa_chattime/last.pt"
     saved = torch.load(path, map_location="cpu", weights_only=False)
@@ -59,6 +67,11 @@ def source_record(previous, config, prepared, identity=process_identity, allow_f
         raise ValueError("Source is not an interrupted training checkpoint")
     if failed_preflight and read(previous/"migration.json", {}).get("target_checkpoint_sha256") != digest(path):
         raise ValueError("Failed preflight changed the saved training state")
+    if expired_waiter:
+        migration = read(previous/"migration.json", {})
+        if migration.get("target_checkpoint_sha256") != digest(path) \
+                or migration.get("source", {}).get("gpu_activity_seconds") != ledger.get("spent_seconds"):
+            raise ValueError("Expired waiter changed its inherited checkpoint or activity ledger")
     result = {"kind": "training_continuation", "output": str(previous), "source_binding": source_binding,
         "window_sha256": digest(previous/"window.json"), "manifest_sha256": digest(previous/"manifest.json"),
         "checkpoint_sha256": digest(path), "started_at": window["started_at"],
@@ -69,6 +82,8 @@ def source_record(previous, config, prepared, identity=process_identity, allow_f
         result["deadline_amendment"] = window["deadline_amendment"]
     if failed_preflight:
         result["repaired_failure"] = "preflight only; saved checkpoint unchanged; no predictions"
+    if expired_waiter:
+        result["redeployed_expired_waiter"] = "explicit user deadline amendment; no new GPU activity or predictions"
     return result
 
 

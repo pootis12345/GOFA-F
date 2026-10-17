@@ -87,6 +87,57 @@ def test_arbitrary_incomplete_source_is_not_a_deadline_continuation(continued):
         source_record(source, config, prepared, identity=lambda _: None)
 
 
+@pytest.mark.parametrize("bad", [None, "checkpoint", "activity", "mechanisms", "failure", "selected", "diagnostics",
+                                  "prediction", "live", "active", "future_deadline"])
+def test_expired_idle_waiter_requires_new_authorization_and_unchanged_unseen_state(continued, bad, monkeypatch):
+    source, target, config, prepared, saved = continued
+    atomic_json(source/"launcher.json", {"state": "wall_deadline"})
+    atomic_json(source/"final_selection.json", {"gofa": None})
+    migration = {"target_checkpoint_sha256": digest(source/"gofa_chattime/last.pt"),
+                 "source": {"gpu_activity_seconds": 8000.}}
+    atomic_json(source/"migration.json", migration)
+    with pytest.raises(ValueError, match="stopped and fully saved"):
+        source_record(source, config, prepared, identity=lambda _: None)
+    if bad == "checkpoint":
+        atomic_json(source/"migration.json", {**migration, "target_checkpoint_sha256": "different"})
+    elif bad == "activity":
+        atomic_json(source/"active_budget.json", {"spent_seconds": 8001., "worker": None})
+    elif bad == "mechanisms":
+        atomic_json(source/"mechanisms.json", {"passed": True})
+    elif bad == "failure":
+        atomic_json(source/"failures.json", {"preflight": {"returncode": 1}})
+    elif bad == "selected":
+        atomic_json(source/"final_selection.json", {"gofa": {"checkpoint_sha256": "selected"}})
+    elif bad == "diagnostics":
+        atomic_json(source/"fixed_prompt_fresh.json", {"passed": False})
+    elif bad == "prediction":
+        path = source/"native_chattime/predictions/test"
+        path.mkdir(parents=True)
+        (path/"000000.npz").write_bytes(b"already evaluated")
+    elif bad == "active":
+        atomic_json(source/"budget.json", {"active_scope": {"name": "train"}})
+    elif bad == "future_deadline":
+        monkeypatch.setattr("gofa_f.chattime_continuation.time.time", lambda: 1001.)
+    def identity(_):
+        return "45" if bad == "live" else None
+    if bad is not None:
+        with pytest.raises(ValueError):
+            source_record(source, config, prepared, identity=identity, allow_expired_waiter=True)
+        return
+    record = source_record(source, config, prepared, identity=identity, allow_expired_waiter=True)
+    assert record["redeployed_expired_waiter"] and record["updates"] == 79
+    amendment = deadline_extension(record, 90000.)
+    bind_window(target, now=record["started_at"], hard_deadline=90000., adopted_from=record,
+                deadline_amendment=amendment)
+    migrated = copy_continuation(record, target, "new-deadline-binding")
+    actual = torch.load(target/"gofa_chattime/last.pt", map_location="cpu", weights_only=False)
+    assert_tree_equal({k: v for k, v in saved.items() if k != "binding"},
+                      {k: v for k, v in actual.items() if k != "binding"})
+    assert migrated["original_start_retained"] and not migrated["original_deadline_retained"]
+    assert migrated["deadline_amendment"] == amendment and not (target/"final_selection.json").exists()
+    assert json.loads((target/"active_budget.json").read_text())["spent_seconds"] == 8000.
+
+
 @pytest.mark.parametrize("change", [None, "training_failure", "changed_checkpoint", "prediction"])
 def test_failed_preflight_repair_requires_explicit_flag_and_unchanged_unseen_state(continued, change):
     source, _, config, prepared, _ = continued

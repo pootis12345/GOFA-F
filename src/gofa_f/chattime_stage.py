@@ -526,7 +526,8 @@ def main():
         from gofa_f.chattime_continuation import source_record
         prepared = {**read(output/"preparation.json"), "output": str(output)}
         adopted = source_record(args.continue_training_from, config, prepared,
-                                allow_failed_preflight=args.repair_failed_preflight)
+                                allow_failed_preflight=args.repair_failed_preflight,
+                                allow_expired_waiter=args.authorized_deadline_extension)
         if cutoff > adopted["original_wall_deadline"] and not args.authorized_deadline_extension:
             raise ValueError("Continuation cannot extend the original deadline")
         if args.authorized_deadline_extension:
