@@ -38,6 +38,10 @@ def trace_layers(model):
     layers = [("embedding", model.native.model.embed_tokens),
               *[(f"layer_{i:02d}", layer) for i, layer in enumerate(model.native.model.layers)],
               ("final_norm", model.native.model.norm), ("logits", model.native.lm_head)]
+    # The first observed divergence was inside block13, before graph injection.
+    if len(model.native.model.layers) > 13:
+        layers.extend(("block13."+name, module)
+                      for name, module in model.native.model.layers[13].named_modules() if name)
     for name, layer in layers:
         handles.append(layer.register_forward_hook(capture(name)))
     try:
