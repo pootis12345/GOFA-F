@@ -103,8 +103,9 @@ class Series:
                                             self.mask.cumsum(0, dtype=np.int64)), 0)
         self._eligible = OrderedDict()
 
-    def candidates(self, variable, length, horizon, split, chunk=0, require_history=True):
-        key = (variable, length, horizon, split, chunk, require_history)
+    def candidates(self, variable, length, horizon, split, chunk=0, require_history=True,
+                   respect_segments=True):
+        key = (variable, length, horizon, split, chunk, require_history, respect_segments)
         if key in self._eligible:
             return self._eligible[key]
         total = len(self.values)
@@ -115,8 +116,9 @@ class Series:
         finish = np.minimum(horizon, chunk+16) if split == "train" else horizon
         begin = chunk if split == "train" else 0
         counts = self.prefix_counts[:, variable]
-        valid = (self.segments[origins-length] == self.segments[origins+horizon-1]) \
-            & (counts[origins+finish]-counts[origins+begin] > 0)
+        valid = counts[origins+finish]-counts[origins+begin] > 0
+        if respect_segments:
+            valid &= self.segments[origins-length] == self.segments[origins+horizon-1]
         if require_history:
             valid &= counts[origins]-counts[origins-length] > 0
         result = origins[valid]

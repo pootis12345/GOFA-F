@@ -76,7 +76,7 @@ def target_queries(data, name, descriptor, count=2048, seed=42):
     for rank, variable in enumerate(order):
         quota = count//len(order)+int(rank < count % len(order))
         origins = data.candidates(int(variable), descriptor["length"], descriptor["horizon"], "test",
-                                  require_history=False)
+                                  require_history=False, respect_segments=name != "exchange")
         quota = min(quota, len(origins))
         for group in np.array_split(origins, quota) if quota else []:
             if len(group):
@@ -264,6 +264,9 @@ def audit_targets(root, output):
     for name, descriptor in TARGETS.items():
         record = dict(descriptor, forecasts_run=0, pretraining_exposure="not_independently_verifiable",
                       sample_manifest_complete=False)
+        if name == "exchange":
+            record["calendar_policy"] = "consecutive original FX observation rows; market-closed days do not break a window"
+            record["calendar_provenance"] = "official CSV dates retained; independent original exchange calendar not verified"
         if name in DRIVE:
             path = raw/(name+".csv")
             record["official_drive_id"] = DRIVE[name][0]

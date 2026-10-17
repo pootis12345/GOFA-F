@@ -142,6 +142,17 @@ def test_directed_road_receiver_rows_preserve_from_to():
     assert a[1, 0] == a[1, 2] == 1 and a[0, 1] == 0
 
 
+def test_exchange_closed_days_are_not_missing_observations(tmp_path):
+    from gofa_f.generative_data import save_series, Series
+    from gofa_f.generative_audit import target_queries
+    save_series(tmp_path, "exchange", np.ones((500, 2)), pd.bdate_range("1990-01-01", periods=500),
+                ["a", "b"], {"fixture": True})
+    series = Series(tmp_path/"exchange.npz")
+    assert not len(series.candidates(0, 14, 7, "test"))
+    queries = target_queries(series, "exchange", {"length": 14, "horizon": 7, "variables": 2}, count=20)
+    assert len(queries) == 20 and {q["variable"] for q in queries} == {0, 1}
+
+
 def test_stage17_supervisor_is_cpu_only():
     p = subprocess.run([sys.executable, "-c",
         'import gofa_f.generative_launcher,sys; assert "torch" not in sys.modules'],
