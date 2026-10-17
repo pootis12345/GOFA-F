@@ -147,7 +147,7 @@ class GraphInteraction(nn.Module):
             for row, (z, graph) in enumerate(zip(memories, graphs)):
                 base, prior = graph.base[graph.target], graph.prior[graph.target]
                 support = base > 0
-                positions = torch.flatnonzero(selected[row])
+                positions = torch.nonzero(selected[row], as_tuple=False).flatten()
                 keys, values = self.key(z), self.value(z)
                 prior_message = (prior @ values)[None]
                 score_bias = base.clamp_min(torch.finfo(torch.float32).tiny).log() \
