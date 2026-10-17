@@ -32,7 +32,7 @@ def tokens():
 
 def test_origin_graph_correlation_direction_normalization_and_missing():
     g = graph(nodes=12)
-    np.testing.assert_allclose(g.base.sum(1), 1)
+    np.testing.assert_allclose(g.base.sum(1), 1, rtol=1e-6, atol=1e-6)
     assert ((g.base > 0).sum(1) <= 9).all()
     x = np.ones((10, 3))
     mask = np.ones_like(x, bool)

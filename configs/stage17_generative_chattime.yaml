@@ -1,0 +1,50 @@
+protocol: stage17-generative-chattime-v1
+seed: 42
+weights:
+  directory: /home/dcg/dcg_data/GOFA-F/data/weights/chattime-7b-20baa88
+  revision: 20baa88d6ab838b34abbd1d2b1f4cea57c8ff870
+  source_revision: 8c2d4c209302d2b2bd6cc3c154586842341e3247
+data:
+  directory: /home/dcg/dcg_data/GOFA-F/data/stage17-v1
+  sources: [solar, nn5, pems04, aq_shunyi]
+  train_queries_per_source: 8192
+  validation_templates: [[10, 1], [12, 12], [14, 7], [48, 24], [192, 96], [288, 144]]
+  target_queries_per_dataset: 2048
+  target_evaluation_enabled: false
+architecture:
+  graph_layers: [30, 31]
+  injection_side: before
+  prefix_layers: 30
+  graph_width: 64
+  attention_rank: 16
+  prior_fraction: 0.5
+  graph_top_k: 8
+training:
+  max_updates: 4000
+  effective_batch: 64
+  microbatch: 4
+  learning_rate: 0.0002
+  weight_decay: 0.0001
+  gradient_clip: 1.0
+  warmup_updates: 100
+  validation_every: 250
+  patience: 5
+  minimum_updates: 1000
+  relative_min_delta: 0.001
+  checkpoint_seconds: 30
+cache:
+  disk_limit_gib: 128
+  ram_limit_gib: 32
+resources:
+  admission_policy: strict_idle
+  idle_check_seconds: 10
+  consecutive_idle_samples: 3
+  idle_max_used_mib: 256
+  memory_cap_gib: 40
+  torch_cap_gib: 38
+  yield_on_foreign: false
+  leave_free_gib: 0
+  activity_limit_seconds: null
+  wall_deadline: null
+  omp_threads: 2
+  mkl_threads: 2
