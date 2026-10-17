@@ -54,8 +54,9 @@ def supervise(output, config, snapshot):
         raise RuntimeError("Previous verified GPU worker still exists")
     # Account an unclean supervisor tail without zeroing previously saved activity.
     if old:
-        previous["spent_seconds"] = previous.get("spent_seconds", 0.)+max(
-            0., time.monotonic()-old.get("last_monotonic", time.monotonic()))
+        tail = min(10., max(0., time.monotonic()-old.get("last_monotonic", time.monotonic())))
+        previous["spent_seconds"] = previous.get("spent_seconds", 0.)+tail
+        previous["conservative_unclean_tail_seconds"] = previous.get("conservative_unclean_tail_seconds", 0.)+tail
         previous["worker"] = None
     ledger = ActivityLedger(output/"activity.json", None, previous or None)
     ledger.save()
@@ -88,7 +89,9 @@ def supervise(output, config, snapshot):
             continue
         environment = dict(os.environ, PYTHONPATH=str(snapshot/"src"), CUDA_VISIBLE_DEVICES=gate.uuid,
             OMP_NUM_THREADS="2", MKL_NUM_THREADS="2", HF_HUB_OFFLINE="1", TRANSFORMERS_OFFLINE="1",
-            PYTHONDONTWRITEBYTECODE="1", GOFA_STAGE17_ADMITTED="1", TOKENIZERS_PARALLELISM="false")
+            PYTHONDONTWRITEBYTECODE="1", GOFA_STAGE17_ADMITTED="1", TOKENIZERS_PARALLELISM="false",
+            GOFA_STAGE17_SUPERVISOR_PID=str(os.getpid()),
+            GOFA_STAGE17_SUPERVISOR_TICKS=str(process_identity(os.getpid())))
         command = [sys.executable, "-u", "-m", "gofa_f.generative_stage", "--config", str(config),
                    "--output", str(output), "--train"]
         if (output/"last.pt").exists():

@@ -66,6 +66,7 @@ class Progress:
         if force or now-self.last_write >= 5:
             atomic_json(self.path, self.state)
             self.last_write = now
+            print(render({"progress": self.state}), flush=True)
         return self.state
 
     def evaluation(self, done, total, work_done, work_total, seconds, **fields):

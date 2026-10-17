@@ -70,6 +70,8 @@ def prepare(cfg, output):
     root.mkdir(parents=True, exist_ok=True)
     records = prepare_sources(root/"sources", root/"raw")
     atomic_json(root/"source_audit.json", records)
+    from gofa_f.generative_audit import audit_targets
+    audit = audit_targets(root, output/"target_protocol")
     series = {name: Series(root/"sources"/(name+".npz")) for name in SOURCES}
     pool_path = root/"pools.json"
     if pool_path.exists():
@@ -89,6 +91,7 @@ def prepare(cfg, output):
                          "numpy": np.__version__, "python": sys.version},
         "targets_evaluated": False, "target_evaluation_enabled": False,
         "stop_rule": "4000_updates_or_source_patience_or_unrecoverable_failure"}
+    manifest["source_target_exclusion"] = audit["source_exclusion"]
     old = read(output/"manifest.json")
     if old is not None and old != manifest:
         raise ValueError("Immutable run manifest changed")
@@ -194,6 +197,11 @@ def train(cfg, output, resume):
     def check():
         if stopped[0]:
             raise Paused("cooperative_resource_or_user_stop")
+        parent = os.environ.get("GOFA_STAGE17_SUPERVISOR_PID")
+        if parent:
+            from gofa_f.idle_launcher import process_identity
+            if process_identity(int(parent)) != int(os.environ["GOFA_STAGE17_SUPERVISOR_TICKS"]):
+                raise Paused("verified_supervisor_exited")
 
     def status(kind, **fields):
         atomic_json(output/"status.json", {"state": kind, "updates": state["updates"],
@@ -367,6 +375,7 @@ def main():
     group.add_argument("--prepare", action="store_true")
     group.add_argument("--train", action="store_true")
     group.add_argument("--report-only", action="store_true")
+    group.add_argument("--audit-only", action="store_true")
     parser.add_argument("--resume", action="store_true")
     args = parser.parse_args()
     output = Path(args.output).resolve()
@@ -375,9 +384,14 @@ def main():
     config_check(cfg)
     if args.prepare:
         prepare(cfg, output)
+    elif args.audit_only:
+        from gofa_f.generative_audit import audit_targets
+        audit_targets(cfg["data"]["directory"], output/"target_protocol")
     elif args.report_only:
         report(output)
     else:
+        if (output/"final_selection.json").exists():
+            raise ValueError("Source checkpoint already sealed; do not restart a completed stage")
         raise SystemExit(train(cfg, output, args.resume))
 
 

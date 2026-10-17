@@ -199,6 +199,11 @@ def prepare_sources(root, raw):
     url = "https://archive.ics.uci.edu/static/public/501/beijing+multi+site+air+quality+data.zip"
     archive = fetch(url, raw/"beijing_multisite.zip")
     with zipfile.ZipFile(archive) as stream:
+        nested = [n for n in stream.namelist() if n.endswith(".zip")]
+        if nested:
+            if len(nested) != 1:
+                raise ValueError("Ambiguous original UCI nested archive")
+            stream = zipfile.ZipFile(io.BytesIO(stream.read(nested[0])))
         members = [n for n in stream.namelist() if "Shunyi" in n and n.endswith(".csv")]
         if len(members) != 1:
             raise ValueError("One original Shunyi station CSV required")
@@ -220,6 +225,7 @@ def build_pools(series, output, per_source=8192, seed=42):
     train, validation, epsilons = {}, [], {}
     for source, data in series.items():
         queries = []
+        seen = set()
         nodes = data.values.shape[1]
         for index in range(per_source):
             variable = index % nodes
@@ -228,7 +234,14 @@ def build_pools(series, output, per_source=8192, seed=42):
             origins = data.candidates(variable, length, horizon, "train", chunk)
             if not len(origins):
                 raise ValueError(f"No legal training query: {source}/{variable}/{length}/{horizon}/{chunk}")
-            queries.append(asdict(Query(source, variable, int(rng.choice(origins)), length, horizon, chunk)))
+            origin = int(rng.choice(origins))
+            while (variable, length, horizon, chunk, origin) in seen:
+                available = [int(o) for o in origins if (variable, length, horizon, chunk, int(o)) not in seen]
+                if not available:
+                    raise ValueError("Insufficient distinct preregistered training queries")
+                origin = int(rng.choice(available))
+            seen.add((variable, length, horizon, chunk, origin))
+            queries.append(asdict(Query(source, variable, origin, length, horizon, chunk)))
         train[source] = queries
         stop = int(.6*len(data.values))
         epsilons[source] = []
