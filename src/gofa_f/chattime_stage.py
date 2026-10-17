@@ -1,4 +1,4 @@
-"""CPU-only Stage16 supervisor. GPU child tasks require a fresh idle admission."""
+"""CPU-only Stage16 supervisor with a persisted user GPU-sharing policy."""
 import argparse
 import hashlib
 import json
@@ -13,7 +13,7 @@ import xml.etree.ElementTree as ET
 
 import yaml
 
-from gofa_f.idle_launcher import (IdleGate, SharedGate, atomic_json, launch as idle_launch,
+from gofa_f.idle_launcher import (CapOnlyGate, IdleGate, SharedGate, atomic_json, launch as idle_launch,
     parse_deadline, process_identity, query_gpu)
 
 STOP = False
@@ -88,7 +88,10 @@ def deadline_extension(adopted_from, hard_deadline):
 
 def bind_window(output, resume=False, now=None, launch_fingerprint=None, hard_deadline=None,
                 adopted_from=None, shared_admission=False, fixed_prompt_kv=False, idle_interval_seconds=30,
-                deadline_amendment=None):
+                deadline_amendment=None, memory_cap_only=False):
+    if shared_admission and memory_cap_only:
+        raise ValueError("GPU admission policies are mutually exclusive")
+    policy = "memory_cap_only" if memory_cap_only else "shared_memory" if shared_admission else "idle"
     if not isinstance(idle_interval_seconds, int) or not 1 <= idle_interval_seconds <= 60:
         raise ValueError("GPU admission interval must be an integer from1 to60 seconds")
     path = Path(output)/"window.json"
@@ -109,8 +112,10 @@ def bind_window(output, resume=False, now=None, launch_fingerprint=None, hard_de
             raise ValueError("Resume cannot create a new deadline amendment")
         if hard_deadline is not None and hard_deadline != old["wall_deadline"]:
             raise ValueError("Resume must retain the saved shortened deadline")
-        if old.get("admission_policy", "idle") != ("shared_memory" if shared_admission else "idle"):
+        if old.get("admission_policy", "idle") != policy:
             raise ValueError("Resume must retain the saved GPU admission policy")
+        if memory_cap_only and old.get("leave_free_gib") != 0:
+            raise ValueError("Cap-only policy cannot restore a free-memory margin")
         if bool(old.get("fixed_prompt_kv")) != bool(fixed_prompt_kv):
             raise ValueError("Resume must retain the fixed prompt cache policy")
         if old.get("idle_interval_seconds", 30) != idle_interval_seconds:
@@ -135,6 +140,8 @@ def bind_window(output, resume=False, now=None, launch_fingerprint=None, hard_de
         result["deadline_amendment"] = deadline_amendment
     if shared_admission:
         result["admission_policy"] = "shared_memory"
+    if memory_cap_only:
+        result.update(admission_policy="memory_cap_only", leave_free_gib=0)
     if idle_interval_seconds != 30:
         result["idle_interval_seconds"] = idle_interval_seconds
     if fixed_prompt_kv:
@@ -282,6 +289,8 @@ def manifest(config, output, window):
         "runtime": cpu["runtime"], "git_revision": subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()}
     if window and window.get("admission_policy") == "shared_memory":
         result["admission_policy"] = "shared_memory"
+    if window and window.get("admission_policy") == "memory_cap_only":
+        result.update(admission_policy="memory_cap_only", memory_cap_gib=40, torch_cap_gib=38, leave_free_gib=0)
     if window and window.get("fixed_prompt_kv"):
         result["fixed_prompt_kv"] = True
     if window and window.get("idle_interval_seconds", 30) != 30:
@@ -368,6 +377,7 @@ def stage(config_path, output, resume):
     config, output = config_file(config_path), Path(output)
     window = read(output/"window.json")
     shared = window.get("admission_policy") == "shared_memory"
+    cap_only = window.get("admission_policy") == "memory_cap_only"
     admission_interval = window.get("idle_interval_seconds", 30)
     expected = manifest(config, output, window)
     if read(output/"launch_binding.json") != expected:
@@ -380,7 +390,7 @@ def stage(config_path, output, resume):
 
     def task(phase):
         boundary = window["wall_deadline"] if phase == "evaluate" else window["training_deadline"]
-        gate = SharedGate(40, 16) if shared else IdleGate()
+        gate = CapOnlyGate() if cap_only else SharedGate(40, 16) if shared else IdleGate()
         while time.time() < boundary-60:
             if STOP or os.getppid() != int(os.environ["GOFA_SUPERVISOR_PID"]):
                 raise InterruptedError("Supervisor released")
@@ -389,7 +399,7 @@ def stage(config_path, output, resume):
             except (OSError, ValueError, RuntimeError, subprocess.TimeoutExpired, ET.ParseError):
                 gpu = None
             admitted = gate.observe(gpu) and gpu["uuid"] == os.environ.get("GOFA_GPU_UUID")
-            status("waiting_for_shared_capacity" if shared else "waiting_for_idle",
+            status("waiting_for_gpu_query" if cap_only else "waiting_for_shared_capacity" if shared else "waiting_for_idle",
                    phase=phase, consecutive_idle=gate.consecutive)
             if admitted:
                 break
@@ -456,6 +466,7 @@ def main():
     parser.add_argument("--hard-deadline", help="Explicit timezone; may shorten but never extend the original window")
     parser.add_argument("--adopt-waiting-window", help="Exited CPU-only output whose original start time must be retained")
     parser.add_argument("--shared-gpu", action="store_true", help="Admit other applications with at least56GiB actually free")
+    parser.add_argument("--memory-cap-only", action="store_true", help="Start sharing immediately; project cap40GiB, no free-memory margin")
     parser.add_argument("--fixed-prompt-kv", action="store_true")
     parser.add_argument("--idle-check-seconds", type=int, default=30)
     parser.add_argument("--authorized-deadline-extension", action="store_true",
@@ -464,6 +475,8 @@ def main():
     parser.add_argument("--continue-training-from", help="Stopped checkpoint to migrate without resetting training or time")
     parser.add_argument("--worker", action="store_true", help=argparse.SUPPRESS)
     args = parser.parse_args()
+    if args.shared_gpu and args.memory_cap_only:
+        raise ValueError("GPU admission policies are mutually exclusive")
     if args.authorized_deadline_extension and (args.resume or not args.continue_training_from):
         raise ValueError("A user deadline extension requires a fresh training continuation")
     if args.repair_failed_preflight and (args.resume or not args.continue_training_from):
@@ -504,6 +517,8 @@ def main():
     expected = manifest(config, output, None)
     if args.shared_gpu:
         expected["admission_policy"] = "shared_memory"
+    if args.memory_cap_only:
+        expected.update(admission_policy="memory_cap_only", memory_cap_gib=40, torch_cap_gib=38, leave_free_gib=0)
     if args.fixed_prompt_kv:
         expected["fixed_prompt_kv"] = True
     if args.idle_check_seconds != 30:
@@ -537,7 +552,8 @@ def main():
     window = bind_window(output, args.resume, launch_fingerprint=fingerprint, hard_deadline=cutoff,
         now=adopted["started_at"] if adopted else None, adopted_from=adopted,
         shared_admission=args.shared_gpu, fixed_prompt_kv=args.fixed_prompt_kv,
-        idle_interval_seconds=args.idle_check_seconds, deadline_amendment=amendment)
+        idle_interval_seconds=args.idle_check_seconds, deadline_amendment=amendment,
+        memory_cap_only=args.memory_cap_only)
     if time.time() >= window["wall_deadline"]-60:
         atomic_json(output/"launcher.json", {"state": "wall_deadline"})
         if (output/"manifest.json").exists():
@@ -557,9 +573,11 @@ def main():
     command = [sys.executable, "-u", "-m", "gofa_f.chattime_stage", "--worker", "--config", args.config,
                "--output", str(output), "--resume"]
     idle_launch(output, command, total=None, wall_deadline=window["wall_deadline"], memory_cap_gib=40,
-                leave_free_gib=16, yield_on_foreign=False,
-                worker_wait_state="waiting_for_shared_capacity" if args.shared_gpu else "waiting_for_idle",
-                shared_admission=args.shared_gpu, idle_interval_seconds=args.idle_check_seconds)
+                leave_free_gib=0 if args.memory_cap_only else 16, yield_on_foreign=False,
+                worker_wait_state="waiting_for_gpu_query" if args.memory_cap_only else
+                    "waiting_for_shared_capacity" if args.shared_gpu else "waiting_for_idle",
+                shared_admission=args.shared_gpu, idle_interval_seconds=args.idle_check_seconds,
+                cap_only_admission=args.memory_cap_only)
     if (output/"manifest.json").exists():
         seal(output)
     write_report(output)

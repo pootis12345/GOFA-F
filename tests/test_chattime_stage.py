@@ -51,6 +51,28 @@ def test_shared_admission_is_bound_to_original_start_and_deadline(tmp_path):
         bind_window(tmp_path, resume=True, shared_admission=False)
 
 
+def test_cap_only_policy_is_bound_and_retains_deadline_without_memory_margin(tmp_path):
+    window = bind_window(tmp_path, now=1000., hard_deadline=28000., memory_cap_only=True)
+    assert window["admission_policy"] == "memory_cap_only" and window["leave_free_gib"] == 0
+    assert bind_window(tmp_path, resume=True, now=20000., memory_cap_only=True) == window
+    with pytest.raises(ValueError, match="admission policy"):
+        bind_window(tmp_path, resume=True)
+    with pytest.raises(ValueError, match="mutually exclusive"):
+        bind_window(tmp_path, resume=True, shared_admission=True, memory_cap_only=True)
+    window["leave_free_gib"] = 16
+    from gofa_f.prefix_cache import atomic_json
+    atomic_json(tmp_path/"window.json", window)
+    with pytest.raises(ValueError, match="free-memory margin"):
+        bind_window(tmp_path, resume=True, memory_cap_only=True)
+
+
+@pytest.mark.parametrize("policy,reserve", [("idle", 16), ("shared_memory", 16), ("memory_cap_only", 0)])
+def test_cap_only_cuda_settings_remove_margin_but_keep_torch_cap(policy, reserve):
+    from gofa_f.chattime_task import gpu_settings
+    settings = gpu_settings({"admission_policy": policy})
+    assert settings["memory_cap_gib"] == 38 and settings["leave_free_gib"] == reserve
+
+
 def test_strict_idle_ten_second_interval_persists_across_resume(tmp_path):
     window = bind_window(tmp_path, now=1000., hard_deadline=28000., idle_interval_seconds=10)
     assert window.get("admission_policy", "idle") == "idle"
@@ -345,16 +367,16 @@ def test_cpu_supervisor_does_not_import_torch():
 
 
 @pytest.mark.parametrize("mechanism_failure", [False, True])
-@pytest.mark.parametrize("shared", [False, True])
-def test_gpu_phase_order_and_test_seal(tmp_path, monkeypatch, mechanism_failure, shared):
+@pytest.mark.parametrize("policy", ["idle", "shared_memory", "memory_cap_only"])
+def test_gpu_phase_order_and_test_seal(tmp_path, monkeypatch, mechanism_failure, policy):
     import os
     import time
     from gofa_f import chattime_stage as stage
     from gofa_f.prefix_cache import atomic_json
     config = config_file("configs/stage16_chattime.yaml")
     window = {"wall_deadline": time.time()+4000, "training_deadline": time.time()+2000}
-    if shared:
-        window["admission_policy"] = "shared_memory"
+    if policy != "idle":
+        window["admission_policy"] = policy
     expected = {"window": window, "inputs": {}}
     atomic_json(tmp_path/"window.json", window)
     atomic_json(tmp_path/"launch_binding.json", expected)
@@ -371,7 +393,11 @@ def test_gpu_phase_order_and_test_seal(tmp_path, monkeypatch, mechanism_failure,
         def observe(self, gpu):
             return True
 
-    if shared:
+    if policy == "memory_cap_only":
+        monkeypatch.setattr(stage, "IdleGate", lambda: pytest.fail("Cap-only child must not wait for idleness"))
+        monkeypatch.setattr(stage, "SharedGate", lambda *a: pytest.fail("Cap-only child must not wait for memory margin"))
+        monkeypatch.setattr(stage, "CapOnlyGate", Gate)
+    elif policy == "shared_memory":
         monkeypatch.setattr(stage, "IdleGate", lambda: pytest.fail("Shared child must not wait for complete idleness"))
         def shared_gate(cap, reserve):
             assert cap == 40 and reserve == 16

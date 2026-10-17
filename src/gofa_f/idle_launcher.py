@@ -131,6 +131,20 @@ class SharedGate:
         return self.consecutive >= 3
 
 
+class CapOnlyGate:
+    """Select a shareable GPU immediately, without idle or free-memory gates."""
+    def __init__(self):
+        self.consecutive, self.uuid = 0, None
+
+    def observe(self, gpu):
+        if gpu is None or gpu.get("compute_mode") != "Default" \
+                or (self.uuid is not None and gpu["uuid"] != self.uuid):
+            self.consecutive = 0
+            return False
+        self.uuid, self.consecutive = gpu["uuid"], 1
+        return True
+
+
 def process_identity(pid):
     """Linux start ticks avoid treating a recycled PID as one of our workers."""
     try:
@@ -229,13 +243,17 @@ def read_status(output):
 
 
 def launch(output, command, total=14400, wall_deadline=None, memory_cap_gib=None, leave_free_gib=16,
-           yield_on_foreign=True, worker_wait_state=None, shared_admission=False, idle_interval_seconds=30):
+           yield_on_foreign=True, worker_wait_state=None, shared_admission=False, idle_interval_seconds=30,
+           cap_only_admission=False):
     if not isinstance(idle_interval_seconds, int) or not 1 <= idle_interval_seconds <= 60:
         raise ValueError("GPU admission interval must be an integer from1 to60 seconds")
     if total is None and wall_deadline is None:
         raise ValueError("Unlimited activity still requires an absolute wall deadline")
-    if memory_cap_gib is not None and (memory_cap_gib > 40 or memory_cap_gib < 1 or leave_free_gib < 16):
+    if memory_cap_gib is not None and (memory_cap_gib > 40 or memory_cap_gib < 1
+            or leave_free_gib < (0 if cap_only_admission else 16)):
         raise ValueError("Unsafe shared memory policy")
+    if cap_only_admission and (memory_cap_gib is None or yield_on_foreign or shared_admission or leave_free_gib != 0):
+        raise ValueError("Cap-only admission requires a cap, zero free-memory margin and continued coexistence")
     if shared_admission and (memory_cap_gib is None or yield_on_foreign):
         raise ValueError("Shared admission requires a cap and continued coexistence")
     output = Path(output).resolve()
@@ -264,6 +282,9 @@ def launch(output, command, total=14400, wall_deadline=None, memory_cap_gib=None
     if shared_admission:
         manifest.pop("idle_max_used_mib")
         manifest.update(admission_policy="shared_memory", admission_min_free_mib=(memory_cap_gib+leave_free_gib)*1024)
+    if cap_only_admission:
+        manifest.pop("idle_max_used_mib")
+        manifest.update(admission_policy="memory_cap_only", idle_samples=1)
     manifest_path = output / "launcher_manifest.json"
     if manifest_path.exists() and json.loads(manifest_path.read_text()) != manifest:
         raise ValueError("Launcher resume requires the identical command, snapshot and policy")
@@ -317,6 +338,8 @@ def launch(output, command, total=14400, wall_deadline=None, memory_cap_gib=None
             ledger.state["worker"] = None
             ledger.save()
     def new_gate():
+        if cap_only_admission:
+            return CapOnlyGate()
         return SharedGate(memory_cap_gib, leave_free_gib) if shared_admission else IdleGate()
     gate = new_gate()
     while not stop[0]:
@@ -336,7 +359,8 @@ def launch(output, command, total=14400, wall_deadline=None, memory_cap_gib=None
         except (OSError, ValueError, RuntimeError, subprocess.TimeoutExpired, ET.ParseError) as exc:
             gpu, error = None, str(exc)
         if not gate.observe(gpu):
-            status("waiting_for_shared_capacity" if shared_admission else "waiting_for_idle",
+            status("waiting_for_gpu_query" if cap_only_admission else
+                   "waiting_for_shared_capacity" if shared_admission else "waiting_for_idle",
                    consecutive_idle=gate.consecutive, query_error=error)
             for _ in range(idle_interval_seconds):
                 if stop[0]:

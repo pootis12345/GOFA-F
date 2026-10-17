@@ -1,5 +1,9 @@
 # 远程验证记录
 
+## Stage16 v13 仅显存上限策略验证（2026-10-17）
+
+用户授权memory_cap_only：立即共享准入，不检查空闲率/其他任务/空闲显存阈值，无三次等待，无16GiB运行暂停；项目组40GiB/Torch38GiB、Default模式不变，其他人加入不退出。策略写入window/manifest/launcher并拒绝普通恢复退回idle/shared余量策略；GPU任务实际使用leave_free_gib=0。模型/数据/优化器/KV数学路径不改。B静态、C Ruff、C禁CUDA OMP/MKL2线程108项资源策略/阶段/恢复专项通过，完整与真实权重复核由v13固定快照执行，CUDA原容差验收仍独立必需。v12已合作停止并保留状态，无新版GPU活动。
+
 ## Stage16 v12 显式延期接续验证（2026-10-17）
 
 新增对wall_deadline且从未获GPU准入的等待源的安全接续，只由明确用户延期标志开启；来源全部退出、无GPU检查/预测/已选模型/失败、继承checkpoint SHA及账本未变化才接受。按新授权保留原start和活动、将截止改为21:30/23:30；新窗口记录来源SHA和原/新截止。模型/KV计算路径未改。B语法与C Ruff通过，C禁CUDA/OMP/MKL各2线程65项恢复/阶段/启动器专项通过；完整回归和真实权重检查由新固定快照bootstrap执行，结果以v12 cpu_preflight.json为准。旧v11无GPU、v10失败证据保留。

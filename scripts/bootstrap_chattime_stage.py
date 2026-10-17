@@ -57,7 +57,9 @@ def downloaders(target):
 def bootstrap(root, output, official_manifest, resume=False, run=subprocess.run, popen=subprocess.Popen,
               hard_deadline=None, adopt_waiting_window=None, shared_gpu=False,
               fixed_prompt_kv=False, continue_training_from=None, idle_check_seconds=30,
-              authorized_deadline_extension=False, repair_failed_preflight=False):
+              authorized_deadline_extension=False, repair_failed_preflight=False, memory_cap_only=False):
+    if shared_gpu and memory_cap_only:
+        raise ValueError("GPU admission policies are mutually exclusive")
     if authorized_deadline_extension and (resume or continue_training_from is None):
         raise ValueError("A user deadline extension requires a fresh training continuation")
     if repair_failed_preflight and (resume or continue_training_from is None):
@@ -149,6 +151,8 @@ def bootstrap(root, output, official_manifest, resume=False, run=subprocess.run,
             command += ["--adopt-waiting-window", str(adopt_waiting_window)]
         if shared_gpu:
             command.append("--shared-gpu")
+        if memory_cap_only:
+            command.append("--memory-cap-only")
         if fixed_prompt_kv:
             command.append("--fixed-prompt-kv")
         if idle_check_seconds != 30:
@@ -193,6 +197,7 @@ def main():
     parser.add_argument("--hard-deadline")
     parser.add_argument("--adopt-waiting-window")
     parser.add_argument("--shared-gpu", action="store_true")
+    parser.add_argument("--memory-cap-only", action="store_true")
     parser.add_argument("--fixed-prompt-kv", action="store_true")
     parser.add_argument("--idle-check-seconds", type=int, default=30)
     parser.add_argument("--authorized-deadline-extension", action="store_true")
@@ -204,7 +209,7 @@ def main():
               shared_gpu=args.shared_gpu, fixed_prompt_kv=args.fixed_prompt_kv,
               continue_training_from=args.continue_training_from, idle_check_seconds=args.idle_check_seconds,
               authorized_deadline_extension=args.authorized_deadline_extension,
-              repair_failed_preflight=args.repair_failed_preflight)
+              repair_failed_preflight=args.repair_failed_preflight, memory_cap_only=args.memory_cap_only)
 
 
 if __name__ == "__main__":

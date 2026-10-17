@@ -51,7 +51,8 @@ def source_record(previous, config, prepared, identity=process_identity, allow_f
         if (directory/"result.json").exists() or any((directory/"predictions").rglob("*.npz")):
             raise ValueError("Cannot resume adaptive training after prediction evaluation")
     window = read(previous/"window.json")
-    if not window or original.get("window") != window or window.get("admission_policy", "idle") not in ("idle", "shared_memory"):
+    if not window or original.get("window") != window or window.get("admission_policy", "idle") not in (
+            "idle", "shared_memory", "memory_cap_only"):
         raise ValueError("Source window/policy differs")
     if expired_waiter and (time.time() < window["wall_deadline"]
             or read(previous/"final_selection.json", {}).get("gofa") is not None

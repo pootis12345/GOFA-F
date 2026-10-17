@@ -1,4 +1,4 @@
-"""One strictly admitted Stage16 CUDA mechanism, training, or evaluation task."""
+"""One admitted Stage16 CUDA mechanism, training, or evaluation task."""
 import argparse
 import gc
 import hashlib
@@ -621,9 +621,15 @@ def mechanisms(config, output, model, codec, data, gpu, budget, binding):
     atomic_json(Path(output)/"mechanisms.json", {"passed": True, **result})
 
 
+def gpu_settings(manifest):
+    return {"memory_cap_gib": 38,
+            "leave_free_gib": 0 if manifest.get("admission_policy") == "memory_cap_only" else 16,
+            "allow_tf32": True, "microbatch_candidates": [1]}
+
+
 def run(args):
     if os.environ.get("GOFA_IDLE_ADMITTED") != "1":
-        raise RuntimeError("GPU tasks require strict idle admission")
+        raise RuntimeError("GPU tasks require the registered resource supervisor")
     config, output = config_file(args.config), Path(args.output).resolve()
     manifest = read(output/"manifest.json")
     if not manifest or manifest["inputs"] != {p: digest(p) for p in manifest["inputs"]}:
@@ -640,7 +646,7 @@ def run(args):
     budget_path = output/"budget.json"
     budget = StageBudget(budget_path, float("inf"), read(budget_path))
     budget.activate(args.phase, float("inf"))
-    gpu = GPU({"memory_cap_gib": 38, "leave_free_gib": 16, "allow_tf32": True, "microbatch_candidates": [1]})
+    gpu = GPU(gpu_settings(manifest))
     torch.cuda.reset_peak_memory_stats()
     try:
         gpu.check(budget)

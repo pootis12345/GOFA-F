@@ -84,6 +84,65 @@ def test_shared_admission_accepts_active_server_with_full_budget_and_margin():
     assert gate.observe(gpu)
 
 
+def test_cap_only_admission_is_immediate_despite_busy_gpu_or_low_free_memory():
+    gpu = {"uuid": "GPU-test", "pids": [999], "utilization": 100, "compute_mode": "Default",
+           "used_mib": 80000, "total_mib": 81559, "free_mib": 1500}
+    gate = idle.CapOnlyGate()
+    assert gate.observe(gpu) and gate.consecutive == 1
+    assert not gate.observe(None)
+    assert gate.observe(gpu)
+    assert not gate.observe({**gpu, "compute_mode": "Exclusive_Process"})
+    assert not gate.observe({**gpu, "uuid": "GPU-changed"})
+
+
+def test_cap_only_launcher_has_no_idle_samples_or_free_memory_delay(tmp_path, monkeypatch):
+    clock, signals = [0.], []
+    output = tmp_path/"run"
+    monkeypatch.setattr(idle.time, "monotonic", lambda: clock[0])
+    monkeypatch.setattr(idle.time, "sleep", lambda n: clock.__setitem__(0, clock[0]+n))
+    monkeypatch.setattr(idle, "process_identity", lambda _: "start")
+    monkeypatch.setattr(idle, "own_gpu_pids", lambda pid: {pid})
+    monkeypatch.setattr(idle.subprocess, "check_output", lambda *a, **k: "fixed")
+    monkeypatch.setattr(idle.os, "killpg", lambda *a: signals.append(a))
+    gpu = {"uuid": "GPU-test", "pids": [999], "utilization": 100, "compute_mode": "Default",
+           "used_mib": 80000, "total_mib": 81559, "free_mib": 1500, "process_used_mib": {999: 80000}}
+    monkeypatch.setattr(idle, "query_gpu", lambda: gpu)
+    monkeypatch.setattr(idle, "IdleGate", lambda: pytest.fail("Cap-only mode must not use idle admission"))
+    monkeypatch.setattr(idle, "SharedGate", lambda *a: pytest.fail("Cap-only mode must not reserve56GiB"))
+
+    class Child:
+        pid = 800
+        returncode = None
+
+        def __init__(self, command, env, start_new_session):
+            assert clock[0] == 0 and start_new_session and env["CUDA_VISIBLE_DEVICES"] == "GPU-test"
+            self.polls = 0
+
+        def poll(self):
+            self.polls += 1
+            if self.polls > 3:
+                self.returncode = 0
+                idle.atomic_json(output/"status.json", {"state": "complete"})
+            return self.returncode
+
+    monkeypatch.setattr(idle.subprocess, "Popen", Child)
+    idle.launch(output, ["worker"], total=None, wall_deadline=10**15, memory_cap_gib=40,
+                leave_free_gib=0, yield_on_foreign=False, cap_only_admission=True)
+    record = json.loads((output/"launcher_manifest.json").read_text())
+    assert record["admission_policy"] == "memory_cap_only" and record["idle_samples"] == 1
+    assert record["memory_cap_gib"] == 40 and record["leave_free_gib"] == 0
+    assert "idle_max_used_mib" not in record and "admission_min_free_mib" not in record and not signals
+
+
+@pytest.mark.parametrize("change", [{"memory_cap_gib": None}, {"memory_cap_gib": 41}, {"leave_free_gib": 16},
+                                   {"yield_on_foreign": True}, {"shared_admission": True}])
+def test_cap_only_policy_requires_cap_and_cannot_restore_other_waiting_policies(tmp_path, change):
+    settings = {"total": None, "wall_deadline": 10**15, "memory_cap_gib": 40,
+                "leave_free_gib": 0, "yield_on_foreign": False, "cap_only_admission": True}
+    with pytest.raises(ValueError):
+        idle.launch(tmp_path, ["worker"], **{**settings, **change})
+
+
 @pytest.mark.parametrize("change", [{"free_mib": None}, {"total_mib": None},
     {"free_mib": 56000}, {"free_mib": 90000}, {"compute_mode": "Exclusive_Process"}])
 def test_shared_admission_fails_closed_for_unknown_or_insufficient_actual_free(change):

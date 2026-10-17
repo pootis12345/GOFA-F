@@ -86,7 +86,8 @@ def test_successful_preparation_launches_only_registered_waiter(module, tmp_path
         assert launched[0][launched[0].index("--adopt-waiting-window")+1] == str(kwargs["adopt_waiting_window"])
 
 
-def test_continuation_waits_for_source_to_save_and_exit(module, tmp_path, monkeypatch):
+@pytest.mark.parametrize("memory_cap_only", [False, True])
+def test_continuation_waits_for_source_to_save_and_exit(module, tmp_path, monkeypatch, memory_cap_only):
     output = tmp_path/"new"
     source = tmp_path/"old"
     source.mkdir()
@@ -108,6 +109,7 @@ def test_continuation_waits_for_source_to_save_and_exit(module, tmp_path, monkey
     def launch(command, **kwargs):
         assert not alive[0] and "--fixed-prompt-kv" in command
         assert "--shared-gpu" not in command
+        assert ("--memory-cap-only" in command) == memory_cap_only
         assert command[command.index("--idle-check-seconds")+1] == "10"
         assert "--authorized-deadline-extension" in command
         assert "--repair-failed-preflight" in command
@@ -115,7 +117,8 @@ def test_continuation_waits_for_source_to_save_and_exit(module, tmp_path, monkey
         return Child()
     module.bootstrap(tmp_path, output, tmp_path/"official.json", run=run, popen=launch,
         hard_deadline="2099-10-16T23:30:00+08:00", continue_training_from=source, fixed_prompt_kv=True,
-        idle_check_seconds=10, authorized_deadline_extension=True, repair_failed_preflight=True)
+        idle_check_seconds=10, authorized_deadline_extension=True, repair_failed_preflight=True,
+        memory_cap_only=memory_cap_only)
 
 
 @pytest.mark.parametrize("resume,source", [(True, "source"), (False, None)])
