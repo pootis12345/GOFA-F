@@ -21,7 +21,7 @@ def align_nasdaq(stocks, index):
     index = index.sort_index()
     if index.index.has_duplicates or not index.index.is_monotonic_increasing:
         raise ValueError("NASDAQ index timestamps must be unique")
-    result = pd.DataFrame(index=index.index)
+    columns = {}
     days = index.index.normalize().unique().sort_values()
     for ticker, frame in stocks.items():
         if frame.index.has_duplicates:
@@ -29,8 +29,9 @@ def align_nasdaq(stocks, index):
         value = frame.reindex(index.index).astype(float)
         if ticker == "LLTC" and len(days) > 157:
             value = value.mask((value.index.normalize() >= days[157]) & value.eq(0))
-        result[ticker] = value
-    result["NDX"] = index.astype(float)
+        columns[ticker] = value
+    columns["NDX"] = index.astype(float)
+    result = pd.DataFrame(columns, index=index.index)
     segments = pd.factorize(index.index.normalize())[0]
     # Timestamp matching drops the unmatched first stock point without reading a future minute.
     return result, segments
@@ -174,7 +175,7 @@ def prepare_extras(root):
                 columns.append(values)
                 identities.append(str(station["wban"]))
                 hashes[station["filename"]] = sha(path)
-            index = pd.date_range("2025-01-01", "2025-12-31 23:00", freq="h", tz="UTC")
+            index = pd.date_range("2025-01-01 01:00", "2026-01-01 00:00", freq="h", tz="UTC")
             matrix = pd.concat(columns, axis=1).reindex(index)
             coords = np.radians([[s["latitude"], s["longitude"]] for s in selected])
             lat, lon = coords[:, 0], coords[:, 1]
@@ -189,7 +190,8 @@ def prepare_extras(root):
             save_series(prepared, "noaa2025", matrix.to_numpy(), index, identities,
                 {"sha256": sha(metadata), "raw_file_sha256": hashes, "selection": selected,
                  "field_number": 10, "field": "T_HR_AVG", "unit": "Celsius",
-                 "hours": "2025 UTC end-labeled hours", "selection_uses_errors": False}, adjacency)
+                 "hours": "2025 observation-year: UTC hour-end labels 2025-01-01T01 to2026-01-01T00",
+                 "selection_uses_errors": False}, adjacency)
     archive = raw/"nasdaq100.zip"
     if archive.exists():
         with zipfile.ZipFile(archive) as stream:
@@ -269,6 +271,10 @@ def audit_targets(root, output):
                 frame = pd.read_csv(path, encoding="cp1252")
                 if "date" not in frame:
                     raise ValueError("Expected original synchronized multivariate CSV, not Hist/Pred demo")
+                original_rows = len(frame)
+                frame = frame.drop_duplicates()  # only byte-value-equivalent full observation rows
+                if frame["date"].duplicated().any():
+                    raise ValueError("Conflicting observations at one target timestamp: "+name)
                 values = frame.drop(columns="date")
                 if values.shape[1] != descriptor["variables"]:
                     raise ValueError(f"Official target variable coverage differs: {name}")
@@ -278,7 +284,9 @@ def audit_targets(root, output):
                 dates = pd.to_datetime(frame["date"], dayfirst="." in str(frame["date"].iloc[0]))
                 record["data"] = save_series(prepared, name, values.to_numpy(), dates,
                     list(values.columns), {"official_drive_id": DRIVE[name][0], "sha256": sha(path),
-                                           "mask": "original_nonfinite_only; sentinel_protocol_unverified"})
+                        "mask": "original_nonfinite_only; sentinel_protocol_unverified",
+                        "identical_full_rows_removed": original_rows-len(frame),
+                        "time_policy": "original timestamp order; discontinuities split windows"})
             else:
                 record["preparation_issue"] = "original_file_not_downloaded"
             record["original_chat_time_exclusion"] = "author_claim; corpus lacks independent row provenance"
@@ -287,7 +295,10 @@ def audit_targets(root, output):
             data = Series(path)
             queries = target_queries(data, name, descriptor)
             atomic_json(output/(name+"-queries.json"), queries)
-            record.update(sample_manifest_complete=True, queries=len(queries),
+            expected_variables = set(descriptor.get("target_variables", range(descriptor["variables"])))
+            covered = {q["variable"] for q in queries}
+            record.update(sample_manifest_complete=len(queries) == 2048 and covered == expected_variables,
+                          queries=len(queries),
                           sample_sha256=sha(output/(name+"-queries.json")),
                           variable_coverage=len({q["variable"] for q in queries}))
         elif "preparation_issue" not in record:
