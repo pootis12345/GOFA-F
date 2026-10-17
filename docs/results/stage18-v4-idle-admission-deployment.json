@@ -1,0 +1,69 @@
+{
+  "observed_at": "2026-10-17T21:34:49.723593+08:00",
+  "launch": {
+    "pid": 1294987,
+    "start_ticks": "616503439",
+    "snapshot": "/home/dcg/dcg_data/GOFA-F-runs/stage18-allnode-chattime-v4",
+    "output": "/home/dcg/dcg_data/GOFA-F/outputs/stage18-allnode-chattime-v4",
+    "code_revision": "e92d5937c38210ca2c1c58ed83be091827ec6a14",
+    "started_at": 1792243973.6300266,
+    "command": [
+      "/home/dcg/dcg_data/GOFA-F/.venv-chat/bin/python",
+      "-u",
+      "/home/dcg/dcg_data/GOFA-F-runs/stage18-allnode-chattime-v4/scripts/bootstrap_allnode_stage.py",
+      "--snapshot",
+      "/home/dcg/dcg_data/GOFA-F-runs/stage18-allnode-chattime-v4",
+      "--output",
+      "/home/dcg/dcg_data/GOFA-F/outputs/stage18-allnode-chattime-v4",
+      "--config",
+      "/home/dcg/dcg_data/GOFA-F-runs/stage18-allnode-chattime-v4/configs/stage18_allnode_chattime.yaml",
+      "--reuse-real-cpu-from",
+      "/home/dcg/dcg_data/GOFA-F/outputs/stage18-allnode-chattime-v3",
+      "--repair-failed-preflight",
+      "/home/dcg/dcg_data/GOFA-F/outputs/stage18-allnode-chattime-v2",
+      "--prior-diagnostic",
+      "/home/dcg/dcg_data/GOFA-F/outputs/stage18-kv-diagnostic-v1",
+      "--prior-diagnostic",
+      "/home/dcg/dcg_data/GOFA-F/outputs/stage18-kv-diagnostic-v2",
+      "--prior-diagnostic",
+      "/home/dcg/dcg_data/GOFA-F/outputs/stage18-kv-diagnostic-v3"
+    ],
+    "admission_policy": "idle",
+    "admission_interval_seconds": 10,
+    "admission_samples": 3,
+    "activity_limit_seconds": null,
+    "wall_deadline": null
+  },
+  "bootstrap": {
+    "state": "waiting_for_prior_cpu",
+    "pid": 1294987,
+    "start_ticks": "616503439",
+    "updated_at": 1792243973.6529078,
+    "source_output": "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage18-allnode-chattime-v3"
+  },
+  "prior_cpu_preflight": {
+    "passed": false,
+    "cases": 423,
+    "skipped": 21,
+    "cuda_disabled": true,
+    "manifest_sha256": "fb6092c213df8efa005a5a867cddb7a110c1d8eba1f654a591fade8fb17f8ba1",
+    "real_weight_dtype": "float32",
+    "stage17_proof_reused": false,
+    "stage17_baseline_imported": false
+  },
+  "prior_handoff_transition": {
+    "state": "cpu_handoff_paused_by_user_policy_change",
+    "controller_pid": 1281506,
+    "start_ticks": "616413811",
+    "at": 1792243562.1418862,
+    "previous": "memory_cap_only",
+    "requested": "idle",
+    "interval_seconds": 10,
+    "consecutive_samples": 3,
+    "cpu_child_allowed_to_finish": true
+  },
+  "gpu_started": false,
+  "formal_updates": 0,
+  "target_predictions": 0,
+  "source_activity_is_preserved_on_migration": true
+}
