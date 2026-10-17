@@ -108,4 +108,3 @@ class AllNodeCodec(GenerativeCodec):
                     reason = "invalid"
             reasons.append(reason)
         return values, valid, reasons
-
