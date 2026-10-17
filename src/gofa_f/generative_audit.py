@@ -113,16 +113,16 @@ def nasdaq_sessions(frame):
 def verified_nasdaq_session(frame, reference):
     parts = nasdaq_sessions(frame)
     expected = np.asarray(reference, float)
-    expected = expected[np.isfinite(expected)]
     matches = []
     for i, part in enumerate(parts):
         values = pd.to_numeric(part["1"], errors="raise").to_numpy()
-        values = values[np.isfinite(values)]
-        # The supplied matrix takes the first nominal day-width rows even when
-        # the raw file contains two sessions and the first has missing minutes.
-        # Match the entire actual session to its matrix prefix, then retain raw
-        # offsets (rather than the matrix's compressed/cross-session tail).
-        if len(values) <= len(expected) and np.allclose(values, expected[:len(values)], rtol=1e-8, atol=1e-8):
+        minutes = pd.to_numeric(part["0"], errors="raise").fillna(0).to_numpy()
+        if np.any(minutes != np.floor(minutes)) or np.any(minutes < 0) or np.any(minutes >= len(expected)):
+            continue
+        # The provider matrix can fill an absent minute using a later repeated
+        # session. Match ALL actual first-session observations at raw minute
+        # offsets; never adopt values at minutes missing in that raw session.
+        if np.allclose(values, expected[minutes.astype(int)], rtol=1e-8, atol=1e-8, equal_nan=True):
             matches.append(i)
     if len(matches) != 1:
         raise ValueError("No unique NASDAQ raw session matching the author matrix")
@@ -222,7 +222,7 @@ def prepare_extras(root):
                     session, selected, count = verified_nasdaq_session(frame, blocks[day][symbol])
                     if count > 1:
                         repeated.append({"member": member, "selected_part": selected, "parts": count,
-                            "evidence": "unique full-session close sequence match to author matrix daily prefix"})
+                            "evidence": "unique full-session match at observed raw minute offsets in author day block"})
                     parts.append(nasdaq_day(session, day, stock=symbol != "NDX"))
                 frames[symbol] = pd.concat(parts).sort_index()
             if symbols[-1] != "NDX" or len(symbols) != 105:

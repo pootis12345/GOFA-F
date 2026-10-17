@@ -89,7 +89,7 @@ def test_nasdaq_original_minute_offsets_and_short_session():
     assert aligned["A"].iloc[0] == 6 and np.isnan(aligned["A"].iloc[1])
     assert aligned["A"].iloc[2] == 8  # missing minutes are not compressed or interpolated
     repeated = pd.concat([stocks, stocks.assign(**{"1": stocks["1"]+10})], ignore_index=True)
-    session, selected, count = verified_nasdaq_session(repeated, stocks["1"])
+    session, selected, count = verified_nasdaq_session(repeated, [5., 6., 99., 8.])
     assert selected == 0 and count == 2 and session["1"].iloc[0] == 5
 
 

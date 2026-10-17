@@ -60,15 +60,24 @@ def supervise(output, config, snapshot):
         previous["conservative_unclean_tail_seconds"] = previous.get("conservative_unclean_tail_seconds", 0.)+tail
         previous["worker"] = None
     ledger = ActivityLedger(output/"activity.json", None, previous or None)
+    ledger.state.setdefault("waiting_seconds", 0.)
+    ledger.state.setdefault("resource_pause_count", 0)
     ledger.save()
     stopped = [False]
     for sig in (signal.SIGTERM, signal.SIGINT):
         signal.signal(sig, lambda *_: stopped.__setitem__(0, True))
 
+    last_state = [None]
     def status(state, **fields):
+        if state != last_state[0]:
+            with (output/"lifecycle.jsonl").open("a") as stream:
+                stream.write(json.dumps({"state": state, "at": time.time(),
+                    "spent_seconds": ledger.state["spent_seconds"],
+                    "waiting_seconds": ledger.state["waiting_seconds"], **fields})+"\n")
+            last_state[0] = state
         atomic_json(output/"launcher.json", {"state": state, "pid": os.getpid(),
             "start_ticks": process_identity(os.getpid()), "spent_seconds": ledger.state["spent_seconds"],
-            "updated_at": time.time(), **fields})
+            "waiting_seconds": ledger.state["waiting_seconds"], "updated_at": time.time(), **fields})
 
     gate = IdleGate()
     while not stopped[0]:
@@ -83,10 +92,13 @@ def supervise(output, config, snapshot):
         admitted = gate.observe(gpu)
         status("waiting_for_idle", consecutive_idle=gate.consecutive, query_error=error)
         if not admitted:
+            wait_started = time.monotonic()
             for _ in range(10):
                 if stopped[0]:
                     break
                 time.sleep(1)
+            ledger.state["waiting_seconds"] += time.monotonic()-wait_started
+            ledger.save()
             continue
         environment = dict(os.environ, PYTHONPATH=str(snapshot/"src"), CUDA_VISIBLE_DEVICES=gate.uuid,
             OMP_NUM_THREADS="2", MKL_NUM_THREADS="2", HF_HUB_OFFLINE="1", TRANSFORMERS_OFFLINE="1",
@@ -120,9 +132,12 @@ def supervise(output, config, snapshot):
                     else:
                         peak = max(peak, used)
                         ledger.state["peak_group_mib"] = peak
-                        status("running", worker_pid=child.pid, group_used_mib=used, peak_group_mib=peak)
+                        status("running", worker_pid=child.pid, group_used_mib=used, peak_group_mib=peak,
+                               gpu_utilization=measured["utilization"], total_used_mib=measured["used_mib"])
                     next_check = now+10
                 if reason:
+                    if reason == "resource_paused":
+                        ledger.state["resource_pause_count"] += 1
                     status(reason, worker_pid=child.pid)
                     if process_identity(child.pid) == tick:
                         os.killpg(child.pid, signal.SIGTERM)

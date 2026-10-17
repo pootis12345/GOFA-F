@@ -107,6 +107,8 @@ def prepare(cfg, output):
     if old is not None and old != manifest:
         raise ValueError("Immutable run manifest changed")
     atomic_json(output/"manifest.json", manifest)
+    if not (output/"progress.json").exists():
+        Progress(output).tick("prepared", force=True)
     return manifest
 
 
