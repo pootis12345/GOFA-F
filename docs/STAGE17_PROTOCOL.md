@@ -1,8 +1,8 @@
 # Stage17：生成式 GOFA-F(ChatTime)，源训练与源验证
 
-2026-10-17 实施。固定代码 `7722c45f734308fde106e4271ed4eb5f297a78ab`。
-快照 `/home/dcg/dcg_data/GOFA-F-runs/stage17-generative-chattime-v2`；
-输出 `/home/dcg/dcg_data/GOFA-F/outputs/stage17-generative-chattime-v2`。
+2026-10-17 实施。固定代码 `57706b6f331504e8563259d81c975073d8d7c709`。
+快照 `/home/dcg/dcg_data/GOFA-F-runs/stage17-generative-chattime-v3`；
+输出 `/home/dcg/dcg_data/GOFA-F/outputs/stage17-generative-chattime-v3`。
 本文件说明协议；实时状态见输出 JSON 和 [RUN_STATUS](RUN_STATUS.md)。
 
 ## 架构与参数
@@ -61,6 +61,10 @@ CPU FP32容差1e-6，真实BF16预测/梯度2e-3；保存状态精确恢复，�
 正式真实权重CPU验收使用FP32；此前v1的额外CPU BF16验收出现初始化差异，已安全停止、
 保留诊断，无GPU活动。该CPU BF16差异的底层原因尚未证实，不以CPU通过代替BF16 CUDA检查。
 图交互仅对被选中的提示/回答位置逐token计算，固定完整前向与增量路径的FP32算术形状；公式及参数不变。
+v2已完成真实FP32六历史验收，预测差0，梯度最大差2.98e-8，精确恢复通过。
+v3仅修复监督器身份类型及跨恢复GPU UUID绑定，模型/数据/缓存模块字节、工厂和优化器/恢复函数AST不变。
+v3严格核对旧证明的清单SHA、权重、数据、依赖、模块哈希和函数AST后复用真实模型证明，
+并重跑当前完整CPU回归；复用来源在`cpu_preflight.json`明确记录，不假称重复运行真实模型。
 
 ## 固定源数据与选模
 
@@ -139,8 +143,8 @@ AdamW事务中途OOM会完整回滚；pending64可恢复后提交同一更新，
 在C查看进度（无需创建CUDA上下文）：
 
 ```bash
-PYTHONPATH=/home/dcg/dcg_data/GOFA-F-runs/stage17-generative-chattime-v2/src /home/dcg/dcg_data/GOFA-F/.venv-chat/bin/python -m gofa_f.generative_progress /home/dcg/dcg_data/GOFA-F/outputs/stage17-generative-chattime-v2 --watch --interval 10
-tail -f /home/dcg/dcg_data/GOFA-F/outputs/stage17-generative-chattime-v2.log
+PYTHONPATH=/home/dcg/dcg_data/GOFA-F-runs/stage17-generative-chattime-v3/src /home/dcg/dcg_data/GOFA-F/.venv-chat/bin/python -m gofa_f.generative_progress /home/dcg/dcg_data/GOFA-F/outputs/stage17-generative-chattime-v3 --watch --interval 10
+tail -f /home/dcg/dcg_data/GOFA-F/outputs/stage17-generative-chattime-v3.log
 ```
 
 准备时看同级 `.bootstrap.log`。显示训练epoch查询数（末个epoch按剩余26624计算）、总体更新进度、当前源验证轮次、
@@ -157,4 +161,5 @@ tail -f /home/dcg/dcg_data/GOFA-F/outputs/stage17-generative-chattime-v2.log
 
 单种子、不同预训练暴露、生成式源验证与后续采样协议差异均须披露。
 本轮不比较参数匹配GNN、不验证图条件语言交互、不自动进入11目标评价或新增架构。
+
 

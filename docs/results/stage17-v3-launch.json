@@ -1,0 +1,22 @@
+{
+  "pid": 1113833,
+  "start_ticks": "615265530",
+  "snapshot": "/mnt/sevenT/dcg_data/GOFA-F-runs/stage17-generative-chattime-v3",
+  "command": [
+    "/home/dcg/dcg_data/GOFA-F/.venv-chat/bin/python",
+    "-u",
+    "-m",
+    "gofa_f.generative_launcher",
+    "--snapshot",
+    "/mnt/sevenT/dcg_data/GOFA-F-runs/stage17-generative-chattime-v3",
+    "--output",
+    "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage17-generative-chattime-v3",
+    "--config",
+    "/mnt/sevenT/dcg_data/GOFA-F-runs/stage17-generative-chattime-v3/configs/stage17_generative_chattime.yaml"
+  ],
+  "output": "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage17-generative-chattime-v3",
+  "started_at": 1792231594.5452974,
+  "admission_policy": "strict_idle",
+  "activity_limit_seconds": null,
+  "wall_deadline": null
+}

@@ -1,6 +1,6 @@
 # 运行交接记录
 
-## Stage17 生成式源训练：固定快照CPU验收中（2026-10-17 17:59，Asia/Shanghai）
+## Stage17 已部署：CPU/CUDA机制通过，源原生基线生成中（2026-10-17 18:10，Asia/Shanghai）
 
 用户已批准新阶段：ChatTime原语言头生成数值，只训练共享历史编码器、两层GNN及两个图交互。
 **当前最新资源要求为完全空闲准入，覆盖下方Stage16历史的memory_cap_only设置。**
@@ -8,18 +8,33 @@
 四源32768训练查询、3396源验证查询；11目标各2048固定查询已准备，覆盖全部目标变量
 （NASDAQ仅指数目标），目标预测为0。本轮不运行目标评价、不新增架构搜索。
 
-当前固定源码`7722c45f734308fde106e4271ed4eb5f297a78ab`，快照
-`/home/dcg/dcg_data/GOFA-F-runs/stage17-generative-chattime-v2`，
-输出`/home/dcg/dcg_data/GOFA-F/outputs/stage17-generative-chattime-v2`，
+当前固定源码`57706b6f331504e8563259d81c975073d8d7c709`，快照
+`/home/dcg/dcg_data/GOFA-F-runs/stage17-generative-chattime-v3`，
+输出`/home/dcg/dcg_data/GOFA-F/outputs/stage17-generative-chattime-v3`，
 独立数据`data/stage17-v3`（旧准备版本和原始数据保留）。
-CPU控制器17:58:40启动，PID1105838/start_ticks615218102；使用前重新核对身份及存活。
-通过绑定快照的完整CPU回归和真实7B FP32验收后，才自动部署CPU空闲等待器。
-从同级`.launch.json`读取届时的实际等待器身份，禁止重复启动。
+CPU控制器18:05:17启动，PID1112561/start_ticks615257809，完成部署后退出。
+完整当前CPU回归369通过/21旧可选依赖跳过（390 XML条目），Stage17专项33项通过。
+真实7B FP32六历史证明经绑定校验复用，1e-6通过；随后真实BF16 CUDA六历史及非零图
+前缀/增量预测和梯度、冻结/准确恢复全部通过，最大命名差5.90198e-5，原容差2e-3不变。
+
+监督器18:06:34启动，PID1113833/start_ticks615265530；三次完全空闲准入后worker1114039开始。
+当前phase=`native_source_baseline`，先完成3396条原生源基线，再训练新增模块；更新仍为0，
+不是训练卡住或已完成epoch。一次观测1244/3396基线查询、活动132秒、项目峰值15728MiB，
+均会继续变化；后续以实时JSON为准。读取同级`.launch.json`及`activity.json`复核身份，禁止重复启动。
+已启用每小时跟进`gofa-f-stage17`，仅终止/异常通知，普通生成/训练/等待保持安静。
 
 首次v1快照的额外BF16 CPU初始化检查未过，CPU控制器已安全退出，无GPU活动/训练/预测；
 失败证据保留，未放宽任何容差。v2按规定采用真实CPU FP32/1e-6，GPU仍须真实BF16/2e-3验收。
 短历史FP32非零图更新后的完整/增量logits差0，命名梯度最大差约2.98e-8；
-这不是六历史最终验收或GPU通过的替代。v2实际结果以`cpu_preflight.json`、`mechanisms.json`为准。
+这段短检查为较早准备记录；当前完整验收以v3的`cpu_preflight.json`和`mechanisms.json`为准。
+
+补记：v2完整CPU367通过/21旧可选依赖跳过，真实FP32六历史、非零图、前缀/增量预测、
+全部命名梯度、冻结与精确恢复均通过；预测差0，梯度最大2.98e-8。
+在部署GPU前发现监督器start_ticks字符串与整数比较缺陷，已合作阻止v2 CPU控制器自动部署，
+让既有CPU验收完成；没有启动GPU。v3修复该身份比较并持久化GPU UUID，
+模型/数据/缓存字节及工厂/优化器/恢复AST不变，严格核验绑定后复用v2真实模型证明，
+只重跑当前完整回归。旧控制器的`stopped_by_user`是维护信号的状态标签，非用户停止新研究。
+证明见[真实CPU验收](results/stage17-v2-cpu-verification.json)和[机制明细](results/stage17-v2-cpu-mechanisms.json)。
 
 每个GPU新worker/恢复任务先10秒一次、连续三次确认无计算/图形进程、util0、used≤256MiB、
 同UUID/Default；等待不建CUDA上下文。运行中他人加入不退出，无16GiB余量条件。
@@ -31,9 +46,9 @@ AdamW中途OOM完整回滚，不能保存半个更新。冻结骨干6,820,343,80
 不把等待GPU时间计入训练速度，ETA到4000更新上限而非早停承诺。C上查看：
 
 ```bash
-PYTHONPATH=/home/dcg/dcg_data/GOFA-F-runs/stage17-generative-chattime-v2/src /home/dcg/dcg_data/GOFA-F/.venv-chat/bin/python -m gofa_f.generative_progress /home/dcg/dcg_data/GOFA-F/outputs/stage17-generative-chattime-v2 --watch --interval 10
-tail -f /home/dcg/dcg_data/GOFA-F/outputs/stage17-generative-chattime-v2.bootstrap.log
-tail -f /home/dcg/dcg_data/GOFA-F/outputs/stage17-generative-chattime-v2.log
+PYTHONPATH=/home/dcg/dcg_data/GOFA-F-runs/stage17-generative-chattime-v3/src /home/dcg/dcg_data/GOFA-F/.venv-chat/bin/python -m gofa_f.generative_progress /home/dcg/dcg_data/GOFA-F/outputs/stage17-generative-chattime-v3 --watch --interval 10
+tail -f /home/dcg/dcg_data/GOFA-F/outputs/stage17-generative-chattime-v3.bootstrap.log
+tail -f /home/dcg/dcg_data/GOFA-F/outputs/stage17-generative-chattime-v3.log
 ```
 
 完整实现/数据修正/评价边界见[Stage17协议](STAGE17_PROTOCOL.md)。不能声称严格复现表4：
@@ -637,3 +652,4 @@ Electricity 8→8、Solar-Energy 24→3，取代上一条的 1/1/3/12/1/3。
 此前选定的历史来源保持不变，来源与配对证据见 `configs/protocol_sources.yaml`。
 仅修订后续协议；原首轮快照不变。用户随后取消旧首轮，执行结果见本文件顶部最新状态。
 没有启动新训练或测速。
+
