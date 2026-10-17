@@ -1,6 +1,6 @@
 # Stage18：全节点共享冻结 ChatTime 的末尾图交织
 
-2026-10-17，Asia/Shanghai。用户批准修正12项审查问题后执行。
+2026-10-17，Asia/Shanghai。用户批准修正12项审查问题后执行，随后明确不再等待GPU完全空闲。
 本轮仅四源训练和完整源验证选模；11目标预测始终关闭。
 Stage17仍停止，不恢复其监督器、训练状态或2744条旧模板基线。
 
@@ -109,18 +109,24 @@ AdamW lr2e-4、wd1e-4、clip1；100更新warmup后恒定。
 ## 部署、资源与进度
 
 独立配置`configs/stage18_allnode_chattime.yaml`，入口`python -m gofa_f.allnode_stage`，
-支持prepare/audit-only/train/resume/report-only。固定快照/输出`stage18-allnode-chattime-v1`。
+支持prepare/audit-only/train/resume/report-only。最新固定快照/输出`stage18-allnode-chattime-v2`。
 B编辑和静态检查，C禁CUDA、OMP/MKL各2线程做完整回归和真实7B FP32检查。
-通过后CPU控制器部署监督器；GPU完全空闲才执行BF16机制及最大形状验收，再生成原生基线、训练。
+通过后CPU控制器部署共享显存监督器，执行BF16机制及最大形状验收，再生成原生基线、训练。
 
-每10秒检查、连续3次无计算/图形进程、util0%、显存≤256MiB、固定UUID/Default。
-等待不创建CUDA上下文；运行中他人加入不退出。项目组40GiB/Torch38GiB；每10秒审计，
-超限或占用未知合作保存≤60秒退出，恢复重新空闲准入。不改模式、不操作其他用户进程。
+资源策略为`memory_cap_only`：一次有效查询确认固定GPU UUID和Default模式即可共享启动，
+不检查其他应用、利用率、已用/空闲显存门槛，不等三次观测，也无16GiB余量条件。
+无法查询时每10秒重试；运行中他人加入不退出。项目组40GiB/Torch38GiB，每10秒审计；
+超限或自身占用未知合作保存≤60秒退出，资源暂停后10秒再重试，不重置活动账本。
+不改模式、不操作其他用户进程。共享计算可能影响其他任务延迟，不承诺延迟不变。
 CPU控制器也支持合作终止，不会在用户停止后偷偷部署GPU。GPU机制失败不放宽容差。
+
+v1 CPU控制器PID1240770/start_ticks616147435已按新资源要求合作停止，其子进程均退出。
+v1只完成394通过/21旧可选依赖跳过的CPU回归，真实FP32检查尚未完成；无GPU监督器、
+GPU活动、正式更新或检查点。旧快照保留，v2从冻结预训练权重重新验收，不复用不完整证明。
 
 C上进度命令：
 ```bash
-PYTHONPATH=/home/dcg/dcg_data/GOFA-F-runs/stage18-allnode-chattime-v1/src /home/dcg/dcg_data/GOFA-F/.venv-chat/bin/python -m gofa_f.allnode_progress /home/dcg/dcg_data/GOFA-F/outputs/stage18-allnode-chattime-v1 --watch --interval 10
+PYTHONPATH=/home/dcg/dcg_data/GOFA-F-runs/stage18-allnode-chattime-v2/src /home/dcg/dcg_data/GOFA-F/.venv-chat/bin/python -m gofa_f.allnode_progress /home/dcg/dcg_data/GOFA-F/outputs/stage18-allnode-chattime-v2 --watch --interval 10
 ```
 显示epoch/总体更新、源验证轮次与查询/数值步、当前节点/历史/块位置、分阶段ETA。
 活动与等待独立累计、跨恢复保留；ETA估计到4000上限，不承诺未知空闲等待或早停时间。

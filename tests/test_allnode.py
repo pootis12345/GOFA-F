@@ -283,7 +283,7 @@ def test_partial_checkpoint_state_and_next_materialized_update(tmp_path, codec):
 
 
 @pytest.mark.parametrize("pause", [False, True, "unknown"])
-def test_stage18_idle_admission_coexistence_pause_and_resume(tmp_path, monkeypatch, pause):
+def test_stage18_cap_only_admission_coexistence_pause_and_resume(tmp_path, monkeypatch, pause):
     import json
     import gofa_f.allnode_launcher as supervisor
     config = tmp_path/"config.yaml"
@@ -302,7 +302,8 @@ def test_stage18_idle_admission_coexistence_pause_and_resume(tmp_path, monkeypat
                 41000 if pause and len(launches) == 1 else 26000)
             return {**gpu, "pids": [800, 999], "used_mib": 70000, "utilization": 100,
                     "process_used_mib": {800: own, 999: 44000}}
-        return gpu
+        return {**gpu, "pids": [999], "used_mib": 48547, "utilization": 100,
+                "process_used_mib": {999: 48547}}  # never becomes idle
     monkeypatch.setattr(supervisor, "query_gpu", probe)
     monkeypatch.setattr(supervisor.os, "killpg", lambda pid, sig: signals.append((pid, sig)))
     class Child:
@@ -322,9 +323,9 @@ def test_stage18_idle_admission_coexistence_pause_and_resume(tmp_path, monkeypat
     monkeypatch.setattr(supervisor.subprocess, "Popen", Child)
     supervisor.supervise(output, config, tmp_path)
     ledger = json.loads((output/"activity.json").read_text())
-    assert launches[0] == 20 and ledger["waiting_seconds"] >= 20 and ledger["worker"] is None
+    assert launches[0] == 0 and ledger["worker"] is None
     assert len(launches) == (2 if pause else 1)
     assert len(signals) == (1 if pause else 0)
     assert all(pid == 800 for pid, _ in signals)
     if pause:
-        assert launches[1] >= launches[0]+23 and ledger["resource_pause_count"] == 1
+        assert launches[1] >= launches[0]+13 and ledger["resource_pause_count"] == 1

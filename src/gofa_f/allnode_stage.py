@@ -62,12 +62,11 @@ def config_check(cfg):
     if any(t[key] != value for key, value in fixed.items()):
         raise ValueError("Preregistered optimization protocol changed")
     if r["activity_limit_seconds"] is not None or r["wall_deadline"] is not None \
-            or r["admission_policy"] != "strict_idle" or r["memory_cap_gib"] != 40 \
-            or r["torch_cap_gib"] != 38 or r["idle_check_seconds"] != 10:
-        raise ValueError("Preregistered unlimited/strict-idle policy changed")
-    if r["consecutive_idle_samples"] != 3 or r["idle_max_used_mib"] != 256 \
-            or r["yield_on_foreign"] or r["leave_free_gib"] != 0:
-        raise ValueError("Strict admission and runtime coexistence changed")
+            or r["admission_policy"] != "memory_cap_only" or r["memory_cap_gib"] != 40 \
+            or r["torch_cap_gib"] != 38 or r["resource_check_seconds"] != 10:
+        raise ValueError("Preregistered unlimited/own-memory-cap policy changed")
+    if r["admission_samples"] != 1 or r["yield_on_foreign"] or r["leave_free_gib"] != 0:
+        raise ValueError("Cap-only admission and runtime coexistence changed")
     if cfg["data"]["target_evaluation_enabled"] or cfg["data"]["sources"] != list(SOURCES):
         raise ValueError("Target evaluation/training is forbidden")
     if cfg["seed"] != 42 or cfg["data"]["train_queries_per_source"] != 8192:
@@ -260,7 +259,7 @@ def record_validation(state, score, update):
 
 def train(cfg, output, resume):
     if os.environ.get("GOFA_STAGE18_ADMITTED") != "1":
-        raise RuntimeError("GPU training must enter through the CPU strict-idle launcher")
+        raise RuntimeError("GPU training must enter through the CPU memory-cap supervisor")
     manifest = read(output/"manifest.json")
     config_check(cfg)
     binding = sha(output/"manifest.json")
@@ -435,7 +434,7 @@ def train(cfg, output, resume):
             try:
                 other_allocations = bool(set(query_gpu()["pids"])-own_gpu_pids(os.getpid()))
             except Exception:
-                other_allocations = True  # unknown resource state must re-enter strict idle
+                other_allocations = True  # unknown resource state requires a cap-supervised retry
             if other_allocations:
                 memory("resource_paused")
                 progress.tick("resource_paused", force=True)

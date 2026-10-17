@@ -1,4 +1,4 @@
-"""Stage18 CPU-only strict-idle supervisor with recorded, unlimited GPU activity.
+"""Stage18 CPU-only own-memory-cap supervisor with recorded, unlimited GPU activity.
 
 Legacy launchers and their time budgets are deliberately unchanged.
 """
@@ -12,7 +12,7 @@ import subprocess
 import sys
 import time
 
-from gofa_f.idle_launcher import (ActivityLedger, IdleGate, atomic_json, own_gpu_pids,
+from gofa_f.idle_launcher import (ActivityLedger, CapOnlyGate, atomic_json, own_gpu_pids,
                                   process_identity, query_gpu)
 
 
@@ -42,8 +42,8 @@ def supervise(output, config, snapshot):
         stream = path.open("a")
         fcntl.flock(stream, fcntl.LOCK_EX | fcntl.LOCK_NB)
         locks.append(stream)
-    binding = {"snapshot": str(snapshot), "config": str(config), "admission_policy": "strict_idle",
-        "idle_check_seconds": 10, "consecutive_idle_samples": 3, "idle_max_used_mib": 256,
+    binding = {"snapshot": str(snapshot), "config": str(config), "admission_policy": "memory_cap_only",
+        "resource_check_seconds": 10, "admission_samples": 1,
         "memory_cap_gib": 40, "torch_cap_gib": 38, "yield_on_foreign": False,
         "activity_limit_seconds": None, "wall_deadline": None, "maximum_updates": 4000}
     if read(output/"launcher_manifest.json", binding) != binding:
@@ -81,7 +81,7 @@ def supervise(output, config, snapshot):
 
     identity_path = output/"gpu_identity.json"
     pinned_uuid = read(identity_path, {}).get("uuid")
-    gate = IdleGate()
+    gate = CapOnlyGate()
     gate.uuid = pinned_uuid
     while not stopped[0]:
         final = read(output/"status.json", {}).get("state")
@@ -97,7 +97,7 @@ def supervise(output, config, snapshot):
             gate.uuid = pinned_uuid
             atomic_json(identity_path, {"uuid": pinned_uuid, "first_observed_at": time.time()})
         admitted = gate.observe(gpu)
-        status("waiting_for_idle", consecutive_idle=gate.consecutive, query_error=error)
+        status("device_checked" if admitted else "waiting_for_gpu_query", query_error=error)
         if not admitted:
             wait_started = time.monotonic()
             for _ in range(10):
@@ -166,7 +166,15 @@ def supervise(output, config, snapshot):
             status(final if final in ("complete", "failed", "incomplete") else "failed",
                    worker_returncode=child.returncode)
             return
-        gate = IdleGate()  # every resource resume requires three NEW idle observations
+        # A failed allocation/audit may recover; avoid a tight restart loop without an idle gate.
+        wait_started = time.monotonic()
+        for _ in range(10):
+            if stopped[0]:
+                break
+            time.sleep(1)
+        ledger.state["waiting_seconds"] += time.monotonic()-wait_started
+        ledger.save()
+        gate = CapOnlyGate()
         gate.uuid = pinned_uuid
     status("stopped_by_user")
 

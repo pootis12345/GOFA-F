@@ -1,4 +1,4 @@
-"""CPU-only Stage18 preflight then a strict-idle supervisor; never touches CUDA."""
+"""CPU-only Stage18 preflight then a cap-only supervisor; never touches CUDA."""
 import argparse
 import fcntl
 import json
@@ -58,7 +58,7 @@ def main():
                                   stderr=subprocess.STDOUT, start_new_session=True)
     record = {"pid": worker.pid, "start_ticks": identity(worker.pid), "snapshot": str(snapshot),
         "output": str(output), "command": command, "started_at": time.time(),
-        "admission_policy": "strict_idle", "activity_limit_seconds": None, "wall_deadline": None}
+        "admission_policy": "memory_cap_only", "activity_limit_seconds": None, "wall_deadline": None}
     atomic(output.with_suffix(".launch.json"), record)
     state("supervisor_deployed", supervisor=record)
     print(json.dumps(record), flush=True)
