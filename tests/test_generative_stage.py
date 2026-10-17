@@ -149,6 +149,32 @@ def test_stage17_supervisor_is_cpu_only():
     assert p.returncode == 0, p.stderr
 
 
+def test_oom_inside_adamw_rolls_back_parameters_gradients_and_cursor(tmp_path, monkeypatch):
+    from gofa_f.generative_stage import apply_update
+    model, batch = tiny(), tokens()
+    optimizer = torch.optim.AdamW(model.adapter.parameters(), lr=2e-4)
+    completion_loss(model(batch, [graph(), graph()]).logits, batch.labels)[0].backward()
+    original = model.trainable_state()
+    gradients = {n: p.grad.clone() for n, p in model.adapter.named_parameters()}
+    state = {"updates": 0, "pending": 64, "pending_tokens": 100, "pending_loss": 64.}
+    real_step = optimizer.step
+    def broken():
+        real_step()
+        raise torch.cuda.OutOfMemoryError("simulated interruption after partial optimizer mutation")
+    monkeypatch.setattr(optimizer, "step", broken)
+    progress = Progress(tmp_path)
+    with pytest.raises(torch.cuda.OutOfMemoryError):
+        apply_update(model, optimizer, state, progress)
+    assert state["updates"] == 0 and state["pending"] == 64 and model.parameter_version == 0
+    assert not optimizer.state
+    for n, p in model.adapter.named_parameters():
+        torch.testing.assert_close(p, original[n], rtol=0, atol=0)
+        torch.testing.assert_close(p.grad, gradients[n], rtol=0, atol=0)
+    monkeypatch.setattr(optimizer, "step", real_step)
+    apply_update(model, optimizer, state, progress)
+    assert state["updates"] == 1 and state["pending"] == 0
+
+
 @pytest.mark.parametrize("pause", [False, True])
 def test_stage17_unlimited_supervisor_idle_coexistence_and_resource_resume(tmp_path, monkeypatch, pause):
     import gofa_f.generative_launcher as supervisor

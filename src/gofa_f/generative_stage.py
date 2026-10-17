@@ -169,6 +169,50 @@ def restore_checkpoint(path, model, optimizer, binding):
     return saved["state"], saved["progress"]
 
 
+def cpu_copy(value):
+    if torch.is_tensor(value):
+        return value.detach().cpu().clone()
+    if isinstance(value, dict):
+        return {k: cpu_copy(v) for k, v in value.items()}
+    if isinstance(value, (list, tuple)):
+        return type(value)(cpu_copy(v) for v in value)
+    return copy.deepcopy(value)
+
+
+def apply_update(model, optimizer, state, progress):
+    """One atomic update; an OOM must not save half an AdamW transaction."""
+    if state["pending"] != 64:
+        raise ValueError("Only a complete effective batch can update")
+    adapter = model.trainable_state()
+    moments, version = cpu_copy(optimizer.state_dict()), model.parameter_version
+    gradients = {n: cpu_copy(p.grad) for n, p in model.adapter.named_parameters()}
+    try:
+        for p in model.adapter.parameters():
+            if p.grad is not None:
+                p.grad.div_(64)
+        norm = torch.nn.utils.clip_grad_norm_(model.adapter.parameters(), 1., error_if_nonfinite=True)
+        lr = 2e-4*min(1., (state["updates"]+1)/100)
+        for group in optimizer.param_groups:
+            group["lr"] = lr
+        optimizer.step()
+    except Exception:
+        model.load_trainable(adapter)
+        model.parameter_version = version
+        optimizer.state.clear()
+        optimizer.load_state_dict(moments)
+        for n, p in model.adapter.named_parameters():
+            p.grad = gradients[n].to(p.device) if gradients[n] is not None else None
+        raise
+    optimizer.zero_grad(set_to_none=True)
+    model.mark_updated()
+    state["updates"] += 1
+    mean_loss = state["pending_loss"]/64
+    state["pending"], state["pending_tokens"], state["pending_loss"] = 0, 0, 0.
+    progress.state["measured_updates"] += 1
+    progress.tick(updates=state["updates"], pending_queries=0, loss=mean_loss,
+                  learning_rate=lr, gradient_norm=float(norm))
+
+
 @lru_cache(maxsize=64)
 def source_permutation(seed, epoch, source_index):
     return np.random.default_rng(np.random.SeedSequence([seed, epoch, source_index])).permutation(8192)
@@ -295,6 +339,9 @@ def train(cfg, output, resume):
                 break
             status("running", phase="train")
             progress.tick("train", updates=state["updates"], pending_queries=state["pending"])
+            if state["pending"] == 64:
+                apply_update(model, optimizer, state, progress)
+                continue
             consumed = state["updates"]*64+state["pending"]
             count = min(state["microbatch"], 64-state["pending"])
             queries = [schedule(pools, consumed+i, cfg["seed"]) for i in range(count)]
@@ -322,28 +369,14 @@ def train(cfg, output, resume):
                 if state["microbatch"] == 1:
                     raise
                 state["microbatch"] = max(1, state["microbatch"]//2)
+                loss, prefix, tokens, graphs = None, None, None, None
                 torch.cuda.empty_cache()
                 continue
             state["pending"] += count
             state["pending_tokens"] += valid_tokens
             state["pending_loss"] += float(loss.detach())
             if state["pending"] == 64:
-                for p in model.adapter.parameters():
-                    if p.grad is not None:
-                        p.grad.div_(64)
-                norm = torch.nn.utils.clip_grad_norm_(model.adapter.parameters(), 1., error_if_nonfinite=True)
-                lr = 2e-4*min(1., (state["updates"]+1)/100)
-                for group in optimizer.param_groups:
-                    group["lr"] = lr
-                optimizer.step()
-                optimizer.zero_grad(set_to_none=True)
-                model.mark_updated()
-                state["updates"] += 1
-                mean_loss = state["pending_loss"]/64
-                state["pending"], state["pending_tokens"], state["pending_loss"] = 0, 0, 0.
-                progress.state["measured_updates"] += 1
-                progress.tick(updates=state["updates"], pending_queries=0, loss=mean_loss,
-                              learning_rate=lr, gradient_norm=float(norm))
+                apply_update(model, optimizer, state, progress)
             else:
                 progress.tick(pending_queries=state["pending"], microbatch=state["microbatch"])
             if time.monotonic()-last_save >= 30 or state["updates"] % 250 == 0 and state["pending"] == 0:
@@ -366,6 +399,18 @@ def train(cfg, output, resume):
         status("resource_paused", reason=str(exc))
         return 75
     except Exception as exc:
+        if isinstance(exc, torch.cuda.OutOfMemoryError):
+            from gofa_f.idle_launcher import query_gpu, own_gpu_pids
+            try:
+                other_allocations = bool(set(query_gpu()["pids"])-own_gpu_pids(os.getpid()))
+            except Exception:
+                other_allocations = True  # unknown resource state must re-enter strict idle
+            if other_allocations:
+                memory("resource_paused")
+                progress.tick("resource_paused", force=True)
+                save_checkpoint(output/"last.pt", model, optimizer, state, progress, binding)
+                status("resource_paused", reason="cuda_oom_with_external_or_unknown_allocations")
+                return 75
         progress.tick("failed", force=True)
         save_checkpoint(output/"last.pt", model, optimizer, state, progress, binding)
         atomic_json(output/"failures.json", {"type": type(exc).__name__, "error": str(exc),
