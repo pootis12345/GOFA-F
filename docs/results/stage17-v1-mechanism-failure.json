@@ -1,0 +1,15 @@
+{
+  "tolerance": 0.002,
+  "graph_layers": [
+    30,
+    31
+  ],
+  "prefix_layers": 30,
+  "target_queries_used": 0,
+  "differences": {
+    "initial_native_L10": 0.59375
+  },
+  "passed": false,
+  "error_type": "AssertionError",
+  "error": "initial_native_L10: Tensor-likes are not equal!\n\nMismatched elements: 1296334 / 3192076 (40.6%)\nGreatest absolute difference: 0.59375 at index (0, 67, 27918)\nGreatest relative difference: 48384.0 at index (0, 63, 2871)"
+}

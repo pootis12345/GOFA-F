@@ -1,5 +1,47 @@
 # 运行交接记录
 
+## Stage17 生成式源训练：固定快照CPU验收中（2026-10-17 17:59，Asia/Shanghai）
+
+用户已批准新阶段：ChatTime原语言头生成数值，只训练共享历史编码器、两层GNN及两个图交互。
+**当前最新资源要求为完全空闲准入，覆盖下方Stage16历史的memory_cap_only设置。**
+零起始层`[30,31]`之前注入，冻结前30层可缓存；辅助节点不经过LLM，图上下文固定在原始预测起点。
+四源32768训练查询、3396源验证查询；11目标各2048固定查询已准备，覆盖全部目标变量
+（NASDAQ仅指数目标），目标预测为0。本轮不运行目标评价、不新增架构搜索。
+
+当前固定源码`7722c45f734308fde106e4271ed4eb5f297a78ab`，快照
+`/home/dcg/dcg_data/GOFA-F-runs/stage17-generative-chattime-v2`，
+输出`/home/dcg/dcg_data/GOFA-F/outputs/stage17-generative-chattime-v2`，
+独立数据`data/stage17-v3`（旧准备版本和原始数据保留）。
+CPU控制器17:58:40启动，PID1105838/start_ticks615218102；使用前重新核对身份及存活。
+通过绑定快照的完整CPU回归和真实7B FP32验收后，才自动部署CPU空闲等待器。
+从同级`.launch.json`读取届时的实际等待器身份，禁止重复启动。
+
+首次v1快照的额外BF16 CPU初始化检查未过，CPU控制器已安全退出，无GPU活动/训练/预测；
+失败证据保留，未放宽任何容差。v2按规定采用真实CPU FP32/1e-6，GPU仍须真实BF16/2e-3验收。
+短历史FP32非零图更新后的完整/增量logits差0，命名梯度最大差约2.98e-8；
+这不是六历史最终验收或GPU通过的替代。v2实际结果以`cpu_preflight.json`、`mechanisms.json`为准。
+
+每个GPU新worker/恢复任务先10秒一次、连续三次确认无计算/图形进程、util0、used≤256MiB、
+同UUID/Default；等待不建CUDA上下文。运行中他人加入不退出，无16GiB余量条件。
+项目组40GiB/Torch38GiB、每10秒审计；超限或占用未知合作保存退出，之后重新完全空闲准入。
+不设置活动或墙钟硬截止，4000更新或源验证早停停止；账本、未完成梯度和验证分片跨恢复保存。
+AdamW中途OOM完整回滚，不能保存半个更新。冻结骨干6,820,343,808，新增可训练1,101,862。
+
+进度显示已实现epoch/总体更新、源验证轮次/查询/数值步和ETA；未测得速度时显示estimating，
+不把等待GPU时间计入训练速度，ETA到4000更新上限而非早停承诺。C上查看：
+
+```bash
+PYTHONPATH=/home/dcg/dcg_data/GOFA-F-runs/stage17-generative-chattime-v2/src /home/dcg/dcg_data/GOFA-F/.venv-chat/bin/python -m gofa_f.generative_progress /home/dcg/dcg_data/GOFA-F/outputs/stage17-generative-chattime-v2 --watch --interval 10
+tail -f /home/dcg/dcg_data/GOFA-F/outputs/stage17-generative-chattime-v2.bootstrap.log
+tail -f /home/dcg/dcg_data/GOFA-F/outputs/stage17-generative-chattime-v2.log
+```
+
+完整实现/数据修正/评价边界见[Stage17协议](STAGE17_PROTOCOL.md)。不能声称严格复现表4：
+官方完整样本/尺度/种子未独立核验，未来为固定分层子集；本轮仅源贪心验证。
+NASDAQ已对齐矩阵不再次移位，原始多时段文件经分钟匹配；NOAA第10字段和小时结束网格、
+Weather全行重复与Exchange交易观测日历均单独记录。原生预训练暴露不可独立核验。
+以下为历史记录；旧Stage16仍按用户要求停止，不能自动恢复。
+
 ## Stage16 已按用户要求停止（2026-10-17 14:52，Asia/Shanghai）
 
 用户明确要求“停止本轮运行”。已删除自动跟进 `gofa-f-stage16`，并核对

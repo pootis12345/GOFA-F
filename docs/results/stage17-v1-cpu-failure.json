@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "cases": 388,
+  "skipped": 21,
+  "manifest_sha256": "14c4d239ef86016516a514835814da6fafbe0f44538daee4923ddf9a41037eb5",
+  "cuda_disabled": true,
+  "error_type": "AssertionError",
+  "error": "initial_native_L10: Tensor-likes are not equal!\n\nMismatched elements: 1296334 / 3192076 (40.6%)\nGreatest absolute difference: 0.59375 at index (0, 67, 27918)\nGreatest relative difference: 48384.0 at index (0, 63, 2871)"
+}
