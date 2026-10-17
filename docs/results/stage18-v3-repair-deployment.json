@@ -1,0 +1,46 @@
+{
+  "observed_at": "2026-10-17T21:20:16.783859+08:00",
+  "launch": {
+    "pid": 1281506,
+    "start_ticks": "616413811",
+    "snapshot": "/home/dcg/dcg_data/GOFA-F-runs/stage18-allnode-chattime-v3",
+    "output": "/home/dcg/dcg_data/GOFA-F/outputs/stage18-allnode-chattime-v3",
+    "code_revision": "47a8cf4909eb4b131956d202ac895988606840de",
+    "started_at": 1792243077.3459613,
+    "command": [
+      "/home/dcg/dcg_data/GOFA-F/.venv-chat/bin/python",
+      "-u",
+      "/home/dcg/dcg_data/GOFA-F-runs/stage18-allnode-chattime-v3/scripts/bootstrap_allnode_stage.py",
+      "--snapshot",
+      "/home/dcg/dcg_data/GOFA-F-runs/stage18-allnode-chattime-v3",
+      "--output",
+      "/home/dcg/dcg_data/GOFA-F/outputs/stage18-allnode-chattime-v3",
+      "--config",
+      "/home/dcg/dcg_data/GOFA-F-runs/stage18-allnode-chattime-v3/configs/stage18_allnode_chattime.yaml",
+      "--repair-failed-preflight",
+      "/home/dcg/dcg_data/GOFA-F/outputs/stage18-allnode-chattime-v2",
+      "--prior-diagnostic",
+      "/home/dcg/dcg_data/GOFA-F/outputs/stage18-kv-diagnostic-v1",
+      "--prior-diagnostic",
+      "/home/dcg/dcg_data/GOFA-F/outputs/stage18-kv-diagnostic-v2",
+      "--prior-diagnostic",
+      "/home/dcg/dcg_data/GOFA-F/outputs/stage18-kv-diagnostic-v3"
+    ],
+    "admission_policy": "memory_cap_only",
+    "activity_limit_seconds": null,
+    "wall_deadline": null
+  },
+  "cpu_preflight": {
+    "passed": false,
+    "cases": 423,
+    "skipped": 21,
+    "cuda_disabled": true,
+    "manifest_sha256": "fb6092c213df8efa005a5a867cddb7a110c1d8eba1f654a591fade8fb17f8ba1",
+    "real_weight_dtype": "float32",
+    "stage17_proof_reused": false,
+    "stage17_baseline_imported": false
+  },
+  "cpu_mechanisms_pending": true,
+  "formal_updates": 0,
+  "target_predictions": 0
+}

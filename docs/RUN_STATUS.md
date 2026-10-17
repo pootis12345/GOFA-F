@@ -1,5 +1,28 @@
 # 运行交接记录
 
+## Stage18 v3 修复已部署，完整重新验收中（2026-10-17 21:20，Asia/Shanghai）
+
+用户明确要求修复并重新验收，通过后恢复训练。固定代码
+`47a8cf4909eb4b131956d202ac895988606840de`，快照
+`/home/dcg/dcg_data/GOFA-F-runs/stage18-allnode-chattime-v3`，输出
+`/home/dcg/dcg_data/GOFA-F/outputs/stage18-allnode-chattime-v3`。
+CPU控制器21:17:57启动，PID1281506/start_ticks616413811；不得重复启动。
+CPU完整回归402通过/21旧可选依赖跳过，真实7B FP32验收仍在执行，尚不能称全部通过。
+通过后自动迁移未训练检查点与旧活动账本，部署cap-only监督器；全部CUDA验收通过才生成源基线及训练。
+
+三次独立显存受控诊断显示分叉首次发生于原生第14块RMSNorm：输入相同，
+不同序列形状下输出先差0.001953125，再放大到logits差0.21875，早于图交互。
+修复将Stage18 RMSNorm也固定128行，保留BF16/原权重/原图/模块/损失/优化器及全部容差，
+原生与图模型同路执行，文本问答绕过不改。独立真实BF16滚动0/16/32逐层及logits差均0；
+该结果不替代完整CPU/CUDA梯度、实际双块生成及最大形状验收。
+详见[修复诊断](results/stage18-rmsnorm-repair-trace.json)与[部署记录](results/stage18-v3-repair-deployment.json)。
+
+`--repair-failed-preflight`仅接受已退出、正式0更新、无源预测与选模、状态SHA匹配的失败预检，
+精确保留adapter/optimizer/RNG及原始起点，只重绑定新清单；v2失败和三次独立诊断活动累计保留。
+已有训练/评价、待累积梯度或活动worker将拒绝迁移，重复调用不得重置新进度。
+仍使用memory_cap_only、项目40GiB/Torch38GiB、10秒审计，不等GPU空闲；无活动或墙钟硬截止。
+本轮只四源训练与源验证，11目标预测保持关闭，Stage17仍停止。以下失败/部署记录为历史。
+
 ## Stage18 v2 GPU机制验收失败，正式训练尚未开始（2026-10-17 21:00，Asia/Shanghai）
 
 v2 完整CPU回归394通过、21旧可选依赖跳过；真实7B FP32六历史/9节点、
