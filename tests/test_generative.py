@@ -127,6 +127,18 @@ def test_bf16_prefix_keeps_native_dtype_and_tolerance():
     cached = model(batch, graphs, prefix=model.prefix(batch)).logits
     assert full.dtype == cached.dtype == torch.bfloat16
     torch.testing.assert_close(cached, full, rtol=2e-3, atol=2e-3)
+    with torch.no_grad():
+        for layer in model.adapter.interactions:
+            layer.up.weight.normal_(std=.001)
+        full = model(batch, graphs).logits
+        pieces, cache = [], None
+        for index in range(6):
+            part = QueryTokens(batch.input_ids[:, index:index+1], batch.attention_mask[:, :index+1],
+                               batch.labels[:, index:index+1], batch.prompt_ends)
+            output = model(part, graphs, cache=cache, use_cache=True)
+            cache = output.past_key_values
+            pieces.append(output.logits)
+        torch.testing.assert_close(torch.cat(pieces, 1), full, rtol=2e-3, atol=2e-3)
 
 
 def test_hierarchical_metric_and_near_zero_rule():

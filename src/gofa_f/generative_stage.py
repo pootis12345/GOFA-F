@@ -38,6 +38,11 @@ def config_check(cfg):
     a, t, r = cfg["architecture"], cfg["training"], cfg["resources"]
     if a["graph_layers"] != [30, 31] or a["prefix_layers"] != 30 or a["injection_side"] != "before":
         raise ValueError("Stage17 interleaving boundary changed")
+    if any(a[k] != v for k, v in {"graph_width": 64, "attention_rank": 16,
+                                  "prior_fraction": .5, "graph_top_k": 8}.items()):
+        raise ValueError("Fixed graph architecture changed")
+    if a.get("numerical_execution") != "bf16_rows128_sdpa_fixed_prompt_capacity_v1":
+        raise ValueError("Shape-stable execution binding changed")
     if cfg["weights"]["revision"] != REVISION or cfg["weights"]["source_revision"] != SOURCE_REVISION:
         raise ValueError("Official ChatTime snapshot changed")
     fixed = {"max_updates": 4000, "effective_batch": 64, "microbatch": 4,
@@ -49,8 +54,13 @@ def config_check(cfg):
             or r["admission_policy"] != "strict_idle" or r["memory_cap_gib"] != 40 \
             or r["torch_cap_gib"] != 38 or r["idle_check_seconds"] != 10:
         raise ValueError("Preregistered unlimited/strict-idle policy changed")
+    if r["consecutive_idle_samples"] != 3 or r["idle_max_used_mib"] != 256 \
+            or r["yield_on_foreign"] or r["leave_free_gib"] != 0:
+        raise ValueError("Strict admission and runtime coexistence changed")
     if cfg["data"]["target_evaluation_enabled"] or cfg["data"]["sources"] != list(SOURCES):
         raise ValueError("Target evaluation/training is forbidden")
+    if cfg["seed"] != 42 or cfg["data"]["train_queries_per_source"] != 8192:
+        raise ValueError("Seed and source pool size changed")
 
 
 def verify_weights(cfg):
@@ -83,7 +93,7 @@ def prepare(cfg, output):
         atomic_json(pool_path, pools)
     weight_sha = verify_weights(cfg)
     source_code = Path(__file__).parent
-    code = {p.name: sha(p) for p in sorted(source_code.glob("generative_*.py"))}
+    code = {p.name: sha(p) for p in sorted(source_code.glob("*.py"))}
     config_sha = hashlib.sha256(json.dumps(cfg, sort_keys=True).encode()).hexdigest()
     manifest = {"protocol": cfg["protocol"], "configuration": cfg, "config_sha256": config_sha,
         "weights_sha256": weight_sha, "source_data": records, "pools": pools, "code": code,
@@ -171,7 +181,10 @@ def train(cfg, output, resume):
     manifest = read(output/"manifest.json")
     config_check(cfg)
     binding = sha(output/"manifest.json")
-    if manifest["configuration"] != cfg or not read(output/"cpu_preflight.json", {}).get("passed"):
+    preflight = read(output/"cpu_preflight.json", {})
+    code = {p.name: sha(p) for p in sorted(Path(__file__).parent.glob("*.py"))}
+    if manifest["configuration"] != cfg or not preflight.get("passed") \
+            or preflight.get("manifest_sha256") != binding or manifest["code"] != code:
         raise ValueError("Successful bound CPU preflight required")
     torch.cuda.set_per_process_memory_fraction(38*2**30/torch.cuda.get_device_properties(0).total_memory)
     device = torch.device("cuda:0")

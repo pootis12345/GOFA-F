@@ -1,6 +1,8 @@
 """Target DATA audit only. No language models, forecasts or target fitting."""
 import json
+import io
 from pathlib import Path
+import zipfile
 
 import numpy as np
 import pandas as pd
@@ -96,10 +98,96 @@ def provenance_exclusion(source_audit):
         for name, record in source_audit.items()}
 
 
+def prepare_extras(root):
+    root = Path(root)
+    raw, prepared = root/"raw/targets", root/"targets"
+    pems = raw/"PEMS08.npz"
+    if pems.exists() and (raw/"PEMS08.csv").exists():
+        with np.load(pems) as data:
+            values = data["data"][:, :, 0]
+        if values.shape[1] != 170:
+            raise ValueError("Expected original 170-node PEMS08 flow")
+        roads = pd.read_csv(raw/"PEMS08.csv")
+        adjacency = np.zeros((170, 170), np.float32)
+        for a, b in roads.iloc[:, :2].itertuples(index=False, name=None):
+            adjacency[int(a), int(b)] = 1
+        save_series(prepared, "pems08", values, pd.date_range("2016-07-01", periods=len(values), freq="5min"),
+            list(map(str, range(170))), {"sha256": sha(pems), "road_sha256": sha(raw/"PEMS08.csv"),
+                "channel": "flow", "source": "official ASTGNN pinned raw data; July-August 2016"}, adjacency)
+    metadata = raw/"noaa_station_metadata.json"
+    if metadata.exists():
+        selected = geographic_stations(json.loads(metadata.read_text()))
+        atomic_json(raw/"noaa_selected_stations.json", selected)
+        if all((raw/"noaa"/s["filename"]).exists() for s in selected):
+            columns, identities, hashes = [], [], {}
+            for station in selected:
+                path = raw/"noaa"/station["filename"]
+                frame = pd.read_csv(path, sep=r"\s+", header=None, dtype=str)
+                values, description = noaa_hourly(frame)
+                if int(description["wban"]) != int(station["wban"]):
+                    raise ValueError("NOAA station identity differs")
+                columns.append(values)
+                identities.append(str(station["wban"]))
+                hashes[station["filename"]] = sha(path)
+            index = pd.date_range("2025-01-01", "2025-12-31 23:00", freq="h", tz="UTC")
+            matrix = pd.concat(columns, axis=1).reindex(index)
+            coords = np.radians([[s["latitude"], s["longitude"]] for s in selected])
+            lat, lon = coords[:, 0], coords[:, 1]
+            distance = np.sin((lat[:, None]-lat[None])/2)**2+np.cos(lat[:, None])*np.cos(lat[None]) \
+                *np.sin((lon[:, None]-lon[None])/2)**2
+            adjacency = np.zeros((16, 16), np.float32)
+            for i in range(16):
+                neighbors = sorted([j for j in range(16) if j != i],
+                    key=lambda j: (distance[i, j], int(identities[j])))[:4]
+                adjacency[i, neighbors] = 1
+            adjacency = np.maximum(adjacency, adjacency.T)
+            save_series(prepared, "noaa2025", matrix.to_numpy(), index, identities,
+                {"sha256": sha(metadata), "raw_file_sha256": hashes, "selection": selected,
+                 "field_number": 10, "field": "T_HR_AVG", "unit": "Celsius",
+                 "hours": "2025 UTC end-labeled hours", "selection_uses_errors": False}, adjacency)
+    archive = raw/"nasdaq100.zip"
+    if archive.exists():
+        with zipfile.ZipFile(archive) as stream:
+            names = stream.namelist()
+            symbol_file = next(n for n in names if n.endswith("full/stock_name.txt"))
+            symbols = stream.read(symbol_file).decode().split()
+            frames = {}
+            for symbol in symbols:
+                members = [n for n in names if "/full/separate/" in "/"+n and n.endswith(".csv")
+                           and (symbol in Path(n).parts or Path(n).stem.startswith(symbol+"_")
+                                or Path(n).stem == symbol)]
+                if not members:
+                    raise ValueError("Original NASDAQ per-timestamp member unavailable: "+symbol)
+                parts = []
+                for member in sorted(members):
+                    frame = pd.read_csv(io.BytesIO(stream.read(member)))
+                    frame.columns = frame.columns.str.lower()
+                    if "date" not in frame or "close" not in frame:
+                        raise ValueError("NASDAQ original date/close columns not verified")
+                    parts.append(pd.Series(frame["close"].to_numpy(), index=pd.to_datetime(frame["date"])))
+                frames[symbol] = pd.concat(parts).sort_index()
+            if symbols[-1] != "NDX" or len(symbols) != 105:
+                raise ValueError("NASDAQ full universe differs")
+            aligned, sessions = align_nasdaq({s: frames[s] for s in symbols[:-1]}, frames["NDX"])
+            matrix_name = next(n for n in names if n.endswith("full/full_non_padding.csv"))
+            matrix = pd.read_csv(io.BytesIO(stream.read(matrix_name)))
+            if matrix.shape != aligned.shape:
+                raise ValueError("NASDAQ original matrix and timestamp join differ in coverage")
+            reference = matrix.to_numpy(dtype=float)
+            position = symbols.index("LLTC")
+            reference[np.isnan(aligned["LLTC"].to_numpy()), position] = np.nan
+            np.testing.assert_allclose(reference, aligned.to_numpy(), rtol=1e-8, atol=1e-8, equal_nan=True)
+            save_series(prepared, "nasdaq100", aligned.to_numpy(), aligned.index, symbols,
+                {"sha256": sha(archive), "source": "author original full archive",
+                 "alignment": "exact raw timestamp join, verified against author matrix; no second shift",
+                 "lltc": "post-day157 pseudo-zero missing", "interpolation": "none"}, segments=sessions)
+
+
 def audit_targets(root, output):
     root, output = Path(root), Path(output)
     output.mkdir(parents=True, exist_ok=True)
     source_audit = json.loads((root/"source_audit.json").read_text())
+    prepare_extras(root)
     exclusion = provenance_exclusion(source_audit)
     records = {}
     raw = root/"raw/targets"

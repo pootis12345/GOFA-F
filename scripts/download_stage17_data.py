@@ -11,7 +11,7 @@ import urllib.request
 import time
 
 
-def ranged(url, output, size, git_blob=None):
+def ranged(url, output, size, git_blob=None, context=None):
     output = Path(output)
     parts = output.parent/(output.name+".ranges")
     parts.mkdir(parents=True, exist_ok=True)
@@ -24,7 +24,7 @@ def ranged(url, output, size, git_blob=None):
         address = url+("&" if "?" in url else "?")+f"stage17_part={index}&transport={time.time_ns()}"
         request = urllib.request.Request(address, headers={"User-Agent": "GOFA-F-Stage17",
                                                           "Range": f"bytes={start}-{end}"})
-        with urllib.request.urlopen(request, timeout=40) as response:
+        with urllib.request.urlopen(request, timeout=40, context=context) as response:
             if response.status != 206 or response.headers.get("Content-Range") != f"bytes {start}-{end}/{size}":
                 raise ValueError("Range response identity differs")
             content = response.read(end-start+2)

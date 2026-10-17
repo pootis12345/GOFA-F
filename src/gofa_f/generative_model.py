@@ -14,6 +14,7 @@ from transformers.modeling_outputs import CausalLMOutputWithPast
 
 from gofa_f.chattime import HistoryCodec
 from gofa_f.generative_graph import GraphModules
+from gofa_f.generative_kernel import install_linear_tiles, stable_attention
 
 
 @dataclass
@@ -80,6 +81,8 @@ class GenerativeGOFA(nn.Module):
         self.adapter = GraphModules(native.config.hidden_size).float()
         self.parameter_version = 0
         self._active = None
+        self._kernel_active = False
+        install_linear_tiles(self.native, lambda: self._kernel_active)
         self._handles = [native.model.layers[index].register_forward_pre_hook(
             self._hook(slot), with_kwargs=True) for slot, index in enumerate(self.graph_layers)]
 
@@ -125,9 +128,10 @@ class GenerativeGOFA(nn.Module):
         ids = self.positions(tokens.attention_mask, hidden.shape[1])
         causal = model._update_causal_mask(tokens.attention_mask, hidden, positions, None, False)
         rotary = model.rotary_emb(hidden, ids)
-        for layer in model.layers[:self.prefix_layers]:
-            hidden = layer(hidden, attention_mask=causal, position_ids=ids, cache_position=positions,
-                position_embeddings=rotary, use_cache=False, output_attentions=False)[0]
+        with stable_attention(self, positions, tokens.attention_mask, tokens.prompt_ends):
+            for layer in model.layers[:self.prefix_layers]:
+                hidden = layer(hidden, attention_mask=causal, position_ids=ids, cache_position=positions,
+                    position_embeddings=rotary, use_cache=False, output_attentions=False)[0]
         return hidden.detach(), tokens.attention_mask
 
     def forward(self, tokens, graphs=None, cache=None, use_cache=False, prefix=None, memories=None):
@@ -152,23 +156,23 @@ class GenerativeGOFA(nn.Module):
                             "mask": tokens.attention_mask, "positions": positions}
         try:
             ids = self.positions(tokens.attention_mask, tokens.input_ids.shape[1])
-            if prefix is None:
-                output = self.native(input_ids=tokens.input_ids, attention_mask=tokens.attention_mask,
-                    position_ids=ids, past_key_values=native_past, use_cache=use_cache, return_dict=True)
-            else:
-                if cache is not None or use_cache:
-                    raise ValueError("Frozen hidden prefix is a training/full-forward cache, not suffix KV")
-                hidden, saved_mask = prefix
-                if not torch.equal(saved_mask, tokens.attention_mask):
-                    raise ValueError("Prefix mask differs")
-                native = self.native.model
-                causal = native._update_causal_mask(tokens.attention_mask, hidden, positions, None, False)
-                rotary = native.rotary_emb(hidden, ids)
-                for layer in native.layers[self.prefix_layers:]:
-                    hidden = layer(hidden, attention_mask=causal, position_ids=ids, cache_position=positions,
-                        position_embeddings=rotary, use_cache=False, output_attentions=False)[0]
-                # Match the native inference logit dtype; CE explicitly promotes to FP32.
-                output = CausalLMOutputWithPast(logits=self.native.lm_head(native.norm(hidden)))
+            with stable_attention(self, positions, tokens.attention_mask, tokens.prompt_ends):
+                if prefix is None:
+                    output = self.native(input_ids=tokens.input_ids, attention_mask=tokens.attention_mask,
+                        position_ids=ids, past_key_values=native_past, use_cache=use_cache, return_dict=True)
+                else:
+                    if cache is not None or use_cache:
+                        raise ValueError("Frozen hidden prefix is a training/full-forward cache, not suffix KV")
+                    hidden, saved_mask = prefix
+                    if not torch.equal(saved_mask, tokens.attention_mask):
+                        raise ValueError("Prefix mask differs")
+                    native = self.native.model
+                    causal = native._update_causal_mask(tokens.attention_mask, hidden, positions, None, False)
+                    rotary = native.rotary_emb(hidden, ids)
+                    for layer in native.layers[self.prefix_layers:]:
+                        hidden = layer(hidden, attention_mask=causal, position_ids=ids, cache_position=positions,
+                            position_embeddings=rotary, use_cache=False, output_attentions=False)[0]
+                    output = CausalLMOutputWithPast(logits=self.native.lm_head(native.norm(hidden)))
         finally:
             self._active = None
         if use_cache:
@@ -198,4 +202,4 @@ def completion_loss(logits, labels):
 
 def frozen_cache_binding(model, weight_hash):
     return hashlib.sha256(str((weight_hash, model.prefix_layers, "before", model.native.dtype,
-        "position_ids=mask.cumsum-1", "right_padding", "native_sdpa")).encode()).hexdigest()
+        "position_ids=mask.cumsum-1", "right_padding", "bf16_rows128_sdpa_fixed_prompt_capacity_v1")).encode()).hexdigest()
