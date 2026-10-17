@@ -1,0 +1,2639 @@
+{
+  "verified_at": "2026-10-17T11:16:52.211140+08:00",
+  "stage": "stage16-chattime-metr-v11",
+  "fixed_source": "9bb224f70f3fc06ef5062a94b9a520d4f6ba5bb7",
+  "snapshot": "/home/dcg/dcg_data/GOFA-F-runs/stage16-chattime-metr-v11",
+  "output": "/home/dcg/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v11",
+  "terminal_state": "wall_deadline",
+  "reason": "Strict idle admission never satisfied during v11; fixed hard deadline reached. No v11 GPU task or new training update.",
+  "process_audit": {
+    "expected_processes": [
+      {
+        "pid": 316422,
+        "expected_start_ticks": 608709160,
+        "exists": false
+      },
+      {
+        "pid": 318760,
+        "expected_start_ticks": 608724854,
+        "exists": false
+      }
+    ],
+    "snapshot_matching_processes": []
+  },
+  "checkpoint": {
+    "path": "/home/dcg/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v11/gofa_chattime/last.pt",
+    "bytes": 18322510,
+    "sha256": "4a262c97c0a813032f15e885ca74d2b98cffd27654d74582c30ba23cff3cc1d1",
+    "unchanged_since_migration": true
+  },
+  "new_v11_updates": 0,
+  "new_v11_activity_seconds": 0.0,
+  "gpu_observation": {
+    "returncode": 0,
+    "query": "memory.used,memory.free,utilization.gpu,compute_mode",
+    "stdout": "15687, 65403, 0, Default",
+    "stderr": ""
+  },
+  "files": {
+    "bootstrap.json": {
+      "sha256": "84b4dfe30a7bdef845d6c695fac28d7864e204bd76f8dddce0b11f6b04da6364",
+      "value": {
+        "state": "wall_deadline",
+        "pid": 316422,
+        "start_ticks": 608709160,
+        "updated_at": 1792205952.607686,
+        "snapshot": "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v11",
+        "launcher_returncode": 0,
+        "window": {
+          "started_at": 1792137782.8795292,
+          "training_deadline": 1792198800.0,
+          "wall_deadline": 1792206000.0,
+          "window_seconds": 68217.12047076225,
+          "adopted_from": {
+            "kind": "training_continuation",
+            "output": "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v10",
+            "source_binding": "7600437ecd8c4840c147a795f469443129c04c91f4502a0e087a7f58c3a12665",
+            "window_sha256": "35103c7231d5cbdf972b4761ce0b7e8660e91ac2746b52e6c603437c3a2fe898",
+            "manifest_sha256": "1a2933609bfeb8e00d2259f63e23dec46043d2897e0c530657b6a2b5fafe68fb",
+            "checkpoint_sha256": "791ca1e2f06fd3a727687e010324e7d96bb21724d461fe3f53dccfdad2e7161d",
+            "started_at": 1792137782.8795292,
+            "original_wall_deadline": 1792206000.0,
+            "gpu_activity_seconds": 9956.406928363256,
+            "updates": 167,
+            "offset": 10737,
+            "pending_windows": 49,
+            "pending_count": 117586,
+            "deadline_amendment": {
+              "authorization": "explicit_user_request",
+              "source_window_sha256": "ecfe1540e17a6316be683376a24d6637a10fd4e5de8b9861ed4d61bbfd15e21b",
+              "previous_wall_deadline": 1792164600.0,
+              "new_wall_deadline": 1792206000.0
+            },
+            "repaired_failure": "preflight only; saved checkpoint unchanged; no predictions"
+          },
+          "deadline_amendment": {
+            "authorization": "explicit_user_request",
+            "source_window_sha256": "ecfe1540e17a6316be683376a24d6637a10fd4e5de8b9861ed4d61bbfd15e21b",
+            "previous_wall_deadline": 1792164600.0,
+            "new_wall_deadline": 1792206000.0
+          },
+          "idle_interval_seconds": 10,
+          "fixed_prompt_kv": true,
+          "launch_fingerprint": "b77f9ae20bc3f1ef95466d1220818c40ad41a3db044d74f8d25097eae1492a91"
+        }
+      }
+    },
+    "launcher.json": {
+      "sha256": "d0631e96a5ebbd4445ddf51b666783efa37e16ef0f55873b76f35529719e2fa0",
+      "value": {
+        "state": "wall_deadline",
+        "pid": 318760,
+        "spent_seconds": 9956.406928363256,
+        "updated_at": 1792205940.7762682
+      }
+    },
+    "status.json": null,
+    "window.json": {
+      "sha256": "fe1e8480c6e6b86fb5f72e8c35bdeb89b3d1cf5cc52500c7f80b52b3462ec22f",
+      "value": {
+        "started_at": 1792137782.8795292,
+        "training_deadline": 1792198800.0,
+        "wall_deadline": 1792206000.0,
+        "window_seconds": 68217.12047076225,
+        "adopted_from": {
+          "kind": "training_continuation",
+          "output": "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v10",
+          "source_binding": "7600437ecd8c4840c147a795f469443129c04c91f4502a0e087a7f58c3a12665",
+          "window_sha256": "35103c7231d5cbdf972b4761ce0b7e8660e91ac2746b52e6c603437c3a2fe898",
+          "manifest_sha256": "1a2933609bfeb8e00d2259f63e23dec46043d2897e0c530657b6a2b5fafe68fb",
+          "checkpoint_sha256": "791ca1e2f06fd3a727687e010324e7d96bb21724d461fe3f53dccfdad2e7161d",
+          "started_at": 1792137782.8795292,
+          "original_wall_deadline": 1792206000.0,
+          "gpu_activity_seconds": 9956.406928363256,
+          "updates": 167,
+          "offset": 10737,
+          "pending_windows": 49,
+          "pending_count": 117586,
+          "deadline_amendment": {
+            "authorization": "explicit_user_request",
+            "source_window_sha256": "ecfe1540e17a6316be683376a24d6637a10fd4e5de8b9861ed4d61bbfd15e21b",
+            "previous_wall_deadline": 1792164600.0,
+            "new_wall_deadline": 1792206000.0
+          },
+          "repaired_failure": "preflight only; saved checkpoint unchanged; no predictions"
+        },
+        "deadline_amendment": {
+          "authorization": "explicit_user_request",
+          "source_window_sha256": "ecfe1540e17a6316be683376a24d6637a10fd4e5de8b9861ed4d61bbfd15e21b",
+          "previous_wall_deadline": 1792164600.0,
+          "new_wall_deadline": 1792206000.0
+        },
+        "idle_interval_seconds": 10,
+        "fixed_prompt_kv": true,
+        "launch_fingerprint": "b77f9ae20bc3f1ef95466d1220818c40ad41a3db044d74f8d25097eae1492a91"
+      }
+    },
+    "manifest.json": {
+      "sha256": "e7cbf7088027db3797bee694ab0d95efd51d8a8337d45cb25dc2d5822fe115c2",
+      "value": {
+        "config": {
+          "protocol": "stage16-chattime-metr-v1",
+          "seed": 42,
+          "datasets": [
+            "metr_la"
+          ],
+          "models": [
+            "native_chattime",
+            "gofa_chattime"
+          ],
+          "weights": {
+            "repo": "ChengsenWang/ChatTime-1-7B-Chat",
+            "revision": "20baa88d6ab838b34abbd1d2b1f4cea57c8ff870",
+            "directory": "data/weights/chattime-7b-20baa88",
+            "source_revision": "8c2d4c209302d2b2bd6cc3c154586842341e3247",
+            "source_directory": "external/ChatTime"
+          },
+          "architecture": {
+            "graph_layers": [
+              29,
+              30
+            ],
+            "rank": 64,
+            "attention_rank": 16,
+            "feature_dim": 19,
+            "prior_floor": 0.5,
+            "head": "linear_4096_to_12_zero"
+          },
+          "data": {
+            "benchmark": "configs/benchmark.yaml",
+            "calendar": "data/features/context-v1/metr_la.npz",
+            "correlation": "outputs/stage8-metr-temporal-v1/correlation_graph.npz",
+            "correlation_sha256": "d25fb015fb887d5fae60411af29cd20315fec31f8d635b4a965f07708312e8d0"
+          },
+          "training": {
+            "context": 12,
+            "horizon": 12,
+            "effective_batch_size": 64,
+            "microbatch": 1,
+            "max_epochs": 100,
+            "patience": 15,
+            "graph_lr": 0.001,
+            "head_lr": 0.0001,
+            "weight_decay": 0.0001,
+            "gradient_clip": 1.0,
+            "loss": "raw_mae",
+            "checkpoint_seconds": 30
+          },
+          "native_decoding": {
+            "do_sample": false,
+            "max_new_tokens": 64,
+            "node_microbatch": 256
+          },
+          "cache": {
+            "disk_limit_gib": 128,
+            "ram_limit_gib": 64,
+            "prefix_layers": 30
+          },
+          "resources": {
+            "python": ".venv-chat/bin/python",
+            "memory_cap_gib": 40,
+            "torch_cap_gib": 38,
+            "leave_free_gib": 16,
+            "wall_window_hours": 11,
+            "evaluation_reserve_hours": 2,
+            "yield_on_foreign": false,
+            "admission_per_gpu_task": true,
+            "allow_tf32": true,
+            "omp_threads": 2,
+            "mkl_threads": 2
+          }
+        },
+        "window": {
+          "started_at": 1792137782.8795292,
+          "training_deadline": 1792198800.0,
+          "wall_deadline": 1792206000.0,
+          "window_seconds": 68217.12047076225,
+          "adopted_from": {
+            "kind": "training_continuation",
+            "output": "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v10",
+            "source_binding": "7600437ecd8c4840c147a795f469443129c04c91f4502a0e087a7f58c3a12665",
+            "window_sha256": "35103c7231d5cbdf972b4761ce0b7e8660e91ac2746b52e6c603437c3a2fe898",
+            "manifest_sha256": "1a2933609bfeb8e00d2259f63e23dec46043d2897e0c530657b6a2b5fafe68fb",
+            "checkpoint_sha256": "791ca1e2f06fd3a727687e010324e7d96bb21724d461fe3f53dccfdad2e7161d",
+            "started_at": 1792137782.8795292,
+            "original_wall_deadline": 1792206000.0,
+            "gpu_activity_seconds": 9956.406928363256,
+            "updates": 167,
+            "offset": 10737,
+            "pending_windows": 49,
+            "pending_count": 117586,
+            "deadline_amendment": {
+              "authorization": "explicit_user_request",
+              "source_window_sha256": "ecfe1540e17a6316be683376a24d6637a10fd4e5de8b9861ed4d61bbfd15e21b",
+              "previous_wall_deadline": 1792164600.0,
+              "new_wall_deadline": 1792206000.0
+            },
+            "repaired_failure": "preflight only; saved checkpoint unchanged; no predictions"
+          },
+          "deadline_amendment": {
+            "authorization": "explicit_user_request",
+            "source_window_sha256": "ecfe1540e17a6316be683376a24d6637a10fd4e5de8b9861ed4d61bbfd15e21b",
+            "previous_wall_deadline": 1792164600.0,
+            "new_wall_deadline": 1792206000.0
+          },
+          "idle_interval_seconds": 10,
+          "fixed_prompt_kv": true,
+          "launch_fingerprint": "b77f9ae20bc3f1ef95466d1220818c40ad41a3db044d74f8d25097eae1492a91"
+        },
+        "inputs": {
+          "data/processed/metr_la.npz": "c5437fe6e78659915b8d30c6cc34acc9076353712a203b38d1d838c18e4c2119",
+          "data/graphs/protocol-v2/metr_la.npz": "a73a1a34b897bcc53e3ea4afc7f01bfd82ad9f6d3ab7fce0c97cd2bacd5b1d92",
+          "data/graphs/protocol-v2/metr_la.metadata.json": "dd0e264e04934ba94210c6fdfac76fef219c02b8d4f5651cab02fb36190b2d6b",
+          "data/features/context-v1/metr_la.npz": "10f706abf1472e1911d894bce668c411fab4cc590f04bc2e4ca5df312fbcf24e",
+          "data/features/context-v1/metr_la.metadata.json": "180349a5ae6fbcc6be43d7e95c06c08d68274edff7594b8ede492edd13a36fe2",
+          "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v11/correlation_graph.npz": "d25fb015fb887d5fae60411af29cd20315fec31f8d635b4a965f07708312e8d0",
+          "data/weights/chattime-7b-20baa88/snapshot.json": "593df2db1fbb32f1f95d33b8b977eb730cbbc57d82690639319482f92b213cd8",
+          "data/weights/chattime-7b-20baa88/added_tokens.json": "658a25af391efe4383bfda2570fcb2fcc857c0b256d8f53bbc1a9ab42fe33dd0",
+          "data/weights/chattime-7b-20baa88/config.json": "214ee4e48c9da2934097fa6d321b1a89a9795e2ca9614bc2f1a4635d5c418fc3",
+          "data/weights/chattime-7b-20baa88/generation_config.json": "b56774072489c745b4d9dc871e08c2d7fe4727ac3dc1f1b1980c8e6a1497773d",
+          "data/weights/chattime-7b-20baa88/model-00001-of-00003.safetensors": "edf3f715a2cb4e9575fcd6ec8aa5ffea03d609cfb611e0aafcde9333328f44c0",
+          "data/weights/chattime-7b-20baa88/model-00002-of-00003.safetensors": "7143de1891826121265ead8ce049fba48d74cd0240338a67f85577986c0c75cf",
+          "data/weights/chattime-7b-20baa88/model-00003-of-00003.safetensors": "a0e745422f2e7bdbd292fe8ba9484577bcb2059e9ed31c8da5fe5eabc742e623",
+          "data/weights/chattime-7b-20baa88/model.safetensors.index.json": "e58b1cc756d4dea01951f5ad0a66d41454d02ebaa02a009ee6f944b019b1a7ac",
+          "data/weights/chattime-7b-20baa88/special_tokens_map.json": "4452b845ab9ca2afa863f59f1411a959e8a32bb4334e264b0e71d5d17dd4dcb9",
+          "data/weights/chattime-7b-20baa88/tokenizer.model": "9e556afd44213b6bd1be2b850ebbbd98f5481437a8021afaf58ee7fb1818d347",
+          "data/weights/chattime-7b-20baa88/tokenizer_config.json": "04817ec717f11d786abf7bcc4cc7084a6c10e83cacbdbd917e0cf8eb80166140",
+          "external/ChatTime/utils/tools.py": "dfa6265ce0f33146512f4a3849ad490657431d9cb21d8061c4868a03b3fc8dff",
+          "external/ChatTime/utils/prompt.py": "d82531ca2eee5ab153aa00e435384bf080c3d677a1d2f8ec8d0522c6f64e0296",
+          "external/ChatTime/model/model.py": "316c9935b7e753b400fb883dc381909dc8afac89008a084177e0f9773626fb33",
+          "external/ChatTime/README.md": "08d5ebf09ae23ec8883d52c4f440b62dbb2aad223a5a97585ab12d32ef2b7149",
+          "external/ChatTime/requirements.txt": "08d2b5b145d3b6fa7c114ea8a464d2bd7be86e8741b27871a066013685c814d1"
+        },
+        "code_files": {
+          "src/gofa_f/__init__.py": "0235e8b50b55a723a79451f6b13ed496f65bf4a40b8000974ca6246b01dfcaed",
+          "src/gofa_f/adaptation_stage.py": "13e6314c1c1a35520ec02c8d2106c10efe5426378cefac1595508d6838d11de9",
+          "src/gofa_f/baseline.py": "6e93ec1ac84eb25706467feabb6d8f80ceb6d8c576be8011fc220827ec821f59",
+          "src/gofa_f/benchmark.py": "c7df6da6f631df2fc71574f460dd5cd3bc56451fc65aa094fbd610ba1549dcd2",
+          "src/gofa_f/chattime.py": "73ef5dfaeda8eed019e885fb3ba24912806bf812ab6dc650706ec4b0f734f5e9",
+          "src/gofa_f/chattime_checks.py": "b563e71dd7d44a10cec0a59eb1e99a9609e193dd3c149b728b6aadfe5cb6f5e4",
+          "src/gofa_f/chattime_continuation.py": "e4c3490afd5bea2b88a7dbb174888298d56e276a79ae64967f1cfcb18523be04",
+          "src/gofa_f/chattime_prompt_cache.py": "6dffe2ebdd03ecf216534db65b42acfea67491a5ed775840a54f84a991ec6608",
+          "src/gofa_f/chattime_stage.py": "e4010fd1f7c4d66c16df480bad8338024a20c4869c78d6f5f190f1b5702836cb",
+          "src/gofa_f/chattime_task.py": "fc84388fbb1d87d63129e145e036d84204d90af8b878e386dfee8c12fa9b490a",
+          "src/gofa_f/contrast_context.py": "6fa77a1e1218282d8205ac7833c53dbbb0e76659f2da7d2cffb34df37b9d8626",
+          "src/gofa_f/contrast_stage.py": "1654108c73694acba6707f2dd858e20c367047d01415ec4d505d3bc10871b360",
+          "src/gofa_f/contrast_task.py": "6b4a362a479e30aead40428a0f332baf88fbc62f45e2b7e70cd5829c52282254",
+          "src/gofa_f/data.py": "b5b9a164cab4e396bd3183711829b4b4847927deb1ac51f43a19df6ce7de66ba",
+          "src/gofa_f/encoded_context.py": "07e5b4175ff3463bbf547790be3a4b2992be873ea6e89124815f0d4c02e4ef38",
+          "src/gofa_f/encoded_stage.py": "cd65f59d9485d19f64f242117826c86a3608cf5cd68b2b2f71d4b565f469fd96",
+          "src/gofa_f/encoded_task.py": "caff1db8aaefd3cb8f0c85cb52af99d611aa9587090053c517e5adf32a9dd902",
+          "src/gofa_f/graph_context.py": "64a6d9a89e62b8bf2f6ca0cb5e6881bcfcd8694fec054915d2c8ed57c0a8a042",
+          "src/gofa_f/graphs.py": "4778f7d72e13827498f02b2829a53fe32f04ff3b46a5d320cd138754861d2b58",
+          "src/gofa_f/head_capacity.py": "27b504a5f5f05e75022db8cc3cecfd71252fa19dd9c746d86bb22dc6641b0276",
+          "src/gofa_f/head_stage.py": "7721250739e78d35d59d82c33924f949ffd4985aa1f9f06b8134169dbaa73620",
+          "src/gofa_f/head_task.py": "d6133b6147e9780b579599372852cfbcd82190a3c7912a16737d3f6c21fd9214",
+          "src/gofa_f/idle_launcher.py": "9bb287810c549200643ec01066ccaff744fe983c8cda0947767547ddb2c473ab",
+          "src/gofa_f/lagged_context.py": "c7276fd699fdbff954a6270c40205fadfdce14e4f578055c5c93da0bba8b2083",
+          "src/gofa_f/lagged_stage.py": "b91acbc24abd85503c11bd2512ab1091c222bae8c9c007bda06caa00688f3ff3",
+          "src/gofa_f/lagged_task.py": "fae1a880acc62a7d58fdeb5384508ebf83105541fa2d1c13ef3031ce198769d8",
+          "src/gofa_f/long_horizon.py": "de31af08a7011a518868b996712fe172346de5e94efdc63f72cfca033122387d",
+          "src/gofa_f/long_stage.py": "9958d1878aade39bb76361dc580d8e0d0e482e03462745297c1be5f671f6d34a",
+          "src/gofa_f/long_task.py": "7a378b65c340ef7abcc8bbc61084663c0230d06f58d297cc7f5f95a8769abfcc",
+          "src/gofa_f/metrics.py": "8dfa900844372ca5ea138bb0e178fabddc0e26516f74677d17f8659e7bd2c348",
+          "src/gofa_f/models.py": "6bf7ffc4d9e80c05ed445f607245c7306f588b5a05202347caa8e95fee0e875c",
+          "src/gofa_f/native.py": "879322c8d383e5863f165f5ab420f4c27f659239cf4a4b31f7766a9bb3fea98e",
+          "src/gofa_f/native_progress.py": "35e49046d92b8b9e164ad94c0a059edca7f26b15c65aac8fbbf81ae73e401a95",
+          "src/gofa_f/native_stage.py": "4ac3eaaa96c5603203ad0a93d6e63712c8e5d5f3a687e1108187709a87ab770d",
+          "src/gofa_f/ordered_context.py": "6e05da0cde1ccb351f44a032978eb30ef966644ceb0da616d4ef9e589e75a82f",
+          "src/gofa_f/ordered_stage.py": "92530ead592e70a6a2273a770108c924a68bf0ed83b82200633865bd911773ae",
+          "src/gofa_f/ordered_task.py": "fa1c7b9cee943fffb5e98f832452f4786f543cb5e319e2cc4a1703e76c212350",
+          "src/gofa_f/prefix_cache.py": "9fb6b7177ed604dcd4bec6f06300dec76b140ef845701e95efcdbd7fa1fcbefb",
+          "src/gofa_f/prepare.py": "2325c745c118eeb8f9aeda7da1ef156e8545358bf82fbc257993548dbd52a8d5",
+          "src/gofa_f/progress.py": "fa667a80647bd659c9c61c8c40f1488c6190523c24e8dcef2dfb5a96ecb15992",
+          "src/gofa_f/pure_graph_stage.py": "4a42e0532282a59d5634cf4a608aa3f9af521e4d4186407c43bd2854a79bd340",
+          "src/gofa_f/pure_graph_task.py": "0128124ac49d917416e5b95ce8569f7cbf7ebbf0f049ffcecc6e9963c8e6eeee",
+          "src/gofa_f/reg_capacity.py": "fad94ab7e6c76318bf9a5bbe1ebd9bed93454d3b4f0344b0fd2a7cef5ef674e6",
+          "src/gofa_f/reg_capacity_stage.py": "ec101b7130aaf8c42e9fd7d8ed4675054b0f16a2541c53d603fad21ba54a39bb",
+          "src/gofa_f/reg_capacity_task.py": "6c357269dd056c0575c7c39575064227b02ec18f0b80f69c891024d291e51e44",
+          "src/gofa_f/report.py": "529ad3951023532f2423c0d93c846887fa14c18fdbb8ba48f21958b8d6ee9214",
+          "src/gofa_f/routed_graph.py": "0d2620281befae655fe9c21516ea3bdc72c54939c66fb37051c511dd31ec9825",
+          "src/gofa_f/routed_stage.py": "b0ead0b6e48a32aec2cb671fabcfb5eec6169a7a1e6f0c332116fc078959d535",
+          "src/gofa_f/routed_task.py": "15b356a32a2608a206aa73d64ca0947474443b0b26c2dbb49458d8a474d29fde",
+          "src/gofa_f/stage_budget.py": "428334d4a29bf2c4d6c13f6baf7e5385d33114d2e2061cb5a3ea9fce5e999e32",
+          "src/gofa_f/temporal_context.py": "35c01f6bbb2904cc174724bdee76f95796b0e20137733a43485a9ae4dc8aa7f3",
+          "src/gofa_f/temporal_stage.py": "d2f1484da799f202d4e2fcfe4a8a15977853f5defe801dab8c951077d9611886",
+          "src/gofa_f/temporal_task.py": "401b78277185ea13923f7db83b594e7f93125966162c7d8f71c0906bcb755941",
+          "src/gofa_f/token_exchange.py": "dbc993c67be2f32e1be3d84f165599852c3c652655781fd3e1c4f068c1591b99",
+          "src/gofa_f/token_stage.py": "9e999f0cfd9cc2a87546ae6a34f0db6da0e9cc3ccc549b6c8b5acca4fcadf20e",
+          "src/gofa_f/token_task.py": "9417f289e3775c6333d8af5f6769a250106a867d6f3a9b7e2a8eb1ee1b8f72e3",
+          "src/gofa_f/train.py": "5eaac58ea47f9c5e75919bfec702d096fcd7276aa3d197cc93ad4a455a6f7b3d",
+          "src/gofa_f/transfer_stage.py": "d5aa9c6e8bad28e0511b3215d8a37541787c6dc1622a2d42d00a44a4ecc001fc",
+          "src/gofa_f/transfer_task.py": "47b6b80f61eb826a63563cea27c8806eddcd569b1cd8884d49d27e67bed85d98",
+          "src/gofa_f/tune.py": "096d6fa903a28fc761c62b015545fa9fcd47a38efa9aed84201357181bd0194a",
+          "src/gofa_f/ufg.py": "c309ec0542ab73447d21b3fafbcad3bc5b72f0ccee6df43abf2521d7adb23147",
+          "configs/stage16_chattime.yaml": "e1cda5a6dbe1348a4e094d005dd39bf20a6fc57b6a287b4aeda75eb18aa81d73",
+          "scripts/check_chattime_cpu.py": "aa21d1e05bffaf075c582f4cb9c594a19f6699700d1133beff6398ceb499776f",
+          "tests/test_chattime.py": "43f7ea460a269760fd83c71e011ff1bed7798a1e6bcee2231e4a3567337d0e66",
+          "tests/test_chattime_bootstrap.py": "83b910965760b1f07e73ae58657835b2e9effc04b89a236555c77d851a83e7de",
+          "tests/test_chattime_continuation.py": "6aa97ac362aff58d3518e082fcc8b37a30a192218dd57a7ba96ac9098f6460e4",
+          "tests/test_chattime_prompt_cache.py": "0c7743116d0feebbaa68b2f202772e8de22db6a110373783cd10d8cf25c5f468",
+          "tests/test_chattime_stage.py": "333c9325c6ddc723c19f433a2385d26dd6779e803a4a71b30a82fea7af32ba7c"
+        },
+        "cpu_preflight_sha256": "fd987c35a2d8b7cc76bd744bcca7a21096c6018e77a154115c2f7cf29b492a6e",
+        "runtime": {
+          "python": "3.11.17 (main, Oct  1 2026, 20:17:42) [GCC 14.3.0]",
+          "executable": "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v11/.venv-chat/bin/python",
+          "packages": {
+            "torch": "2.6.0+cu124",
+            "transformers": "4.46.3",
+            "numpy": "1.26.4",
+            "scikit-learn": "1.5.2",
+            "protobuf": "5.28.3"
+          },
+          "sys_path": [
+            "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v11/scripts",
+            "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages",
+            "/home/dcg/dcg_data/GOFA-F/.venv-native/lib/python3.11/site-packages",
+            "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages",
+            "/home/dcg/dcg_data/GOFA-F/.venv-native/lib/python3.11/site-packages",
+            "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v11/src",
+            "/home/dcg/dcg_data/miniconda3/envs/gofaf/lib/python311.zip",
+            "/home/dcg/dcg_data/miniconda3/envs/gofaf/lib/python3.11",
+            "/home/dcg/dcg_data/miniconda3/envs/gofaf/lib/python3.11/lib-dynload",
+            "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v11/.venv-chat/lib/python3.11/site-packages",
+            "/home/dcg/dcg_data/miniconda3/envs/gofaf/lib/python3.11/site-packages",
+            "/mnt/sevenT/dcg_data/GOFA-F/src",
+            "/tmp/tmpfdeuan37",
+            "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages/setuptools/_vendor"
+          ],
+          "isolated_environment_paths": {
+            "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v11/.venv-chat/pyvenv.cfg": "home = /home/dcg/dcg_data/miniconda3/envs/gofaf/bin\ninclude-system-site-packages = true\nversion = 3.11.17\nexecutable = /mnt/sevenT/dcg_data/miniconda3/envs/gofaf/bin/python3.11\ncommand = /home/dcg/dcg_data/GOFA-F/.venv-native/bin/python -m venv --system-site-packages /home/dcg/dcg_data/GOFA-F/.venv-chat\n",
+            "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v11/.venv-chat/lib/python3.11/site-packages/native_read_only.pth": "import sys; sys.path.insert(0, '/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages'); sys.path.insert(1, '/home/dcg/dcg_data/GOFA-F/.venv-native/lib/python3.11/site-packages')\n"
+          },
+          "modules": {
+            "torch": {
+              "path": "/home/dcg/dcg_data/miniconda3/envs/gofaf/lib/python3.11/site-packages/torch/__init__.py",
+              "sha256": "5a190666c3853aa236c4d48ed64e2d4bbcd23bd32c21e64c0867646a6852e43f"
+            },
+            "transformers": {
+              "path": "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages/transformers/__init__.py",
+              "sha256": "71a729a440bba6c0c9d1f9209c6edd61edb21380c89154461be00063d86bc829"
+            },
+            "numpy": {
+              "path": "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages/numpy/__init__.py",
+              "sha256": "22cd1535fa14d74ef6f457cca149ffdc80875f460be313b8f895273f78bc402e"
+            },
+            "sklearn": {
+              "path": "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v11/.venv-chat/lib/python3.11/site-packages/sklearn/__init__.py",
+              "sha256": "cfc20835d0434f1ced9e6c5fd32e836c150d2202bcaa7983be60539a627bbc5a"
+            },
+            "protobuf": {
+              "path": "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v11/.venv-chat/lib/python3.11/site-packages/google/protobuf/__init__.py",
+              "sha256": "0d2fe5e532a35a7a7f3b447125d00bfbfa555112ce8ca20c3fd909bd5c85ea6b"
+            }
+          },
+          "critical_files": {
+            "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages/transformers/models/llama/modeling_llama.py": "733e7625fec5abcfa416ab9b866cb91875d41007f2e31c3e90d2ae0111ae98f7",
+            "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages/transformers/modeling_attn_mask_utils.py": "6b48608887ba16712929165d8c05bde9c136b1d5cac19acfde68a5435a570cce",
+            "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages/transformers/generation/utils.py": "24e719be0942a06f1956cadd469a100a455012ea6f808cca894a3e94edb06bf3",
+            "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages/transformers/models/llama/tokenization_llama.py": "e77968e24ccfc4e92af9e33221b790477b4d264cb889baebbf3eb4dc7c9356d3",
+            "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v11/.venv-chat/lib/python3.11/site-packages/google/protobuf/__init__.py": "0d2fe5e532a35a7a7f3b447125d00bfbfa555112ce8ca20c3fd909bd5c85ea6b"
+          }
+        },
+        "git_revision": "9bb224f70f3fc06ef5062a94b9a520d4f6ba5bb7",
+        "fixed_prompt_kv": true,
+        "idle_interval_seconds": 10
+      }
+    },
+    "launcher_manifest.json": {
+      "sha256": "4cf3da5571d21a8ab6f333d0d4148ad83379fe705f7f6b221f82771472bc55e7",
+      "value": {
+        "command": [
+          "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v11/.venv-chat/bin/python",
+          "-u",
+          "-m",
+          "gofa_f.chattime_stage",
+          "--worker",
+          "--config",
+          "configs/stage16_chattime.yaml",
+          "--output",
+          "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v11",
+          "--resume"
+        ],
+        "cwd": "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v11",
+        "total_seconds": null,
+        "wall_deadline": 1792206000.0,
+        "memory_cap_gib": 40,
+        "leave_free_gib": 16,
+        "git_revision": "9bb224f70f3fc06ef5062a94b9a520d4f6ba5bb7",
+        "idle_samples": 3,
+        "idle_interval_seconds": 10,
+        "watchdog_interval_seconds": 10,
+        "idle_max_used_mib": 256,
+        "yield_on_foreign": false,
+        "worker_wait_state": "waiting_for_idle"
+      }
+    },
+    "launch_binding.json": {
+      "sha256": "e7cbf7088027db3797bee694ab0d95efd51d8a8337d45cb25dc2d5822fe115c2",
+      "value": {
+        "config": {
+          "protocol": "stage16-chattime-metr-v1",
+          "seed": 42,
+          "datasets": [
+            "metr_la"
+          ],
+          "models": [
+            "native_chattime",
+            "gofa_chattime"
+          ],
+          "weights": {
+            "repo": "ChengsenWang/ChatTime-1-7B-Chat",
+            "revision": "20baa88d6ab838b34abbd1d2b1f4cea57c8ff870",
+            "directory": "data/weights/chattime-7b-20baa88",
+            "source_revision": "8c2d4c209302d2b2bd6cc3c154586842341e3247",
+            "source_directory": "external/ChatTime"
+          },
+          "architecture": {
+            "graph_layers": [
+              29,
+              30
+            ],
+            "rank": 64,
+            "attention_rank": 16,
+            "feature_dim": 19,
+            "prior_floor": 0.5,
+            "head": "linear_4096_to_12_zero"
+          },
+          "data": {
+            "benchmark": "configs/benchmark.yaml",
+            "calendar": "data/features/context-v1/metr_la.npz",
+            "correlation": "outputs/stage8-metr-temporal-v1/correlation_graph.npz",
+            "correlation_sha256": "d25fb015fb887d5fae60411af29cd20315fec31f8d635b4a965f07708312e8d0"
+          },
+          "training": {
+            "context": 12,
+            "horizon": 12,
+            "effective_batch_size": 64,
+            "microbatch": 1,
+            "max_epochs": 100,
+            "patience": 15,
+            "graph_lr": 0.001,
+            "head_lr": 0.0001,
+            "weight_decay": 0.0001,
+            "gradient_clip": 1.0,
+            "loss": "raw_mae",
+            "checkpoint_seconds": 30
+          },
+          "native_decoding": {
+            "do_sample": false,
+            "max_new_tokens": 64,
+            "node_microbatch": 256
+          },
+          "cache": {
+            "disk_limit_gib": 128,
+            "ram_limit_gib": 64,
+            "prefix_layers": 30
+          },
+          "resources": {
+            "python": ".venv-chat/bin/python",
+            "memory_cap_gib": 40,
+            "torch_cap_gib": 38,
+            "leave_free_gib": 16,
+            "wall_window_hours": 11,
+            "evaluation_reserve_hours": 2,
+            "yield_on_foreign": false,
+            "admission_per_gpu_task": true,
+            "allow_tf32": true,
+            "omp_threads": 2,
+            "mkl_threads": 2
+          }
+        },
+        "window": {
+          "started_at": 1792137782.8795292,
+          "training_deadline": 1792198800.0,
+          "wall_deadline": 1792206000.0,
+          "window_seconds": 68217.12047076225,
+          "adopted_from": {
+            "kind": "training_continuation",
+            "output": "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v10",
+            "source_binding": "7600437ecd8c4840c147a795f469443129c04c91f4502a0e087a7f58c3a12665",
+            "window_sha256": "35103c7231d5cbdf972b4761ce0b7e8660e91ac2746b52e6c603437c3a2fe898",
+            "manifest_sha256": "1a2933609bfeb8e00d2259f63e23dec46043d2897e0c530657b6a2b5fafe68fb",
+            "checkpoint_sha256": "791ca1e2f06fd3a727687e010324e7d96bb21724d461fe3f53dccfdad2e7161d",
+            "started_at": 1792137782.8795292,
+            "original_wall_deadline": 1792206000.0,
+            "gpu_activity_seconds": 9956.406928363256,
+            "updates": 167,
+            "offset": 10737,
+            "pending_windows": 49,
+            "pending_count": 117586,
+            "deadline_amendment": {
+              "authorization": "explicit_user_request",
+              "source_window_sha256": "ecfe1540e17a6316be683376a24d6637a10fd4e5de8b9861ed4d61bbfd15e21b",
+              "previous_wall_deadline": 1792164600.0,
+              "new_wall_deadline": 1792206000.0
+            },
+            "repaired_failure": "preflight only; saved checkpoint unchanged; no predictions"
+          },
+          "deadline_amendment": {
+            "authorization": "explicit_user_request",
+            "source_window_sha256": "ecfe1540e17a6316be683376a24d6637a10fd4e5de8b9861ed4d61bbfd15e21b",
+            "previous_wall_deadline": 1792164600.0,
+            "new_wall_deadline": 1792206000.0
+          },
+          "idle_interval_seconds": 10,
+          "fixed_prompt_kv": true,
+          "launch_fingerprint": "b77f9ae20bc3f1ef95466d1220818c40ad41a3db044d74f8d25097eae1492a91"
+        },
+        "inputs": {
+          "data/processed/metr_la.npz": "c5437fe6e78659915b8d30c6cc34acc9076353712a203b38d1d838c18e4c2119",
+          "data/graphs/protocol-v2/metr_la.npz": "a73a1a34b897bcc53e3ea4afc7f01bfd82ad9f6d3ab7fce0c97cd2bacd5b1d92",
+          "data/graphs/protocol-v2/metr_la.metadata.json": "dd0e264e04934ba94210c6fdfac76fef219c02b8d4f5651cab02fb36190b2d6b",
+          "data/features/context-v1/metr_la.npz": "10f706abf1472e1911d894bce668c411fab4cc590f04bc2e4ca5df312fbcf24e",
+          "data/features/context-v1/metr_la.metadata.json": "180349a5ae6fbcc6be43d7e95c06c08d68274edff7594b8ede492edd13a36fe2",
+          "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v11/correlation_graph.npz": "d25fb015fb887d5fae60411af29cd20315fec31f8d635b4a965f07708312e8d0",
+          "data/weights/chattime-7b-20baa88/snapshot.json": "593df2db1fbb32f1f95d33b8b977eb730cbbc57d82690639319482f92b213cd8",
+          "data/weights/chattime-7b-20baa88/added_tokens.json": "658a25af391efe4383bfda2570fcb2fcc857c0b256d8f53bbc1a9ab42fe33dd0",
+          "data/weights/chattime-7b-20baa88/config.json": "214ee4e48c9da2934097fa6d321b1a89a9795e2ca9614bc2f1a4635d5c418fc3",
+          "data/weights/chattime-7b-20baa88/generation_config.json": "b56774072489c745b4d9dc871e08c2d7fe4727ac3dc1f1b1980c8e6a1497773d",
+          "data/weights/chattime-7b-20baa88/model-00001-of-00003.safetensors": "edf3f715a2cb4e9575fcd6ec8aa5ffea03d609cfb611e0aafcde9333328f44c0",
+          "data/weights/chattime-7b-20baa88/model-00002-of-00003.safetensors": "7143de1891826121265ead8ce049fba48d74cd0240338a67f85577986c0c75cf",
+          "data/weights/chattime-7b-20baa88/model-00003-of-00003.safetensors": "a0e745422f2e7bdbd292fe8ba9484577bcb2059e9ed31c8da5fe5eabc742e623",
+          "data/weights/chattime-7b-20baa88/model.safetensors.index.json": "e58b1cc756d4dea01951f5ad0a66d41454d02ebaa02a009ee6f944b019b1a7ac",
+          "data/weights/chattime-7b-20baa88/special_tokens_map.json": "4452b845ab9ca2afa863f59f1411a959e8a32bb4334e264b0e71d5d17dd4dcb9",
+          "data/weights/chattime-7b-20baa88/tokenizer.model": "9e556afd44213b6bd1be2b850ebbbd98f5481437a8021afaf58ee7fb1818d347",
+          "data/weights/chattime-7b-20baa88/tokenizer_config.json": "04817ec717f11d786abf7bcc4cc7084a6c10e83cacbdbd917e0cf8eb80166140",
+          "external/ChatTime/utils/tools.py": "dfa6265ce0f33146512f4a3849ad490657431d9cb21d8061c4868a03b3fc8dff",
+          "external/ChatTime/utils/prompt.py": "d82531ca2eee5ab153aa00e435384bf080c3d677a1d2f8ec8d0522c6f64e0296",
+          "external/ChatTime/model/model.py": "316c9935b7e753b400fb883dc381909dc8afac89008a084177e0f9773626fb33",
+          "external/ChatTime/README.md": "08d5ebf09ae23ec8883d52c4f440b62dbb2aad223a5a97585ab12d32ef2b7149",
+          "external/ChatTime/requirements.txt": "08d2b5b145d3b6fa7c114ea8a464d2bd7be86e8741b27871a066013685c814d1"
+        },
+        "code_files": {
+          "src/gofa_f/__init__.py": "0235e8b50b55a723a79451f6b13ed496f65bf4a40b8000974ca6246b01dfcaed",
+          "src/gofa_f/adaptation_stage.py": "13e6314c1c1a35520ec02c8d2106c10efe5426378cefac1595508d6838d11de9",
+          "src/gofa_f/baseline.py": "6e93ec1ac84eb25706467feabb6d8f80ceb6d8c576be8011fc220827ec821f59",
+          "src/gofa_f/benchmark.py": "c7df6da6f631df2fc71574f460dd5cd3bc56451fc65aa094fbd610ba1549dcd2",
+          "src/gofa_f/chattime.py": "73ef5dfaeda8eed019e885fb3ba24912806bf812ab6dc650706ec4b0f734f5e9",
+          "src/gofa_f/chattime_checks.py": "b563e71dd7d44a10cec0a59eb1e99a9609e193dd3c149b728b6aadfe5cb6f5e4",
+          "src/gofa_f/chattime_continuation.py": "e4c3490afd5bea2b88a7dbb174888298d56e276a79ae64967f1cfcb18523be04",
+          "src/gofa_f/chattime_prompt_cache.py": "6dffe2ebdd03ecf216534db65b42acfea67491a5ed775840a54f84a991ec6608",
+          "src/gofa_f/chattime_stage.py": "e4010fd1f7c4d66c16df480bad8338024a20c4869c78d6f5f190f1b5702836cb",
+          "src/gofa_f/chattime_task.py": "fc84388fbb1d87d63129e145e036d84204d90af8b878e386dfee8c12fa9b490a",
+          "src/gofa_f/contrast_context.py": "6fa77a1e1218282d8205ac7833c53dbbb0e76659f2da7d2cffb34df37b9d8626",
+          "src/gofa_f/contrast_stage.py": "1654108c73694acba6707f2dd858e20c367047d01415ec4d505d3bc10871b360",
+          "src/gofa_f/contrast_task.py": "6b4a362a479e30aead40428a0f332baf88fbc62f45e2b7e70cd5829c52282254",
+          "src/gofa_f/data.py": "b5b9a164cab4e396bd3183711829b4b4847927deb1ac51f43a19df6ce7de66ba",
+          "src/gofa_f/encoded_context.py": "07e5b4175ff3463bbf547790be3a4b2992be873ea6e89124815f0d4c02e4ef38",
+          "src/gofa_f/encoded_stage.py": "cd65f59d9485d19f64f242117826c86a3608cf5cd68b2b2f71d4b565f469fd96",
+          "src/gofa_f/encoded_task.py": "caff1db8aaefd3cb8f0c85cb52af99d611aa9587090053c517e5adf32a9dd902",
+          "src/gofa_f/graph_context.py": "64a6d9a89e62b8bf2f6ca0cb5e6881bcfcd8694fec054915d2c8ed57c0a8a042",
+          "src/gofa_f/graphs.py": "4778f7d72e13827498f02b2829a53fe32f04ff3b46a5d320cd138754861d2b58",
+          "src/gofa_f/head_capacity.py": "27b504a5f5f05e75022db8cc3cecfd71252fa19dd9c746d86bb22dc6641b0276",
+          "src/gofa_f/head_stage.py": "7721250739e78d35d59d82c33924f949ffd4985aa1f9f06b8134169dbaa73620",
+          "src/gofa_f/head_task.py": "d6133b6147e9780b579599372852cfbcd82190a3c7912a16737d3f6c21fd9214",
+          "src/gofa_f/idle_launcher.py": "9bb287810c549200643ec01066ccaff744fe983c8cda0947767547ddb2c473ab",
+          "src/gofa_f/lagged_context.py": "c7276fd699fdbff954a6270c40205fadfdce14e4f578055c5c93da0bba8b2083",
+          "src/gofa_f/lagged_stage.py": "b91acbc24abd85503c11bd2512ab1091c222bae8c9c007bda06caa00688f3ff3",
+          "src/gofa_f/lagged_task.py": "fae1a880acc62a7d58fdeb5384508ebf83105541fa2d1c13ef3031ce198769d8",
+          "src/gofa_f/long_horizon.py": "de31af08a7011a518868b996712fe172346de5e94efdc63f72cfca033122387d",
+          "src/gofa_f/long_stage.py": "9958d1878aade39bb76361dc580d8e0d0e482e03462745297c1be5f671f6d34a",
+          "src/gofa_f/long_task.py": "7a378b65c340ef7abcc8bbc61084663c0230d06f58d297cc7f5f95a8769abfcc",
+          "src/gofa_f/metrics.py": "8dfa900844372ca5ea138bb0e178fabddc0e26516f74677d17f8659e7bd2c348",
+          "src/gofa_f/models.py": "6bf7ffc4d9e80c05ed445f607245c7306f588b5a05202347caa8e95fee0e875c",
+          "src/gofa_f/native.py": "879322c8d383e5863f165f5ab420f4c27f659239cf4a4b31f7766a9bb3fea98e",
+          "src/gofa_f/native_progress.py": "35e49046d92b8b9e164ad94c0a059edca7f26b15c65aac8fbbf81ae73e401a95",
+          "src/gofa_f/native_stage.py": "4ac3eaaa96c5603203ad0a93d6e63712c8e5d5f3a687e1108187709a87ab770d",
+          "src/gofa_f/ordered_context.py": "6e05da0cde1ccb351f44a032978eb30ef966644ceb0da616d4ef9e589e75a82f",
+          "src/gofa_f/ordered_stage.py": "92530ead592e70a6a2273a770108c924a68bf0ed83b82200633865bd911773ae",
+          "src/gofa_f/ordered_task.py": "fa1c7b9cee943fffb5e98f832452f4786f543cb5e319e2cc4a1703e76c212350",
+          "src/gofa_f/prefix_cache.py": "9fb6b7177ed604dcd4bec6f06300dec76b140ef845701e95efcdbd7fa1fcbefb",
+          "src/gofa_f/prepare.py": "2325c745c118eeb8f9aeda7da1ef156e8545358bf82fbc257993548dbd52a8d5",
+          "src/gofa_f/progress.py": "fa667a80647bd659c9c61c8c40f1488c6190523c24e8dcef2dfb5a96ecb15992",
+          "src/gofa_f/pure_graph_stage.py": "4a42e0532282a59d5634cf4a608aa3f9af521e4d4186407c43bd2854a79bd340",
+          "src/gofa_f/pure_graph_task.py": "0128124ac49d917416e5b95ce8569f7cbf7ebbf0f049ffcecc6e9963c8e6eeee",
+          "src/gofa_f/reg_capacity.py": "fad94ab7e6c76318bf9a5bbe1ebd9bed93454d3b4f0344b0fd2a7cef5ef674e6",
+          "src/gofa_f/reg_capacity_stage.py": "ec101b7130aaf8c42e9fd7d8ed4675054b0f16a2541c53d603fad21ba54a39bb",
+          "src/gofa_f/reg_capacity_task.py": "6c357269dd056c0575c7c39575064227b02ec18f0b80f69c891024d291e51e44",
+          "src/gofa_f/report.py": "529ad3951023532f2423c0d93c846887fa14c18fdbb8ba48f21958b8d6ee9214",
+          "src/gofa_f/routed_graph.py": "0d2620281befae655fe9c21516ea3bdc72c54939c66fb37051c511dd31ec9825",
+          "src/gofa_f/routed_stage.py": "b0ead0b6e48a32aec2cb671fabcfb5eec6169a7a1e6f0c332116fc078959d535",
+          "src/gofa_f/routed_task.py": "15b356a32a2608a206aa73d64ca0947474443b0b26c2dbb49458d8a474d29fde",
+          "src/gofa_f/stage_budget.py": "428334d4a29bf2c4d6c13f6baf7e5385d33114d2e2061cb5a3ea9fce5e999e32",
+          "src/gofa_f/temporal_context.py": "35c01f6bbb2904cc174724bdee76f95796b0e20137733a43485a9ae4dc8aa7f3",
+          "src/gofa_f/temporal_stage.py": "d2f1484da799f202d4e2fcfe4a8a15977853f5defe801dab8c951077d9611886",
+          "src/gofa_f/temporal_task.py": "401b78277185ea13923f7db83b594e7f93125966162c7d8f71c0906bcb755941",
+          "src/gofa_f/token_exchange.py": "dbc993c67be2f32e1be3d84f165599852c3c652655781fd3e1c4f068c1591b99",
+          "src/gofa_f/token_stage.py": "9e999f0cfd9cc2a87546ae6a34f0db6da0e9cc3ccc549b6c8b5acca4fcadf20e",
+          "src/gofa_f/token_task.py": "9417f289e3775c6333d8af5f6769a250106a867d6f3a9b7e2a8eb1ee1b8f72e3",
+          "src/gofa_f/train.py": "5eaac58ea47f9c5e75919bfec702d096fcd7276aa3d197cc93ad4a455a6f7b3d",
+          "src/gofa_f/transfer_stage.py": "d5aa9c6e8bad28e0511b3215d8a37541787c6dc1622a2d42d00a44a4ecc001fc",
+          "src/gofa_f/transfer_task.py": "47b6b80f61eb826a63563cea27c8806eddcd569b1cd8884d49d27e67bed85d98",
+          "src/gofa_f/tune.py": "096d6fa903a28fc761c62b015545fa9fcd47a38efa9aed84201357181bd0194a",
+          "src/gofa_f/ufg.py": "c309ec0542ab73447d21b3fafbcad3bc5b72f0ccee6df43abf2521d7adb23147",
+          "configs/stage16_chattime.yaml": "e1cda5a6dbe1348a4e094d005dd39bf20a6fc57b6a287b4aeda75eb18aa81d73",
+          "scripts/check_chattime_cpu.py": "aa21d1e05bffaf075c582f4cb9c594a19f6699700d1133beff6398ceb499776f",
+          "tests/test_chattime.py": "43f7ea460a269760fd83c71e011ff1bed7798a1e6bcee2231e4a3567337d0e66",
+          "tests/test_chattime_bootstrap.py": "83b910965760b1f07e73ae58657835b2e9effc04b89a236555c77d851a83e7de",
+          "tests/test_chattime_continuation.py": "6aa97ac362aff58d3518e082fcc8b37a30a192218dd57a7ba96ac9098f6460e4",
+          "tests/test_chattime_prompt_cache.py": "0c7743116d0feebbaa68b2f202772e8de22db6a110373783cd10d8cf25c5f468",
+          "tests/test_chattime_stage.py": "333c9325c6ddc723c19f433a2385d26dd6779e803a4a71b30a82fea7af32ba7c"
+        },
+        "cpu_preflight_sha256": "fd987c35a2d8b7cc76bd744bcca7a21096c6018e77a154115c2f7cf29b492a6e",
+        "runtime": {
+          "python": "3.11.17 (main, Oct  1 2026, 20:17:42) [GCC 14.3.0]",
+          "executable": "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v11/.venv-chat/bin/python",
+          "packages": {
+            "torch": "2.6.0+cu124",
+            "transformers": "4.46.3",
+            "numpy": "1.26.4",
+            "scikit-learn": "1.5.2",
+            "protobuf": "5.28.3"
+          },
+          "sys_path": [
+            "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v11/scripts",
+            "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages",
+            "/home/dcg/dcg_data/GOFA-F/.venv-native/lib/python3.11/site-packages",
+            "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages",
+            "/home/dcg/dcg_data/GOFA-F/.venv-native/lib/python3.11/site-packages",
+            "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v11/src",
+            "/home/dcg/dcg_data/miniconda3/envs/gofaf/lib/python311.zip",
+            "/home/dcg/dcg_data/miniconda3/envs/gofaf/lib/python3.11",
+            "/home/dcg/dcg_data/miniconda3/envs/gofaf/lib/python3.11/lib-dynload",
+            "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v11/.venv-chat/lib/python3.11/site-packages",
+            "/home/dcg/dcg_data/miniconda3/envs/gofaf/lib/python3.11/site-packages",
+            "/mnt/sevenT/dcg_data/GOFA-F/src",
+            "/tmp/tmpfdeuan37",
+            "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages/setuptools/_vendor"
+          ],
+          "isolated_environment_paths": {
+            "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v11/.venv-chat/pyvenv.cfg": "home = /home/dcg/dcg_data/miniconda3/envs/gofaf/bin\ninclude-system-site-packages = true\nversion = 3.11.17\nexecutable = /mnt/sevenT/dcg_data/miniconda3/envs/gofaf/bin/python3.11\ncommand = /home/dcg/dcg_data/GOFA-F/.venv-native/bin/python -m venv --system-site-packages /home/dcg/dcg_data/GOFA-F/.venv-chat\n",
+            "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v11/.venv-chat/lib/python3.11/site-packages/native_read_only.pth": "import sys; sys.path.insert(0, '/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages'); sys.path.insert(1, '/home/dcg/dcg_data/GOFA-F/.venv-native/lib/python3.11/site-packages')\n"
+          },
+          "modules": {
+            "torch": {
+              "path": "/home/dcg/dcg_data/miniconda3/envs/gofaf/lib/python3.11/site-packages/torch/__init__.py",
+              "sha256": "5a190666c3853aa236c4d48ed64e2d4bbcd23bd32c21e64c0867646a6852e43f"
+            },
+            "transformers": {
+              "path": "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages/transformers/__init__.py",
+              "sha256": "71a729a440bba6c0c9d1f9209c6edd61edb21380c89154461be00063d86bc829"
+            },
+            "numpy": {
+              "path": "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages/numpy/__init__.py",
+              "sha256": "22cd1535fa14d74ef6f457cca149ffdc80875f460be313b8f895273f78bc402e"
+            },
+            "sklearn": {
+              "path": "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v11/.venv-chat/lib/python3.11/site-packages/sklearn/__init__.py",
+              "sha256": "cfc20835d0434f1ced9e6c5fd32e836c150d2202bcaa7983be60539a627bbc5a"
+            },
+            "protobuf": {
+              "path": "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v11/.venv-chat/lib/python3.11/site-packages/google/protobuf/__init__.py",
+              "sha256": "0d2fe5e532a35a7a7f3b447125d00bfbfa555112ce8ca20c3fd909bd5c85ea6b"
+            }
+          },
+          "critical_files": {
+            "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages/transformers/models/llama/modeling_llama.py": "733e7625fec5abcfa416ab9b866cb91875d41007f2e31c3e90d2ae0111ae98f7",
+            "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages/transformers/modeling_attn_mask_utils.py": "6b48608887ba16712929165d8c05bde9c136b1d5cac19acfde68a5435a570cce",
+            "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages/transformers/generation/utils.py": "24e719be0942a06f1956cadd469a100a455012ea6f808cca894a3e94edb06bf3",
+            "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages/transformers/models/llama/tokenization_llama.py": "e77968e24ccfc4e92af9e33221b790477b4d264cb889baebbf3eb4dc7c9356d3",
+            "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v11/.venv-chat/lib/python3.11/site-packages/google/protobuf/__init__.py": "0d2fe5e532a35a7a7f3b447125d00bfbfa555112ce8ca20c3fd909bd5c85ea6b"
+          }
+        },
+        "git_revision": "9bb224f70f3fc06ef5062a94b9a520d4f6ba5bb7",
+        "fixed_prompt_kv": true,
+        "idle_interval_seconds": 10
+      }
+    },
+    "migration.json": {
+      "sha256": "7eec80b909d686fc4e5153075d65a4b43d51c8eb6744e73256579407de41a687",
+      "value": {
+        "source": {
+          "kind": "training_continuation",
+          "output": "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v10",
+          "source_binding": "7600437ecd8c4840c147a795f469443129c04c91f4502a0e087a7f58c3a12665",
+          "window_sha256": "35103c7231d5cbdf972b4761ce0b7e8660e91ac2746b52e6c603437c3a2fe898",
+          "manifest_sha256": "1a2933609bfeb8e00d2259f63e23dec46043d2897e0c530657b6a2b5fafe68fb",
+          "checkpoint_sha256": "791ca1e2f06fd3a727687e010324e7d96bb21724d461fe3f53dccfdad2e7161d",
+          "started_at": 1792137782.8795292,
+          "original_wall_deadline": 1792206000.0,
+          "gpu_activity_seconds": 9956.406928363256,
+          "updates": 167,
+          "offset": 10737,
+          "pending_windows": 49,
+          "pending_count": 117586,
+          "deadline_amendment": {
+            "authorization": "explicit_user_request",
+            "source_window_sha256": "ecfe1540e17a6316be683376a24d6637a10fd4e5de8b9861ed4d61bbfd15e21b",
+            "previous_wall_deadline": 1792164600.0,
+            "new_wall_deadline": 1792206000.0
+          },
+          "repaired_failure": "preflight only; saved checkpoint unchanged; no predictions"
+        },
+        "target_binding": "9a5384f8106af964a8877c117d64e129e1484b392730896cf9cc40fa081b42f8",
+        "target_checkpoint_sha256": "4a262c97c0a813032f15e885ca74d2b98cffd27654d74582c30ba23cff3cc1d1",
+        "state_restore": "exact",
+        "cache": "ephemeral caches rebuilt; old caches not modified",
+        "original_start_retained": true,
+        "original_deadline_retained": true,
+        "deadline_amendment": {
+          "authorization": "explicit_user_request",
+          "source_window_sha256": "ecfe1540e17a6316be683376a24d6637a10fd4e5de8b9861ed4d61bbfd15e21b",
+          "previous_wall_deadline": 1792164600.0,
+          "new_wall_deadline": 1792206000.0
+        }
+      }
+    },
+    "cpu_preflight.json": {
+      "sha256": "fd987c35a2d8b7cc76bd744bcca7a21096c6018e77a154115c2f7cf29b492a6e",
+      "value": {
+        "passed": true,
+        "code_files": {
+          "src/gofa_f/__init__.py": "0235e8b50b55a723a79451f6b13ed496f65bf4a40b8000974ca6246b01dfcaed",
+          "src/gofa_f/adaptation_stage.py": "13e6314c1c1a35520ec02c8d2106c10efe5426378cefac1595508d6838d11de9",
+          "src/gofa_f/baseline.py": "6e93ec1ac84eb25706467feabb6d8f80ceb6d8c576be8011fc220827ec821f59",
+          "src/gofa_f/benchmark.py": "c7df6da6f631df2fc71574f460dd5cd3bc56451fc65aa094fbd610ba1549dcd2",
+          "src/gofa_f/chattime.py": "73ef5dfaeda8eed019e885fb3ba24912806bf812ab6dc650706ec4b0f734f5e9",
+          "src/gofa_f/chattime_checks.py": "b563e71dd7d44a10cec0a59eb1e99a9609e193dd3c149b728b6aadfe5cb6f5e4",
+          "src/gofa_f/chattime_continuation.py": "e4c3490afd5bea2b88a7dbb174888298d56e276a79ae64967f1cfcb18523be04",
+          "src/gofa_f/chattime_prompt_cache.py": "6dffe2ebdd03ecf216534db65b42acfea67491a5ed775840a54f84a991ec6608",
+          "src/gofa_f/chattime_stage.py": "e4010fd1f7c4d66c16df480bad8338024a20c4869c78d6f5f190f1b5702836cb",
+          "src/gofa_f/chattime_task.py": "fc84388fbb1d87d63129e145e036d84204d90af8b878e386dfee8c12fa9b490a",
+          "src/gofa_f/contrast_context.py": "6fa77a1e1218282d8205ac7833c53dbbb0e76659f2da7d2cffb34df37b9d8626",
+          "src/gofa_f/contrast_stage.py": "1654108c73694acba6707f2dd858e20c367047d01415ec4d505d3bc10871b360",
+          "src/gofa_f/contrast_task.py": "6b4a362a479e30aead40428a0f332baf88fbc62f45e2b7e70cd5829c52282254",
+          "src/gofa_f/data.py": "b5b9a164cab4e396bd3183711829b4b4847927deb1ac51f43a19df6ce7de66ba",
+          "src/gofa_f/encoded_context.py": "07e5b4175ff3463bbf547790be3a4b2992be873ea6e89124815f0d4c02e4ef38",
+          "src/gofa_f/encoded_stage.py": "cd65f59d9485d19f64f242117826c86a3608cf5cd68b2b2f71d4b565f469fd96",
+          "src/gofa_f/encoded_task.py": "caff1db8aaefd3cb8f0c85cb52af99d611aa9587090053c517e5adf32a9dd902",
+          "src/gofa_f/graph_context.py": "64a6d9a89e62b8bf2f6ca0cb5e6881bcfcd8694fec054915d2c8ed57c0a8a042",
+          "src/gofa_f/graphs.py": "4778f7d72e13827498f02b2829a53fe32f04ff3b46a5d320cd138754861d2b58",
+          "src/gofa_f/head_capacity.py": "27b504a5f5f05e75022db8cc3cecfd71252fa19dd9c746d86bb22dc6641b0276",
+          "src/gofa_f/head_stage.py": "7721250739e78d35d59d82c33924f949ffd4985aa1f9f06b8134169dbaa73620",
+          "src/gofa_f/head_task.py": "d6133b6147e9780b579599372852cfbcd82190a3c7912a16737d3f6c21fd9214",
+          "src/gofa_f/idle_launcher.py": "9bb287810c549200643ec01066ccaff744fe983c8cda0947767547ddb2c473ab",
+          "src/gofa_f/lagged_context.py": "c7276fd699fdbff954a6270c40205fadfdce14e4f578055c5c93da0bba8b2083",
+          "src/gofa_f/lagged_stage.py": "b91acbc24abd85503c11bd2512ab1091c222bae8c9c007bda06caa00688f3ff3",
+          "src/gofa_f/lagged_task.py": "fae1a880acc62a7d58fdeb5384508ebf83105541fa2d1c13ef3031ce198769d8",
+          "src/gofa_f/long_horizon.py": "de31af08a7011a518868b996712fe172346de5e94efdc63f72cfca033122387d",
+          "src/gofa_f/long_stage.py": "9958d1878aade39bb76361dc580d8e0d0e482e03462745297c1be5f671f6d34a",
+          "src/gofa_f/long_task.py": "7a378b65c340ef7abcc8bbc61084663c0230d06f58d297cc7f5f95a8769abfcc",
+          "src/gofa_f/metrics.py": "8dfa900844372ca5ea138bb0e178fabddc0e26516f74677d17f8659e7bd2c348",
+          "src/gofa_f/models.py": "6bf7ffc4d9e80c05ed445f607245c7306f588b5a05202347caa8e95fee0e875c",
+          "src/gofa_f/native.py": "879322c8d383e5863f165f5ab420f4c27f659239cf4a4b31f7766a9bb3fea98e",
+          "src/gofa_f/native_progress.py": "35e49046d92b8b9e164ad94c0a059edca7f26b15c65aac8fbbf81ae73e401a95",
+          "src/gofa_f/native_stage.py": "4ac3eaaa96c5603203ad0a93d6e63712c8e5d5f3a687e1108187709a87ab770d",
+          "src/gofa_f/ordered_context.py": "6e05da0cde1ccb351f44a032978eb30ef966644ceb0da616d4ef9e589e75a82f",
+          "src/gofa_f/ordered_stage.py": "92530ead592e70a6a2273a770108c924a68bf0ed83b82200633865bd911773ae",
+          "src/gofa_f/ordered_task.py": "fa1c7b9cee943fffb5e98f832452f4786f543cb5e319e2cc4a1703e76c212350",
+          "src/gofa_f/prefix_cache.py": "9fb6b7177ed604dcd4bec6f06300dec76b140ef845701e95efcdbd7fa1fcbefb",
+          "src/gofa_f/prepare.py": "2325c745c118eeb8f9aeda7da1ef156e8545358bf82fbc257993548dbd52a8d5",
+          "src/gofa_f/progress.py": "fa667a80647bd659c9c61c8c40f1488c6190523c24e8dcef2dfb5a96ecb15992",
+          "src/gofa_f/pure_graph_stage.py": "4a42e0532282a59d5634cf4a608aa3f9af521e4d4186407c43bd2854a79bd340",
+          "src/gofa_f/pure_graph_task.py": "0128124ac49d917416e5b95ce8569f7cbf7ebbf0f049ffcecc6e9963c8e6eeee",
+          "src/gofa_f/reg_capacity.py": "fad94ab7e6c76318bf9a5bbe1ebd9bed93454d3b4f0344b0fd2a7cef5ef674e6",
+          "src/gofa_f/reg_capacity_stage.py": "ec101b7130aaf8c42e9fd7d8ed4675054b0f16a2541c53d603fad21ba54a39bb",
+          "src/gofa_f/reg_capacity_task.py": "6c357269dd056c0575c7c39575064227b02ec18f0b80f69c891024d291e51e44",
+          "src/gofa_f/report.py": "529ad3951023532f2423c0d93c846887fa14c18fdbb8ba48f21958b8d6ee9214",
+          "src/gofa_f/routed_graph.py": "0d2620281befae655fe9c21516ea3bdc72c54939c66fb37051c511dd31ec9825",
+          "src/gofa_f/routed_stage.py": "b0ead0b6e48a32aec2cb671fabcfb5eec6169a7a1e6f0c332116fc078959d535",
+          "src/gofa_f/routed_task.py": "15b356a32a2608a206aa73d64ca0947474443b0b26c2dbb49458d8a474d29fde",
+          "src/gofa_f/stage_budget.py": "428334d4a29bf2c4d6c13f6baf7e5385d33114d2e2061cb5a3ea9fce5e999e32",
+          "src/gofa_f/temporal_context.py": "35c01f6bbb2904cc174724bdee76f95796b0e20137733a43485a9ae4dc8aa7f3",
+          "src/gofa_f/temporal_stage.py": "d2f1484da799f202d4e2fcfe4a8a15977853f5defe801dab8c951077d9611886",
+          "src/gofa_f/temporal_task.py": "401b78277185ea13923f7db83b594e7f93125966162c7d8f71c0906bcb755941",
+          "src/gofa_f/token_exchange.py": "dbc993c67be2f32e1be3d84f165599852c3c652655781fd3e1c4f068c1591b99",
+          "src/gofa_f/token_stage.py": "9e999f0cfd9cc2a87546ae6a34f0db6da0e9cc3ccc549b6c8b5acca4fcadf20e",
+          "src/gofa_f/token_task.py": "9417f289e3775c6333d8af5f6769a250106a867d6f3a9b7e2a8eb1ee1b8f72e3",
+          "src/gofa_f/train.py": "5eaac58ea47f9c5e75919bfec702d096fcd7276aa3d197cc93ad4a455a6f7b3d",
+          "src/gofa_f/transfer_stage.py": "d5aa9c6e8bad28e0511b3215d8a37541787c6dc1622a2d42d00a44a4ecc001fc",
+          "src/gofa_f/transfer_task.py": "47b6b80f61eb826a63563cea27c8806eddcd569b1cd8884d49d27e67bed85d98",
+          "src/gofa_f/tune.py": "096d6fa903a28fc761c62b015545fa9fcd47a38efa9aed84201357181bd0194a",
+          "src/gofa_f/ufg.py": "c309ec0542ab73447d21b3fafbcad3bc5b72f0ccee6df43abf2521d7adb23147",
+          "configs/stage16_chattime.yaml": "e1cda5a6dbe1348a4e094d005dd39bf20a6fc57b6a287b4aeda75eb18aa81d73",
+          "scripts/check_chattime_cpu.py": "aa21d1e05bffaf075c582f4cb9c594a19f6699700d1133beff6398ceb499776f",
+          "tests/test_chattime.py": "43f7ea460a269760fd83c71e011ff1bed7798a1e6bcee2231e4a3567337d0e66",
+          "tests/test_chattime_bootstrap.py": "83b910965760b1f07e73ae58657835b2e9effc04b89a236555c77d851a83e7de",
+          "tests/test_chattime_continuation.py": "6aa97ac362aff58d3518e082fcc8b37a30a192218dd57a7ba96ac9098f6460e4",
+          "tests/test_chattime_prompt_cache.py": "0c7743116d0feebbaa68b2f202772e8de22db6a110373783cd10d8cf25c5f468",
+          "tests/test_chattime_stage.py": "333c9325c6ddc723c19f433a2385d26dd6779e803a4a71b30a82fea7af32ba7c"
+        },
+        "runtime": {
+          "python": "3.11.17 (main, Oct  1 2026, 20:17:42) [GCC 14.3.0]",
+          "executable": "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v11/.venv-chat/bin/python",
+          "packages": {
+            "torch": "2.6.0+cu124",
+            "transformers": "4.46.3",
+            "numpy": "1.26.4",
+            "scikit-learn": "1.5.2",
+            "protobuf": "5.28.3"
+          },
+          "sys_path": [
+            "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v11/scripts",
+            "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages",
+            "/home/dcg/dcg_data/GOFA-F/.venv-native/lib/python3.11/site-packages",
+            "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages",
+            "/home/dcg/dcg_data/GOFA-F/.venv-native/lib/python3.11/site-packages",
+            "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v11/src",
+            "/home/dcg/dcg_data/miniconda3/envs/gofaf/lib/python311.zip",
+            "/home/dcg/dcg_data/miniconda3/envs/gofaf/lib/python3.11",
+            "/home/dcg/dcg_data/miniconda3/envs/gofaf/lib/python3.11/lib-dynload",
+            "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v11/.venv-chat/lib/python3.11/site-packages",
+            "/home/dcg/dcg_data/miniconda3/envs/gofaf/lib/python3.11/site-packages",
+            "/mnt/sevenT/dcg_data/GOFA-F/src",
+            "/tmp/tmpfdeuan37",
+            "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages/setuptools/_vendor"
+          ],
+          "isolated_environment_paths": {
+            "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v11/.venv-chat/pyvenv.cfg": "home = /home/dcg/dcg_data/miniconda3/envs/gofaf/bin\ninclude-system-site-packages = true\nversion = 3.11.17\nexecutable = /mnt/sevenT/dcg_data/miniconda3/envs/gofaf/bin/python3.11\ncommand = /home/dcg/dcg_data/GOFA-F/.venv-native/bin/python -m venv --system-site-packages /home/dcg/dcg_data/GOFA-F/.venv-chat\n",
+            "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v11/.venv-chat/lib/python3.11/site-packages/native_read_only.pth": "import sys; sys.path.insert(0, '/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages'); sys.path.insert(1, '/home/dcg/dcg_data/GOFA-F/.venv-native/lib/python3.11/site-packages')\n"
+          },
+          "modules": {
+            "torch": {
+              "path": "/home/dcg/dcg_data/miniconda3/envs/gofaf/lib/python3.11/site-packages/torch/__init__.py",
+              "sha256": "5a190666c3853aa236c4d48ed64e2d4bbcd23bd32c21e64c0867646a6852e43f"
+            },
+            "transformers": {
+              "path": "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages/transformers/__init__.py",
+              "sha256": "71a729a440bba6c0c9d1f9209c6edd61edb21380c89154461be00063d86bc829"
+            },
+            "numpy": {
+              "path": "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages/numpy/__init__.py",
+              "sha256": "22cd1535fa14d74ef6f457cca149ffdc80875f460be313b8f895273f78bc402e"
+            },
+            "sklearn": {
+              "path": "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v11/.venv-chat/lib/python3.11/site-packages/sklearn/__init__.py",
+              "sha256": "cfc20835d0434f1ced9e6c5fd32e836c150d2202bcaa7983be60539a627bbc5a"
+            },
+            "protobuf": {
+              "path": "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v11/.venv-chat/lib/python3.11/site-packages/google/protobuf/__init__.py",
+              "sha256": "0d2fe5e532a35a7a7f3b447125d00bfbfa555112ce8ca20c3fd909bd5c85ea6b"
+            }
+          },
+          "critical_files": {
+            "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages/transformers/models/llama/modeling_llama.py": "733e7625fec5abcfa416ab9b866cb91875d41007f2e31c3e90d2ae0111ae98f7",
+            "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages/transformers/modeling_attn_mask_utils.py": "6b48608887ba16712929165d8c05bde9c136b1d5cac19acfde68a5435a570cce",
+            "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages/transformers/generation/utils.py": "24e719be0942a06f1956cadd469a100a455012ea6f808cca894a3e94edb06bf3",
+            "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages/transformers/models/llama/tokenization_llama.py": "e77968e24ccfc4e92af9e33221b790477b4d264cb889baebbf3eb4dc7c9356d3",
+            "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v11/.venv-chat/lib/python3.11/site-packages/google/protobuf/__init__.py": "0d2fe5e532a35a7a7f3b447125d00bfbfa555112ce8ca20c3fd909bd5c85ea6b"
+          }
+        },
+        "cpu_test_cases": 332,
+        "stage16_cases": 84,
+        "optional_skipped": 11,
+        "official_codec_examples": 3,
+        "real_model_mechanisms": {
+          "initial_persistence": true,
+          "zero_graph_native_hidden": true,
+          "cached_prediction_and_gradients": true,
+          "graph_gradient_active": true,
+          "batch_graph_isolation": true,
+          "empty_nodes": true,
+          "pending_gradient_resume_exact": true,
+          "optimizer_resume_exact": true,
+          "native_weights_unchanged": true,
+          "text_bypass_exact": true,
+          "native_prefill_shared_prediction_and_gradient": true,
+          "numeric_tolerance": {
+            "rtol": 0.002,
+            "atol": 0.002
+          },
+          "checkpoint_state_tolerance": "exact"
+        },
+        "real_model_nodes": 3,
+        "parameters": {
+          "registered_real_dof": 6821464722,
+          "trainable_real_dof": 1120914,
+          "continuous_forward_module_real_dof": 6649428626,
+          "native_registered_real_dof": 6820343808,
+          "new_graph_and_router": 1071750,
+          "new_continuous_head": 49164,
+          "note": "Forward module count excludes original unused LM head; embedding tensor counted in full. Frozen parameters and compute are not matched to historical UFG-A."
+        },
+        "estimated_full_cache_bytes": 2999480985963,
+        "fixed_prompt_mechanisms": {
+          "passed": true,
+          "prediction_max_abs": 0.0,
+          "gradient_max_abs": 0.0,
+          "tolerance": {
+            "rtol": 0.002,
+            "atol": 0.002
+          },
+          "cache": {
+            "enabled": true,
+            "format": "fixed_prompt_kv_v2",
+            "binding": "mechanism-check",
+            "tokens": 47,
+            "builds": 1,
+            "reused_rows": 3,
+            "fallback_rows": 0,
+            "single_copy_bytes": 23486464,
+            "precision": "native dtype, lossless storage; no input truncation",
+            "attention": "full-length zero-padded queries, native square causal SDPA"
+          },
+          "prefix": {
+            "max_abs": 0.0,
+            "changed_elements": 0
+          },
+          "optimized_exercised": true
+        },
+        "cuda_initialized": false,
+        "scope": "CPU verification only; no GPU accuracy or mechanism claim"
+      }
+    },
+    "parameters.json": {
+      "sha256": "91091e6692461a4edbfc58d412df3287b7f2866da61ecc8e7a0fa7b2d7b7c53d",
+      "value": {
+        "registered_real_dof": 6821464722,
+        "trainable_real_dof": 1120914,
+        "continuous_forward_module_real_dof": 6649428626,
+        "native_registered_real_dof": 6820343808,
+        "new_graph_and_router": 1071750,
+        "new_continuous_head": 49164,
+        "note": "Forward module count excludes original unused LM head; embedding tensor counted in full. Frozen parameters and compute are not matched to historical UFG-A."
+      }
+    },
+    "active_budget.json": {
+      "sha256": "ce035c7a2e7538b584f088e2f3d9854a7a786b4f8b0348e68c98f1b635b5e6af",
+      "value": {
+        "spent_seconds": 9956.406928363256,
+        "worker": null
+      }
+    },
+    "budget.json": {
+      "sha256": "adcce2a607a9330eb330671cd75cd5ccc83bcf4a4470b5c1d44a33c941765628",
+      "value": {
+        "spent_seconds": 9882.842370609753,
+        "scopes": {
+          "preflight": 17.008372533135116,
+          "train": 9865.833998076618
+        },
+        "active_scope": null
+      }
+    },
+    "mechanisms.json": null,
+    "fixed_prompt_fresh.json": null,
+    "fixed_prompt_continued.json": null,
+    "failures.json": null,
+    "final_selection.json": {
+      "sha256": "182621a52651017b679abf304a9010639a46f7fa660e5f3c2c2c0d019ed51530",
+      "value": {
+        "selection_split": "complete validation raw MAE",
+        "sealed_at": 1792205940.7767873,
+        "native": {
+          "revision": "20baa88d6ab838b34abbd1d2b1f4cea57c8ff870",
+          "do_sample": false,
+          "max_new_tokens": 64
+        },
+        "gofa": null,
+        "updates": 167,
+        "stop_reason": "training_deadline_or_signal"
+      }
+    },
+    "report.json": {
+      "sha256": "0c84c11442a02d0d7fa5670158540eda804e8b57d0cc36cf221538f5f4993365",
+      "value": {
+        "state": "wall_deadline",
+        "results": {
+          "native_chattime": null,
+          "gofa_chattime": null
+        },
+        "evaluation_progress": {
+          "native_chattime": {
+            "val": {
+              "completed_windows": 0,
+              "total_windows": 3281,
+              "complete": false
+            },
+            "test": {
+              "completed_windows": 0,
+              "total_windows": 6313,
+              "complete": false
+            }
+          },
+          "gofa_chattime": {
+            "val": {
+              "complete": false,
+              "source": "locked complete validation"
+            },
+            "test": {
+              "completed_windows": 0,
+              "total_windows": 6313,
+              "complete": false
+            }
+          }
+        },
+        "historical_references": {
+          "stage4_native_bolt_g2_hsd": {
+            "persistence": {
+              "test": {
+                "mae": 4.232327017283864,
+                "mse": 66.34171106696597,
+                "rmse": 8.145042115726964,
+                "mape_pct": 10.939013234196972,
+                "mape_observations": 14940228,
+                "mape_valid_fraction": 1.0,
+                "wape_pct": 7.327638034282183,
+                "observations": 14940228,
+                "by_horizon": [
+                  {
+                    "step": 1,
+                    "mae": 2.812124080553967,
+                    "rmse": 4.613853336857007,
+                    "observations": 1245052
+                  },
+                  {
+                    "step": 2,
+                    "mae": 3.204616952001386,
+                    "rmse": 5.654756413727267,
+                    "observations": 1245046
+                  },
+                  {
+                    "step": 3,
+                    "mae": 3.4937229865729282,
+                    "rmse": 6.389776896223283,
+                    "observations": 1245040
+                  },
+                  {
+                    "step": 4,
+                    "mae": 3.744247535868597,
+                    "rmse": 6.996063082579805,
+                    "observations": 1245034
+                  },
+                  {
+                    "step": 5,
+                    "mae": 3.972871190325955,
+                    "rmse": 7.522307944109563,
+                    "observations": 1245028
+                  },
+                  {
+                    "step": 6,
+                    "mae": 4.196402966342596,
+                    "rmse": 8.007841850787887,
+                    "observations": 1245022
+                  },
+                  {
+                    "step": 7,
+                    "mae": 4.410331914401698,
+                    "rmse": 8.452228181696679,
+                    "observations": 1245016
+                  },
+                  {
+                    "step": 8,
+                    "mae": 4.613657010911735,
+                    "rmse": 8.864185417868361,
+                    "observations": 1245010
+                  },
+                  {
+                    "step": 9,
+                    "mae": 4.804378783493808,
+                    "rmse": 9.24261533096773,
+                    "observations": 1245004
+                  },
+                  {
+                    "step": 10,
+                    "mae": 4.994342627876355,
+                    "rmse": 9.605411752663569,
+                    "observations": 1244998
+                  },
+                  {
+                    "step": 11,
+                    "mae": 5.178708797029353,
+                    "rmse": 9.948437651530725,
+                    "observations": 1244992
+                  },
+                  {
+                    "step": 12,
+                    "mae": 5.3626730082252205,
+                    "rmse": 10.280163862704455,
+                    "observations": 1244986
+                  }
+                ]
+              },
+              "validation": 3.8547055661183087,
+              "status": "complete",
+              "evaluation_protocol": "raw-target-v2"
+            },
+            "native_bolt": {
+              "test": {
+                "mae": 4.382211424168759,
+                "mse": 72.49545479725971,
+                "rmse": 8.514426275284771,
+                "mape_pct": 11.5598123812586,
+                "mape_observations": 14940228,
+                "mape_valid_fraction": 1.0,
+                "wape_pct": 7.5871403544361735,
+                "observations": 14940228,
+                "by_horizon": [
+                  {
+                    "step": 1,
+                    "mae": 2.631071840006869,
+                    "rmse": 4.460698474207662,
+                    "observations": 1245052
+                  },
+                  {
+                    "step": 2,
+                    "mae": 2.9905818480482544,
+                    "rmse": 5.4744063970279235,
+                    "observations": 1245046
+                  },
+                  {
+                    "step": 3,
+                    "mae": 3.304847810493006,
+                    "rmse": 6.237123568298749,
+                    "observations": 1245040
+                  },
+                  {
+                    "step": 4,
+                    "mae": 3.6307734888393544,
+                    "rmse": 6.907095119179605,
+                    "observations": 1245034
+                  },
+                  {
+                    "step": 5,
+                    "mae": 3.9872684395872393,
+                    "rmse": 7.564769570190001,
+                    "observations": 1245028
+                  },
+                  {
+                    "step": 6,
+                    "mae": 4.287565703925337,
+                    "rmse": 8.144177856050348,
+                    "observations": 1245022
+                  },
+                  {
+                    "step": 7,
+                    "mae": 4.582184283097704,
+                    "rmse": 8.720030423394045,
+                    "observations": 1245016
+                  },
+                  {
+                    "step": 8,
+                    "mae": 4.874309072377711,
+                    "rmse": 9.275879018728782,
+                    "observations": 1245010
+                  },
+                  {
+                    "step": 9,
+                    "mae": 5.189784645731383,
+                    "rmse": 9.863671324449221,
+                    "observations": 1245004
+                  },
+                  {
+                    "step": 10,
+                    "mae": 5.459042911493259,
+                    "rmse": 10.36012172401714,
+                    "observations": 1244998
+                  },
+                  {
+                    "step": 11,
+                    "mae": 5.709492232361446,
+                    "rmse": 10.819437678993603,
+                    "observations": 1244992
+                  },
+                  {
+                    "step": 12,
+                    "mae": 5.939823718408186,
+                    "rmse": 11.231959615410476,
+                    "observations": 1244986
+                  }
+                ]
+              },
+              "validation": 3.9434010403494404,
+              "status": "complete",
+              "evaluation_protocol": "raw-target-v2"
+            },
+            "matched_hsdgnn": {
+              "test": {
+                "mae": 3.655026160586331,
+                "mse": 56.99663317140355,
+                "rmse": 7.549611458307212,
+                "mape_pct": 10.528094594058649,
+                "mape_observations": 14940228,
+                "mape_valid_fraction": 1.0,
+                "wape_pct": 6.328128379785936,
+                "observations": 14940228,
+                "by_horizon": [
+                  {
+                    "step": 1,
+                    "mae": 2.4137466112448105,
+                    "rmse": 4.301542159766076,
+                    "observations": 1245052
+                  },
+                  {
+                    "step": 2,
+                    "mae": 2.764828018356525,
+                    "rmse": 5.314199493537094,
+                    "observations": 1245046
+                  },
+                  {
+                    "step": 3,
+                    "mae": 3.025039369078327,
+                    "rmse": 6.008695359281773,
+                    "observations": 1245040
+                  },
+                  {
+                    "step": 4,
+                    "mae": 3.2519134122778204,
+                    "rmse": 6.544370795059389,
+                    "observations": 1245034
+                  },
+                  {
+                    "step": 5,
+                    "mae": 3.4573641944219475,
+                    "rmse": 7.059139516933131,
+                    "observations": 1245028
+                  },
+                  {
+                    "step": 6,
+                    "mae": 3.647301096910021,
+                    "rmse": 7.479519245792755,
+                    "observations": 1245022
+                  },
+                  {
+                    "step": 7,
+                    "mae": 3.823033643142416,
+                    "rmse": 7.866935220752596,
+                    "observations": 1245016
+                  },
+                  {
+                    "step": 8,
+                    "mae": 3.9960009764915876,
+                    "rmse": 8.245365595670812,
+                    "observations": 1245010
+                  },
+                  {
+                    "step": 9,
+                    "mae": 4.151795468577254,
+                    "rmse": 8.55409935930277,
+                    "observations": 1245004
+                  },
+                  {
+                    "step": 10,
+                    "mae": 4.299489422456206,
+                    "rmse": 8.843439676111919,
+                    "observations": 1244998
+                  },
+                  {
+                    "step": 11,
+                    "mae": 4.444146376699884,
+                    "rmse": 9.126789113852547,
+                    "observations": 1244992
+                  },
+                  {
+                    "step": 12,
+                    "mae": 4.585785982377816,
+                    "rmse": 9.378697190012705,
+                    "observations": 1244986
+                  }
+                ]
+              },
+              "validation": 3.309826669590973,
+              "status": "complete",
+              "evaluation_protocol": "raw-target-v2"
+            },
+            "gofa_bolt": {
+              "test": {
+                "mae": 3.7667223303439394,
+                "mse": 58.727423696065536,
+                "rmse": 7.663382001183651,
+                "mape_pct": 10.449405812805171,
+                "mape_observations": 14940228,
+                "mape_valid_fraction": 1.0,
+                "wape_pct": 6.521513507744396,
+                "observations": 14940228,
+                "by_horizon": [
+                  {
+                    "step": 1,
+                    "mae": 2.4191521324027097,
+                    "rmse": 4.26727676884173,
+                    "observations": 1245052
+                  },
+                  {
+                    "step": 2,
+                    "mae": 2.780852409855954,
+                    "rmse": 5.270811218849797,
+                    "observations": 1245046
+                  },
+                  {
+                    "step": 3,
+                    "mae": 3.0531433980069154,
+                    "rmse": 5.986179483453269,
+                    "observations": 1245040
+                  },
+                  {
+                    "step": 4,
+                    "mae": 3.2934459711900645,
+                    "rmse": 6.566852852042598,
+                    "observations": 1245034
+                  },
+                  {
+                    "step": 5,
+                    "mae": 3.5165341642049976,
+                    "rmse": 7.076752767260722,
+                    "observations": 1245028
+                  },
+                  {
+                    "step": 6,
+                    "mae": 3.7317662344683655,
+                    "rmse": 7.541475741464922,
+                    "observations": 1245022
+                  },
+                  {
+                    "step": 7,
+                    "mae": 3.935671660789001,
+                    "rmse": 7.9684377658468355,
+                    "observations": 1245016
+                  },
+                  {
+                    "step": 8,
+                    "mae": 4.129352304483919,
+                    "rmse": 8.355117185482554,
+                    "observations": 1245010
+                  },
+                  {
+                    "step": 9,
+                    "mae": 4.315468147134159,
+                    "rmse": 8.713277396850941,
+                    "observations": 1245004
+                  },
+                  {
+                    "step": 10,
+                    "mae": 4.497135997538012,
+                    "rmse": 9.054988198012312,
+                    "observations": 1244998
+                  },
+                  {
+                    "step": 11,
+                    "mae": 4.675205372621881,
+                    "rmse": 9.375092243113265,
+                    "observations": 1244992
+                  },
+                  {
+                    "step": 12,
+                    "mae": 4.85308735685511,
+                    "rmse": 9.680913181406517,
+                    "observations": 1244986
+                  }
+                ]
+              },
+              "validation": 3.3871191349453755,
+              "status": "complete",
+              "evaluation_protocol": "raw-target-v2"
+            }
+          },
+          "stage4_gnn_rows": {
+            "metr_la/g2_clock": {
+              "dataset": "metr_la",
+              "variant": "g2_clock",
+              "seed": 42,
+              "context": 12,
+              "horizon": 12,
+              "parameters": {
+                "total": 21345794,
+                "trainable": 109698,
+                "registered_real_dof": 21345794,
+                "active_real_dof": null,
+                "trainable_real_dof": 109698,
+                "complex_counting": "all parameters real",
+                "point_loss_active_trainable_real_dof": 107442,
+                "note": "Trainable tensor count; median/horizon-only loss may not update all head rows. Frozen backbone scalar usage not separately counted"
+              },
+              "checkpoint_sha256": "6d02806e25f62ba21933f8820fb1e8510698f44df7aee9806a023b5cf261ff4e",
+              "checkpoint_updates": 15078,
+              "training_complete": true,
+              "evaluation_protocol": "raw-target-v2",
+              "layout": "late_contiguous",
+              "test": {
+                "mae": 3.525163913684546,
+                "mse": 50.67578781863538,
+                "rmse": 7.1186928448020135,
+                "mape_pct": 10.046069849779286,
+                "mape_observations": 14940228,
+                "mape_valid_fraction": 1.0,
+                "wape_pct": 6.103291419945921,
+                "observations": 14940228,
+                "by_horizon": [
+                  {
+                    "step": 1,
+                    "mae": 2.39055407648004,
+                    "rmse": 4.201370633076058,
+                    "observations": 1245052
+                  },
+                  {
+                    "step": 2,
+                    "mae": 2.721091423902625,
+                    "rmse": 5.13172026161687,
+                    "observations": 1245046
+                  },
+                  {
+                    "step": 3,
+                    "mae": 2.963421180993864,
+                    "rmse": 5.76947840272479,
+                    "observations": 1245040
+                  },
+                  {
+                    "step": 4,
+                    "mae": 3.170484528603809,
+                    "rmse": 6.27119908160889,
+                    "observations": 1245034
+                  },
+                  {
+                    "step": 5,
+                    "mae": 3.3553458529157516,
+                    "rmse": 6.699053614956052,
+                    "observations": 1245028
+                  },
+                  {
+                    "step": 6,
+                    "mae": 3.5262063902910477,
+                    "rmse": 7.081257257716445,
+                    "observations": 1245022
+                  },
+                  {
+                    "step": 7,
+                    "mae": 3.683481334675663,
+                    "rmse": 7.422042373410273,
+                    "observations": 1245016
+                  },
+                  {
+                    "step": 8,
+                    "mae": 3.829504119320192,
+                    "rmse": 7.720061885846411,
+                    "observations": 1245010
+                  },
+                  {
+                    "step": 9,
+                    "mae": 3.9688669566804227,
+                    "rmse": 8.00479610435944,
+                    "observations": 1245004
+                  },
+                  {
+                    "step": 10,
+                    "mae": 4.102234568910565,
+                    "rmse": 8.269453072236264,
+                    "observations": 1244998
+                  },
+                  {
+                    "step": 11,
+                    "mae": 4.23062692821688,
+                    "rmse": 8.518301956702356,
+                    "observations": 1244992
+                  },
+                  {
+                    "step": 12,
+                    "mae": 4.360267182198713,
+                    "rmse": 8.762560693323815,
+                    "observations": 1244986
+                  }
+                ]
+              },
+              "validation": 3.1884260769656025,
+              "training_updates": 20463,
+              "epochs": 57,
+              "stop_reason": "early_stopping",
+              "train_scope_seconds": 1084.6876778788865,
+              "loss": "raw_mae",
+              "lr": 0.001
+            },
+            "metr_la/g2_self": {
+              "dataset": "metr_la",
+              "variant": "g2_self",
+              "seed": 42,
+              "context": 12,
+              "horizon": 12,
+              "parameters": {
+                "total": 21345026,
+                "trainable": 108930,
+                "registered_real_dof": 21345026,
+                "active_real_dof": null,
+                "trainable_real_dof": 108930,
+                "complex_counting": "all parameters real",
+                "point_loss_active_trainable_real_dof": 106674,
+                "note": "Trainable tensor count; median/horizon-only loss may not update all head rows. Frozen backbone scalar usage not separately counted"
+              },
+              "checkpoint_sha256": "ca85475d871b2f9276c38b29d580e893a5476d0089c02cfb58af06c01bb0f807",
+              "checkpoint_updates": 11129,
+              "training_complete": true,
+              "evaluation_protocol": "raw-target-v2",
+              "layout": "late_contiguous",
+              "test": {
+                "mae": 3.774400241040066,
+                "mse": 59.39465629942585,
+                "rmse": 7.706792867297385,
+                "mape_pct": 10.573255255973484,
+                "mape_observations": 14940228,
+                "mape_valid_fraction": 1.0,
+                "wape_pct": 6.53480665598436,
+                "observations": 14940228,
+                "by_horizon": [
+                  {
+                    "step": 1,
+                    "mae": 2.408265701285208,
+                    "rmse": 4.2685884528479585,
+                    "observations": 1245052
+                  },
+                  {
+                    "step": 2,
+                    "mae": 2.777269346632294,
+                    "rmse": 5.3272479676466995,
+                    "observations": 1245046
+                  },
+                  {
+                    "step": 3,
+                    "mae": 3.0578957684952313,
+                    "rmse": 6.0650763293845875,
+                    "observations": 1245040
+                  },
+                  {
+                    "step": 4,
+                    "mae": 3.304429134436509,
+                    "rmse": 6.658530453257699,
+                    "observations": 1245034
+                  },
+                  {
+                    "step": 5,
+                    "mae": 3.5317753156958154,
+                    "rmse": 7.171499709628323,
+                    "observations": 1245028
+                  },
+                  {
+                    "step": 6,
+                    "mae": 3.7488929754002216,
+                    "rmse": 7.6292885328185935,
+                    "observations": 1245022
+                  },
+                  {
+                    "step": 7,
+                    "mae": 3.9529559416030433,
+                    "rmse": 8.043249738961025,
+                    "observations": 1245016
+                  },
+                  {
+                    "step": 8,
+                    "mae": 4.145977660276355,
+                    "rmse": 8.41227610860472,
+                    "observations": 1245010
+                  },
+                  {
+                    "step": 9,
+                    "mae": 4.3297612269324315,
+                    "rmse": 8.753249367957125,
+                    "observations": 1245004
+                  },
+                  {
+                    "step": 10,
+                    "mae": 4.507252920438373,
+                    "rmse": 9.073168227271726,
+                    "observations": 1244998
+                  },
+                  {
+                    "step": 11,
+                    "mae": 4.678636247501186,
+                    "rmse": 9.367911986460326,
+                    "observations": 1244992
+                  },
+                  {
+                    "step": 12,
+                    "mae": 4.849838334498072,
+                    "rmse": 9.655186600151708,
+                    "observations": 1244986
+                  }
+                ]
+              },
+              "validation": 3.4009499286249896,
+              "training_updates": 16514,
+              "epochs": 46,
+              "stop_reason": "early_stopping",
+              "train_scope_seconds": 874.6034313160926,
+              "loss": "raw_mae",
+              "lr": 0.001
+            },
+            "metr_la/g2_values": {
+              "dataset": "metr_la",
+              "variant": "g2_values",
+              "seed": 42,
+              "context": 12,
+              "horizon": 12,
+              "parameters": {
+                "total": 21345026,
+                "trainable": 108930,
+                "registered_real_dof": 21345026,
+                "active_real_dof": null,
+                "trainable_real_dof": 108930,
+                "complex_counting": "all parameters real",
+                "point_loss_active_trainable_real_dof": 106674,
+                "note": "Trainable tensor count; median/horizon-only loss may not update all head rows. Frozen backbone scalar usage not separately counted"
+              },
+              "checkpoint_sha256": "dd914e2cb49790a9a414a9f5a5caacf9f66bff78a452699ad88a89b0c3b381db",
+              "checkpoint_updates": 20822,
+              "training_complete": true,
+              "evaluation_protocol": "raw-target-v2",
+              "layout": "late_contiguous",
+              "test": {
+                "mae": 3.6682056696838465,
+                "mse": 55.52482819882388,
+                "rmse": 7.451498386151867,
+                "mape_pct": 10.339311270385293,
+                "mape_observations": 14940228,
+                "mape_valid_fraction": 1.0,
+                "wape_pct": 6.35094671866706,
+                "observations": 14940228,
+                "by_horizon": [
+                  {
+                    "step": 1,
+                    "mae": 2.3916688577184058,
+                    "rmse": 4.201668141845297,
+                    "observations": 1245052
+                  },
+                  {
+                    "step": 2,
+                    "mae": 2.7448254235496194,
+                    "rmse": 5.18853078036955,
+                    "observations": 1245046
+                  },
+                  {
+                    "step": 3,
+                    "mae": 3.006388130225349,
+                    "rmse": 5.87832606666572,
+                    "observations": 1245040
+                  },
+                  {
+                    "step": 4,
+                    "mae": 3.2366024460598317,
+                    "rmse": 6.440004245432387,
+                    "observations": 1245034
+                  },
+                  {
+                    "step": 5,
+                    "mae": 3.4486687718515348,
+                    "rmse": 6.926786586346036,
+                    "observations": 1245028
+                  },
+                  {
+                    "step": 6,
+                    "mae": 3.648981184420852,
+                    "rmse": 7.3679461239384105,
+                    "observations": 1245022
+                  },
+                  {
+                    "step": 7,
+                    "mae": 3.8370454734422426,
+                    "rmse": 7.766797145378285,
+                    "observations": 1245016
+                  },
+                  {
+                    "step": 8,
+                    "mae": 4.012852253056135,
+                    "rmse": 8.123457965070715,
+                    "observations": 1245010
+                  },
+                  {
+                    "step": 9,
+                    "mae": 4.181010162021628,
+                    "rmse": 8.45411193463825,
+                    "observations": 1245004
+                  },
+                  {
+                    "step": 10,
+                    "mae": 4.344002047601537,
+                    "rmse": 8.763435614271563,
+                    "observations": 1244998
+                  },
+                  {
+                    "step": 11,
+                    "mae": 4.503280504778011,
+                    "rmse": 9.046096072907881,
+                    "observations": 1244992
+                  },
+                  {
+                    "step": 12,
+                    "mae": 4.663279598102952,
+                    "rmse": 9.328267325307568,
+                    "observations": 1244986
+                  }
+                ]
+              },
+              "validation": 3.3079304371966476,
+              "training_updates": 26207,
+              "epochs": 73,
+              "stop_reason": "early_stopping",
+              "train_scope_seconds": 1415.71795880422,
+              "loss": "raw_mae",
+              "lr": 0.001
+            },
+            "metr_la/ufg_a": {
+              "dataset": "metr_la",
+              "variant": "ufg_a",
+              "seed": 42,
+              "context": 12,
+              "horizon": 12,
+              "parameters": {
+                "registered_numel": 641213,
+                "registered_real_dof": 1264679,
+                "active_real_dof": 108927,
+                "trainable_real_dof": 108927,
+                "inactive_names": [
+                  "embeddings",
+                  "conv2_list.0.linear.weight",
+                  "conv2_list.0.linear.bias",
+                  "conv2_list.1.linear.weight",
+                  "conv2_list.1.linear.bias"
+                ],
+                "complex_counting": "two real scalar degrees of freedom per complex scalar"
+              },
+              "checkpoint_sha256": "bd4358f8f7f7e49345562b741c28d2442a6a85c4319a802759a9027de387236d",
+              "checkpoint_updates": 6462,
+              "training_complete": true,
+              "evaluation_protocol": "raw-target-v2",
+              "layout": null,
+              "test": {
+                "mae": 3.769236406114767,
+                "mse": 45.294535246706104,
+                "rmse": 6.730121488257557,
+                "mape_pct": 10.617965084386672,
+                "mape_observations": 14940228,
+                "mape_valid_fraction": 1.0,
+                "wape_pct": 6.525866252030022,
+                "observations": 14940228,
+                "by_horizon": [
+                  {
+                    "step": 1,
+                    "mae": 2.6326786554053156,
+                    "rmse": 4.332296283389546,
+                    "observations": 1245052
+                  },
+                  {
+                    "step": 2,
+                    "mae": 2.9841714995998854,
+                    "rmse": 5.1810687999634935,
+                    "observations": 1245046
+                  },
+                  {
+                    "step": 3,
+                    "mae": 3.2384003359409115,
+                    "rmse": 5.728134038351302,
+                    "observations": 1245040
+                  },
+                  {
+                    "step": 4,
+                    "mae": 3.448267103074235,
+                    "rmse": 6.150444466883008,
+                    "observations": 1245034
+                  },
+                  {
+                    "step": 5,
+                    "mae": 3.629191575520053,
+                    "rmse": 6.49563419011527,
+                    "observations": 1245028
+                  },
+                  {
+                    "step": 6,
+                    "mae": 3.8017228757787946,
+                    "rmse": 6.786171533278749,
+                    "observations": 1245022
+                  },
+                  {
+                    "step": 7,
+                    "mae": 3.9452158291616537,
+                    "rmse": 7.035749160112401,
+                    "observations": 1245016
+                  },
+                  {
+                    "step": 8,
+                    "mae": 4.085318972450744,
+                    "rmse": 7.251843532677044,
+                    "observations": 1245010
+                  },
+                  {
+                    "step": 9,
+                    "mae": 4.205434648342215,
+                    "rmse": 7.443063884247244,
+                    "observations": 1245004
+                  },
+                  {
+                    "step": 10,
+                    "mae": 4.3176619482020415,
+                    "rmse": 7.615598270518095,
+                    "observations": 1244998
+                  },
+                  {
+                    "step": 11,
+                    "mae": 4.41694222634836,
+                    "rmse": 7.779183825726246,
+                    "observations": 1244992
+                  },
+                  {
+                    "step": 12,
+                    "mae": 4.5259434268841625,
+                    "rmse": 7.9395634855010515,
+                    "observations": 1244986
+                  }
+                ]
+              },
+              "validation": 3.4159430468128376,
+              "training_updates": 11847,
+              "epochs": 33,
+              "stop_reason": "early_stopping",
+              "train_scope_seconds": 517.7594752172008,
+              "loss": "standardized_mse",
+              "lr": 0.003
+            },
+            "metr_la/ufg_s": {
+              "dataset": "metr_la",
+              "variant": "ufg_s",
+              "seed": 42,
+              "context": 12,
+              "horizon": 12,
+              "parameters": {
+                "registered_numel": 6635,
+                "registered_real_dof": 8548,
+                "active_real_dof": 7332,
+                "trainable_real_dof": 7332,
+                "inactive_names": [
+                  "embeddings",
+                  "conv2_list.0.linear.weight",
+                  "conv2_list.0.linear.bias",
+                  "conv2_list.1.linear.weight",
+                  "conv2_list.1.linear.bias"
+                ],
+                "complex_counting": "two real scalar degrees of freedom per complex scalar"
+              },
+              "checkpoint_sha256": "7367030df32bc74893b167cc526dfd2397da4367575f83d70c28ffbd3c92056e",
+              "checkpoint_updates": 7539,
+              "training_complete": true,
+              "evaluation_protocol": "raw-target-v2",
+              "layout": null,
+              "test": {
+                "mae": 3.7899890328232213,
+                "mse": 46.0039699887634,
+                "rmse": 6.782622648265448,
+                "mape_pct": 10.516613364884396,
+                "mape_observations": 14940228,
+                "mape_valid_fraction": 1.0,
+                "wape_pct": 6.561796305676427,
+                "observations": 14940228,
+                "by_horizon": [
+                  {
+                    "step": 1,
+                    "mae": 2.6420172050130004,
+                    "rmse": 4.33998760483048,
+                    "observations": 1245052
+                  },
+                  {
+                    "step": 2,
+                    "mae": 2.9899738179114657,
+                    "rmse": 5.187264030699458,
+                    "observations": 1245046
+                  },
+                  {
+                    "step": 3,
+                    "mae": 3.2432805386123986,
+                    "rmse": 5.740666945060545,
+                    "observations": 1245040
+                  },
+                  {
+                    "step": 4,
+                    "mae": 3.455466268932334,
+                    "rmse": 6.172377535299578,
+                    "observations": 1245034
+                  },
+                  {
+                    "step": 5,
+                    "mae": 3.638817818305166,
+                    "rmse": 6.522086312837823,
+                    "observations": 1245028
+                  },
+                  {
+                    "step": 6,
+                    "mae": 3.8096534125076187,
+                    "rmse": 6.824220235515935,
+                    "observations": 1245022
+                  },
+                  {
+                    "step": 7,
+                    "mae": 3.960763160018798,
+                    "rmse": 7.080680642572058,
+                    "observations": 1245016
+                  },
+                  {
+                    "step": 8,
+                    "mae": 4.102546934502637,
+                    "rmse": 7.311161840395567,
+                    "observations": 1245010
+                  },
+                  {
+                    "step": 9,
+                    "mae": 4.232013134272133,
+                    "rmse": 7.513063905640718,
+                    "observations": 1245004
+                  },
+                  {
+                    "step": 10,
+                    "mae": 4.351718406671566,
+                    "rmse": 7.701075408057226,
+                    "observations": 1244998
+                  },
+                  {
+                    "step": 11,
+                    "mae": 4.468576702851773,
+                    "rmse": 7.877338272685826,
+                    "observations": 1244992
+                  },
+                  {
+                    "step": 12,
+                    "mae": 4.585156332406009,
+                    "rmse": 8.046850482206848,
+                    "observations": 1244986
+                  }
+                ]
+              },
+              "validation": 3.4404391282254005,
+              "training_updates": 12924,
+              "epochs": 36,
+              "stop_reason": "early_stopping",
+              "train_scope_seconds": 130.81528977490962,
+              "loss": "standardized_mse",
+              "lr": 0.003
+            }
+          },
+          "stage8": {
+            "t1_sketch": null,
+            "t2_correlated": {
+              "status": "complete",
+              "variant": "t2_correlated",
+              "seed": 42,
+              "parameters": {
+                "total": 21351174,
+                "trainable": 115078,
+                "registered_real_dof": 21351174,
+                "active_real_dof": null,
+                "trainable_real_dof": 115078,
+                "complex_counting": "all parameters real",
+                "point_loss_active_trainable_real_dof": 112822,
+                "note": "Trainable tensor count; median/horizon-only loss may not update all head rows. Frozen backbone scalar usage not separately counted"
+              },
+              "checkpoint_sha256": "1cd967855747ca3729267a5a55e2a5cce0284e99ca75da596b1bee700c0051ca",
+              "checkpoint_updates": 17591,
+              "validation": {
+                "raw": {
+                  "mae": 3.0783439033134705,
+                  "mse": 39.87393245999131,
+                  "rmse": 6.3145809409644365,
+                  "mape_pct": 8.77672198459651,
+                  "mape_observations": 7892981,
+                  "mape_valid_fraction": 1.0,
+                  "wape_pct": 5.225281775973222,
+                  "observations": 7892981,
+                  "by_horizon": [
+                    {
+                      "step": 1,
+                      "mae": 2.1855405520554356,
+                      "rmse": 3.860959103269196,
+                      "observations": 657759
+                    },
+                    {
+                      "step": 2,
+                      "mae": 2.458649532246717,
+                      "rmse": 4.674165672356641,
+                      "observations": 657757
+                    },
+                    {
+                      "step": 3,
+                      "mae": 2.658168045026645,
+                      "rmse": 5.240615384573471,
+                      "observations": 657752
+                    },
+                    {
+                      "step": 4,
+                      "mae": 2.826137651961233,
+                      "rmse": 5.666260134448742,
+                      "observations": 657747
+                    },
+                    {
+                      "step": 5,
+                      "mae": 2.9715917482383114,
+                      "rmse": 6.016993644314576,
+                      "observations": 657744
+                    },
+                    {
+                      "step": 6,
+                      "mae": 3.1008711723647093,
+                      "rmse": 6.331067615153229,
+                      "observations": 657743
+                    },
+                    {
+                      "step": 7,
+                      "mae": 3.215623590165318,
+                      "rmse": 6.6051833401288675,
+                      "observations": 657743
+                    },
+                    {
+                      "step": 8,
+                      "mae": 3.321482756188943,
+                      "rmse": 6.842922658166628,
+                      "observations": 657744
+                    },
+                    {
+                      "step": 9,
+                      "mae": 3.4167497945179175,
+                      "rmse": 7.0568426855939395,
+                      "observations": 657746
+                    },
+                    {
+                      "step": 10,
+                      "mae": 3.5078996678829832,
+                      "rmse": 7.252286750075564,
+                      "observations": 657747
+                    },
+                    {
+                      "step": 11,
+                      "mae": 3.5942772781814036,
+                      "rmse": 7.427326710751053,
+                      "observations": 657748
+                    },
+                    {
+                      "step": 12,
+                      "mae": 3.6831616007344037,
+                      "rmse": 7.606708256141879,
+                      "observations": 657751
+                    }
+                  ]
+                },
+                "standardized": {
+                  "mae": 0.34103941138168026,
+                  "mse": 0.4530956161876448,
+                  "rmse": 0.6731237747900789,
+                  "mape_pct": 223.19235602397714,
+                  "mape_observations": 7892705,
+                  "mape_valid_fraction": 0.9999650322229333,
+                  "wape_pct": 47.35430140292419,
+                  "observations": 7892981,
+                  "by_horizon": [
+                    {
+                      "step": 1,
+                      "mae": 0.2587445614338047,
+                      "rmse": 0.4703650839332813,
+                      "observations": 657759
+                    },
+                    {
+                      "step": 2,
+                      "mae": 0.2841592889971585,
+                      "rmse": 0.5378604735968692,
+                      "observations": 657757
+                    },
+                    {
+                      "step": 3,
+                      "mae": 0.3025932434550842,
+                      "rmse": 0.585518129410448,
+                      "observations": 657752
+                    },
+                    {
+                      "step": 4,
+                      "mae": 0.31800041189109496,
+                      "rmse": 0.6213763137294595,
+                      "observations": 657747
+                    },
+                    {
+                      "step": 5,
+                      "mae": 0.33134820458662656,
+                      "rmse": 0.6509688575616855,
+                      "observations": 657744
+                    },
+                    {
+                      "step": 6,
+                      "mae": 0.3432209517291243,
+                      "rmse": 0.6770745370278678,
+                      "observations": 657743
+                    },
+                    {
+                      "step": 7,
+                      "mae": 0.3536871631170667,
+                      "rmse": 0.6995461300978519,
+                      "observations": 657743
+                    },
+                    {
+                      "step": 8,
+                      "mae": 0.3633350284995627,
+                      "rmse": 0.7189024623295173,
+                      "observations": 657744
+                    },
+                    {
+                      "step": 9,
+                      "mae": 0.3721681062370291,
+                      "rmse": 0.7370873174633457,
+                      "observations": 657746
+                    },
+                    {
+                      "step": 10,
+                      "mae": 0.3804476698299634,
+                      "rmse": 0.7530723834334977,
+                      "observations": 657747
+                    },
+                    {
+                      "step": 11,
+                      "mae": 0.38837920860328623,
+                      "rmse": 0.7670181787243827,
+                      "observations": 657748
+                    },
+                    {
+                      "step": 12,
+                      "mae": 0.39639154303254376,
+                      "rmse": 0.7813888895326574,
+                      "observations": 657751
+                    }
+                  ]
+                }
+              },
+              "test": {
+                "raw": {
+                  "mae": 3.4062673395574996,
+                  "mse": 46.09625026166148,
+                  "rmse": 6.7894219386970995,
+                  "mape_pct": 9.696487165088113,
+                  "mape_observations": 14940228,
+                  "mape_valid_fraction": 1.0,
+                  "wape_pct": 5.897439874174224,
+                  "observations": 14940228,
+                  "by_horizon": [
+                    {
+                      "step": 1,
+                      "mae": 2.3588792603711433,
+                      "rmse": 4.111303458434937,
+                      "observations": 1245052
+                    },
+                    {
+                      "step": 2,
+                      "mae": 2.6735058420758873,
+                      "rmse": 4.986095759438396,
+                      "observations": 1245046
+                    },
+                    {
+                      "step": 3,
+                      "mae": 2.901712487259316,
+                      "rmse": 5.578456627469221,
+                      "observations": 1245040
+                    },
+                    {
+                      "step": 4,
+                      "mae": 3.095904509659708,
+                      "rmse": 6.034042472412428,
+                      "observations": 1245034
+                    },
+                    {
+                      "step": 5,
+                      "mae": 3.267544905031899,
+                      "rmse": 6.416272024335673,
+                      "observations": 1245028
+                    },
+                    {
+                      "step": 6,
+                      "mae": 3.425608937835416,
+                      "rmse": 6.773377813733961,
+                      "observations": 1245022
+                    },
+                    {
+                      "step": 7,
+                      "mae": 3.5647999632564566,
+                      "rmse": 7.0834948097733825,
+                      "observations": 1245016
+                    },
+                    {
+                      "step": 8,
+                      "mae": 3.694086114838673,
+                      "rmse": 7.362992888441507,
+                      "observations": 1245010
+                    },
+                    {
+                      "step": 9,
+                      "mae": 3.8093147985512594,
+                      "rmse": 7.61186709431223,
+                      "observations": 1245004
+                    },
+                    {
+                      "step": 10,
+                      "mae": 3.9213224353132,
+                      "rmse": 7.846608886793794,
+                      "observations": 1244998
+                    },
+                    {
+                      "step": 11,
+                      "mae": 4.026216951013167,
+                      "rmse": 8.047082200922139,
+                      "observations": 1244992
+                    },
+                    {
+                      "step": 12,
+                      "mae": 4.136417531622438,
+                      "rmse": 8.256101403418437,
+                      "observations": 1244986
+                    }
+                  ]
+                },
+                "standardized": {
+                  "mae": 0.36740764170333495,
+                  "mse": 0.48049391852942896,
+                  "rmse": 0.6931766863718289,
+                  "mape_pct": 250.25157424462924,
+                  "mape_observations": 14939462,
+                  "mape_valid_fraction": 0.9999487290287672,
+                  "wape_pct": 51.83876445017464,
+                  "observations": 14940228,
+                  "by_horizon": [
+                    {
+                      "step": 1,
+                      "mae": 0.2744749989961421,
+                      "rmse": 0.48941613398219336,
+                      "observations": 1245052
+                    },
+                    {
+                      "step": 2,
+                      "mae": 0.30291940625985636,
+                      "rmse": 0.5579484780654257,
+                      "observations": 1245046
+                    },
+                    {
+                      "step": 3,
+                      "mae": 0.3231885569143836,
+                      "rmse": 0.6043903294466373,
+                      "observations": 1245040
+                    },
+                    {
+                      "step": 4,
+                      "mae": 0.3402854425266855,
+                      "rmse": 0.6390531308092313,
+                      "observations": 1245034
+                    },
+                    {
+                      "step": 5,
+                      "mae": 0.3553795051446697,
+                      "rmse": 0.6679797801298131,
+                      "observations": 1245028
+                    },
+                    {
+                      "step": 6,
+                      "mae": 0.36928088542339443,
+                      "rmse": 0.6951494259721742,
+                      "observations": 1245022
+                    },
+                    {
+                      "step": 7,
+                      "mae": 0.3815327079966884,
+                      "rmse": 0.7180979861329204,
+                      "observations": 1245016
+                    },
+                    {
+                      "step": 8,
+                      "mae": 0.3927750690456389,
+                      "rmse": 0.7391205719642819,
+                      "observations": 1245010
+                    },
+                    {
+                      "step": 9,
+                      "mae": 0.40290513048678583,
+                      "rmse": 0.7577815215809106,
+                      "observations": 1245004
+                    },
+                    {
+                      "step": 10,
+                      "mae": 0.4127559535946758,
+                      "rmse": 0.775649794720869,
+                      "observations": 1244998
+                    },
+                    {
+                      "step": 11,
+                      "mae": 0.42192256567242825,
+                      "rmse": 0.7903381746393255,
+                      "observations": 1244992
+                    },
+                    {
+                      "step": 12,
+                      "mae": 0.43148078570848475,
+                      "rmse": 0.8059446155103255,
+                      "observations": 1244986
+                    }
+                  ]
+                }
+              },
+              "evaluation_protocol": "raw-target-v2"
+            }
+          },
+          "stage15_validation_only": {
+            "selection_split": "validation",
+            "sealed_at": 1792115160.7537174,
+            "selected": "r1_reg_rank6",
+            "jobs": {
+              "r1_reg_rank6": {
+                "checkpoint_sha256": "160eeaf6074a287d8d7380cee66b78dadd4531ffc6d1c2f19e9dc30dd06baf61",
+                "validation_raw_mae": 3.0626643914763667,
+                "validation_step12_mae": 3.6691021727276247,
+                "updates": 35900,
+                "epochs": 100,
+                "training_complete": true,
+                "stop_reason": "max_epochs",
+                "parameters": {
+                  "total": 21355398,
+                  "trainable": 119302,
+                  "registered_real_dof": 21355398,
+                  "active_real_dof": null,
+                  "trainable_real_dof": 119302,
+                  "complex_counting": "all parameters real",
+                  "point_loss_active_trainable_real_dof": 115918,
+                  "note": "Trainable tensor count; median/horizon-only loss may not update all head rows. Frozen backbone scalar usage not separately counted"
+                }
+              }
+            }
+          },
+          "note": "References only; no new training, no parameter matching, Stage15 test remains unavailable"
+        },
+        "final_selection": {
+          "selection_split": "complete validation raw MAE",
+          "sealed_at": 1792205940.7767873,
+          "native": {
+            "revision": "20baa88d6ab838b34abbd1d2b1f4cea57c8ff870",
+            "do_sample": false,
+            "max_new_tokens": 64
+          },
+          "gofa": null,
+          "updates": 167,
+          "stop_reason": "training_deadline_or_signal"
+        },
+        "training": {
+          "epoch": 0,
+          "offset": 10737,
+          "updates": 167,
+          "stale": 0,
+          "best_mae": null,
+          "best_updates": null,
+          "phase": "train",
+          "pending_windows": 49,
+          "pending_count": 117586,
+          "pending_loss": 431256.71337890625,
+          "validation_offset": 0,
+          "last_validated_key": null,
+          "suffix_checkpointing": false,
+          "prefix_node_chunk": 256,
+          "last_gradient_norm": 4.410202503204346,
+          "last_training_raw_mae": 3.858170493746622,
+          "stop_reason": "training_deadline_or_signal",
+          "updated_at": 1792156317.989897,
+          "checkpoint_sha256": "4a262c97c0a813032f15e885ca74d2b98cffd27654d74582c30ba23cff3cc1d1"
+        },
+        "parameters": {
+          "registered_real_dof": 6821464722,
+          "trainable_real_dof": 1120914,
+          "continuous_forward_module_real_dof": 6649428626,
+          "native_registered_real_dof": 6820343808,
+          "new_graph_and_router": 1071750,
+          "new_continuous_head": 49164,
+          "note": "Forward module count excludes original unused LM head; embedding tensor counted in full. Frozen parameters and compute are not matched to historical UFG-A."
+        },
+        "mechanisms": null,
+        "failures": {},
+        "cache": null,
+        "activity": {
+          "spent_seconds": 9956.406928363256,
+          "worker": null
+        },
+        "budget": {
+          "spent_seconds": 9882.842370609753,
+          "scopes": {
+            "preflight": 17.008372533135116,
+            "train": 9865.833998076618
+          },
+          "active_scope": null
+        },
+        "memory": {
+          "phases": {
+            "preflight": {
+              "peak_allocated": 32319703552,
+              "peak_reserved": 37593546752,
+              "attempts": 2
+            },
+            "train": {
+              "peak_allocated": 19523580416,
+              "peak_reserved": 21760049152,
+              "attempts": 1
+            }
+          },
+          "peak_allocated": 32319703552,
+          "peak_reserved": 37593546752
+        },
+        "window": {
+          "started_at": 1792137782.8795292,
+          "training_deadline": 1792198800.0,
+          "wall_deadline": 1792206000.0,
+          "window_seconds": 68217.12047076225,
+          "adopted_from": {
+            "kind": "training_continuation",
+            "output": "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v10",
+            "source_binding": "7600437ecd8c4840c147a795f469443129c04c91f4502a0e087a7f58c3a12665",
+            "window_sha256": "35103c7231d5cbdf972b4761ce0b7e8660e91ac2746b52e6c603437c3a2fe898",
+            "manifest_sha256": "1a2933609bfeb8e00d2259f63e23dec46043d2897e0c530657b6a2b5fafe68fb",
+            "checkpoint_sha256": "791ca1e2f06fd3a727687e010324e7d96bb21724d461fe3f53dccfdad2e7161d",
+            "started_at": 1792137782.8795292,
+            "original_wall_deadline": 1792206000.0,
+            "gpu_activity_seconds": 9956.406928363256,
+            "updates": 167,
+            "offset": 10737,
+            "pending_windows": 49,
+            "pending_count": 117586,
+            "deadline_amendment": {
+              "authorization": "explicit_user_request",
+              "source_window_sha256": "ecfe1540e17a6316be683376a24d6637a10fd4e5de8b9861ed4d61bbfd15e21b",
+              "previous_wall_deadline": 1792164600.0,
+              "new_wall_deadline": 1792206000.0
+            },
+            "repaired_failure": "preflight only; saved checkpoint unchanged; no predictions"
+          },
+          "deadline_amendment": {
+            "authorization": "explicit_user_request",
+            "source_window_sha256": "ecfe1540e17a6316be683376a24d6637a10fd4e5de8b9861ed4d61bbfd15e21b",
+            "previous_wall_deadline": 1792164600.0,
+            "new_wall_deadline": 1792206000.0
+          },
+          "idle_interval_seconds": 10,
+          "fixed_prompt_kv": true,
+          "launch_fingerprint": "b77f9ae20bc3f1ef95466d1220818c40ad41a3db044d74f8d25097eae1492a91"
+        },
+        "limitations": [
+          "single seed; development tests previously viewed",
+          "native greedy differs from official 8 samples",
+          "GOFA supervised continuous head and 19 history/clock features; no no-graph adaptation control",
+          "historical UFG/HSD are references, not matched to the new parameter count",
+          "pretraining data overlap not fully auditable; TITAN 3.08 is a cross-implementation reference"
+        ]
+      }
+    },
+    "cache.json": null,
+    "cuda_memory.json": {
+      "sha256": "eb333080bcec986b44825a2024b61daa29b1b1b74e9828ec62f9a65665d4c74d",
+      "value": {
+        "phases": {
+          "preflight": {
+            "peak_allocated": 32319703552,
+            "peak_reserved": 37593546752,
+            "attempts": 2
+          },
+          "train": {
+            "peak_allocated": 19523580416,
+            "peak_reserved": 21760049152,
+            "attempts": 1
+          }
+        },
+        "peak_allocated": 32319703552,
+        "peak_reserved": 37593546752
+      }
+    },
+    "gofa_chattime/progress.json": {
+      "sha256": "2dd15480ec7f8c1115f1d0f9fa14e86da23221a01108750ffe05003973feddb3",
+      "value": {
+        "epoch": 0,
+        "offset": 10737,
+        "updates": 167,
+        "stale": 0,
+        "best_mae": null,
+        "best_updates": null,
+        "phase": "train",
+        "pending_windows": 49,
+        "pending_count": 117586,
+        "pending_loss": 431256.71337890625,
+        "validation_offset": 0,
+        "last_validated_key": null,
+        "suffix_checkpointing": false,
+        "prefix_node_chunk": 256,
+        "last_gradient_norm": 4.410202503204346,
+        "last_training_raw_mae": 3.858170493746622,
+        "stop_reason": "training_deadline_or_signal",
+        "updated_at": 1792156317.989897,
+        "checkpoint_sha256": "4a262c97c0a813032f15e885ca74d2b98cffd27654d74582c30ba23cff3cc1d1"
+      }
+    },
+    "gofa_chattime/best_validation.json": null,
+    "gofa_chattime/fixed_prompt_cache.json": null,
+    "gofa_chattime/evaluation_progress.json": {
+      "sha256": "bd7bb8fed2659abf735359f9ac179f32445b7ab9a1b06cea89e5a157197341cc",
+      "value": {
+        "val": {
+          "complete": false,
+          "source": "locked complete validation"
+        },
+        "test": {
+          "completed_windows": 0,
+          "total_windows": 6313,
+          "complete": false
+        }
+      }
+    },
+    "native_chattime/evaluation_progress.json": {
+      "sha256": "a1bf42402112098d394c51465edf6ab47fd4a7c004f309c2b159be6b19548750",
+      "value": {
+        "val": {
+          "completed_windows": 0,
+          "total_windows": 3281,
+          "complete": false
+        },
+        "test": {
+          "completed_windows": 0,
+          "total_windows": 6313,
+          "complete": false
+        }
+      }
+    },
+    "gofa_chattime/result.json": null,
+    "native_chattime/result.json": null,
+    ".launch.json": {
+      "sha256": "73d0a840ac07789be13adee8e263b121b25e3139d9a45cb89b51f86450c21e36",
+      "value": {
+        "pid": 318760,
+        "start_ticks": 608724854,
+        "snapshot": "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v11",
+        "output": "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v11",
+        "spawned_at": 1792166187.7824378,
+        "command": [
+          "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v11/.venv-chat/bin/python",
+          "-u",
+          "-m",
+          "gofa_f.chattime_stage",
+          "--output",
+          "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v11",
+          "--hard-deadline",
+          "2026-10-17T11:00:00+08:00",
+          "--fixed-prompt-kv",
+          "--idle-check-seconds",
+          "10",
+          "--repair-failed-preflight",
+          "--continue-training-from",
+          "/home/dcg/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v10"
+        ]
+      }
+    },
+    ".bootstrap.launch.json": {
+      "sha256": "51a65ce644877dfa61ec96c07480f70fa460531f4f1c44c8fe5f66c404b099ae",
+      "value": {
+        "pid": 316422,
+        "start_ticks": 608709160,
+        "snapshot": "/home/dcg/dcg_data/GOFA-F-runs/stage16-chattime-metr-v11",
+        "output": "/home/dcg/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v11",
+        "spawned_at": 1792166030.8428614,
+        "command": [
+          "/home/dcg/dcg_data/GOFA-F-runs/stage16-chattime-metr-v11/.venv-chat/bin/python",
+          "-u",
+          "/home/dcg/dcg_data/GOFA-F-runs/stage16-chattime-metr-v11/scripts/bootstrap_chattime_stage.py",
+          "--output",
+          "/home/dcg/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v11",
+          "--official-manifest",
+          "/home/dcg/dcg_data/GOFA-F/.remote/chattime-official-snapshot.json",
+          "--hard-deadline",
+          "2026-10-17T11:00:00+08:00",
+          "--continue-training-from",
+          "/home/dcg/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v10",
+          "--fixed-prompt-kv",
+          "--idle-check-seconds",
+          "10",
+          "--repair-failed-preflight"
+        ],
+        "git_revision": "9bb224f70f3fc06ef5062a94b9a520d4f6ba5bb7",
+        "user_authorization": "\u4fee\u590dStage16\uff0c\u539f09:00/11:00\u622a\u6b62\u548c\u5b8c\u5168\u7a7a\u95f210\u79d2\u653f\u7b56\u4e0d\u53d8"
+      }
+    }
+  },
+  "logs": {
+    ".log": {
+      "last_lines": [
+        "{\"state\": \"waiting_for_idle\", \"consecutive_idle\": 0, \"query_error\": null}",
+        "{\"state\": \"waiting_for_idle\", \"consecutive_idle\": 0, \"query_error\": null}",
+        "{\"state\": \"waiting_for_idle\", \"consecutive_idle\": 0, \"query_error\": null}",
+        "{\"state\": \"waiting_for_idle\", \"consecutive_idle\": 0, \"query_error\": null}",
+        "{\"state\": \"waiting_for_idle\", \"consecutive_idle\": 0, \"query_error\": null}",
+        "{\"state\": \"waiting_for_idle\", \"consecutive_idle\": 0, \"query_error\": null}",
+        "{\"state\": \"waiting_for_idle\", \"consecutive_idle\": 0, \"query_error\": null}",
+        "{\"state\": \"waiting_for_idle\", \"consecutive_idle\": 0, \"query_error\": null}",
+        "{\"state\": \"waiting_for_idle\", \"consecutive_idle\": 0, \"query_error\": null}",
+        "{\"state\": \"waiting_for_idle\", \"consecutive_idle\": 0, \"query_error\": null}",
+        "{\"state\": \"waiting_for_idle\", \"consecutive_idle\": 0, \"query_error\": null}",
+        "{\"state\": \"wall_deadline\"}"
+      ]
+    },
+    ".bootstrap.log": {
+      "last_lines": [
+        "{\"state\": \"preparing_weights\", \"window_started\": false}",
+        "{\"state\": \"cpu_preflight\", \"window_started\": false}",
+        "{\"state\": \"waiting_for_source_checkpoint\", \"window_started\": false, \"source\": \"/mnt/sevenT/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v10\", \"hard_deadline\": \"2026-10-17T11:00:00+08:00\"}",
+        "{\"state\": \"starting_idle_waiter\", \"window_started\": false}",
+        "{\"state\": \"idle_waiter_deployed\", \"launcher_pid\": 318760, \"launcher_start_ticks\": 608724854}",
+        "{\"state\": \"wall_deadline\", \"launcher_returncode\": 0, \"window\": {\"started_at\": 1792137782.8795292, \"training_deadline\": 1792198800.0, \"wall_deadline\": 1792206000.0, \"window_seconds\": 68217.12047076225, \"adopted_from\": {\"kind\": \"training_continuation\", \"output\": \"/mnt/sevenT/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v10\", \"source_binding\": \"7600437ecd8c4840c147a795f469443129c04c91f4502a0e087a7f58c3a12665\", \"window_sha256\": \"35103c7231d5cbdf972b4761ce0b7e8660e91ac2746b52e6c603437c3a2fe898\", \"manifest_sha256\": \"1a2933609bfeb8e00d2259f63e23dec46043d2897e0c530657b6a2b5fafe68fb\", \"checkpoint_sha256\": \"791ca1e2f06fd3a727687e010324e7d96bb21724d461fe3f53dccfdad2e7161d\", \"started_at\": 1792137782.8795292, \"original_wall_deadline\": 1792206000.0, \"gpu_activity_seconds\": 9956.406928363256, \"updates\": 167, \"offset\": 10737, \"pending_windows\": 49, \"pending_count\": 117586, \"deadline_amendment\": {\"authorization\": \"explicit_user_request\", \"source_window_sha256\": \"ecfe1540e17a6316be683376a24d6637a10fd4e5de8b9861ed4d61bbfd15e21b\", \"previous_wall_deadline\": 1792164600.0, \"new_wall_deadline\": 1792206000.0}, \"repaired_failure\": \"preflight only; saved checkpoint unchanged; no predictions\"}, \"deadline_amendment\": {\"authorization\": \"explicit_user_request\", \"source_window_sha256\": \"ecfe1540e17a6316be683376a24d6637a10fd4e5de8b9861ed4d61bbfd15e21b\", \"previous_wall_deadline\": 1792164600.0, \"new_wall_deadline\": 1792206000.0}, \"idle_interval_seconds\": 10, \"fixed_prompt_kv\": true, \"launch_fingerprint\": \"b77f9ae20bc3f1ef95466d1220818c40ad41a3db044d74f8d25097eae1492a91\"}}"
+      ]
+    }
+  },
+  "notes": [
+    "CPU verification is not CUDA verification. v11 fixed_prompt_fresh and fixed_prompt_continued were never run.",
+    "Memory peaks and training/activity counts carried from prior versions, not new v11 GPU work.",
+    "No complete validation or test; no formal accuracy metrics, valid-generation rate, or fallback rate available.",
+    "Original v10 failure evidence is retained separately; v11 did not reproduce or resolve that CUDA failure.",
+    "No deadline extension, GPU launch, or manipulation of other users processes during terminal collection."
+  ],
+  "report_markdown": "# Stage16 ChatTime / GOFA-F(ChatTime), METR-LA 12-to-12\n\nState: wall_deadline\n\n|Model|Complete validation MAE|Complete test MAE|Test step12 MAE|Observed-target fallback rate|\n|---|---:|---:|---:|---:|\n|native_chattime|\u2014|\u2014|\u2014|\u2014|\n|gofa_chattime|\u2014|\u2014|\u2014|\u2014|\n\nIncomplete evaluation is excluded from the main metric table.\nNative full-coverage scores include the preregistered Persistence fallback; valid-generation scores are separate.\n\nsingle seed; development tests previously viewed\nnative greedy differs from official 8 samples\nGOFA supervised continuous head and 19 history/clock features; no no-graph adaptation control\nhistorical UFG/HSD are references, not matched to the new parameter count\npretraining data overlap not fully auditable; TITAN 3.08 is a cross-implementation reference\n"
+}

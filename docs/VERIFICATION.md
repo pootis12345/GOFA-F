@@ -1,5 +1,11 @@
 # 远程验证记录
 
+## Stage16 v11 终止验收：墙钟截止、零新增GPU活动（2026-10-17）
+
+截止后只读复核控制器316422与等待器318760均退出、无本快照匹配进程，账本worker=null、active_scope=null。launcher/bootstrap状态wall_deadline；last.pt实际SHA与progress及migration一致（`4a262c97c0a813032f15e885ca74d2b98cffd27654d74582c30ba23cff3cc1d1`），167更新和pending49窗口117586标签保留。累计9956.406928363256秒与迁移来源相等，v11新增更新/活动0，原始起点和已授权09:00/11:00截止未变。
+
+CPU321通过/11跳过、Stage16专项84项、真实7B BF16 CPU差0沿用此前验证，无无故重复测试。v11没有获GPU完全空闲准入，fresh/continued CUDA检查、机制passed和两组result均缺失；final_selection.gofa=null，评价覆盖0，没有正式精度。旧v10 CUDA失败未被v11验证解决。证据 `results/stage16-chattime-metr-v11-terminal.json`，结果 `STAGE16_RESULTS.md`；终止之后不启动GPU或补训。以下为历史对应版本记录。
+
 ## Stage16 方形因果注意力修复CPU验证（2026-10-16）
 
 源码 `9bb224f70f3fc06ef5062a94b9a520d4f6ba5bb7`：B静态/C Ruff通过，94专项通过，完整禁CUDA/OMP/MKL各2线程321通过、11旧可选跳过。覆盖缓存注意力查询完整形状与因果dispatch、只读KV、历史因果隔离、梯度诊断失败仍严格报错、原容差保持、preflight-only失败修复必须显式授权且原训练SHA未变化，以及已授权09:00/11:00窗口跨修复继承而不重置或再延长。
