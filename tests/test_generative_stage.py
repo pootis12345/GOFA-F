@@ -133,6 +133,13 @@ def test_native_progress_pass_and_validation_round(tmp_path):
     assert p.state["evaluation_maximum_rounds"] == 16
 
 
+def test_directed_road_receiver_rows_preserve_from_to():
+    from gofa_f.generative_data import directed_roads
+    roads = pd.DataFrame({"from": [0, 2], "to": [1, 1], "cost": [4., 5.]})
+    a = directed_roads(roads, 3)
+    assert a[1, 0] == a[1, 2] == 1 and a[0, 1] == 0
+
+
 def test_noaa_selection_uses_only_metadata():
     stations = [dict(wban=str(10000+i), latitude=25+i, longitude=-120+i) for i in range(20)]
     chosen = geographic_stations(stations)

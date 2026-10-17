@@ -7,7 +7,7 @@ import zipfile
 import numpy as np
 import pandas as pd
 
-from gofa_f.generative_data import DRIVE, Query, Series, save_series, sha
+from gofa_f.generative_data import DRIVE, Query, Series, save_series, sha, directed_roads
 from gofa_f.prefix_cache import atomic_json
 
 TARGETS = {name: {"length": info[1], "horizon": info[2], "variables": info[3]} for name, info in DRIVE.items()}
@@ -154,12 +154,11 @@ def prepare_extras(root):
         if values.shape[1] != 170:
             raise ValueError("Expected original 170-node PEMS08 flow")
         roads = pd.read_csv(raw/"PEMS08.csv")
-        adjacency = np.zeros((170, 170), np.float32)
-        for a, b in roads.iloc[:, :2].itertuples(index=False, name=None):
-            adjacency[int(a), int(b)] = 1
+        adjacency = directed_roads(roads, 170)
         save_series(prepared, "pems08", values, pd.date_range("2016-07-01", periods=len(values), freq="5min"),
             list(map(str, range(170))), {"sha256": sha(pems), "road_sha256": sha(raw/"PEMS08.csv"),
-                "channel": "flow", "source": "official ASTGNN pinned raw data; July-August 2016"}, adjacency)
+                "channel": "flow", "source": "official ASTGNN pinned raw data; July-August 2016",
+                "adjacency": "receiver_rows_sender_columns; original from->to preserved"}, adjacency)
     metadata = raw/"noaa_station_metadata.json"
     if metadata.exists():
         selected = geographic_stations(json.loads(metadata.read_text()))

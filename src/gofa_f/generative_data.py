@@ -170,6 +170,15 @@ def save_series(root, name, values, times, ids, provenance, external=None, segme
     return result
 
 
+def directed_roads(frame, nodes):
+    if list(frame.columns[:2]) != ["from", "to"]:
+        raise ValueError("Unverified directed road schema")
+    adjacency = np.zeros((nodes, nodes), np.float32)
+    for sender, receiver in frame.iloc[:, :2].itertuples(index=False, name=None):
+        adjacency[int(receiver), int(sender)] = 1
+    return adjacency
+
+
 def prepare_sources(root, raw):
     root, raw = Path(root), Path(raw)
     records = {}
@@ -189,14 +198,13 @@ def prepare_sources(root, raw):
         roads = fetch(f"{base}/{code}/{code}.csv", raw/(code+".csv"))
         with np.load(signals) as data:
             values = data["data"][:, :, 0]  # original flow, not speed or occupancy
-        adjacency = np.zeros((values.shape[1], values.shape[1]), np.float32)
         frame = pd.read_csv(roads)
-        for a, b in frame.iloc[:, :2].itertuples(index=False, name=None):
-            adjacency[int(a), int(b)] = 1
+        adjacency = directed_roads(frame, values.shape[1])
         records[name] = save_series(root, name, values,
             pd.date_range("2018-01-01", periods=len(values), freq="5min"), list(map(str, range(values.shape[1]))),
             {"url": f"{base}/{code}", "sha256": sha(signals), "road_sha256": sha(roads),
-             "source_revision": ASTGNN_REVISION, "tfb_revision": TFB_REVISION, "channel": "flow"}, adjacency)
+             "source_revision": ASTGNN_REVISION, "tfb_revision": TFB_REVISION, "channel": "flow",
+             "adjacency": "receiver_rows_sender_columns; original from->to preserved"}, adjacency)
     url = "https://archive.ics.uci.edu/static/public/501/beijing+multi+site+air+quality+data.zip"
     archive = fetch(url, raw/"beijing_multisite.zip")
     with zipfile.ZipFile(archive) as stream:
