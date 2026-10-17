@@ -12,6 +12,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", required=True)
     parser.add_argument("--output", required=True)
+    parser.add_argument("--reuse-real-cpu-from")
     args = parser.parse_args()
     if os.environ.get("CUDA_VISIBLE_DEVICES") != "":
         raise RuntimeError("CPU preflight must explicitly disable CUDA")
@@ -25,7 +26,7 @@ def main():
     output = Path(args.output).resolve()
     output.mkdir(parents=True, exist_ok=True)
     cfg = yaml.safe_load(Path(args.config).read_text())
-    prepare(cfg, output)
+    manifest = prepare(cfg, output)
     xml = output/"cpu_tests.xml"
     completed = subprocess.run([sys.executable, "-m", "pytest", "tests", "-q", "--disable-warnings",
                                "--junitxml="+str(xml)], check=False)
@@ -38,6 +39,15 @@ def main():
         "manifest_sha256": sha(output/"manifest.json"), "real_weight_dtype": "float32",
         "stage17_proof_reused": False, "stage17_baseline_imported": False}
     atomic_json(output/"cpu_preflight.json", record)
+    if args.reuse_real_cpu_from:
+        from gofa_f.allnode_recovery import reuse_real_cpu
+        reused = reuse_real_cpu(args.reuse_real_cpu_from, manifest)
+        record.update(real_weights=reused["real_weights"], parameters=reused["parameters"],
+                      real_cpu_proof_reused=reused, passed=True)
+        atomic_json(output/"cpu_mechanisms.json", reused["real_weights"])
+        atomic_json(output/"cpu_preflight.json", record)
+        print(json.dumps(record, indent=2), flush=True)
+        return
     root = Path(cfg["data"]["directory"])
     series = {name: Series(root/"sources"/(name+".npz")) for name in SOURCES}
     model, codec = load_model(cfg, "cpu", dtype=torch.float32)

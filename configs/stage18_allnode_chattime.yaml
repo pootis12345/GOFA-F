@@ -1,4 +1,4 @@
-protocol: stage18-allnode-chattime-v3
+protocol: stage18-allnode-chattime-v4
 seed: 42
 weights:
   directory: /home/dcg/dcg_data/GOFA-F/data/weights/chattime-7b-20baa88
@@ -38,9 +38,9 @@ cache:
   disk_limit_gib: 128
   ram_limit_gib: 32
 resources:
-  admission_policy: memory_cap_only
+  admission_policy: idle
   resource_check_seconds: 10
-  admission_samples: 1
+  admission_samples: 3
   memory_cap_gib: 40
   torch_cap_gib: 38
   yield_on_foreign: false

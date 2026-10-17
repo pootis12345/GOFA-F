@@ -1,6 +1,6 @@
 # Stage18：全节点共享冻结 ChatTime 的末尾图交织
 
-2026-10-17，Asia/Shanghai。用户批准修正12项审查问题后执行，随后明确不再等待GPU完全空闲。
+2026-10-17，Asia/Shanghai。用户批准修正12项审查问题后执行，最新要求本轮等待GPU完全空闲。
 本轮仅四源训练和完整源验证选模；11目标预测始终关闭。
 Stage17仍停止，不恢复其监督器、训练状态或2744条旧模板基线。
 
@@ -109,14 +109,15 @@ AdamW lr2e-4、wd1e-4、clip1；100更新warmup后恒定。
 ## 部署、资源与进度
 
 独立配置`configs/stage18_allnode_chattime.yaml`，入口`python -m gofa_f.allnode_stage`，
-支持prepare/audit-only/train/resume/report-only。最新固定快照/输出`stage18-allnode-chattime-v2`。
+支持prepare/audit-only/train/resume/report-only。最新固定快照/输出`stage18-allnode-chattime-v4`。
 B编辑和静态检查，C禁CUDA、OMP/MKL各2线程做完整回归和真实7B FP32检查。
-通过后CPU控制器部署共享显存监督器，执行BF16机制及最大形状验收，再生成原生基线、训练。
+通过后CPU控制器部署完全空闲准入监督器，执行BF16机制及最大形状验收，再生成原生基线、训练。
 
-资源策略为`memory_cap_only`：一次有效查询确认固定GPU UUID和Default模式即可共享启动，
-不检查其他应用、利用率、已用/空闲显存门槛，不等三次观测，也无16GiB余量条件。
-无法查询时每10秒重试；运行中他人加入不退出。项目组40GiB/Torch38GiB，每10秒审计；
-超限或自身占用未知合作保存≤60秒退出，资源暂停后10秒再重试，不重置活动账本。
+资源策略为`idle`：每10秒观测，连续三次无计算/图形应用、利用率0%、已用≤256MiB、
+UUID一致及Default模式才准入；查询失败或任意条件不满足清零计数继续等待。
+等待期间不创建CUDA上下文；运行中他人加入不退出。项目组40GiB/Torch38GiB，每10秒审计；
+无固定16GiB余量门槛。超限或自身占用未知合作保存≤60秒退出，资源恢复重新等待三次完全空闲，
+不重置活动账本。
 不改模式、不操作其他用户进程。共享计算可能影响其他任务延迟，不承诺延迟不变。
 CPU控制器也支持合作终止，不会在用户停止后偷偷部署GPU。GPU机制失败不放宽容差。
 
@@ -126,7 +127,7 @@ GPU活动、正式更新或检查点。旧快照保留，v2从冻结预训练权
 
 C上进度命令：
 ```bash
-PYTHONPATH=/home/dcg/dcg_data/GOFA-F-runs/stage18-allnode-chattime-v2/src /home/dcg/dcg_data/GOFA-F/.venv-chat/bin/python -m gofa_f.allnode_progress /home/dcg/dcg_data/GOFA-F/outputs/stage18-allnode-chattime-v2 --watch --interval 10
+PYTHONPATH=/home/dcg/dcg_data/GOFA-F-runs/stage18-allnode-chattime-v4/src /home/dcg/dcg_data/GOFA-F/.venv-chat/bin/python -m gofa_f.allnode_progress /home/dcg/dcg_data/GOFA-F/outputs/stage18-allnode-chattime-v4 --watch --interval 10
 ```
 显示epoch/总体更新、源验证轮次与查询/数值步、当前节点/历史/块位置、分阶段ETA。
 活动与等待独立累计、跨恢复保留；ETA估计到4000上限，不承诺未知空闲等待或早停时间。
@@ -136,7 +137,8 @@ PYTHONPATH=/home/dcg/dcg_data/GOFA-F-runs/stage18-allnode-chattime-v2/src /home/
 交付逐变量/逐源误差、S、覆盖/回退、更新/停止、活动/等待/暂停、缓存和显存峰值。
 单种子、预训练暴露不可独立核验、独立目标样本与解码差异必须披露。
 后续11目标评价需另行授权，同一锁定检查点、不做目标适配。本轮不自动进入目标评价。
-# v3 数值执行修复与失败接续
+
+## v3 数值执行修复与失败接续
 
 v2 在真实BF16滚动16步的完整/增量路径验收失败，正式更新、源基线、源验证均为0。
 逐层追踪显示第14个Transformer块的输入相同，RMSNorm首先出现0.001953125的差异，
@@ -154,3 +156,9 @@ v3仅对Stage18的RMSNorm增加固定128行分块；原有Linear固定128行和�
 只重绑定新清单；失败和独立诊断的活动、峰值及原始起点单列并累计，不能归零。
 已有正式训练或评价产物不得使用该迁移入口；重复调用不得覆盖后续已推进状态。
 全部验收通过才生成新原生源基线及训练；不导入Stage17旧基线，不运行目标评价。
+
+v4只落实最新完全空闲资源策略，模型/张量执行与v3一致。为保留已完成CPU计算，
+v3的CPU控制器先停止调度而允许CPU子进程完成；完整FP32证明写出后，核验旧控制器UID/
+命令/start_ticks并合作退出，不允许旧共享GPU交接。v4重新运行完整CPU回归；只有源证明
+完整、清单和已检固定快照SHA一致、模型/数据/数值内核未变且训练函数AST一致时，
+才可复用v3真实FP32证明，不能复用未完成证明。资源变更及证明来源均写入清单与迁移记录。

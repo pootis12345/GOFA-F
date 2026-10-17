@@ -24,6 +24,7 @@ def failed_run(tmp_path):
     old = copy.deepcopy(manifest)
     old["configuration"]["protocol"] = "stage18-allnode-chattime-v2"
     old["configuration"]["architecture"]["numerical_execution"] = "previous_kernel"
+    old["configuration"]["resources"].update(admission_policy="memory_cap_only", admission_samples=1)
     old["code_revision"] = "old"
     write(source/"manifest.json", old)
     write(output/"manifest.json", manifest)
@@ -81,3 +82,53 @@ def test_failed_preflight_refuses_unsafe_migration(tmp_path, problem):
         migrate_failed_preflight(source, output,
             [diagnostic, diagnostic] if problem == "duplicate_cost" else [diagnostic])
     assert not (output/"last.pt").exists()
+
+
+def real_proof(tmp_path):
+    source, output, _, _ = failed_run(tmp_path)
+    from gofa_f import allnode_recovery
+    repository = Path(allnode_recovery.__file__).parent
+    checked = tmp_path/"checked_snapshot"
+    (checked/"src/gofa_f").mkdir(parents=True)
+    (checked/"CODE_REVISION").write_text("old\n")
+    old, new = (json.loads((p/"manifest.json").read_text()) for p in (source, output))
+    names = ("allnode_model.py", "allnode_kernel.py", "allnode_stage.py",
+             "allnode_launcher.py", "allnode_recovery.py")
+    for name in names:
+        (checked/"src/gofa_f"/name).write_bytes((repository/name).read_bytes())
+    old["code"] = new["code"] = {name: sha(repository/name) for name in names}
+    old["configuration"]["architecture"]["numerical_execution"] = \
+        new["configuration"]["architecture"]["numerical_execution"]
+    write(source/"manifest.json", old)
+    write(output/"manifest.json", new)
+    record = json.loads(source.with_suffix(".bootstrap.launch.json").read_text())
+    write(source.with_suffix(".bootstrap.launch.json"), {**record, "snapshot": str(checked)})
+    write(source/"cpu_preflight.json", dict(passed=True, real_weight_dtype="float32",
+        manifest_sha256=sha(source/"manifest.json"),
+        real_weights=dict(passed=True, tolerance=1e-6), parameters=dict(trainable=1060998)))
+    return source, new, checked
+
+
+def test_same_model_real_cpu_proof_reuse_for_admission_only(tmp_path):
+    from gofa_f.allnode_recovery import reuse_real_cpu
+    source, manifest, _ = real_proof(tmp_path)
+    proof = reuse_real_cpu(source, manifest)
+    assert proof["real_weights"]["passed"] and proof["real_weights"]["tolerance"] == 1e-6
+    assert proof["source_cpu_proof_sha256"] == sha(source/"cpu_preflight.json")
+
+
+@pytest.mark.parametrize("problem", ["model_module", "kernel", "incomplete", "source_tamper"])
+def test_real_cpu_reuse_rejects_changed_or_incomplete_proof(tmp_path, problem):
+    from gofa_f.allnode_recovery import reuse_real_cpu
+    source, manifest, checked = real_proof(tmp_path)
+    if problem == "model_module":
+        manifest["code"]["allnode_model.py"] = "changed"
+    elif problem == "kernel":
+        manifest["configuration"]["architecture"]["numerical_execution"] = "different_execution"
+    elif problem == "incomplete":
+        proof = json.loads((source/"cpu_preflight.json").read_text())
+        write(source/"cpu_preflight.json", {**proof, "passed": False})
+    else:
+        (checked/"src/gofa_f/allnode_model.py").write_text("modified\n")
+    with pytest.raises(ValueError):
+        reuse_real_cpu(source, manifest)

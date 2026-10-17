@@ -305,7 +305,8 @@ def test_partial_checkpoint_state_and_next_materialized_update(tmp_path, codec):
 
 
 @pytest.mark.parametrize("pause", [False, True, "unknown"])
-def test_stage18_cap_only_admission_coexistence_pause_and_resume(tmp_path, monkeypatch, pause):
+@pytest.mark.parametrize("query_failure", [False, True])
+def test_stage18_idle_admission_coexistence_pause_and_resume(tmp_path, monkeypatch, pause, query_failure):
     import json
     import gofa_f.allnode_launcher as supervisor
     config = tmp_path/"config.yaml"
@@ -319,13 +320,17 @@ def test_stage18_cap_only_admission_coexistence_pause_and_resume(tmp_path, monke
     monkeypatch.setattr(supervisor, "process_identity", lambda _: "ticks")
     monkeypatch.setattr(supervisor, "own_gpu_pids", lambda _: {800})
     def probe():
+        if query_failure and clock[0] == 50:
+            raise RuntimeError("GPU query failed")
         if launches and clock[0] <= launches[-1]+2:
             own = None if pause == "unknown" and len(launches) == 1 else (
                 41000 if pause and len(launches) == 1 else 26000)
             return {**gpu, "pids": [800, 999], "used_mib": 70000, "utilization": 100,
                     "process_used_mib": {800: own, 999: 44000}}
-        return {**gpu, "pids": [999], "used_mib": 48547, "utilization": 100,
-                "process_used_mib": {999: 48547}}  # never becomes idle
+        if clock[0] < 40:
+            return {**gpu, "pids": [999], "used_mib": 48547, "utilization": 100,
+                    "process_used_mib": {999: 48547}}
+        return gpu
     monkeypatch.setattr(supervisor, "query_gpu", probe)
     monkeypatch.setattr(supervisor.os, "killpg", lambda pid, sig: signals.append((pid, sig)))
     class Child:
@@ -345,9 +350,11 @@ def test_stage18_cap_only_admission_coexistence_pause_and_resume(tmp_path, monke
     monkeypatch.setattr(supervisor.subprocess, "Popen", Child)
     supervisor.supervise(output, config, tmp_path)
     ledger = json.loads((output/"activity.json").read_text())
-    assert launches[0] == 0 and ledger["worker"] is None
+    assert launches[0] == (80 if query_failure else 60) and ledger["worker"] is None
     assert len(launches) == (2 if pause else 1)
     assert len(signals) == (1 if pause else 0)
     assert all(pid == 800 for pid, _ in signals)
+    assert ledger["waiting_seconds"] >= launches[0]
+    assert ledger["spent_seconds"] == 3*len(launches)
     if pause:
-        assert launches[1] >= launches[0]+13 and ledger["resource_pause_count"] == 1
+        assert launches[1] >= launches[0]+33 and ledger["resource_pause_count"] == 1

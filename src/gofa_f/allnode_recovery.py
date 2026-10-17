@@ -1,4 +1,5 @@
 """Audited migration of an untrained, failed Stage18 GPU preflight only."""
+import ast
 import copy
 import json
 from pathlib import Path
@@ -31,7 +32,46 @@ def science(cfg):
     result = copy.deepcopy(cfg)
     result.pop("protocol")
     result["architecture"].pop("numerical_execution")
+    for key in ("admission_policy", "admission_samples"):
+        result["resources"].pop(key)
     return result
+
+
+def reuse_real_cpu(source, manifest):
+    """Reuse a finished same-model FP32 proof after an admission-only amendment."""
+    source = Path(source).resolve()
+    previous, proof = read(source/"manifest.json"), read(source/"cpu_preflight.json")
+    checked = Path(read(source.with_suffix(".bootstrap.launch.json"))["snapshot"])
+    if not proof.get("passed") or proof.get("real_weight_dtype") != "float32" \
+            or proof.get("manifest_sha256") != sha(source/"manifest.json") \
+            or not proof.get("real_weights", {}).get("passed") \
+            or proof["real_weights"]["tolerance"] != 1e-6:
+        raise ValueError("Source real FP32 acceptance is not complete and bound")
+    if (checked/"CODE_REVISION").read_text().strip() != previous["code_revision"]:
+        raise ValueError("Source CPU snapshot revision changed")
+    if science(previous["configuration"]) != science(manifest["configuration"]) \
+            or previous["configuration"]["architecture"]["numerical_execution"] != \
+               manifest["configuration"]["architecture"]["numerical_execution"]:
+        raise ValueError("A different model/numerical execution needs fresh real CPU acceptance")
+    for key in ("weights_sha256", "source_data", "pools", "dependencies", "prompt_sha256", "decode"):
+        if previous[key] != manifest[key]:
+            raise ValueError("Source real CPU proof data/runtime binding changed: "+key)
+    if set(previous["code"]) != set(manifest["code"]):
+        raise ValueError("Source real CPU proof module set changed")
+    for name, digest in previous["code"].items():
+        if sha(checked/"src/gofa_f"/name) != digest:
+            raise ValueError("Checked source CPU snapshot was modified")
+        if name not in ("allnode_stage.py", "allnode_launcher.py", "allnode_recovery.py") \
+                and digest != manifest["code"][name]:
+            raise ValueError("A checked tensor/model/data module changed: "+name)
+    def functions(path):
+        return {item.name: ast.dump(item, include_attributes=False) for item in ast.parse(path.read_text()).body
+                if isinstance(item, (ast.FunctionDef, ast.ClassDef)) and item.name != "config_check"}
+    if functions(checked/"src/gofa_f/allnode_stage.py") != functions(Path(__file__).parent/"allnode_stage.py"):
+        raise ValueError("Training/model/recovery functions changed; fresh real CPU proof required")
+    return {"real_weights": proof["real_weights"], "parameters": proof["parameters"],
+            "source_output": str(source), "source_manifest_sha256": sha(source/"manifest.json"),
+            "source_cpu_proof_sha256": sha(source/"cpu_preflight.json")}
 
 
 def migrate_failed_preflight(source, output, diagnostics=()):
@@ -50,6 +90,14 @@ def migrate_failed_preflight(source, output, diagnostics=()):
         raise ValueError("Evaluation/training outputs require a different recovery audit")
     if science(old["configuration"]) != science(new["configuration"]):
         raise ValueError("A preflight repair cannot change the scientific protocol")
+    resource_change = {"old": old["configuration"]["resources"],
+                       "new": new["configuration"]["resources"]}
+    if resource_change["old"] != resource_change["new"] and (
+            resource_change["old"]["admission_policy"] != "memory_cap_only"
+            or resource_change["old"]["admission_samples"] != 1
+            or resource_change["new"]["admission_policy"] != "idle"
+            or resource_change["new"]["admission_samples"] != 3):
+        raise ValueError("Only the user's explicit cap-only to fully-idle amendment is allowed")
     for key in ("weights_sha256", "source_data", "pools", "dependencies", "prompt_sha256", "decode"):
         if old[key] != new[key]:
             raise ValueError("Repair changed a fixed data/weight/decode binding: "+key)
@@ -75,6 +123,7 @@ def migrate_failed_preflight(source, output, diagnostics=()):
         "source_code": old["code_revision"], "new_code": new["code_revision"], "formal_updates": 0,
         "state_restore": "exact_except_manifest_rebinding", "no_predictions_or_selection_imported": True,
         "reason": "shape_stable_rmsnorm_full_incremental_repair",
+        "resource_policy_amendment": {"authorization": "User: 本轮等待GPU完全空闲", **resource_change},
         "original_started_at": read(source.with_suffix(".bootstrap.launch.json")).get("started_at"),
         "activity_sources": [{"output": str(path), "activity_sha256": sha(path/"activity.json"),
                               **activity} for path, activity in evidence]}
