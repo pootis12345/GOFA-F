@@ -1,7 +1,6 @@
 """Preregistered real-weight Stage17 checks. Never loads a target query."""
 import copy
 
-import numpy as np
 import torch
 
 from gofa_f.generative_data import Query

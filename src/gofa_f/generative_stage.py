@@ -1,6 +1,7 @@
 """Stage17 source-only training. This entry point never evaluates target datasets."""
 import argparse
 import copy
+from functools import lru_cache
 import hashlib
 import json
 import os
@@ -147,12 +148,17 @@ def restore_checkpoint(path, model, optimizer, binding):
     return saved["state"], saved["progress"]
 
 
+@lru_cache(maxsize=64)
+def source_permutation(seed, epoch, source_index):
+    return np.random.default_rng(np.random.SeedSequence([seed, epoch, source_index])).permutation(8192)
+
+
 def schedule(pool, consumed, seed):
     names = list(SOURCES)
     epoch, offset = divmod(consumed, 32768)
     source_index = offset % 4
     source = names[source_index]
-    permutation = np.random.default_rng(np.random.SeedSequence([seed, epoch, source_index])).permutation(8192)
+    permutation = source_permutation(seed, epoch, source_index)
     return Query(**pool[source][int(permutation[offset//4])])
 
 

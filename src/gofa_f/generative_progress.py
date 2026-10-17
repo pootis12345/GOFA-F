@@ -1,6 +1,7 @@
 """Durable phase/epoch/overall progress; ETA excludes unknown GPU idle waits."""
 import argparse
 import json
+import math
 from pathlib import Path
 import time
 
@@ -38,14 +39,20 @@ class Progress:
         updates = self.state["updates"]
         processed = updates*self.state["effective_batch"]+self.state.get("pending_queries", 0)
         length = self.state["epoch_queries"]
+        total_queries = self.state["max_updates"]*self.state["effective_batch"]
+        epoch_index = min(processed//length, (total_queries-1)//length)
+        epoch_size = min(length, total_queries-epoch_index*length)
+        epoch_done = processed-epoch_index*length
         self.state.update(state=self.phase, epoch=processed//length+1, epoch_queries_done=processed%length,
             epoch_queries_total=length, overall_queries_done=processed,
             overall_queries_total=self.state["max_updates"]*self.state["effective_batch"],
             overall_fraction=min(1., processed/(self.state["max_updates"]*self.state["effective_batch"])),
             eta_excludes_gpu_wait=True, eta_to_update_cap=True, updated_at=time.time())
+        self.state.update(epoch=epoch_index+1, epoch_queries_done=epoch_done, epoch_queries_total=epoch_size,
+                          maximum_epochs=math.ceil(total_queries/length))
         measured = self.state["measured_updates"]
         per_update = self.state["train_seconds"]/measured if measured else None
-        self.state["epoch_eta_seconds"] = ((length-processed%length)/self.state["effective_batch"]*per_update
+        self.state["epoch_eta_seconds"] = ((epoch_size-epoch_done)/self.state["effective_batch"]*per_update
                                             if per_update is not None else None)
         remaining = self.state["max_updates"]-updates
         validation_mean = (self.state["validation_seconds"]/self.state["validation_runs"]
@@ -53,6 +60,9 @@ class Progress:
         self.state["training_eta_seconds"] = remaining*per_update if per_update is not None else None
         self.state["overall_eta_seconds"] = (remaining*per_update+((self.state["max_updates"]//250)
             -(updates//250))*validation_mean if per_update is not None and validation_mean is not None else None)
+        if self.phase == "complete":
+            self.state.update(overall_eta_seconds=0., training_eta_seconds=0., epoch_eta_seconds=0.,
+                              task_complete=True)
         if force or now-self.last_write >= 5:
             atomic_json(self.path, self.state)
             self.last_write = now
@@ -60,6 +70,10 @@ class Progress:
 
     def evaluation(self, done, total, work_done, work_total, seconds, **fields):
         return self.tick(force=True, evaluation_done=done, evaluation_total=total,
+            evaluation_round=self.state["validation_runs"]+1,
+            evaluation_maximum_rounds=self.state["max_updates"]//250,
+            evaluation_overall_done=self.state["validation_runs"]*total+done,
+            evaluation_overall_total=self.state["max_updates"]//250*total,
             evaluation_fraction=done/total if total else 0., evaluation_work_done=work_done,
             evaluation_work_total=work_total, evaluation_eta_seconds=(seconds/work_done*(work_total-work_done)
                 if work_done else None), evaluation_eta_basis="generated_numeric_steps", **fields)
@@ -81,7 +95,8 @@ def render(record):
     lines = [f"state={state} | phase={p.get('state', 'not_started')} | GPU active="
              f"{duration(record.get('activity', {}).get('spent_seconds', 0))}"]
     if p:
-        lines.append(f"epoch {p['epoch']} | {p['epoch_queries_done']}/{p['epoch_queries_total']} queries | "
+        lines.append(f"epoch {p['epoch']}/{p.get('maximum_epochs', 8)} | "
+            f"{p['epoch_queries_done']}/{p['epoch_queries_total']} queries | "
             f"epoch ETA {duration(p.get('epoch_eta_seconds'))}")
         lines.append(f"overall {p['updates']}/{p['max_updates']} updates "
             f"({100*p['overall_fraction']:.2f}%) | ETA {duration(p.get('overall_eta_seconds'))} "
@@ -90,6 +105,9 @@ def render(record):
             lines.append(f"{p.get('evaluation_kind', 'evaluation')} {p['evaluation_done']}/{p['evaluation_total']} "
                 f"queries | ETA {duration(p.get('evaluation_eta_seconds'))} | "
                 f"current query {p.get('evaluation_current_step', 0)}/{p.get('evaluation_current_horizon', 0)}")
+            if p.get("evaluation_kind") != "native":
+                lines.append(f"validation round {p['evaluation_round']}/{p['evaluation_maximum_rounds']} | "
+                    f"overall validation {p['evaluation_overall_done']}/{p['evaluation_overall_total']}")
     return "\n".join(lines)
 
 

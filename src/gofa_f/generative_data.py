@@ -6,7 +6,6 @@ import hashlib
 import io
 import json
 from pathlib import Path
-import re
 import urllib.request
 import zipfile
 
