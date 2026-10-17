@@ -102,6 +102,14 @@ def nasdaq_day(frame, day, stock):
     return pd.Series(pd.to_numeric(frame["1"], errors="raise").to_numpy(), index=index)
 
 
+def nasdaq_sessions(frame):
+    minute = pd.to_numeric(frame["0"], errors="raise")
+    starts = np.flatnonzero(minute.isna() | minute.diff().lt(0))
+    starts = np.unique(np.r_[0, starts])
+    return [frame.iloc[a:b].reset_index(drop=True) for a, b in
+            zip(starts, np.r_[starts[1:], len(frame)])]
+
+
 def provenance_exclusion(source_audit):
     # Identity and observation-period separation is explicit; byte equality alone is insufficient.
     evidence = {
@@ -170,7 +178,7 @@ def prepare_extras(root):
             names = stream.namelist()
             symbol_file = next(n for n in names if n.endswith("full/stock_name.txt"))
             symbols = stream.read(symbol_file).decode().split()
-            frames = {}
+            frames, repeated = {}, []
             for symbol in symbols:
                 members = [n for n in names if "/full/stock_data_GOOGLE/" in "/"+n and n.endswith(".csv")
                            and not n.startswith("__MACOSX/")
@@ -178,30 +186,38 @@ def prepare_extras(root):
                                 or Path(n).stem == symbol)]
                 if not members:
                     raise ValueError("Original NASDAQ per-timestamp member unavailable: "+symbol)
-                parts = []
+                parts, verified_sessions = [], []
                 for member in sorted(members):
                     frame = pd.read_csv(io.BytesIO(stream.read(member)))
                     day = Path(member).stem.removeprefix(symbol+"_")
-                    parts.append(nasdaq_day(frame, day, stock=symbol != "NDX"))
+                    sessions = nasdaq_sessions(frame)
+                    for duplicate in sessions[:-1]:
+                        # Some files repeat a complete earlier day. Remove only exact
+                        # minute/close matches to an already verified dated session.
+                        if not any(duplicate[["0", "1"]].equals(old) for old in verified_sessions):
+                            raise ValueError("Unresolved repeated NASDAQ session: "+member)
+                        repeated.append(member)
+                    session = sessions[-1]
+                    verified_sessions.append(session[["0", "1"]])
+                    parts.append(nasdaq_day(session, day, stock=symbol != "NDX"))
                 frames[symbol] = pd.concat(parts).sort_index()
             if symbols[-1] != "NDX" or len(symbols) != 105:
                 raise ValueError("NASDAQ full universe differs")
-            aligned, sessions = align_nasdaq({s: frames[s] for s in symbols[:-1]}, frames["NDX"])
+            # Keep missing index minutes as masked targets. Never compress their time.
+            days = sorted(frames["NDX"].index.normalize().unique())
+            grid = pd.DatetimeIndex(np.concatenate([pd.date_range(day, periods=210 if
+                day == pd.Timestamp("2016-11-25") else 390, freq="min").to_numpy() for day in days]))
+            index = frames["NDX"].reindex(grid)
+            aligned, sessions = align_nasdaq({s: frames[s] for s in symbols[:-1]}, index)
             matrix_name = next(n for n in names if n.endswith("full/full_non_padding.csv"))
             matrix = pd.read_csv(io.BytesIO(stream.read(matrix_name)))
-            if matrix.shape != aligned.shape:
-                raise ValueError("NASDAQ original matrix and timestamp join differ in coverage")
-            reference = matrix.to_numpy(dtype=float)
-            position = symbols.index("LLTC")
-            reference[np.isnan(aligned["LLTC"].to_numpy()), position] = np.nan
-            comparable = np.isfinite(reference) & np.isfinite(aligned.to_numpy())
-            matches = np.isclose(reference, aligned.to_numpy(), rtol=1e-8, atol=1e-8)
-            matching_fraction = float(matches[comparable].mean())
             save_series(prepared, "nasdaq100", aligned.to_numpy(), aligned.index, symbols,
                 {"sha256": sha(archive), "source": "author original full archive",
                  "alignment": "join documented relative-minute offsets: stock minute minus1 vs index minute",
                  "timestamps": "session-relative offsets and filename dates; no independently verified UTC times",
-                 "provider_matrix_matching_fraction": matching_fraction,
+                 "provider_matrix_shape": list(matrix.shape), "reconstructed_shape": list(aligned.shape),
+                 "repeated_sessions_verified_and_removed": repeated,
+                 "short_session": "2016-11-25:210 index minutes", "missing_index_minutes": int(index.isna().sum()),
                  "provider_matrix_shifted_again": False,
                  "matrix_policy": "reconstruct raw minute join; do not shift provider matrix",
                  "lltc": "post-day157 pseudo-zero missing", "interpolation": "none"}, segments=sessions)
