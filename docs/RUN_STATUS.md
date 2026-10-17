@@ -10,6 +10,9 @@ B静态、C Ruff通过；C禁CUDA/OMP/MKL各2线程，65项恢复/阶段/启动�
 
 GPU仍须完全空闲连续三次、每10秒检查，无计算或图形应用、util0、已用≤256MiB、Default；未知重置等待。运行中他人加入不退出，低余量暂停，项目40GiB/Torch38GiB/至少留16GiB，不独占、不操作他人进程。沿用每小时跟进、正常等待/训练静默；此前已授权失败时在既定截止内自主安全修复，不放宽容差或增加候选。下方v11已终止记录是历史，当前部署以v12实际文件为准。
 
+12:07实际部署核验：固定运行源码 `e0d8745d1f283846ca1a7acc9540678c80d7f307`，快照 `/home/dcg/dcg_data/GOFA-F-runs/stage16-chattime-metr-v12`，输出 `outputs/stage16-chattime-metr-v12/`。CPU控制器12:02:29启动，PID793503/start_ticks613081051；监督器PID795540/start_ticks613096205，使用前重新核对。全套CPU332通过/11旧可选跳过（343 XML条目）、Stage16专项95项，真实7B三节点BF16 CPU边界/预测/梯度差0、CUDA未初始化。独立CPU核验实际v11/v12模型/优化器/梯度/RNG/全部状态除binding外完全一致。
+
+window训练截止1792243800（今天21:30）、硬截止1792251000（23:30）、原start1792137782.879529正确；deadline_amendment保留来源window SHA和11:00→23:30的新授权。migration.state_restore=exact、original_start_retained=true、original_deadline_retained=false（本次合法延期），目标last.pt SHA `7512a8a0d409ab9d3c4f7b69067eb954c0a5addf5ca21eae47e880b3baa7c8a3`。167更新/pending49窗口117586标签与9956.406928363256秒账本保持，旧final_selection未复制。等待器正常waiting_for_idle、无新GPU机制/更新，另一任务仍使用GPU；外层及各子任务准入仍10秒/三次/256MiB/Default。每小时跟进gofa-f-stage16已恢复并指向v12及新截止，仅终止/异常/确需处理时通知。证据 `docs/results/stage16-cpu-verification-v12.json`、`docs/results/stage16-redeployment-v12.json`。以下均为历史。
 ## Stage16 v11 已终止：未获GPU完全空闲准入（2026-10-17 11:16，Asia/Shanghai）
 
 本条覆盖以下所有“运行中/等待中”描述。v11在10:59:00按硬截止前60秒规则标记 `wall_deadline`，bootstrap10:59:12完成CPU汇总并退出。PID316422/start_ticks608709160、318760/start_ticks608724854均已退出，扫描无本快照进程，worker与active_scope均为空。09:00后未补训，11:00后没有GPU作业，不再自动部署修复或新阶段。

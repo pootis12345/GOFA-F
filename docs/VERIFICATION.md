@@ -4,6 +4,7 @@
 
 新增对wall_deadline且从未获GPU准入的等待源的安全接续，只由明确用户延期标志开启；来源全部退出、无GPU检查/预测/已选模型/失败、继承checkpoint SHA及账本未变化才接受。按新授权保留原start和活动、将截止改为21:30/23:30；新窗口记录来源SHA和原/新截止。模型/KV计算路径未改。B语法与C Ruff通过，C禁CUDA/OMP/MKL各2线程65项恢复/阶段/启动器专项通过；完整回归和真实权重检查由新固定快照bootstrap执行，结果以v12 cpu_preflight.json为准。旧v11无GPU、v10失败证据保留。
 
+v12实际完整验证：332通过、11旧可选依赖跳过（343 XML条目），Stage16专项95项；真实7B三节点CPU边界状态/预测/梯度差0，CUDA未初始化。独立比较实际v11/v12检查点除实现binding外模型/优化器/未完成梯度/RNG/游标与全部状态精确一致，9956.406928363256秒不重置；目标SHA7512a8a0d409ab9d3c4f7b69067eb954c0a5addf5ca21eae47e880b3baa7c8a3。新窗口21:30/23:30及来源SHA/授权修订已核验，原start保留；CPU控制器793503、等待器795540身份存活正确，当前等待完全空闲。CPU通过不替代fresh/continued CUDA验收，尚无新速度或精度结论。证据 `results/stage16-cpu-verification-v12.json`、`results/stage16-redeployment-v12.json`。
 ## Stage16 v11 终止验收：墙钟截止、零新增GPU活动（2026-10-17）
 
 截止后只读复核控制器316422与等待器318760均退出、无本快照匹配进程，账本worker=null、active_scope=null。launcher/bootstrap状态wall_deadline；last.pt实际SHA与progress及migration一致（`4a262c97c0a813032f15e885ca74d2b98cffd27654d74582c30ba23cff3cc1d1`），167更新和pending49窗口117586标签保留。累计9956.406928363256秒与迁移来源相等，v11新增更新/活动0，原始起点和已授权09:00/11:00截止未变。

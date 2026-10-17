@@ -1,0 +1,683 @@
+{
+  "verified_at": "2026-10-17T12:06:45.026718+08:00",
+  "fixed_source": "e0d8745d1f283846ca1a7acc9540678c80d7f307",
+  "snapshot": "/home/dcg/dcg_data/GOFA-F-runs/stage16-chattime-metr-v12",
+  "output": "/home/dcg/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v12",
+  "authorization": "User explicitly requested redeployment with hard deadline tonight 2026-10-17 23:30 Asia/Shanghai",
+  "actual_checkpoint_comparison": "all values other than implementation binding exactly equal; model, optimizer, pending gradients, RNG, cursor, counters retained",
+  "records": {
+    "bootstrap.json": {
+      "state": "idle_waiter_deployed",
+      "pid": 793503,
+      "start_ticks": 613081051,
+      "updated_at": 1792209901.2897325,
+      "snapshot": "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v12",
+      "launcher_pid": 795540,
+      "launcher_start_ticks": 613096205
+    },
+    "launcher.json": {
+      "state": "waiting_for_idle",
+      "pid": 795540,
+      "spent_seconds": 9956.406928363256,
+      "updated_at": 1792210002.7066863,
+      "consecutive_idle": 0,
+      "query_error": null
+    },
+    "window.json": {
+      "started_at": 1792137782.8795292,
+      "training_deadline": 1792243800.0,
+      "wall_deadline": 1792251000.0,
+      "window_seconds": 113217.12047076225,
+      "adopted_from": {
+        "kind": "training_continuation",
+        "output": "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v11",
+        "source_binding": "9a5384f8106af964a8877c117d64e129e1484b392730896cf9cc40fa081b42f8",
+        "window_sha256": "fe1e8480c6e6b86fb5f72e8c35bdeb89b3d1cf5cc52500c7f80b52b3462ec22f",
+        "manifest_sha256": "e7cbf7088027db3797bee694ab0d95efd51d8a8337d45cb25dc2d5822fe115c2",
+        "checkpoint_sha256": "4a262c97c0a813032f15e885ca74d2b98cffd27654d74582c30ba23cff3cc1d1",
+        "started_at": 1792137782.8795292,
+        "original_wall_deadline": 1792206000.0,
+        "gpu_activity_seconds": 9956.406928363256,
+        "updates": 167,
+        "offset": 10737,
+        "pending_windows": 49,
+        "pending_count": 117586,
+        "deadline_amendment": {
+          "authorization": "explicit_user_request",
+          "source_window_sha256": "ecfe1540e17a6316be683376a24d6637a10fd4e5de8b9861ed4d61bbfd15e21b",
+          "previous_wall_deadline": 1792164600.0,
+          "new_wall_deadline": 1792206000.0
+        },
+        "redeployed_expired_waiter": "explicit user deadline amendment; no new GPU activity or predictions"
+      },
+      "deadline_amendment": {
+        "authorization": "explicit_user_request",
+        "source_window_sha256": "fe1e8480c6e6b86fb5f72e8c35bdeb89b3d1cf5cc52500c7f80b52b3462ec22f",
+        "previous_wall_deadline": 1792206000.0,
+        "new_wall_deadline": 1792251000.0
+      },
+      "idle_interval_seconds": 10,
+      "fixed_prompt_kv": true,
+      "launch_fingerprint": "206c2be9c0c1aa24d58cefa4107a05d3284fa6983b8aab9983cdf5a3e466f8b6"
+    },
+    "manifest.json": {
+      "config": {
+        "protocol": "stage16-chattime-metr-v1",
+        "seed": 42,
+        "datasets": [
+          "metr_la"
+        ],
+        "models": [
+          "native_chattime",
+          "gofa_chattime"
+        ],
+        "weights": {
+          "repo": "ChengsenWang/ChatTime-1-7B-Chat",
+          "revision": "20baa88d6ab838b34abbd1d2b1f4cea57c8ff870",
+          "directory": "data/weights/chattime-7b-20baa88",
+          "source_revision": "8c2d4c209302d2b2bd6cc3c154586842341e3247",
+          "source_directory": "external/ChatTime"
+        },
+        "architecture": {
+          "graph_layers": [
+            29,
+            30
+          ],
+          "rank": 64,
+          "attention_rank": 16,
+          "feature_dim": 19,
+          "prior_floor": 0.5,
+          "head": "linear_4096_to_12_zero"
+        },
+        "data": {
+          "benchmark": "configs/benchmark.yaml",
+          "calendar": "data/features/context-v1/metr_la.npz",
+          "correlation": "outputs/stage8-metr-temporal-v1/correlation_graph.npz",
+          "correlation_sha256": "d25fb015fb887d5fae60411af29cd20315fec31f8d635b4a965f07708312e8d0"
+        },
+        "training": {
+          "context": 12,
+          "horizon": 12,
+          "effective_batch_size": 64,
+          "microbatch": 1,
+          "max_epochs": 100,
+          "patience": 15,
+          "graph_lr": 0.001,
+          "head_lr": 0.0001,
+          "weight_decay": 0.0001,
+          "gradient_clip": 1.0,
+          "loss": "raw_mae",
+          "checkpoint_seconds": 30
+        },
+        "native_decoding": {
+          "do_sample": false,
+          "max_new_tokens": 64,
+          "node_microbatch": 256
+        },
+        "cache": {
+          "disk_limit_gib": 128,
+          "ram_limit_gib": 64,
+          "prefix_layers": 30
+        },
+        "resources": {
+          "python": ".venv-chat/bin/python",
+          "memory_cap_gib": 40,
+          "torch_cap_gib": 38,
+          "leave_free_gib": 16,
+          "wall_window_hours": 11,
+          "evaluation_reserve_hours": 2,
+          "yield_on_foreign": false,
+          "admission_per_gpu_task": true,
+          "allow_tf32": true,
+          "omp_threads": 2,
+          "mkl_threads": 2
+        }
+      },
+      "window": {
+        "started_at": 1792137782.8795292,
+        "training_deadline": 1792243800.0,
+        "wall_deadline": 1792251000.0,
+        "window_seconds": 113217.12047076225,
+        "adopted_from": {
+          "kind": "training_continuation",
+          "output": "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v11",
+          "source_binding": "9a5384f8106af964a8877c117d64e129e1484b392730896cf9cc40fa081b42f8",
+          "window_sha256": "fe1e8480c6e6b86fb5f72e8c35bdeb89b3d1cf5cc52500c7f80b52b3462ec22f",
+          "manifest_sha256": "e7cbf7088027db3797bee694ab0d95efd51d8a8337d45cb25dc2d5822fe115c2",
+          "checkpoint_sha256": "4a262c97c0a813032f15e885ca74d2b98cffd27654d74582c30ba23cff3cc1d1",
+          "started_at": 1792137782.8795292,
+          "original_wall_deadline": 1792206000.0,
+          "gpu_activity_seconds": 9956.406928363256,
+          "updates": 167,
+          "offset": 10737,
+          "pending_windows": 49,
+          "pending_count": 117586,
+          "deadline_amendment": {
+            "authorization": "explicit_user_request",
+            "source_window_sha256": "ecfe1540e17a6316be683376a24d6637a10fd4e5de8b9861ed4d61bbfd15e21b",
+            "previous_wall_deadline": 1792164600.0,
+            "new_wall_deadline": 1792206000.0
+          },
+          "redeployed_expired_waiter": "explicit user deadline amendment; no new GPU activity or predictions"
+        },
+        "deadline_amendment": {
+          "authorization": "explicit_user_request",
+          "source_window_sha256": "fe1e8480c6e6b86fb5f72e8c35bdeb89b3d1cf5cc52500c7f80b52b3462ec22f",
+          "previous_wall_deadline": 1792206000.0,
+          "new_wall_deadline": 1792251000.0
+        },
+        "idle_interval_seconds": 10,
+        "fixed_prompt_kv": true,
+        "launch_fingerprint": "206c2be9c0c1aa24d58cefa4107a05d3284fa6983b8aab9983cdf5a3e466f8b6"
+      },
+      "inputs": {
+        "data/processed/metr_la.npz": "c5437fe6e78659915b8d30c6cc34acc9076353712a203b38d1d838c18e4c2119",
+        "data/graphs/protocol-v2/metr_la.npz": "a73a1a34b897bcc53e3ea4afc7f01bfd82ad9f6d3ab7fce0c97cd2bacd5b1d92",
+        "data/graphs/protocol-v2/metr_la.metadata.json": "dd0e264e04934ba94210c6fdfac76fef219c02b8d4f5651cab02fb36190b2d6b",
+        "data/features/context-v1/metr_la.npz": "10f706abf1472e1911d894bce668c411fab4cc590f04bc2e4ca5df312fbcf24e",
+        "data/features/context-v1/metr_la.metadata.json": "180349a5ae6fbcc6be43d7e95c06c08d68274edff7594b8ede492edd13a36fe2",
+        "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v12/correlation_graph.npz": "d25fb015fb887d5fae60411af29cd20315fec31f8d635b4a965f07708312e8d0",
+        "data/weights/chattime-7b-20baa88/snapshot.json": "593df2db1fbb32f1f95d33b8b977eb730cbbc57d82690639319482f92b213cd8",
+        "data/weights/chattime-7b-20baa88/added_tokens.json": "658a25af391efe4383bfda2570fcb2fcc857c0b256d8f53bbc1a9ab42fe33dd0",
+        "data/weights/chattime-7b-20baa88/config.json": "214ee4e48c9da2934097fa6d321b1a89a9795e2ca9614bc2f1a4635d5c418fc3",
+        "data/weights/chattime-7b-20baa88/generation_config.json": "b56774072489c745b4d9dc871e08c2d7fe4727ac3dc1f1b1980c8e6a1497773d",
+        "data/weights/chattime-7b-20baa88/model-00001-of-00003.safetensors": "edf3f715a2cb4e9575fcd6ec8aa5ffea03d609cfb611e0aafcde9333328f44c0",
+        "data/weights/chattime-7b-20baa88/model-00002-of-00003.safetensors": "7143de1891826121265ead8ce049fba48d74cd0240338a67f85577986c0c75cf",
+        "data/weights/chattime-7b-20baa88/model-00003-of-00003.safetensors": "a0e745422f2e7bdbd292fe8ba9484577bcb2059e9ed31c8da5fe5eabc742e623",
+        "data/weights/chattime-7b-20baa88/model.safetensors.index.json": "e58b1cc756d4dea01951f5ad0a66d41454d02ebaa02a009ee6f944b019b1a7ac",
+        "data/weights/chattime-7b-20baa88/special_tokens_map.json": "4452b845ab9ca2afa863f59f1411a959e8a32bb4334e264b0e71d5d17dd4dcb9",
+        "data/weights/chattime-7b-20baa88/tokenizer.model": "9e556afd44213b6bd1be2b850ebbbd98f5481437a8021afaf58ee7fb1818d347",
+        "data/weights/chattime-7b-20baa88/tokenizer_config.json": "04817ec717f11d786abf7bcc4cc7084a6c10e83cacbdbd917e0cf8eb80166140",
+        "external/ChatTime/utils/tools.py": "dfa6265ce0f33146512f4a3849ad490657431d9cb21d8061c4868a03b3fc8dff",
+        "external/ChatTime/utils/prompt.py": "d82531ca2eee5ab153aa00e435384bf080c3d677a1d2f8ec8d0522c6f64e0296",
+        "external/ChatTime/model/model.py": "316c9935b7e753b400fb883dc381909dc8afac89008a084177e0f9773626fb33",
+        "external/ChatTime/README.md": "08d5ebf09ae23ec8883d52c4f440b62dbb2aad223a5a97585ab12d32ef2b7149",
+        "external/ChatTime/requirements.txt": "08d2b5b145d3b6fa7c114ea8a464d2bd7be86e8741b27871a066013685c814d1"
+      },
+      "code_files": {
+        "src/gofa_f/__init__.py": "0235e8b50b55a723a79451f6b13ed496f65bf4a40b8000974ca6246b01dfcaed",
+        "src/gofa_f/adaptation_stage.py": "13e6314c1c1a35520ec02c8d2106c10efe5426378cefac1595508d6838d11de9",
+        "src/gofa_f/baseline.py": "6e93ec1ac84eb25706467feabb6d8f80ceb6d8c576be8011fc220827ec821f59",
+        "src/gofa_f/benchmark.py": "c7df6da6f631df2fc71574f460dd5cd3bc56451fc65aa094fbd610ba1549dcd2",
+        "src/gofa_f/chattime.py": "73ef5dfaeda8eed019e885fb3ba24912806bf812ab6dc650706ec4b0f734f5e9",
+        "src/gofa_f/chattime_checks.py": "b563e71dd7d44a10cec0a59eb1e99a9609e193dd3c149b728b6aadfe5cb6f5e4",
+        "src/gofa_f/chattime_continuation.py": "4a34026f02c5fcaea4a1eff276d20620288db59be92d6d3e88224ec4021c0df9",
+        "src/gofa_f/chattime_prompt_cache.py": "6dffe2ebdd03ecf216534db65b42acfea67491a5ed775840a54f84a991ec6608",
+        "src/gofa_f/chattime_stage.py": "655e3b45e8e711acae16a3f66dd3da9b5acdc463b7bc2b00c30f38ea253ca269",
+        "src/gofa_f/chattime_task.py": "fc84388fbb1d87d63129e145e036d84204d90af8b878e386dfee8c12fa9b490a",
+        "src/gofa_f/contrast_context.py": "6fa77a1e1218282d8205ac7833c53dbbb0e76659f2da7d2cffb34df37b9d8626",
+        "src/gofa_f/contrast_stage.py": "1654108c73694acba6707f2dd858e20c367047d01415ec4d505d3bc10871b360",
+        "src/gofa_f/contrast_task.py": "6b4a362a479e30aead40428a0f332baf88fbc62f45e2b7e70cd5829c52282254",
+        "src/gofa_f/data.py": "b5b9a164cab4e396bd3183711829b4b4847927deb1ac51f43a19df6ce7de66ba",
+        "src/gofa_f/encoded_context.py": "07e5b4175ff3463bbf547790be3a4b2992be873ea6e89124815f0d4c02e4ef38",
+        "src/gofa_f/encoded_stage.py": "cd65f59d9485d19f64f242117826c86a3608cf5cd68b2b2f71d4b565f469fd96",
+        "src/gofa_f/encoded_task.py": "caff1db8aaefd3cb8f0c85cb52af99d611aa9587090053c517e5adf32a9dd902",
+        "src/gofa_f/graph_context.py": "64a6d9a89e62b8bf2f6ca0cb5e6881bcfcd8694fec054915d2c8ed57c0a8a042",
+        "src/gofa_f/graphs.py": "4778f7d72e13827498f02b2829a53fe32f04ff3b46a5d320cd138754861d2b58",
+        "src/gofa_f/head_capacity.py": "27b504a5f5f05e75022db8cc3cecfd71252fa19dd9c746d86bb22dc6641b0276",
+        "src/gofa_f/head_stage.py": "7721250739e78d35d59d82c33924f949ffd4985aa1f9f06b8134169dbaa73620",
+        "src/gofa_f/head_task.py": "d6133b6147e9780b579599372852cfbcd82190a3c7912a16737d3f6c21fd9214",
+        "src/gofa_f/idle_launcher.py": "9bb287810c549200643ec01066ccaff744fe983c8cda0947767547ddb2c473ab",
+        "src/gofa_f/lagged_context.py": "c7276fd699fdbff954a6270c40205fadfdce14e4f578055c5c93da0bba8b2083",
+        "src/gofa_f/lagged_stage.py": "b91acbc24abd85503c11bd2512ab1091c222bae8c9c007bda06caa00688f3ff3",
+        "src/gofa_f/lagged_task.py": "fae1a880acc62a7d58fdeb5384508ebf83105541fa2d1c13ef3031ce198769d8",
+        "src/gofa_f/long_horizon.py": "de31af08a7011a518868b996712fe172346de5e94efdc63f72cfca033122387d",
+        "src/gofa_f/long_stage.py": "9958d1878aade39bb76361dc580d8e0d0e482e03462745297c1be5f671f6d34a",
+        "src/gofa_f/long_task.py": "7a378b65c340ef7abcc8bbc61084663c0230d06f58d297cc7f5f95a8769abfcc",
+        "src/gofa_f/metrics.py": "8dfa900844372ca5ea138bb0e178fabddc0e26516f74677d17f8659e7bd2c348",
+        "src/gofa_f/models.py": "6bf7ffc4d9e80c05ed445f607245c7306f588b5a05202347caa8e95fee0e875c",
+        "src/gofa_f/native.py": "879322c8d383e5863f165f5ab420f4c27f659239cf4a4b31f7766a9bb3fea98e",
+        "src/gofa_f/native_progress.py": "35e49046d92b8b9e164ad94c0a059edca7f26b15c65aac8fbbf81ae73e401a95",
+        "src/gofa_f/native_stage.py": "4ac3eaaa96c5603203ad0a93d6e63712c8e5d5f3a687e1108187709a87ab770d",
+        "src/gofa_f/ordered_context.py": "6e05da0cde1ccb351f44a032978eb30ef966644ceb0da616d4ef9e589e75a82f",
+        "src/gofa_f/ordered_stage.py": "92530ead592e70a6a2273a770108c924a68bf0ed83b82200633865bd911773ae",
+        "src/gofa_f/ordered_task.py": "fa1c7b9cee943fffb5e98f832452f4786f543cb5e319e2cc4a1703e76c212350",
+        "src/gofa_f/prefix_cache.py": "9fb6b7177ed604dcd4bec6f06300dec76b140ef845701e95efcdbd7fa1fcbefb",
+        "src/gofa_f/prepare.py": "2325c745c118eeb8f9aeda7da1ef156e8545358bf82fbc257993548dbd52a8d5",
+        "src/gofa_f/progress.py": "fa667a80647bd659c9c61c8c40f1488c6190523c24e8dcef2dfb5a96ecb15992",
+        "src/gofa_f/pure_graph_stage.py": "4a42e0532282a59d5634cf4a608aa3f9af521e4d4186407c43bd2854a79bd340",
+        "src/gofa_f/pure_graph_task.py": "0128124ac49d917416e5b95ce8569f7cbf7ebbf0f049ffcecc6e9963c8e6eeee",
+        "src/gofa_f/reg_capacity.py": "fad94ab7e6c76318bf9a5bbe1ebd9bed93454d3b4f0344b0fd2a7cef5ef674e6",
+        "src/gofa_f/reg_capacity_stage.py": "ec101b7130aaf8c42e9fd7d8ed4675054b0f16a2541c53d603fad21ba54a39bb",
+        "src/gofa_f/reg_capacity_task.py": "6c357269dd056c0575c7c39575064227b02ec18f0b80f69c891024d291e51e44",
+        "src/gofa_f/report.py": "529ad3951023532f2423c0d93c846887fa14c18fdbb8ba48f21958b8d6ee9214",
+        "src/gofa_f/routed_graph.py": "0d2620281befae655fe9c21516ea3bdc72c54939c66fb37051c511dd31ec9825",
+        "src/gofa_f/routed_stage.py": "b0ead0b6e48a32aec2cb671fabcfb5eec6169a7a1e6f0c332116fc078959d535",
+        "src/gofa_f/routed_task.py": "15b356a32a2608a206aa73d64ca0947474443b0b26c2dbb49458d8a474d29fde",
+        "src/gofa_f/stage_budget.py": "428334d4a29bf2c4d6c13f6baf7e5385d33114d2e2061cb5a3ea9fce5e999e32",
+        "src/gofa_f/temporal_context.py": "35c01f6bbb2904cc174724bdee76f95796b0e20137733a43485a9ae4dc8aa7f3",
+        "src/gofa_f/temporal_stage.py": "d2f1484da799f202d4e2fcfe4a8a15977853f5defe801dab8c951077d9611886",
+        "src/gofa_f/temporal_task.py": "401b78277185ea13923f7db83b594e7f93125966162c7d8f71c0906bcb755941",
+        "src/gofa_f/token_exchange.py": "dbc993c67be2f32e1be3d84f165599852c3c652655781fd3e1c4f068c1591b99",
+        "src/gofa_f/token_stage.py": "9e999f0cfd9cc2a87546ae6a34f0db6da0e9cc3ccc549b6c8b5acca4fcadf20e",
+        "src/gofa_f/token_task.py": "9417f289e3775c6333d8af5f6769a250106a867d6f3a9b7e2a8eb1ee1b8f72e3",
+        "src/gofa_f/train.py": "5eaac58ea47f9c5e75919bfec702d096fcd7276aa3d197cc93ad4a455a6f7b3d",
+        "src/gofa_f/transfer_stage.py": "d5aa9c6e8bad28e0511b3215d8a37541787c6dc1622a2d42d00a44a4ecc001fc",
+        "src/gofa_f/transfer_task.py": "47b6b80f61eb826a63563cea27c8806eddcd569b1cd8884d49d27e67bed85d98",
+        "src/gofa_f/tune.py": "096d6fa903a28fc761c62b015545fa9fcd47a38efa9aed84201357181bd0194a",
+        "src/gofa_f/ufg.py": "c309ec0542ab73447d21b3fafbcad3bc5b72f0ccee6df43abf2521d7adb23147",
+        "configs/stage16_chattime.yaml": "e1cda5a6dbe1348a4e094d005dd39bf20a6fc57b6a287b4aeda75eb18aa81d73",
+        "scripts/check_chattime_cpu.py": "aa21d1e05bffaf075c582f4cb9c594a19f6699700d1133beff6398ceb499776f",
+        "tests/test_chattime.py": "43f7ea460a269760fd83c71e011ff1bed7798a1e6bcee2231e4a3567337d0e66",
+        "tests/test_chattime_bootstrap.py": "83b910965760b1f07e73ae58657835b2e9effc04b89a236555c77d851a83e7de",
+        "tests/test_chattime_continuation.py": "8d1d855199eb95bb632f23a92b8f6be84d12efdaa3b4873d62a23e8a555b5fac",
+        "tests/test_chattime_prompt_cache.py": "0c7743116d0feebbaa68b2f202772e8de22db6a110373783cd10d8cf25c5f468",
+        "tests/test_chattime_stage.py": "333c9325c6ddc723c19f433a2385d26dd6779e803a4a71b30a82fea7af32ba7c"
+      },
+      "cpu_preflight_sha256": "669de83b15dc2347dd7770425ad0edcc62cf83fe530138b565b42b6c601d8afa",
+      "runtime": {
+        "python": "3.11.17 (main, Oct  1 2026, 20:17:42) [GCC 14.3.0]",
+        "executable": "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v12/.venv-chat/bin/python",
+        "packages": {
+          "torch": "2.6.0+cu124",
+          "transformers": "4.46.3",
+          "numpy": "1.26.4",
+          "scikit-learn": "1.5.2",
+          "protobuf": "5.28.3"
+        },
+        "sys_path": [
+          "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v12/scripts",
+          "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages",
+          "/home/dcg/dcg_data/GOFA-F/.venv-native/lib/python3.11/site-packages",
+          "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages",
+          "/home/dcg/dcg_data/GOFA-F/.venv-native/lib/python3.11/site-packages",
+          "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v12/src",
+          "/home/dcg/dcg_data/miniconda3/envs/gofaf/lib/python311.zip",
+          "/home/dcg/dcg_data/miniconda3/envs/gofaf/lib/python3.11",
+          "/home/dcg/dcg_data/miniconda3/envs/gofaf/lib/python3.11/lib-dynload",
+          "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v12/.venv-chat/lib/python3.11/site-packages",
+          "/home/dcg/dcg_data/miniconda3/envs/gofaf/lib/python3.11/site-packages",
+          "/mnt/sevenT/dcg_data/GOFA-F/src",
+          "/tmp/tmpz6ml4jgd",
+          "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages/setuptools/_vendor"
+        ],
+        "isolated_environment_paths": {
+          "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v12/.venv-chat/pyvenv.cfg": "home = /home/dcg/dcg_data/miniconda3/envs/gofaf/bin\ninclude-system-site-packages = true\nversion = 3.11.17\nexecutable = /mnt/sevenT/dcg_data/miniconda3/envs/gofaf/bin/python3.11\ncommand = /home/dcg/dcg_data/GOFA-F/.venv-native/bin/python -m venv --system-site-packages /home/dcg/dcg_data/GOFA-F/.venv-chat\n",
+          "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v12/.venv-chat/lib/python3.11/site-packages/native_read_only.pth": "import sys; sys.path.insert(0, '/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages'); sys.path.insert(1, '/home/dcg/dcg_data/GOFA-F/.venv-native/lib/python3.11/site-packages')\n"
+        },
+        "modules": {
+          "torch": {
+            "path": "/home/dcg/dcg_data/miniconda3/envs/gofaf/lib/python3.11/site-packages/torch/__init__.py",
+            "sha256": "5a190666c3853aa236c4d48ed64e2d4bbcd23bd32c21e64c0867646a6852e43f"
+          },
+          "transformers": {
+            "path": "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages/transformers/__init__.py",
+            "sha256": "71a729a440bba6c0c9d1f9209c6edd61edb21380c89154461be00063d86bc829"
+          },
+          "numpy": {
+            "path": "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages/numpy/__init__.py",
+            "sha256": "22cd1535fa14d74ef6f457cca149ffdc80875f460be313b8f895273f78bc402e"
+          },
+          "sklearn": {
+            "path": "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v12/.venv-chat/lib/python3.11/site-packages/sklearn/__init__.py",
+            "sha256": "cfc20835d0434f1ced9e6c5fd32e836c150d2202bcaa7983be60539a627bbc5a"
+          },
+          "protobuf": {
+            "path": "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v12/.venv-chat/lib/python3.11/site-packages/google/protobuf/__init__.py",
+            "sha256": "0d2fe5e532a35a7a7f3b447125d00bfbfa555112ce8ca20c3fd909bd5c85ea6b"
+          }
+        },
+        "critical_files": {
+          "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages/transformers/models/llama/modeling_llama.py": "733e7625fec5abcfa416ab9b866cb91875d41007f2e31c3e90d2ae0111ae98f7",
+          "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages/transformers/modeling_attn_mask_utils.py": "6b48608887ba16712929165d8c05bde9c136b1d5cac19acfde68a5435a570cce",
+          "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages/transformers/generation/utils.py": "24e719be0942a06f1956cadd469a100a455012ea6f808cca894a3e94edb06bf3",
+          "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages/transformers/models/llama/tokenization_llama.py": "e77968e24ccfc4e92af9e33221b790477b4d264cb889baebbf3eb4dc7c9356d3",
+          "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v12/.venv-chat/lib/python3.11/site-packages/google/protobuf/__init__.py": "0d2fe5e532a35a7a7f3b447125d00bfbfa555112ce8ca20c3fd909bd5c85ea6b"
+        }
+      },
+      "git_revision": "e0d8745d1f283846ca1a7acc9540678c80d7f307",
+      "fixed_prompt_kv": true,
+      "idle_interval_seconds": 10
+    },
+    "launcher_manifest.json": {
+      "command": [
+        "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v12/.venv-chat/bin/python",
+        "-u",
+        "-m",
+        "gofa_f.chattime_stage",
+        "--worker",
+        "--config",
+        "configs/stage16_chattime.yaml",
+        "--output",
+        "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v12",
+        "--resume"
+      ],
+      "cwd": "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v12",
+      "total_seconds": null,
+      "wall_deadline": 1792251000.0,
+      "memory_cap_gib": 40,
+      "leave_free_gib": 16,
+      "git_revision": "e0d8745d1f283846ca1a7acc9540678c80d7f307",
+      "idle_samples": 3,
+      "idle_interval_seconds": 10,
+      "watchdog_interval_seconds": 10,
+      "idle_max_used_mib": 256,
+      "yield_on_foreign": false,
+      "worker_wait_state": "waiting_for_idle"
+    },
+    "migration.json": {
+      "source": {
+        "kind": "training_continuation",
+        "output": "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v11",
+        "source_binding": "9a5384f8106af964a8877c117d64e129e1484b392730896cf9cc40fa081b42f8",
+        "window_sha256": "fe1e8480c6e6b86fb5f72e8c35bdeb89b3d1cf5cc52500c7f80b52b3462ec22f",
+        "manifest_sha256": "e7cbf7088027db3797bee694ab0d95efd51d8a8337d45cb25dc2d5822fe115c2",
+        "checkpoint_sha256": "4a262c97c0a813032f15e885ca74d2b98cffd27654d74582c30ba23cff3cc1d1",
+        "started_at": 1792137782.8795292,
+        "original_wall_deadline": 1792206000.0,
+        "gpu_activity_seconds": 9956.406928363256,
+        "updates": 167,
+        "offset": 10737,
+        "pending_windows": 49,
+        "pending_count": 117586,
+        "deadline_amendment": {
+          "authorization": "explicit_user_request",
+          "source_window_sha256": "ecfe1540e17a6316be683376a24d6637a10fd4e5de8b9861ed4d61bbfd15e21b",
+          "previous_wall_deadline": 1792164600.0,
+          "new_wall_deadline": 1792206000.0
+        },
+        "redeployed_expired_waiter": "explicit user deadline amendment; no new GPU activity or predictions"
+      },
+      "target_binding": "b54f9a028d0bfa55371e250f6cdbf5d41c443a3957594187dc5e2c1ff0de0772",
+      "target_checkpoint_sha256": "7512a8a0d409ab9d3c4f7b69067eb954c0a5addf5ca21eae47e880b3baa7c8a3",
+      "state_restore": "exact",
+      "cache": "ephemeral caches rebuilt; old caches not modified",
+      "original_start_retained": true,
+      "original_deadline_retained": false,
+      "deadline_amendment": {
+        "authorization": "explicit_user_request",
+        "source_window_sha256": "fe1e8480c6e6b86fb5f72e8c35bdeb89b3d1cf5cc52500c7f80b52b3462ec22f",
+        "previous_wall_deadline": 1792206000.0,
+        "new_wall_deadline": 1792251000.0
+      }
+    },
+    "cpu_preflight.json": {
+      "passed": true,
+      "code_files": {
+        "src/gofa_f/__init__.py": "0235e8b50b55a723a79451f6b13ed496f65bf4a40b8000974ca6246b01dfcaed",
+        "src/gofa_f/adaptation_stage.py": "13e6314c1c1a35520ec02c8d2106c10efe5426378cefac1595508d6838d11de9",
+        "src/gofa_f/baseline.py": "6e93ec1ac84eb25706467feabb6d8f80ceb6d8c576be8011fc220827ec821f59",
+        "src/gofa_f/benchmark.py": "c7df6da6f631df2fc71574f460dd5cd3bc56451fc65aa094fbd610ba1549dcd2",
+        "src/gofa_f/chattime.py": "73ef5dfaeda8eed019e885fb3ba24912806bf812ab6dc650706ec4b0f734f5e9",
+        "src/gofa_f/chattime_checks.py": "b563e71dd7d44a10cec0a59eb1e99a9609e193dd3c149b728b6aadfe5cb6f5e4",
+        "src/gofa_f/chattime_continuation.py": "4a34026f02c5fcaea4a1eff276d20620288db59be92d6d3e88224ec4021c0df9",
+        "src/gofa_f/chattime_prompt_cache.py": "6dffe2ebdd03ecf216534db65b42acfea67491a5ed775840a54f84a991ec6608",
+        "src/gofa_f/chattime_stage.py": "655e3b45e8e711acae16a3f66dd3da9b5acdc463b7bc2b00c30f38ea253ca269",
+        "src/gofa_f/chattime_task.py": "fc84388fbb1d87d63129e145e036d84204d90af8b878e386dfee8c12fa9b490a",
+        "src/gofa_f/contrast_context.py": "6fa77a1e1218282d8205ac7833c53dbbb0e76659f2da7d2cffb34df37b9d8626",
+        "src/gofa_f/contrast_stage.py": "1654108c73694acba6707f2dd858e20c367047d01415ec4d505d3bc10871b360",
+        "src/gofa_f/contrast_task.py": "6b4a362a479e30aead40428a0f332baf88fbc62f45e2b7e70cd5829c52282254",
+        "src/gofa_f/data.py": "b5b9a164cab4e396bd3183711829b4b4847927deb1ac51f43a19df6ce7de66ba",
+        "src/gofa_f/encoded_context.py": "07e5b4175ff3463bbf547790be3a4b2992be873ea6e89124815f0d4c02e4ef38",
+        "src/gofa_f/encoded_stage.py": "cd65f59d9485d19f64f242117826c86a3608cf5cd68b2b2f71d4b565f469fd96",
+        "src/gofa_f/encoded_task.py": "caff1db8aaefd3cb8f0c85cb52af99d611aa9587090053c517e5adf32a9dd902",
+        "src/gofa_f/graph_context.py": "64a6d9a89e62b8bf2f6ca0cb5e6881bcfcd8694fec054915d2c8ed57c0a8a042",
+        "src/gofa_f/graphs.py": "4778f7d72e13827498f02b2829a53fe32f04ff3b46a5d320cd138754861d2b58",
+        "src/gofa_f/head_capacity.py": "27b504a5f5f05e75022db8cc3cecfd71252fa19dd9c746d86bb22dc6641b0276",
+        "src/gofa_f/head_stage.py": "7721250739e78d35d59d82c33924f949ffd4985aa1f9f06b8134169dbaa73620",
+        "src/gofa_f/head_task.py": "d6133b6147e9780b579599372852cfbcd82190a3c7912a16737d3f6c21fd9214",
+        "src/gofa_f/idle_launcher.py": "9bb287810c549200643ec01066ccaff744fe983c8cda0947767547ddb2c473ab",
+        "src/gofa_f/lagged_context.py": "c7276fd699fdbff954a6270c40205fadfdce14e4f578055c5c93da0bba8b2083",
+        "src/gofa_f/lagged_stage.py": "b91acbc24abd85503c11bd2512ab1091c222bae8c9c007bda06caa00688f3ff3",
+        "src/gofa_f/lagged_task.py": "fae1a880acc62a7d58fdeb5384508ebf83105541fa2d1c13ef3031ce198769d8",
+        "src/gofa_f/long_horizon.py": "de31af08a7011a518868b996712fe172346de5e94efdc63f72cfca033122387d",
+        "src/gofa_f/long_stage.py": "9958d1878aade39bb76361dc580d8e0d0e482e03462745297c1be5f671f6d34a",
+        "src/gofa_f/long_task.py": "7a378b65c340ef7abcc8bbc61084663c0230d06f58d297cc7f5f95a8769abfcc",
+        "src/gofa_f/metrics.py": "8dfa900844372ca5ea138bb0e178fabddc0e26516f74677d17f8659e7bd2c348",
+        "src/gofa_f/models.py": "6bf7ffc4d9e80c05ed445f607245c7306f588b5a05202347caa8e95fee0e875c",
+        "src/gofa_f/native.py": "879322c8d383e5863f165f5ab420f4c27f659239cf4a4b31f7766a9bb3fea98e",
+        "src/gofa_f/native_progress.py": "35e49046d92b8b9e164ad94c0a059edca7f26b15c65aac8fbbf81ae73e401a95",
+        "src/gofa_f/native_stage.py": "4ac3eaaa96c5603203ad0a93d6e63712c8e5d5f3a687e1108187709a87ab770d",
+        "src/gofa_f/ordered_context.py": "6e05da0cde1ccb351f44a032978eb30ef966644ceb0da616d4ef9e589e75a82f",
+        "src/gofa_f/ordered_stage.py": "92530ead592e70a6a2273a770108c924a68bf0ed83b82200633865bd911773ae",
+        "src/gofa_f/ordered_task.py": "fa1c7b9cee943fffb5e98f832452f4786f543cb5e319e2cc4a1703e76c212350",
+        "src/gofa_f/prefix_cache.py": "9fb6b7177ed604dcd4bec6f06300dec76b140ef845701e95efcdbd7fa1fcbefb",
+        "src/gofa_f/prepare.py": "2325c745c118eeb8f9aeda7da1ef156e8545358bf82fbc257993548dbd52a8d5",
+        "src/gofa_f/progress.py": "fa667a80647bd659c9c61c8c40f1488c6190523c24e8dcef2dfb5a96ecb15992",
+        "src/gofa_f/pure_graph_stage.py": "4a42e0532282a59d5634cf4a608aa3f9af521e4d4186407c43bd2854a79bd340",
+        "src/gofa_f/pure_graph_task.py": "0128124ac49d917416e5b95ce8569f7cbf7ebbf0f049ffcecc6e9963c8e6eeee",
+        "src/gofa_f/reg_capacity.py": "fad94ab7e6c76318bf9a5bbe1ebd9bed93454d3b4f0344b0fd2a7cef5ef674e6",
+        "src/gofa_f/reg_capacity_stage.py": "ec101b7130aaf8c42e9fd7d8ed4675054b0f16a2541c53d603fad21ba54a39bb",
+        "src/gofa_f/reg_capacity_task.py": "6c357269dd056c0575c7c39575064227b02ec18f0b80f69c891024d291e51e44",
+        "src/gofa_f/report.py": "529ad3951023532f2423c0d93c846887fa14c18fdbb8ba48f21958b8d6ee9214",
+        "src/gofa_f/routed_graph.py": "0d2620281befae655fe9c21516ea3bdc72c54939c66fb37051c511dd31ec9825",
+        "src/gofa_f/routed_stage.py": "b0ead0b6e48a32aec2cb671fabcfb5eec6169a7a1e6f0c332116fc078959d535",
+        "src/gofa_f/routed_task.py": "15b356a32a2608a206aa73d64ca0947474443b0b26c2dbb49458d8a474d29fde",
+        "src/gofa_f/stage_budget.py": "428334d4a29bf2c4d6c13f6baf7e5385d33114d2e2061cb5a3ea9fce5e999e32",
+        "src/gofa_f/temporal_context.py": "35c01f6bbb2904cc174724bdee76f95796b0e20137733a43485a9ae4dc8aa7f3",
+        "src/gofa_f/temporal_stage.py": "d2f1484da799f202d4e2fcfe4a8a15977853f5defe801dab8c951077d9611886",
+        "src/gofa_f/temporal_task.py": "401b78277185ea13923f7db83b594e7f93125966162c7d8f71c0906bcb755941",
+        "src/gofa_f/token_exchange.py": "dbc993c67be2f32e1be3d84f165599852c3c652655781fd3e1c4f068c1591b99",
+        "src/gofa_f/token_stage.py": "9e999f0cfd9cc2a87546ae6a34f0db6da0e9cc3ccc549b6c8b5acca4fcadf20e",
+        "src/gofa_f/token_task.py": "9417f289e3775c6333d8af5f6769a250106a867d6f3a9b7e2a8eb1ee1b8f72e3",
+        "src/gofa_f/train.py": "5eaac58ea47f9c5e75919bfec702d096fcd7276aa3d197cc93ad4a455a6f7b3d",
+        "src/gofa_f/transfer_stage.py": "d5aa9c6e8bad28e0511b3215d8a37541787c6dc1622a2d42d00a44a4ecc001fc",
+        "src/gofa_f/transfer_task.py": "47b6b80f61eb826a63563cea27c8806eddcd569b1cd8884d49d27e67bed85d98",
+        "src/gofa_f/tune.py": "096d6fa903a28fc761c62b015545fa9fcd47a38efa9aed84201357181bd0194a",
+        "src/gofa_f/ufg.py": "c309ec0542ab73447d21b3fafbcad3bc5b72f0ccee6df43abf2521d7adb23147",
+        "configs/stage16_chattime.yaml": "e1cda5a6dbe1348a4e094d005dd39bf20a6fc57b6a287b4aeda75eb18aa81d73",
+        "scripts/check_chattime_cpu.py": "aa21d1e05bffaf075c582f4cb9c594a19f6699700d1133beff6398ceb499776f",
+        "tests/test_chattime.py": "43f7ea460a269760fd83c71e011ff1bed7798a1e6bcee2231e4a3567337d0e66",
+        "tests/test_chattime_bootstrap.py": "83b910965760b1f07e73ae58657835b2e9effc04b89a236555c77d851a83e7de",
+        "tests/test_chattime_continuation.py": "8d1d855199eb95bb632f23a92b8f6be84d12efdaa3b4873d62a23e8a555b5fac",
+        "tests/test_chattime_prompt_cache.py": "0c7743116d0feebbaa68b2f202772e8de22db6a110373783cd10d8cf25c5f468",
+        "tests/test_chattime_stage.py": "333c9325c6ddc723c19f433a2385d26dd6779e803a4a71b30a82fea7af32ba7c"
+      },
+      "runtime": {
+        "python": "3.11.17 (main, Oct  1 2026, 20:17:42) [GCC 14.3.0]",
+        "executable": "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v12/.venv-chat/bin/python",
+        "packages": {
+          "torch": "2.6.0+cu124",
+          "transformers": "4.46.3",
+          "numpy": "1.26.4",
+          "scikit-learn": "1.5.2",
+          "protobuf": "5.28.3"
+        },
+        "sys_path": [
+          "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v12/scripts",
+          "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages",
+          "/home/dcg/dcg_data/GOFA-F/.venv-native/lib/python3.11/site-packages",
+          "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages",
+          "/home/dcg/dcg_data/GOFA-F/.venv-native/lib/python3.11/site-packages",
+          "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v12/src",
+          "/home/dcg/dcg_data/miniconda3/envs/gofaf/lib/python311.zip",
+          "/home/dcg/dcg_data/miniconda3/envs/gofaf/lib/python3.11",
+          "/home/dcg/dcg_data/miniconda3/envs/gofaf/lib/python3.11/lib-dynload",
+          "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v12/.venv-chat/lib/python3.11/site-packages",
+          "/home/dcg/dcg_data/miniconda3/envs/gofaf/lib/python3.11/site-packages",
+          "/mnt/sevenT/dcg_data/GOFA-F/src",
+          "/tmp/tmpz6ml4jgd",
+          "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages/setuptools/_vendor"
+        ],
+        "isolated_environment_paths": {
+          "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v12/.venv-chat/pyvenv.cfg": "home = /home/dcg/dcg_data/miniconda3/envs/gofaf/bin\ninclude-system-site-packages = true\nversion = 3.11.17\nexecutable = /mnt/sevenT/dcg_data/miniconda3/envs/gofaf/bin/python3.11\ncommand = /home/dcg/dcg_data/GOFA-F/.venv-native/bin/python -m venv --system-site-packages /home/dcg/dcg_data/GOFA-F/.venv-chat\n",
+          "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v12/.venv-chat/lib/python3.11/site-packages/native_read_only.pth": "import sys; sys.path.insert(0, '/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages'); sys.path.insert(1, '/home/dcg/dcg_data/GOFA-F/.venv-native/lib/python3.11/site-packages')\n"
+        },
+        "modules": {
+          "torch": {
+            "path": "/home/dcg/dcg_data/miniconda3/envs/gofaf/lib/python3.11/site-packages/torch/__init__.py",
+            "sha256": "5a190666c3853aa236c4d48ed64e2d4bbcd23bd32c21e64c0867646a6852e43f"
+          },
+          "transformers": {
+            "path": "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages/transformers/__init__.py",
+            "sha256": "71a729a440bba6c0c9d1f9209c6edd61edb21380c89154461be00063d86bc829"
+          },
+          "numpy": {
+            "path": "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages/numpy/__init__.py",
+            "sha256": "22cd1535fa14d74ef6f457cca149ffdc80875f460be313b8f895273f78bc402e"
+          },
+          "sklearn": {
+            "path": "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v12/.venv-chat/lib/python3.11/site-packages/sklearn/__init__.py",
+            "sha256": "cfc20835d0434f1ced9e6c5fd32e836c150d2202bcaa7983be60539a627bbc5a"
+          },
+          "protobuf": {
+            "path": "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v12/.venv-chat/lib/python3.11/site-packages/google/protobuf/__init__.py",
+            "sha256": "0d2fe5e532a35a7a7f3b447125d00bfbfa555112ce8ca20c3fd909bd5c85ea6b"
+          }
+        },
+        "critical_files": {
+          "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages/transformers/models/llama/modeling_llama.py": "733e7625fec5abcfa416ab9b866cb91875d41007f2e31c3e90d2ae0111ae98f7",
+          "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages/transformers/modeling_attn_mask_utils.py": "6b48608887ba16712929165d8c05bde9c136b1d5cac19acfde68a5435a570cce",
+          "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages/transformers/generation/utils.py": "24e719be0942a06f1956cadd469a100a455012ea6f808cca894a3e94edb06bf3",
+          "/home/dcg/dcg_data/GOFA-F/.venv/lib/python3.11/site-packages/transformers/models/llama/tokenization_llama.py": "e77968e24ccfc4e92af9e33221b790477b4d264cb889baebbf3eb4dc7c9356d3",
+          "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v12/.venv-chat/lib/python3.11/site-packages/google/protobuf/__init__.py": "0d2fe5e532a35a7a7f3b447125d00bfbfa555112ce8ca20c3fd909bd5c85ea6b"
+        }
+      },
+      "cpu_test_cases": 343,
+      "stage16_cases": 95,
+      "optional_skipped": 11,
+      "official_codec_examples": 3,
+      "real_model_mechanisms": {
+        "initial_persistence": true,
+        "zero_graph_native_hidden": true,
+        "cached_prediction_and_gradients": true,
+        "graph_gradient_active": true,
+        "batch_graph_isolation": true,
+        "empty_nodes": true,
+        "pending_gradient_resume_exact": true,
+        "optimizer_resume_exact": true,
+        "native_weights_unchanged": true,
+        "text_bypass_exact": true,
+        "native_prefill_shared_prediction_and_gradient": true,
+        "numeric_tolerance": {
+          "rtol": 0.002,
+          "atol": 0.002
+        },
+        "checkpoint_state_tolerance": "exact"
+      },
+      "real_model_nodes": 3,
+      "parameters": {
+        "registered_real_dof": 6821464722,
+        "trainable_real_dof": 1120914,
+        "continuous_forward_module_real_dof": 6649428626,
+        "native_registered_real_dof": 6820343808,
+        "new_graph_and_router": 1071750,
+        "new_continuous_head": 49164,
+        "note": "Forward module count excludes original unused LM head; embedding tensor counted in full. Frozen parameters and compute are not matched to historical UFG-A."
+      },
+      "estimated_full_cache_bytes": 2999480985963,
+      "fixed_prompt_mechanisms": {
+        "passed": true,
+        "prediction_max_abs": 0.0,
+        "gradient_max_abs": 0.0,
+        "tolerance": {
+          "rtol": 0.002,
+          "atol": 0.002
+        },
+        "cache": {
+          "enabled": true,
+          "format": "fixed_prompt_kv_v2",
+          "binding": "mechanism-check",
+          "tokens": 47,
+          "builds": 1,
+          "reused_rows": 3,
+          "fallback_rows": 0,
+          "single_copy_bytes": 23486464,
+          "precision": "native dtype, lossless storage; no input truncation",
+          "attention": "full-length zero-padded queries, native square causal SDPA"
+        },
+        "prefix": {
+          "max_abs": 0.0,
+          "changed_elements": 0
+        },
+        "optimized_exercised": true
+      },
+      "cuda_initialized": false,
+      "scope": "CPU verification only; no GPU accuracy or mechanism claim"
+    },
+    "active_budget.json": {
+      "spent_seconds": 9956.406928363256,
+      "worker": null
+    },
+    "budget.json": {
+      "spent_seconds": 9882.842370609753,
+      "scopes": {
+        "preflight": 17.008372533135116,
+        "train": 9865.833998076618
+      },
+      "active_scope": null
+    },
+    "gofa_chattime/progress.json": {
+      "epoch": 0,
+      "offset": 10737,
+      "updates": 167,
+      "stale": 0,
+      "best_mae": null,
+      "best_updates": null,
+      "phase": "train",
+      "pending_windows": 49,
+      "pending_count": 117586,
+      "pending_loss": 431256.71337890625,
+      "validation_offset": 0,
+      "last_validated_key": null,
+      "suffix_checkpointing": false,
+      "prefix_node_chunk": 256,
+      "last_gradient_norm": 4.410202503204346,
+      "last_training_raw_mae": 3.858170493746622,
+      "stop_reason": "training_deadline_or_signal",
+      "updated_at": 1792156317.989897,
+      "checkpoint_sha256": "7512a8a0d409ab9d3c4f7b69067eb954c0a5addf5ca21eae47e880b3baa7c8a3"
+    }
+  },
+  "identities": {
+    ".bootstrap.launch.json": {
+      "pid": 793503,
+      "start_ticks": 613081051,
+      "snapshot": "/home/dcg/dcg_data/GOFA-F-runs/stage16-chattime-metr-v12",
+      "output": "/home/dcg/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v12",
+      "source_revision": "e0d8745d1f283846ca1a7acc9540678c80d7f307",
+      "spawned_at": 1792209749.7534752,
+      "spawned_at_shanghai": "2026-10-17T12:02:29.753550+08:00",
+      "command": [
+        "/home/dcg/dcg_data/GOFA-F-runs/stage16-chattime-metr-v12/.venv-chat/bin/python",
+        "-u",
+        "/home/dcg/dcg_data/GOFA-F-runs/stage16-chattime-metr-v12/scripts/bootstrap_chattime_stage.py",
+        "--output",
+        "/home/dcg/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v12",
+        "--official-manifest",
+        "/home/dcg/dcg_data/GOFA-F/.remote/chattime-official-snapshot.json",
+        "--hard-deadline",
+        "2026-10-17T23:30:00+08:00",
+        "--continue-training-from",
+        "/home/dcg/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v11",
+        "--fixed-prompt-kv",
+        "--idle-check-seconds",
+        "10",
+        "--authorized-deadline-extension"
+      ],
+      "authorization": "explicit_user_redeployment_deadline_2026-10-17_23:30",
+      "identity_matches": true
+    },
+    ".launch.json": {
+      "pid": 795540,
+      "start_ticks": 613096205,
+      "snapshot": "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v12",
+      "output": "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v12",
+      "spawned_at": 1792209901.2895737,
+      "command": [
+        "/mnt/sevenT/dcg_data/GOFA-F-runs/stage16-chattime-metr-v12/.venv-chat/bin/python",
+        "-u",
+        "-m",
+        "gofa_f.chattime_stage",
+        "--output",
+        "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v12",
+        "--hard-deadline",
+        "2026-10-17T23:30:00+08:00",
+        "--fixed-prompt-kv",
+        "--idle-check-seconds",
+        "10",
+        "--authorized-deadline-extension",
+        "--continue-training-from",
+        "/home/dcg/dcg_data/GOFA-F/outputs/stage16-chattime-metr-v11"
+      ],
+      "identity_matches": true
+    }
+  },
+  "gpu_observation": {
+    "returncode": 0,
+    "stdout": "27433, 53658, 100, Default",
+    "stderr": ""
+  },
+  "cuda_initialized": false,
+  "note": "CPU checks and exact migration verified. CUDA fresh/continued checks still required after idle admission; no acceleration or accuracy claim."
+}
