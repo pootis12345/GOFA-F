@@ -30,7 +30,15 @@ def mechanisms(model, codec, series, queries, tolerance, diagnostic=None, check=
         "cuda_replay": "same_execution_tolerance_not_cross_dtype_bitwise"}
     cache = GenerativePrefixLRU("acceptance_only", max_bytes=512*2**20)
     def compare(actual, expected, label, exact=False):
-        result["differences"][label] = float((actual.detach().float()-expected.detach().float()).abs().max())
+        error = (actual.detach().float()-expected.detach().float()).abs()
+        result["differences"][label] = float(error.max())
+        allowed = 0 if exact else tolerance+tolerance*expected.detach().float().abs()
+        if (error > allowed).any():
+            index = int(error.flatten().argmax())
+            position = np.unravel_index(index, error.shape)
+            result["failed_comparison"] = {"label": label, "shape": list(error.shape),
+                "max_position": [int(i) for i in position], "violations": int((error > allowed).sum()),
+                "actual_at_max": float(actual[position]), "expected_at_max": float(expected[position])}
         torch.testing.assert_close(actual, expected, rtol=0 if exact else tolerance,
                                    atol=0 if exact else tolerance, msg=label)
     def gradients():

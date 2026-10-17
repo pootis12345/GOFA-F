@@ -17,6 +17,8 @@ def main():
     parser.add_argument("--snapshot", required=True)
     parser.add_argument("--output", required=True)
     parser.add_argument("--config", required=True)
+    parser.add_argument("--repair-failed-preflight")
+    parser.add_argument("--prior-diagnostic", action="append", default=[])
     args = parser.parse_args()
     snapshot, output, config = (Path(x).resolve() for x in (args.snapshot, args.output, args.config))
     output.mkdir(parents=True, exist_ok=True)
@@ -51,6 +53,11 @@ def main():
     proof = json.loads((output/"cpu_preflight.json").read_text())
     if not proof.get("passed"):
         raise RuntimeError("Bound complete CPU acceptance did not pass")
+    if args.repair_failed_preflight:
+        from gofa_f.allnode_recovery import migrate_failed_preflight
+        migrate_failed_preflight(args.repair_failed_preflight, output, args.prior_diagnostic)
+    elif args.prior_diagnostic:
+        raise ValueError("Prior diagnostic activity must accompany an audited repair")
     command = [sys.executable, "-u", "-m", "gofa_f.allnode_launcher", "--snapshot", str(snapshot),
                "--output", str(output), "--config", str(config)]
     with output.with_suffix(".log").open("a") as log:

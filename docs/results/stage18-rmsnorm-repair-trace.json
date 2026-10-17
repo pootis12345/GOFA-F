@@ -1,0 +1,314 @@
+{
+  "observed_at": "2026-10-17T21:16:39.695887+08:00",
+  "formal_updates": 0,
+  "target_predictions": 0,
+  "tolerance": 0.002,
+  "diagnostic_only": true,
+  "runs": [
+    {
+      "output": "/home/dcg/dcg_data/GOFA-F/outputs/stage18-kv-diagnostic-v1",
+      "launch": {
+        "pid": 1273511,
+        "start_ticks": "616365414",
+        "code_revision": "5bb21e95cc7242e9432379b9a7b2a03d304782c7",
+        "snapshot": "/home/dcg/dcg_data/GOFA-F-runs/stage18-kv-diagnostic-v1",
+        "output": "/home/dcg/dcg_data/GOFA-F/outputs/stage18-kv-diagnostic-v1",
+        "started_at": 1792242593.3810997,
+        "diagnostic_only": true,
+        "command": [
+          "/home/dcg/dcg_data/GOFA-F/.venv-chat/bin/python",
+          "-u",
+          "-m",
+          "gofa_f.allnode_launcher",
+          "--snapshot",
+          "/home/dcg/dcg_data/GOFA-F-runs/stage18-kv-diagnostic-v1",
+          "--output",
+          "/home/dcg/dcg_data/GOFA-F/outputs/stage18-kv-diagnostic-v1",
+          "--config",
+          "/home/dcg/dcg_data/GOFA-F-runs/stage18-kv-diagnostic-v1/configs/stage18_allnode_chattime.yaml",
+          "--worker-mode",
+          "kv_diagnostic"
+        ]
+      },
+      "activity": {
+        "spent_seconds": 11.45774405170232,
+        "worker": null,
+        "waiting_seconds": 0.0,
+        "resource_pause_count": 0,
+        "peak_group_mib": 0
+      },
+      "status": {
+        "state": "complete",
+        "diagnostic_only": true,
+        "formal_updates": 0,
+        "target_predictions": 0
+      },
+      "views": {
+        "0": {
+          "prompt_tokens": 71,
+          "total_tokens": 74,
+          "first_divergent_layer": null,
+          "logits_max": 0.0,
+          "all_recorded_layers_identical": true,
+          "first_native_rmsnorm": {}
+        },
+        "16": {
+          "prompt_tokens": 103,
+          "total_tokens": 106,
+          "first_divergent_layer": "layer_13",
+          "logits_max": 0.21875,
+          "all_recorded_layers_identical": false,
+          "first_native_rmsnorm": {}
+        },
+        "32": {
+          "prompt_tokens": 135,
+          "total_tokens": 138,
+          "first_divergent_layer": null,
+          "logits_max": 0.0,
+          "all_recorded_layers_identical": true,
+          "first_native_rmsnorm": {}
+        }
+      }
+    },
+    {
+      "output": "/home/dcg/dcg_data/GOFA-F/outputs/stage18-kv-diagnostic-v2",
+      "launch": {
+        "pid": 1275159,
+        "start_ticks": "616374716",
+        "snapshot": "/home/dcg/dcg_data/GOFA-F-runs/stage18-kv-diagnostic-v2",
+        "output": "/home/dcg/dcg_data/GOFA-F/outputs/stage18-kv-diagnostic-v2",
+        "code_revision": "b16f85b881016fceedef81a2164efdfb3f265454",
+        "started_at": 1792242686.4009202,
+        "diagnostic_only": true
+      },
+      "activity": {
+        "spent_seconds": 11.32005738466978,
+        "worker": null,
+        "waiting_seconds": 0.0,
+        "resource_pause_count": 0,
+        "peak_group_mib": 14572
+      },
+      "status": {
+        "state": "complete",
+        "diagnostic_only": true,
+        "formal_updates": 0,
+        "target_predictions": 0
+      },
+      "views": {
+        "0": {
+          "prompt_tokens": 71,
+          "total_tokens": 74,
+          "first_divergent_layer": null,
+          "logits_max": 0.0,
+          "all_recorded_layers_identical": true,
+          "first_native_rmsnorm": {
+            "block13.input_layernorm": {
+              "max_absolute": 0.0,
+              "violations": 0,
+              "max_position": [
+                0,
+                0,
+                0
+              ],
+              "actual_at_max": -0.003570556640625,
+              "reference_at_max": -0.003570556640625
+            },
+            "block13.self_attn.q_proj": {
+              "max_absolute": 0.0,
+              "violations": 0,
+              "max_position": [
+                0,
+                0,
+                0
+              ],
+              "actual_at_max": 0.0283203125,
+              "reference_at_max": 0.0283203125
+            }
+          }
+        },
+        "16": {
+          "prompt_tokens": 103,
+          "total_tokens": 106,
+          "first_divergent_layer": "block13.input_layernorm",
+          "logits_max": 0.21875,
+          "all_recorded_layers_identical": false,
+          "first_native_rmsnorm": {
+            "block13.input_layernorm": {
+              "max_absolute": 0.001953125,
+              "violations": 0,
+              "max_position": [
+                0,
+                105,
+                1240
+              ],
+              "actual_at_max": 0.2890625,
+              "reference_at_max": 0.287109375
+            },
+            "block13.self_attn.q_proj": {
+              "max_absolute": 0.015625,
+              "violations": 34,
+              "max_position": [
+                0,
+                105,
+                3391
+              ],
+              "actual_at_max": -3.640625,
+              "reference_at_max": -3.625
+            }
+          }
+        },
+        "32": {
+          "prompt_tokens": 135,
+          "total_tokens": 138,
+          "first_divergent_layer": null,
+          "logits_max": 0.0,
+          "all_recorded_layers_identical": true,
+          "first_native_rmsnorm": {
+            "block13.input_layernorm": {
+              "max_absolute": 0.0,
+              "violations": 0,
+              "max_position": [
+                0,
+                0,
+                0
+              ],
+              "actual_at_max": -0.003570556640625,
+              "reference_at_max": -0.003570556640625
+            },
+            "block13.self_attn.q_proj": {
+              "max_absolute": 0.0,
+              "violations": 0,
+              "max_position": [
+                0,
+                0,
+                0
+              ],
+              "actual_at_max": 0.0283203125,
+              "reference_at_max": 0.0283203125
+            }
+          }
+        }
+      }
+    },
+    {
+      "output": "/home/dcg/dcg_data/GOFA-F/outputs/stage18-kv-diagnostic-v3",
+      "launch": {
+        "pid": 1277195,
+        "start_ticks": "616385239",
+        "snapshot": "/home/dcg/dcg_data/GOFA-F-runs/stage18-kv-diagnostic-v3",
+        "output": "/home/dcg/dcg_data/GOFA-F/outputs/stage18-kv-diagnostic-v3",
+        "code_revision": "4d9801f0b9125293e470689ff339a2bf628c078f",
+        "started_at": 1792242791.6294675,
+        "diagnostic_only": true
+      },
+      "activity": {
+        "spent_seconds": 11.303618155419827,
+        "worker": null,
+        "waiting_seconds": 0.0,
+        "resource_pause_count": 0,
+        "peak_group_mib": 14574
+      },
+      "status": {
+        "state": "complete",
+        "diagnostic_only": true,
+        "formal_updates": 0,
+        "target_predictions": 0
+      },
+      "views": {
+        "0": {
+          "prompt_tokens": 71,
+          "total_tokens": 74,
+          "first_divergent_layer": null,
+          "logits_max": 0.0,
+          "all_recorded_layers_identical": true,
+          "first_native_rmsnorm": {
+            "block13.input_layernorm": {
+              "max_absolute": 0.0,
+              "violations": 0,
+              "max_position": [
+                0,
+                0,
+                0
+              ],
+              "actual_at_max": -0.003570556640625,
+              "reference_at_max": -0.003570556640625
+            },
+            "block13.self_attn.q_proj": {
+              "max_absolute": 0.0,
+              "violations": 0,
+              "max_position": [
+                0,
+                0,
+                0
+              ],
+              "actual_at_max": 0.0283203125,
+              "reference_at_max": 0.0283203125
+            }
+          }
+        },
+        "16": {
+          "prompt_tokens": 103,
+          "total_tokens": 106,
+          "first_divergent_layer": null,
+          "logits_max": 0.0,
+          "all_recorded_layers_identical": true,
+          "first_native_rmsnorm": {
+            "block13.input_layernorm": {
+              "max_absolute": 0.0,
+              "violations": 0,
+              "max_position": [
+                0,
+                0,
+                0
+              ],
+              "actual_at_max": -0.003570556640625,
+              "reference_at_max": -0.003570556640625
+            },
+            "block13.self_attn.q_proj": {
+              "max_absolute": 0.0,
+              "violations": 0,
+              "max_position": [
+                0,
+                0,
+                0
+              ],
+              "actual_at_max": 0.0283203125,
+              "reference_at_max": 0.0283203125
+            }
+          }
+        },
+        "32": {
+          "prompt_tokens": 135,
+          "total_tokens": 138,
+          "first_divergent_layer": null,
+          "logits_max": 0.0,
+          "all_recorded_layers_identical": true,
+          "first_native_rmsnorm": {
+            "block13.input_layernorm": {
+              "max_absolute": 0.0,
+              "violations": 0,
+              "max_position": [
+                0,
+                0,
+                0
+              ],
+              "actual_at_max": -0.003570556640625,
+              "reference_at_max": -0.003570556640625
+            },
+            "block13.self_attn.q_proj": {
+              "max_absolute": 0.0,
+              "violations": 0,
+              "max_position": [
+                0,
+                0,
+                0
+              ],
+              "actual_at_max": 0.0283203125,
+              "reference_at_max": 0.0283203125
+            }
+          }
+        }
+      }
+    }
+  ]
+}
