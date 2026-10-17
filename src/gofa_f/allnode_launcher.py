@@ -29,7 +29,7 @@ def own_usage(gpu, worker, uuid=None):
     return None if any(v is None for v in values) else sum(values)
 
 
-def supervise(output, config, snapshot):
+def supervise(output, config, snapshot, worker_mode="train"):
     import yaml
     output, config, snapshot = Path(output).resolve(), Path(config).resolve(), Path(snapshot).resolve()
     cfg = yaml.safe_load(config.read_text())
@@ -42,10 +42,13 @@ def supervise(output, config, snapshot):
         stream = path.open("a")
         fcntl.flock(stream, fcntl.LOCK_EX | fcntl.LOCK_NB)
         locks.append(stream)
+    if worker_mode not in ("train", "kv_diagnostic"):
+        raise ValueError("Unknown supervised worker mode")
     binding = {"snapshot": str(snapshot), "config": str(config), "admission_policy": "memory_cap_only",
         "resource_check_seconds": 10, "admission_samples": 1,
         "memory_cap_gib": 40, "torch_cap_gib": 38, "yield_on_foreign": False,
-        "activity_limit_seconds": None, "wall_deadline": None, "maximum_updates": 4000}
+        "activity_limit_seconds": None, "wall_deadline": None, "maximum_updates": 4000,
+        "worker_mode": worker_mode}
     if read(output/"launcher_manifest.json", binding) != binding:
         raise ValueError("Launcher recovery policy differs")
     atomic_json(output/"launcher_manifest.json", binding)
@@ -112,10 +115,13 @@ def supervise(output, config, snapshot):
             PYTHONDONTWRITEBYTECODE="1", GOFA_STAGE18_ADMITTED="1", TOKENIZERS_PARALLELISM="false",
             GOFA_STAGE18_SUPERVISOR_PID=str(os.getpid()),
             GOFA_STAGE18_SUPERVISOR_TICKS=str(process_identity(os.getpid())))
-        command = [sys.executable, "-u", "-m", "gofa_f.allnode_stage", "--config", str(config),
-                   "--output", str(output), "--train"]
-        if (output/"last.pt").exists():
-            command.append("--resume")
+        command = [sys.executable, "-u", "-m",
+                   "gofa_f.allnode_stage" if worker_mode == "train" else "gofa_f.allnode_diagnostics",
+                   "--config", str(config), "--output", str(output)]
+        if worker_mode == "train":
+            command.append("--train")
+            if (output/"last.pt").exists():
+                command.append("--resume")
         child = subprocess.Popen(command, cwd=snapshot, env=environment, start_new_session=True)
         tick = process_identity(child.pid)
         ledger.start(child.pid)
@@ -184,8 +190,9 @@ def main():
     parser.add_argument("--output", required=True)
     parser.add_argument("--config", required=True)
     parser.add_argument("--snapshot", required=True)
+    parser.add_argument("--worker-mode", choices=("train", "kv_diagnostic"), default="train")
     args = parser.parse_args()
-    supervise(args.output, args.config, args.snapshot)
+    supervise(args.output, args.config, args.snapshot, args.worker_mode)
 
 
 if __name__ == "__main__":
