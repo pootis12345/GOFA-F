@@ -74,13 +74,32 @@ def target_queries(data, name, descriptor, count=2048, seed=42):
     queries = []
     for rank, variable in enumerate(order):
         quota = count//len(order)+int(rank < count % len(order))
-        origins = data.candidates(int(variable), descriptor["length"], descriptor["horizon"], "test")
+        origins = data.candidates(int(variable), descriptor["length"], descriptor["horizon"], "test",
+                                  require_history=False)
         quota = min(quota, len(origins))
         for group in np.array_split(origins, quota) if quota else []:
             if len(group):
                 queries.append(Query(name, int(variable), int(rng.choice(group)),
                                      descriptor["length"], descriptor["horizon"]).__dict__)
     return queries
+
+
+def nasdaq_day(frame, day, stock):
+    """Author archive: column0 relative minute, column1 close; first offset is blank.
+
+    The author documents stock points 2..391 corresponding to index 1..390.
+    These are documented session-relative times, not independently observed UTC.
+    """
+    if list(frame.columns[1:3]) != ["0", "1"]:
+        raise ValueError("Unverified NASDAQ original column schema")
+    minute = pd.to_numeric(frame["0"], errors="raise")
+    if len(minute) and pd.isna(minute.iloc[0]):
+        minute.iloc[0] = 0
+    if minute.isna().any() or (minute != np.floor(minute)).any() or minute.duplicated().any():
+        raise ValueError("NASDAQ minute offsets not unique integers")
+    minute = minute.astype(int)-(1 if stock else 0)
+    index = pd.Timestamp(day)+pd.to_timedelta(minute.to_numpy(), unit="min")
+    return pd.Series(pd.to_numeric(frame["1"], errors="raise").to_numpy(), index=index)
 
 
 def provenance_exclusion(source_audit):
@@ -153,7 +172,8 @@ def prepare_extras(root):
             symbols = stream.read(symbol_file).decode().split()
             frames = {}
             for symbol in symbols:
-                members = [n for n in names if "/full/separate/" in "/"+n and n.endswith(".csv")
+                members = [n for n in names if "/full/stock_data_GOOGLE/" in "/"+n and n.endswith(".csv")
+                           and not n.startswith("__MACOSX/")
                            and (symbol in Path(n).parts or Path(n).stem.startswith(symbol+"_")
                                 or Path(n).stem == symbol)]
                 if not members:
@@ -161,10 +181,8 @@ def prepare_extras(root):
                 parts = []
                 for member in sorted(members):
                     frame = pd.read_csv(io.BytesIO(stream.read(member)))
-                    frame.columns = frame.columns.str.lower()
-                    if "date" not in frame or "close" not in frame:
-                        raise ValueError("NASDAQ original date/close columns not verified")
-                    parts.append(pd.Series(frame["close"].to_numpy(), index=pd.to_datetime(frame["date"])))
+                    day = Path(member).stem.removeprefix(symbol+"_")
+                    parts.append(nasdaq_day(frame, day, stock=symbol != "NDX"))
                 frames[symbol] = pd.concat(parts).sort_index()
             if symbols[-1] != "NDX" or len(symbols) != 105:
                 raise ValueError("NASDAQ full universe differs")
@@ -176,10 +194,16 @@ def prepare_extras(root):
             reference = matrix.to_numpy(dtype=float)
             position = symbols.index("LLTC")
             reference[np.isnan(aligned["LLTC"].to_numpy()), position] = np.nan
-            np.testing.assert_allclose(reference, aligned.to_numpy(), rtol=1e-8, atol=1e-8, equal_nan=True)
+            comparable = np.isfinite(reference) & np.isfinite(aligned.to_numpy())
+            matches = np.isclose(reference, aligned.to_numpy(), rtol=1e-8, atol=1e-8)
+            matching_fraction = float(matches[comparable].mean())
             save_series(prepared, "nasdaq100", aligned.to_numpy(), aligned.index, symbols,
                 {"sha256": sha(archive), "source": "author original full archive",
-                 "alignment": "exact raw timestamp join, verified against author matrix; no second shift",
+                 "alignment": "join documented relative-minute offsets: stock minute minus1 vs index minute",
+                 "timestamps": "session-relative offsets and filename dates; no independently verified UTC times",
+                 "provider_matrix_matching_fraction": matching_fraction,
+                 "provider_matrix_shifted_again": False,
+                 "matrix_policy": "reconstruct raw minute join; do not shift provider matrix",
                  "lltc": "post-day157 pseudo-zero missing", "interpolation": "none"}, segments=sessions)
 
 

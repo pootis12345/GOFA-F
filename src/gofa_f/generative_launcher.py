@@ -20,8 +20,9 @@ def read(path, default=None):
     return json.loads(Path(path).read_text()) if Path(path).exists() else default
 
 
-def own_usage(gpu, worker):
-    if gpu is None:
+def own_usage(gpu, worker, uuid=None):
+    if gpu is None or (uuid is not None and gpu["uuid"] != uuid) \
+            or gpu.get("compute_mode", "Default") != "Default":
         return None
     pids = set(gpu["pids"]) & own_gpu_pids(worker)
     values = [gpu["process_used_mib"].get(pid) for pid in pids]
@@ -111,7 +112,7 @@ def supervise(output, config, snapshot):
                 else:
                     try:
                         measured = query_gpu()
-                        used = own_usage(measured, child.pid)
+                        used = own_usage(measured, child.pid, gate.uuid)
                     except Exception:
                         used = None
                     if used is None or used > 40*1024:

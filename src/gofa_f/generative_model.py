@@ -15,6 +15,7 @@ from transformers.modeling_outputs import CausalLMOutputWithPast
 from gofa_f.chattime import HistoryCodec
 from gofa_f.generative_graph import GraphModules
 from gofa_f.generative_kernel import install_linear_tiles, stable_attention
+from gofa_f.chattime import PrefixLRU
 
 
 @dataclass
@@ -203,3 +204,11 @@ def completion_loss(logits, labels):
 def frozen_cache_binding(model, weight_hash):
     return hashlib.sha256(str((weight_hash, model.prefix_layers, "before", model.native.dtype,
         "position_ids=mask.cumsum-1", "right_padding", "bf16_rows128_sdpa_fixed_prompt_capacity_v1")).encode()).hexdigest()
+
+
+class GenerativePrefixLRU(PrefixLRU):
+    def key(self, encoded):
+        # Numerical attention capacity also depends on the original prompt boundary.
+        digest = hashlib.sha256(super().key(encoded).encode())
+        digest.update(encoded.prompt_ends.detach().cpu().contiguous().numpy().tobytes())
+        return digest.hexdigest()

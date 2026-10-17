@@ -7,7 +7,7 @@ import pytest
 import torch
 import yaml
 
-from gofa_f.generative_audit import align_nasdaq, geographic_stations, noaa_hourly
+from gofa_f.generative_audit import align_nasdaq, geographic_stations, noaa_hourly, nasdaq_day
 from gofa_f.generative_launcher import own_usage
 from gofa_f.generative_progress import Progress
 from gofa_f.generative_stage import (config_check, restore_checkpoint, save_checkpoint, schedule)
@@ -77,6 +77,24 @@ def test_noaa_correct_temperature_utc_and_missing():
     assert values.iloc[0] == 12.5 and np.isnan(values.iloc[1])
     assert str(values.index[0]) == "2025-01-01 00:00:00+00:00"
     assert metadata["field"] == "T_HR_AVG"
+
+
+def test_nasdaq_original_minute_offsets_and_short_session():
+    stocks = pd.DataFrame({"index": [0, 1, 2], "0": [np.nan, 1., 3.], "1": [5., 6., 8.]})
+    index = pd.DataFrame({"index": [0, 1, 2], "0": [np.nan, 1., 2.], "1": [100., 101., 102.]})
+    s = nasdaq_day(stocks, "2016-11-25", stock=True)
+    i = nasdaq_day(index, "2016-11-25", stock=False)
+    aligned, _ = align_nasdaq({"A": s}, i)
+    assert aligned["A"].iloc[0] == 6 and np.isnan(aligned["A"].iloc[1])
+    assert aligned["A"].iloc[2] == 8  # missing minutes are not compressed or interpolated
+
+
+def test_frozen_cache_prompt_boundary_binding():
+    from gofa_f.generative_model import GenerativePrefixLRU, QueryTokens
+    b = tokens()
+    changed = QueryTokens(b.input_ids, b.attention_mask, b.labels, b.prompt_ends+1)
+    cache = GenerativePrefixLRU("fixed")
+    assert cache.key(b) != cache.key(changed)
 
 
 def test_noaa_selection_uses_only_metadata():

@@ -17,11 +17,12 @@ import torch
 import yaml
 from transformers import LlamaForCausalLM, LlamaTokenizer
 
-from gofa_f.chattime import PrefixLRU, REVISION, SOURCE_REVISION
+from gofa_f.chattime import REVISION, SOURCE_REVISION
 from gofa_f.generative_data import (Query, SOURCES, Series, build_pools, prepare_sources,
                                     relative_score, sha)
 from gofa_f.generative_forecast import evaluate_sources
-from gofa_f.generative_model import GenerativeCodec, GenerativeGOFA, completion_loss, frozen_cache_binding
+from gofa_f.generative_model import (GenerativeCodec, GenerativeGOFA, GenerativePrefixLRU,
+                                     completion_loss, frozen_cache_binding)
 from gofa_f.generative_progress import Progress
 from gofa_f.prefix_cache import atomic_json
 
@@ -226,7 +227,7 @@ def train(cfg, output, resume):
         item["reserved_bytes"] = max(item["reserved_bytes"], torch.cuda.max_memory_reserved())
         atomic_json(output/"cuda_memory.json", state["peak_memory"])
 
-    cache = PrefixLRU(frozen_cache_binding(model, manifest["weights_sha256"]),
+    cache = GenerativePrefixLRU(frozen_cache_binding(model, manifest["weights_sha256"]),
                       max_bytes=cfg["cache"]["ram_limit_gib"]*2**30)
     atomic_json(output/"cache.json", {"prefix_layers": 30, "ram_limit_gib": 32,
         "disk_limit_gib": 128, "mode": "bounded_lossless_ram_lru", "graph_kv_cross_update": False,
