@@ -160,6 +160,48 @@ def test_stage17_supervisor_is_cpu_only():
     assert p.returncode == 0, p.stderr
 
 
+def test_supervisor_start_ticks_are_compared_as_linux_strings(monkeypatch):
+    from gofa_f.generative_stage import supervisor_alive
+    monkeypatch.setattr("gofa_f.idle_launcher.process_identity", lambda _: "615218102")
+    assert supervisor_alive("800", "615218102") and supervisor_alive(800, 615218102)
+    assert not supervisor_alive(800, "other")
+    monkeypatch.setattr("gofa_f.idle_launcher.process_identity", lambda _: None)
+    assert not supervisor_alive(800, "615218102")
+
+
+def test_cpu_proof_reuse_rejects_changed_data_or_precision(tmp_path):
+    import hashlib
+    import importlib.util
+    from pathlib import Path
+    spec = importlib.util.spec_from_file_location("stage17_cpu_script", "scripts/check_generative_cpu.py")
+    script = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(script)
+    source = tmp_path/"snapshot"
+    folder = source/"src/gofa_f"
+    folder.mkdir(parents=True)
+    text = Path("src/gofa_f/generative_stage.py").read_text()
+    (folder/"generative_stage.py").write_text(text)
+    (source/"CODE_REVISION").write_text("fixed")
+    record = {"code_revision": "fixed", "code": {"generative_stage.py": hashlib.sha256(text.encode()).hexdigest()}}
+    record.update({key: {} for key in ("configuration", "weights_sha256", "source_data", "pools", "dependencies")})
+    raw = json.dumps(record).encode()
+    prior = tmp_path/"run"
+    prior.mkdir()
+    (prior/"manifest.json").write_bytes(raw)
+    proof = {"passed": True, "real_weight_dtype": "float32", "real_weights": {"passed": True, "tolerance": 1e-6},
+             "manifest_sha256": hashlib.sha256(raw).hexdigest()}
+    (prior/"cpu_preflight.json").write_text(json.dumps(proof))
+    assert script.reuse_real_check(prior, source, record)["passed"]
+    changed = deepcopy(record)
+    changed["pools"] = {"changed": True}
+    with pytest.raises(ValueError):
+        script.reuse_real_check(prior, source, changed)
+    proof["real_weight_dtype"] = "bfloat16"
+    (prior/"cpu_preflight.json").write_text(json.dumps(proof))
+    with pytest.raises(ValueError):
+        script.reuse_real_check(prior, source, record)
+
+
 def test_oom_inside_adamw_rolls_back_parameters_gradients_and_cursor(tmp_path, monkeypatch):
     from gofa_f.generative_stage import apply_update
     model, batch = tiny(), tokens()

@@ -29,6 +29,8 @@ def main():
     parser.add_argument("--snapshot", required=True)
     parser.add_argument("--output", required=True)
     parser.add_argument("--config", required=True)
+    parser.add_argument("--reuse-real-from")
+    parser.add_argument("--reuse-real-snapshot")
     args = parser.parse_args()
     snapshot, output, config = map(lambda x: Path(x).resolve(), (args.snapshot, args.output, args.config))
     output.mkdir(parents=True, exist_ok=True)
@@ -43,9 +45,29 @@ def main():
     env = dict(os.environ, CUDA_VISIBLE_DEVICES="", OMP_NUM_THREADS="2", MKL_NUM_THREADS="2",
         PYTHONPATH=str(snapshot/"src"), PYTHONDONTWRITEBYTECODE="1", HF_HUB_OFFLINE="1",
         TRANSFORMERS_OFFLINE="1", TOKENIZERS_PARALLELISM="false")
+    if args.reuse_real_from:
+        source = Path(args.reuse_real_from)
+        state("waiting_for_cpu_proof", source=str(source))
+        while not stopped[0]:
+            path = source/"cpu_preflight.json"
+            proof = json.loads(path.read_text()) if path.exists() else {}
+            if proof.get("passed"):
+                break
+            previous = json.loads((source/"bootstrap.json").read_text())
+            if previous["state"] != "cpu_preflight":
+                state("failed", error="Source real-weight CPU proof did not finish successfully")
+                return 1
+            time.sleep(10)
+        if stopped[0]:
+            state("stopped_by_user")
+            return 1
     state("cpu_preflight")
     command = [sys.executable, "-u", str(snapshot/"scripts/check_generative_cpu.py"),
                "--config", str(config), "--output", str(output)]
+    if args.reuse_real_from or args.reuse_real_snapshot:
+        if not (args.reuse_real_from and args.reuse_real_snapshot):
+            raise ValueError("Complete CPU proof source binding required")
+        command += ["--reuse-real-from", args.reuse_real_from, "--reuse-real-snapshot", args.reuse_real_snapshot]
     result = subprocess.run(command, cwd=snapshot, env=env, check=False)
     if result.returncode or stopped[0]:
         state("stopped_by_user" if stopped[0] else "failed", returncode=result.returncode)

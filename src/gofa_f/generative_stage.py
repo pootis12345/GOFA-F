@@ -32,6 +32,11 @@ class Paused(RuntimeError):
     pass
 
 
+def supervisor_alive(pid, ticks):
+    from gofa_f.idle_launcher import process_identity
+    return process_identity(int(pid)) == str(ticks)
+
+
 def read(path, default=None):
     return json.loads(Path(path).read_text()) if Path(path).exists() else default
 
@@ -264,8 +269,7 @@ def train(cfg, output, resume):
             raise Paused("cooperative_resource_or_user_stop")
         parent = os.environ.get("GOFA_STAGE17_SUPERVISOR_PID")
         if parent:
-            from gofa_f.idle_launcher import process_identity
-            if process_identity(int(parent)) != int(os.environ["GOFA_STAGE17_SUPERVISOR_TICKS"]):
+            if not supervisor_alive(parent, os.environ["GOFA_STAGE17_SUPERVISOR_TICKS"]):
                 raise Paused("verified_supervisor_exited")
 
     def status(kind, **fields):

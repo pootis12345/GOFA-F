@@ -79,7 +79,10 @@ def supervise(output, config, snapshot):
             "start_ticks": process_identity(os.getpid()), "spent_seconds": ledger.state["spent_seconds"],
             "waiting_seconds": ledger.state["waiting_seconds"], "updated_at": time.time(), **fields})
 
+    identity_path = output/"gpu_identity.json"
+    pinned_uuid = read(identity_path, {}).get("uuid")
     gate = IdleGate()
+    gate.uuid = pinned_uuid
     while not stopped[0]:
         final = read(output/"status.json", {}).get("state")
         if final in ("complete", "failed", "incomplete"):
@@ -89,6 +92,10 @@ def supervise(output, config, snapshot):
             gpu, error = query_gpu(), None
         except Exception as exc:
             gpu, error = None, str(exc)
+        if gpu is not None and pinned_uuid is None:
+            pinned_uuid = gpu["uuid"]
+            gate.uuid = pinned_uuid
+            atomic_json(identity_path, {"uuid": pinned_uuid, "first_observed_at": time.time()})
         admitted = gate.observe(gpu)
         status("waiting_for_idle", consecutive_idle=gate.consecutive, query_error=error)
         if not admitted:
@@ -160,6 +167,7 @@ def supervise(output, config, snapshot):
                    worker_returncode=child.returncode)
             return
         gate = IdleGate()  # every resource resume requires three NEW idle observations
+        gate.uuid = pinned_uuid
     status("stopped_by_user")
 
 
