@@ -1,0 +1,63 @@
+{
+  "passed": true,
+  "manifest_sha256": "1780abc1379d68409bf88a25d740a5f789ef73784172e5bfb918c848eb4c79de",
+  "cpu_tests_sha256": "10832821a65ddad0fcc10c2c8cfa97d793444027f27a319ef6cf6b94f3432ea7",
+  "existing_analysis_sha256": "613d2386e6a095fe406be85a30e8cb14bb68bdc56c0107f7c3ba0c685e0ce9a2",
+  "alphabet": {
+    "finite_tokens": 10000,
+    "alphabet_sha256": "add5643ae352306b6e4ef714df79233350116f659a83ec2f0efbbd5c07612ab7",
+    "nan_excluded": true,
+    "first_separator": [],
+    "separator": [
+      29871
+    ],
+    "whole_and_incremental_checked": true
+  },
+  "adapter_parameters": 1060998,
+  "paused_state": {
+    "updates": 1177,
+    "pending": 30,
+    "pending_tokens": 390,
+    "gradient_tensors": 16,
+    "optimizer_parameters": 16,
+    "parameter_version": 1177
+  },
+  "original_inference_files_unchanged": true,
+  "official_weight_content_hashes_verified": true,
+  "real_7b_fp32_cases": [
+    {
+      "query": {
+        "source": "pems04",
+        "variable": 102,
+        "origin": 10318,
+        "length": 48,
+        "horizon": 24,
+        "chunk": 0
+      },
+      "seed": 2407345944272044973,
+      "max_abs": 0.0,
+      "violations": 0,
+      "argmax_equal": true,
+      "raw_tokens_equal": true,
+      "full_path": "single_complete_causal_forward_actual_sample_prefix"
+    },
+    {
+      "query": {
+        "source": "nn5",
+        "variable": 92,
+        "origin": 568,
+        "length": 48,
+        "horizon": 24,
+        "chunk": 0
+      },
+      "seed": 4329713871947429781,
+      "max_abs": 0.0,
+      "violations": 0,
+      "argmax_equal": true,
+      "raw_tokens_equal": true,
+      "full_path": "single_complete_causal_forward_actual_sample_prefix"
+    }
+  ],
+  "cuda_initialized": false,
+  "scope": "tiny Llama plus real 7B quarter-amplitude full/KV sampled cases; BF16 checks after idle admission"
+}

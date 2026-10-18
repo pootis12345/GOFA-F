@@ -1,5 +1,18 @@
 # 运行交接记录
 
+## Stage19 图增量与目标一致性诊断实现及 CPU 验收通过（2026-10-18，Asia/Shanghai）
+
+独立入口 short_stability_diagnostic、固定配置 stage19_stability_diagnostic.yaml；
+固定1000更新最佳，不修改生产图模块、旧快照、损失、解码或训练恢复入口。
+32条主查询+2条单列 NN5 病例；复用原生/alpha1的8采样，新增alpha0.25的272轨迹及102次教师前向。
+两层全节点缩放、第二层重新计算、上下文失效及原始绑定均已实现。
+C禁CUDA/OMP和MKL各2线程：Ruff通过，完整回归506通过/21旧可选依赖跳过；
+真实7B FP32的PEMS04变量102与NN5变量92首轨迹通过1e-6容差和实际token一致。
+GPU尚待独立固定快照部署及三次10秒完全空闲准入，BF16新增结果不提前宣称完成。
+原训练仍1177更新/pending30查询390标签暂停；last/best哈希锁定，每小时跟进仍PAUSED，目标评价0。
+[协议](STAGE19_STABILITY_DIAGNOSTIC_PROTOCOL.md)，[阶段报告](STAGE19_STABILITY_DIAGNOSTIC_RESULTS.md)，
+[CPU证明](results/stage19-stability-diagnostic-v1-cpu.json)，[已有结果零GPU分析](results/stage19-stability-existing-analysis.json)。
+
 ## Stage19固定源配对采样诊断已完成（2026-10-18 21:11，Asia/Shanghai）
 
 原生及1000更新源最佳，同BF16/提示/固定尺度/有限词表/单块路径，固定32条主查询+2既知病例。

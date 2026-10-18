@@ -45,7 +45,8 @@ def supervise(output, config, snapshot, worker_mode="train"):
         stream = path.open("a")
         fcntl.flock(stream, fcntl.LOCK_EX | fcntl.LOCK_NB)
         locks.append(stream)
-    if worker_mode not in ("train", "projection_probe", "source_diagnostic", "native_case_probe", "sampling_diagnostic"):
+    if worker_mode not in ("train", "projection_probe", "source_diagnostic", "native_case_probe",
+                           "sampling_diagnostic", "stability_diagnostic"):
         raise ValueError("Unknown supervised worker mode")
     binding = {"snapshot": str(snapshot), "config": str(config), "admission_policy": "idle",
         "resource_check_seconds": 10, "admission_samples": 3, "idle_max_used_mib": 256,
@@ -122,13 +123,16 @@ def supervise(output, config, snapshot, worker_mode="train"):
         module = {"train": "gofa_f.short_generative_stage", "projection_probe": "gofa_f.short_projection_probe",
                   "source_diagnostic": "gofa_f.short_source_diagnostic",
                   "native_case_probe": "gofa_f.short_native_case_probe",
-                  "sampling_diagnostic": "gofa_f.short_sampling_diagnostic"}[worker_mode]
+                  "sampling_diagnostic": "gofa_f.short_sampling_diagnostic",
+                  "stability_diagnostic": "gofa_f.short_stability_diagnostic"}[worker_mode]
         command = [sys.executable, "-u", "-m", module,
                    "--config", str(config), "--output", str(output)]
         if worker_mode == "train":
             command.append("--train")
             if (output/"last.pt").exists():
                 command.append("--resume")
+        elif worker_mode == "stability_diagnostic" and any((output/"teachers").glob("*.json")):
+            command.append("--resume")
         child = subprocess.Popen(command, cwd=snapshot, env=environment, start_new_session=True)
         tick = process_identity(child.pid)
         ledger.start(child.pid)
@@ -198,7 +202,8 @@ def main():
     parser.add_argument("--config", required=True)
     parser.add_argument("--snapshot", required=True)
     parser.add_argument("--worker-mode", choices=("train", "projection_probe", "source_diagnostic",
-                                                "native_case_probe", "sampling_diagnostic"), default="train")
+                                                "native_case_probe", "sampling_diagnostic",
+                                                "stability_diagnostic"), default="train")
     args = parser.parse_args()
     supervise(args.output, args.config, args.snapshot, args.worker_mode)
 

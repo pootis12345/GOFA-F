@@ -1,0 +1,35 @@
+protocol: stage19-stability-diagnostic-v1
+source_output: /home/dcg/dcg_data/GOFA-F/outputs/stage19-short-generative-chattime-v5
+source_revision: 384205872c3d53c7bab91e592da7a8e07d629194
+paused_last_sha256: a37c4f4e793d073d20c8bc2af9ba437977a068f953518e134fd4794ac278cd3b
+checkpoints:
+  '1000': 18128f46578da279f842e9b2efe3cfa3d5c6a27f7404b67e135ab5c07f765db9
+prior_sampling_output: /home/dcg/dcg_data/GOFA-F/outputs/stage19-sampling-diagnostic-v1
+prior_teacher_output: /home/dcg/dcg_data/GOFA-F/outputs/stage19-source-diagnostic-v1
+historical_checkpoint_500_sha256: 3f54dcc99e0a1fe818a477b106ed92ea82fc8761f552ef66b9eb45e295bddfdf
+intervention_alpha: 0.25
+sampling:
+  samples: 8
+  top_k: 100
+  temperature: 1.0
+  top_p: 1.0
+  seed: 42
+  aggregate: pointwise_median
+  execution: serial_single_query_independent_kv
+training:
+  max_updates: 4000  # Supervisor schema only; no training in this diagnostic.
+data:
+  target_training_enabled: false
+  target_evaluation_enabled: false
+diagnostic_updates: 0
+resume_training_after_diagnostic: false
+resources:
+  admission_policy: idle
+  resource_check_seconds: 10
+  admission_samples: 3
+  memory_cap_gib: 40
+  torch_cap_gib: 38
+  yield_on_foreign: false
+  leave_free_gib: 0
+  activity_limit_seconds: null
+  wall_deadline: null
