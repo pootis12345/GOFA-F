@@ -1,6 +1,6 @@
 # 运行交接记录
 
-## Stage19 已批准8采样源验证和1177→1500接续，CPU验收通过（2026-10-18，Asia/Shanghai）
+## Stage19 8采样源验证和1177→1500接续已部署运行（2026-10-18 23:37，Asia/Shanghai）
 
 新独立stage19-sampled-continuation-v1：先原2264条原生8采样源基线，再固定1000更新8采样验证；
 然后从1177更新/pending30查询390标签精确接续，1500更新完成同协议源验证后停止复核。
@@ -10,8 +10,16 @@
 C禁CUDA、OMP/MKL各2线程：Ruff通过，最终完整回归515通过/21旧可选依赖跳过，
 真实1177模型/AdamW/部分梯度/RNG/状态序列化精确迁移；新增端到端CPU测试确认先评价、再更新、1500必停。
 张量模型/训练/采样路径均未改，依据文件哈希复用既有真实FP32/BF16非零预测/梯度、训练优化与8采样KV证明。
-GPU待固定快照部署后由三次10秒完全空闲准入；保持40GiB项目组/38GiB Torch、10秒审计、无时间硬限制。
-[执行协议](STAGE19_SAMPLED_CONTINUATION_PROTOCOL.md)，[CPU证明](results/stage19-sampled-continuation-v1-cpu.json)。
+运行提交01f89fa696803bf78e2a1e5099651f6d0e9cfb5b，固定快照/输出stage19-sampled-continuation-v1。
+监督器2489771/start_ticks625874964，worker2489960/start_ticks625877022，身份已核实。
+三次10秒完全空闲准入后已开始sampled-native，23:37已保存61/2264查询、492/18112轨迹；
+当前阶段ETA约5527秒，仅指原生基线，排除后续1000/1500验证、训练和未知等待，不作硬截止。
+restore_audit.passed=true：实际GPU模型、AdamW、部分梯度、RNG精确恢复；仍1177更新/pending30，不提前训练。
+累计活动迁移17736.966414秒、累计等待2380.165839秒及组峰17246MiB一次性保留，之后继续累加，不重复合并。
+当前项目组约13788MiB，无失败/资源暂停；保持40GiB项目组/38GiB Torch、10秒审计、无时间硬限制。
+原v5旧文件仍暂停且last/bestSHA未变，新任务将自动执行到1500完整采样验证后停，不开目标评价或每小时跟进。
+[执行协议](STAGE19_SAMPLED_CONTINUATION_PROTOCOL.md)，[CPU证明](results/stage19-sampled-continuation-v1-cpu.json)，
+[部署与实际GPU恢复证明](results/stage19-sampled-continuation-v1-deployment.json)。
 
 ## Stage19 图增量与目标一致性诊断完成（2026-10-18 22:47，Asia/Shanghai）
 
