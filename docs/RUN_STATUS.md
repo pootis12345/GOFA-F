@@ -1,22 +1,20 @@
 # 运行交接记录
 
-## Stage19固定源采样排查已部署，等待完全空闲（2026-10-18 20:59，Asia/Shanghai）
+## Stage19固定源配对采样诊断已完成（2026-10-18 21:11，Asia/Shanghai）
 
-用户批准低成本诊断；生产保持1177更新/pending30查询390标签暂停，不自动训练或目标评价。
-新增独立stage19-sampling-diagnostic-v1：原生与1000更新源最佳，同BF16/提示/固定尺度/有限词表/单块24路径。
-先精确复现既有贪心原始token，再每查询串行8采样/top_k100/temperature1，逐步中位数。
-四源32条ID分层查询汇总；已知NN5变量16/92两病例单列，不纳入32条统计。
-种子绑定查询和样本号且模型间共用，全部原轨迹保存；无优化器、反传或权重更新。
-C禁CUDA OMP/MKL各2线程，Ruff通过，完整CPU496通过/21旧可选跳过；
-官方tokenizer/适配器形状和有限值/源与checkpointSHA核验通过，模型和原推理文件逐字节保持。
-这不是官方FP16/16+8滚动协议；CPU通过不等于真实BF16采样检查已经完成。
-独立GPU worker仍须3次10秒完全空闲准入，40GiB项目组/38GiB Torch；每小时跟进保持关闭。
-固定代码a86a4d93d770f9abb06b2845b4a756c6e26c67f3，快照/输出stage19-sampling-diagnostic-v1。
-监督器2375170/start_ticks624925831，20:59核验waiting_for_idle/consecutive0、worker为空、GPU活动0。
-其他GPU任务仍在运行，尚无真实BF16配对采样结果，不把CPU通过当GPU完成；不会绕过完全空闲条件。
-完成后结果由独立worker写入result.json，不自动恢复训练或目标评价；每小时跟进仍关闭。
-[固定协议](STAGE19_SAMPLING_DIAGNOSTIC_PROTOCOL.md)，[CPU证明](results/stage19-sampling-diagnostic-v1-cpu.json)，
-[部署及暂停源SHA证据](results/stage19-sampling-diagnostic-v1-deployment.json)。
+原生及1000更新源最佳，同BF16/提示/固定尺度/有限词表/单块路径，固定32条主查询+2既知病例。
+68组贪心精确复现，544条8采样轨迹完成；4组真实采样缓存/无缓存logits差0/token一致，故障0。
+32条中图模型多步整段恒值17/24→3/24，上端点110/352→3/352；原生恒值20/24→3/24。
+图模型NN5查询等权MAE20.2892→6.4127，PEMS04 31.8314→28.1164，Solar2.6025→1.1888，AQ9.6332→11.3836。
+同采样原生MAE分别NN58.3431、PEMS0443.2656、Solar0.9074、AQ10.0421，收益不均且并非每查询改善。
+仅32条subset_S贪心1.05570665→采样0.88712793；不能替代完整2264验证S或改变最佳/早停。
+单列NN5变量92图模型MAE75.7884→8.0860，原生8.2255→9.6802；不重复不等于必然更准。
+生产仍1177更新/pending30查询390标签用户暂停，last SHA a37c4f4e793d073d20c8bc2af9ba437977a068f953518e134fd4794ac278cd3b未变。
+监督器2375170和worker2381719均退出；独立活动254.304663秒、等待510.033447秒、组峰14468MiB、资源暂停0。
+运行源码a86a4d93d770f9abb06b2845b4a756c6e26c67f3/独立stage19-sampling-diagnostic-v1，不是官方FP16/16+8协议。
+CPU496通过/21跳过；没有反传/更新/目标评价，不自动训练、改解码选模或开启每小时跟进。
+[结果报告](STAGE19_SAMPLING_DIAGNOSTIC_RESULTS.md)，[完整证据](results/stage19-sampling-diagnostic-v1-result.json)，
+[固定协议](STAGE19_SAMPLING_DIAGNOSTIC_PROTOCOL.md)，[CPU证明](results/stage19-sampling-diagnostic-v1-cpu.json)。
 
 ## 官方原生ChatTime重复病例测试已完成（2026-10-18 20:34，Asia/Shanghai）
 
