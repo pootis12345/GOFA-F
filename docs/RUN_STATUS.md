@@ -1,5 +1,25 @@
 # 运行交接记录
 
+## Stage19用户暂停训练并开始固定源诊断（2026-10-18，Asia/Shanghai）
+
+用户要求先暂停训练进行检查。19:42已安全停止监督器2108414与worker2114376，
+保留1177更新/pending30查询、全部部分梯度/AdamW/RNG/游标/两轮验证和源最佳。
+last SHA a37c4f4e793d073d20c8bc2af9ba437977a068f953518e134fd4794ac278cd3b，
+best SHA18128f46578da279f842e9b2efe3cfa3d5c6a27f7404b67e135ab5c07f765db9。
+原activity.worker为空，原GPU进程已退出；launcher stopped_by_user，worker统一状态resource_paused不代表资源故障。
+不自动恢复训练，每小时跟进仍关闭，目标评价未启动。
+
+独立只读诊断：32条按源/模板/变量ID固定查询，另列2条已披露NN5病例；
+原生/500/1000的教师强制与自由生成、端点概率、图增量/门值、自环机制干预，4组实际检查点缓存核验。
+无优化器/反传/训练更新，不以诊断选择架构或改变既定选模。
+新CPU开发包已480通过/21旧可选跳过，真实官方tokenizer字表、两检查点形状和有限值通过；
+推理相关代码与生产manifest逐字节一致。归档换行规范为LF以匹配生产，不修改旧快照。
+CPU证明不等于新增真实7B GPU检查已完成，部署后以独立输出stage19-source-diagnostic-v1实际记录为准。
+遵守3次10秒完全空闲准入、40/38GiB监督，诊断完成仍保持训练暂停。
+[固定诊断协议](STAGE19_PAUSED_DIAGNOSTIC_PROTOCOL.md)，
+[暂停证据](results/stage19-v5-user-paused-for-diagnosis.json)，
+[CPU证明](results/stage19-source-diagnostic-v1-cpu.json)。
+
 ## Stage19 v5 第二次完整源验证（2026-10-18 19:28，Asia/Shanghai）
 
 1000更新检查点于19:06:59完成2264/2264条源验证，评价活动1091.648493秒（约18分12秒）。

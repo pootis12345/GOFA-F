@@ -1,0 +1,70 @@
+{
+  "passed": true,
+  "manifest_sha256": "6b97ad8abab84087c79e87d5b96e8277a508a7951193571c57147258ba1fd31e",
+  "cpu_tests_sha256": "a59a55bd19fcdc18c7563c49172bcd32a7d8fb000249fcd5910ed90c77882ff8",
+  "alphabet": {
+    "finite_tokens": 10000,
+    "alphabet_sha256": "add5643ae352306b6e4ef714df79233350116f659a83ec2f0efbbd5c07612ab7",
+    "nan_excluded": true,
+    "first_separator": [],
+    "separator": [
+      29871
+    ],
+    "whole_and_incremental_checked": true
+  },
+  "checkpoints": {
+    "500": {
+      "parameters": 1060998,
+      "parameter_norms": {
+        "exchanges.0.down.weight": 6.377596855163574,
+        "exchanges.0.query.weight": 2.301537275314331,
+        "exchanges.0.key.weight": 2.321080446243286,
+        "exchanges.0.value.weight": 4.647342205047607,
+        "exchanges.0.edge_score.weight": 0.3422575891017914,
+        "exchanges.0.gate.weight": 0.061965327709913254,
+        "exchanges.0.gate.bias": 0.0053926934488117695,
+        "exchanges.0.up.weight": 3.258579969406128,
+        "exchanges.1.down.weight": 5.796550273895264,
+        "exchanges.1.query.weight": 2.280792236328125,
+        "exchanges.1.key.weight": 2.351367950439453,
+        "exchanges.1.value.weight": 4.667725086212158,
+        "exchanges.1.edge_score.weight": 0.6973664164543152,
+        "exchanges.1.gate.weight": 0.04519924893975258,
+        "exchanges.1.gate.bias": 0.006221234332770109,
+        "exchanges.1.up.weight": 3.0642194747924805
+      }
+    },
+    "1000": {
+      "parameters": 1060998,
+      "parameter_norms": {
+        "exchanges.0.down.weight": 7.465930461883545,
+        "exchanges.0.query.weight": 2.3109586238861084,
+        "exchanges.0.key.weight": 2.328841209411621,
+        "exchanges.0.value.weight": 4.700886249542236,
+        "exchanges.0.edge_score.weight": 0.3494589030742645,
+        "exchanges.0.gate.weight": 0.0882527232170105,
+        "exchanges.0.gate.bias": 0.009942574426531792,
+        "exchanges.0.up.weight": 4.347224712371826,
+        "exchanges.1.down.weight": 6.885121822357178,
+        "exchanges.1.query.weight": 2.2864797115325928,
+        "exchanges.1.key.weight": 2.359421491622925,
+        "exchanges.1.value.weight": 4.734516620635986,
+        "exchanges.1.edge_score.weight": 0.6948606371879578,
+        "exchanges.1.gate.weight": 0.07657241076231003,
+        "exchanges.1.gate.bias": 0.009236018173396587,
+        "exchanges.1.up.weight": 4.47896146774292
+      }
+    }
+  },
+  "paused_state": {
+    "updates": 1177,
+    "pending": 30,
+    "pending_tokens": 390,
+    "gradient_tensors": 16,
+    "optimizer_parameters": 16,
+    "parameter_version": 1177
+  },
+  "unchanged_inference_files_checked": true,
+  "cuda_initialized": false,
+  "scope": "CPU tests use tiny real Llama plus official tokenizer; real 7B parameters unchanged, not a new real 7B FP32 forward proof"
+}
