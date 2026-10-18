@@ -1,5 +1,18 @@
 # 运行交接记录
 
+## Stage19固定源采样排查已准备（2026-10-18，Asia/Shanghai）
+
+用户批准低成本诊断；生产保持1177更新/pending30查询390标签暂停，不自动训练或目标评价。
+新增独立stage19-sampling-diagnostic-v1：原生与1000更新源最佳，同BF16/提示/固定尺度/有限词表/单块24路径。
+先精确复现既有贪心原始token，再每查询串行8采样/top_k100/temperature1，逐步中位数。
+四源32条ID分层查询汇总；已知NN5变量16/92两病例单列，不纳入32条统计。
+种子绑定查询和样本号且模型间共用，全部原轨迹保存；无优化器、反传或权重更新。
+C禁CUDA OMP/MKL各2线程，Ruff通过，完整CPU496通过/21旧可选跳过；
+官方tokenizer/适配器形状和有限值/源与checkpointSHA核验通过，模型和原推理文件逐字节保持。
+这不是官方FP16/16+8滚动协议；CPU通过不等于真实BF16采样检查已经完成。
+独立GPU worker仍须3次10秒完全空闲准入，40GiB项目组/38GiB Torch；每小时跟进保持关闭。
+[固定协议](STAGE19_SAMPLING_DIAGNOSTIC_PROTOCOL.md)，[CPU证明](results/stage19-sampling-diagnostic-v1-cpu.json)。
+
 ## 官方原生ChatTime重复病例测试已完成（2026-10-18 20:34，Asia/Shanghai）
 
 NN5变量92/起点568/48→24，直接官方FP16 predict，固定seed42，无图/适配器。

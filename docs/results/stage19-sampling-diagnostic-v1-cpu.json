@@ -1,0 +1,27 @@
+{
+  "passed": true,
+  "manifest_sha256": "a24f0ac2014026f23ebe0dc3b367bf10848ccb0436278785c9323449a8ff765d",
+  "cpu_tests_sha256": "49f0a4501eaba810e8d6526584e31eac954c871070bbe1ebfb24d51195c17499",
+  "alphabet": {
+    "finite_tokens": 10000,
+    "alphabet_sha256": "add5643ae352306b6e4ef714df79233350116f659a83ec2f0efbbd5c07612ab7",
+    "nan_excluded": true,
+    "first_separator": [],
+    "separator": [
+      29871
+    ],
+    "whole_and_incremental_checked": true
+  },
+  "checkpoint_parameters": 1060998,
+  "paused_state": {
+    "updates": 1177,
+    "pending": 30,
+    "pending_tokens": 390,
+    "gradient_tensors": 16,
+    "optimizer_parameters": 16,
+    "parameter_version": 1177
+  },
+  "unchanged_production_inference": true,
+  "cuda_initialized": false,
+  "scope": "tiny real Llama plus official tokenizer; no new 7B FP32 forward; actual BF16 sampling checked after admission"
+}
