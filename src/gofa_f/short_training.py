@@ -1,4 +1,4 @@
-"""Training-only compact vocabulary projection and isolated two-query batching.
+"""Training-only observed-slot projection and isolated two-query batching.
 
 The public all-node forward and all generation paths remain unchanged. Per-row
 attention keeps each query's original capacity and one-row math-SDPA execution;
@@ -116,14 +116,15 @@ def compact_forward(model, codec, tokens, contexts, prefix=None):
         raise ValueError("Each query needs an observed numeric target")
     alphabet = codec.alphabet(hidden.device)
     head = model.native.lm_head
-    weight = head.weight.index_select(0, alphabet)
-    bias = head.bias.index_select(0, alphabet) if head.bias is not None else None
     selected = hidden[rows, steps]
-    # Retain the registered 128-row projection execution, including a short tail.
+    # Keep native 128 x 42001 BF16 GEMM geometry. Reducing its output width to
+    # 10000 or adding a zero work column failed CUDA value equivalence on C.
+    # Only observed positions are projected; finite-only CE is unchanged.
     parts = []
     for start in range(0, len(selected), 128):
         part = selected[start:start+128]
-        parts.append(F.linear(F.pad(part, (0, 0, 0, 128-len(part))), weight, bias)[:len(part)])
+        full = F.linear(F.pad(part, (0, 0, 0, 128-len(part))), head.weight, head.bias)
+        parts.append(full[:len(part)].index_select(-1, alphabet))
     scores = torch.cat(parts, 0).float()
     targets = codec.lookup(head.out_features, hidden.device)[labels[rows, steps]]
     if (targets < 0).any():

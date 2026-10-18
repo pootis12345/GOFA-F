@@ -41,7 +41,7 @@ def config_check(cfg):
         "validation_every": 500, "patience": 5, "minimum_updates": 1000, "relative_min_delta": .001}
     if any(t[k] != v for k, v in fixed.items()):
         raise ValueError("Fixed optimization protocol changed")
-    if cfg.get("optimizations") != {"training_logits": "observed_numeric_slots_finite_vocabulary_v1",
+    if cfg.get("optimizations") != {"training_logits": "observed_numeric_slots_native_width_v2",
                                     "teacher_attention": "isolated_rows_original_capacity_v1"}:
         raise ValueError("Training-only optimization binding changed")
     if tuple(map(tuple, cfg["data"]["templates"])) != TEMPLATES or cfg["seed"] != 42 \

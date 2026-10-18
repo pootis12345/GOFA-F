@@ -1,0 +1,192 @@
+{
+  "checked_beijing": "2026-10-18T15:00:22.673551+08:00",
+  "candidate_rejected": true,
+  "training_state_modified": false,
+  "projection_probe": {
+    "tolerance": 0.002,
+    "cases": {
+      "1": {
+        "compact_10000": {
+          "logits": {
+            "max_abs": 0.00390625,
+            "violations": 1,
+            "elements": 10000
+          },
+          "loss": {
+            "max_abs": 4.76837158203125e-06,
+            "violations": 0,
+            "elements": 1
+          },
+          "hidden_gradient": {
+            "max_abs": 0.00048828125,
+            "violations": 0,
+            "elements": 524288
+          }
+        },
+        "tail_one_10001": {
+          "logits": {
+            "max_abs": 0.00390625,
+            "violations": 3,
+            "elements": 10000
+          },
+          "loss": {
+            "max_abs": 1.9073486328125e-06,
+            "violations": 0,
+            "elements": 1
+          },
+          "hidden_gradient": {
+            "max_abs": 0.00048828125,
+            "violations": 0,
+            "elements": 524288
+          }
+        }
+      },
+      "25": {
+        "compact_10000": {
+          "logits": {
+            "max_abs": 0.03125,
+            "violations": 52043,
+            "elements": 250000
+          },
+          "loss": {
+            "max_abs": 2.09808349609375e-05,
+            "violations": 0,
+            "elements": 1
+          },
+          "hidden_gradient": {
+            "max_abs": 3.0517578125e-05,
+            "violations": 0,
+            "elements": 524288
+          }
+        },
+        "tail_one_10001": {
+          "logits": {
+            "max_abs": 0.03125,
+            "violations": 87735,
+            "elements": 250000
+          },
+          "loss": {
+            "max_abs": 0.00031375885009765625,
+            "violations": 0,
+            "elements": 1
+          },
+          "hidden_gradient": {
+            "max_abs": 3.0517578125e-05,
+            "violations": 0,
+            "elements": 524288
+          }
+        }
+      },
+      "48": {
+        "compact_10000": {
+          "logits": {
+            "max_abs": 0.03125,
+            "violations": 101551,
+            "elements": 480000
+          },
+          "loss": {
+            "max_abs": 2.6702880859375e-05,
+            "violations": 0,
+            "elements": 1
+          },
+          "hidden_gradient": {
+            "max_abs": 1.52587890625e-05,
+            "violations": 0,
+            "elements": 524288
+          }
+        },
+        "tail_one_10001": {
+          "logits": {
+            "max_abs": 0.03125,
+            "violations": 170664,
+            "elements": 480000
+          },
+          "loss": {
+            "max_abs": 0.001270294189453125,
+            "violations": 0,
+            "elements": 1
+          },
+          "hidden_gradient": {
+            "max_abs": 1.52587890625e-05,
+            "violations": 0,
+            "elements": 524288
+          }
+        }
+      }
+    },
+    "finite_tokens": 10000,
+    "native_vocabulary": 42001,
+    "candidate": "finite_plus_one_zero_work_row",
+    "no_model_or_training_state_modified": true,
+    "candidate_passed": false,
+    "weight_shard_sha256": "a0e745422f2e7bdbd292fe8ba9484577bcb2059e9ed31c8da5fe5eabc742e623",
+    "alphabet_sha256": "add5643ae352306b6e4ef714df79233350116f659a83ec2f0efbbd5c07612ab7",
+    "dtype": "torch.bfloat16",
+    "allocated_bytes": 584425472,
+    "reserved_bytes": 622854144,
+    "allow_bf16_reduced_precision_reduction": true
+  },
+  "activity": {
+    "spent_seconds": 6.150784632191062,
+    "worker": null,
+    "waiting_seconds": 510.0340251652524,
+    "resource_pause_count": 0,
+    "peak_group_mib": 0
+  },
+  "launcher": {
+    "state": "complete",
+    "pid": 2068900,
+    "start_ticks": "622610883",
+    "spent_seconds": 6.150784632191062,
+    "waiting_seconds": 510.0340251652524,
+    "updated_at": 1792305573.2489433,
+    "worker_returncode": 0
+  },
+  "status": {
+    "state": "complete",
+    "phase": "projection_probe",
+    "candidate_passed": false,
+    "updated_at": 1792305572.1341126
+  },
+  "launcher_manifest": {
+    "snapshot": "/mnt/sevenT/dcg_data/GOFA-F-runs/stage19-projection-diagnostic-v1",
+    "config": "/mnt/sevenT/dcg_data/GOFA-F-runs/stage19-projection-diagnostic-v1/configs/stage19_short_generative_chattime.yaml",
+    "admission_policy": "idle",
+    "resource_check_seconds": 10,
+    "admission_samples": 3,
+    "idle_max_used_mib": 256,
+    "memory_cap_gib": 40,
+    "torch_cap_gib": 38,
+    "yield_on_foreign": false,
+    "activity_limit_seconds": null,
+    "wall_deadline": null,
+    "maximum_updates": 4000,
+    "worker_mode": "projection_probe"
+  },
+  "launch": {
+    "pid": 2068900,
+    "start_ticks": "622610883",
+    "code_revision": "a110b1719166dbda1ce18e9419ea5ac2e7c0bb50",
+    "snapshot": "/home/dcg/dcg_data/GOFA-F-runs/stage19-projection-diagnostic-v1",
+    "output": "/home/dcg/dcg_data/GOFA-F/outputs/stage19-projection-diagnostic-v1",
+    "command": [
+      "/home/dcg/dcg_data/GOFA-F/.venv-chat/bin/python",
+      "-u",
+      "-m",
+      "gofa_f.short_launcher",
+      "--snapshot",
+      "/home/dcg/dcg_data/GOFA-F-runs/stage19-projection-diagnostic-v1",
+      "--config",
+      "/home/dcg/dcg_data/GOFA-F-runs/stage19-projection-diagnostic-v1/configs/stage19_short_generative_chattime.yaml",
+      "--output",
+      "/home/dcg/dcg_data/GOFA-F/outputs/stage19-projection-diagnostic-v1",
+      "--worker-mode",
+      "projection_probe"
+    ],
+    "started_at": 1792305048.0685081,
+    "admission_policy": "idle",
+    "admission_samples": 3,
+    "interval_seconds": 10,
+    "training_state_untouched": true
+  }
+}

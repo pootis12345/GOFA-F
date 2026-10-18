@@ -28,7 +28,7 @@ def optimization_checks(model, codec, series, queries, tolerance, check=lambda: 
            torch.cuda.get_rng_state_all() if device.type == "cuda" else None)
     proof = {"passed": False, "tolerance": tolerance, "differences": {},
              "microbatch": 2, "finite_vocabulary": 10000, "generation_path_changed": False,
-             "diagnostics": {}}
+             "projection_work_columns": model.native.lm_head.out_features, "diagnostics": {}}
     cache = GenerativePrefixLRU(frozen_cache_binding(model, "optimization-proof"), max_bytes=2*2**30)
     def compare(a, b, name):
         error = (a.detach().float()-b.detach().float()).abs()

@@ -74,6 +74,42 @@ def reusable_cpu_proof(cfg, output):
     return result
 
 
+def projection_diagnostic(cfg):
+    """Retain the rejected compact-tail diagnostic and all of its resource costs."""
+    path = cfg.get("continuation", {}).get("prior_projection_diagnostic")
+    if not path:
+        return None
+    path = Path(path)
+    launch = read(path.with_suffix(".launch.json"))
+    if process_identity(launch["pid"]) == str(launch["start_ticks"]):
+        raise ValueError("Projection diagnostic supervisor is still alive")
+    ledger, launcher, state = (read(path/name) for name in ("activity.json", "launcher.json", "status.json"))
+    report, policy = read(path/"projection_probe.json"), read(path/"launcher_manifest.json")
+    if ledger.get("worker") is not None or launcher["state"] != "complete" or state["state"] != "complete" \
+            or report["candidate_passed"] is not False or report["tolerance"] != .002:
+        raise ValueError("Stopped diagnostic rejecting the compact-tail candidate required")
+    required = {"worker_mode": "projection_probe", "admission_policy": "idle",
+        "resource_check_seconds": 10, "admission_samples": 3, "memory_cap_gib": 40, "torch_cap_gib": 38}
+    if any(policy.get(k) != v for k, v in required.items()) or \
+            report["finite_tokens"] != 10000 or report["native_vocabulary"] != 42001 \
+            or report["candidate"] != "finite_plus_one_zero_work_row":
+        raise ValueError("Projection diagnostic policy or output layout differs")
+    root = Path(cfg["weights"]["directory"])
+    index = read(root/"model.safetensors.index.json")
+    shard = index["weight_map"]["lm_head.weight"]
+    source = Path(cfg["continuation"]["source_output"])
+    if report["weight_shard_sha256"] != read(root/"snapshot.json")["files"][shard]["sha256"] or \
+            report["alphabet_sha256"] != read(source/"cpu_preflight.json")["alphabet"]["alphabet_sha256"] or \
+            read(path/"gpu_identity.json")["uuid"] != read(source/"gpu_identity.json")["uuid"]:
+        raise ValueError("Projection probe head, alphabet or GPU binding changed")
+    if set(report["cases"]) != {"1", "25", "48"} or not any(
+            item["violations"] for case in report["cases"].values() for item in case["tail_one_10001"].values()):
+        raise ValueError("Projection probe rejection has no measured discrepancy")
+    return {"output": str(path), "report_sha256": sha(path/"projection_probe.json"),
+        "activity_sha256": sha(path/"activity.json"), "activity": ledger, "source_revision": launch["code_revision"],
+        "candidate_rejected": True, "selected_fix": "observed_positions_native_head_width"}
+
+
 def migrate(cfg, output):
     output = Path(output)
     source = Path(cfg["continuation"]["source_output"]).resolve()
@@ -97,6 +133,13 @@ def migrate(cfg, output):
                 existing["target_checkpoint_sha256"] != sha(output/"last.pt"):
             raise ValueError("Do not migrate over an already progressed destination")
         return existing
+    diagnostic = projection_diagnostic(cfg)
+    if diagnostic:
+        ledger = copy.deepcopy(ledger)
+        for key in ("spent_seconds", "waiting_seconds", "resource_pause_count"):
+            ledger[key] = ledger.get(key, 0)+diagnostic["activity"].get(key, 0)
+        ledger["peak_group_mib"] = max(ledger.get("peak_group_mib", 0),
+                                      diagnostic["activity"].get("peak_group_mib", 0))
     if (source/"final_selection.json").exists() or (source/"best_validation.json").exists():
         raise ValueError("This migration requires the current pre-first-validation training state")
     before, after = read(source/"manifest.json"), read(output/"manifest.json")
@@ -171,13 +214,14 @@ def migrate(cfg, output):
     record = {"source": str(source), "source_checkpoint_sha256": expected,
         "source_manifest_sha256": old_binding, "target_manifest_sha256": new_binding,
         "target_checkpoint_sha256": sha(output/"last.pt"), "state_restore": "exact",
-        "operational_changes": ["microbatch1_to2", "compact_training_projection", "post_migration_eta_anchor"],
+        "operational_changes": ["microbatch1_to2", "compact_training_projection", "post_migration_eta_anchor"]+
+            (["observed_positions_native_projection_width", "isolated_projection_diagnostic_costs"] if diagnostic else []),
         "updates": payload["state"]["updates"], "pending": payload["state"]["pending"],
         "pending_tokens": payload["state"]["pending_tokens"],
         "source_baseline_sha256": sha(baseline/"complete.json"), "baseline_queries_preserved": len(queries),
         "baseline_predictions_changed": False, "inference_code_sha_unchanged": list(INFERENCE_FILES),
         "activity_retained": ledger, "old_processes_exited": True,
-        "failed_acceptance_repair": failed,
+        "failed_acceptance_repair": failed, "prior_projection_diagnostic": diagnostic,
         "source_migration": read(source/"migration.json") if failed else None}
     atomic_json(output/"migration.json", record)
     return record

@@ -1,8 +1,9 @@
-protocol: stage19-short-generative-chattime-v4
+protocol: stage19-short-generative-chattime-v5
 seed: 42
 continuation:
-  source_output: /home/dcg/dcg_data/GOFA-F/outputs/stage19-short-generative-chattime-v3
-  checkpoint_sha256: d9532487337bc15544d8bc48756a4b3345deb8b4a85233f4891942f463ae340c
+  source_output: /home/dcg/dcg_data/GOFA-F/outputs/stage19-short-generative-chattime-v4
+  checkpoint_sha256: 4316568f0394f2b05e729ce0bde28ba21bba0075c123f30d196d7056cec35e8c
+  prior_projection_diagnostic: /home/dcg/dcg_data/GOFA-F/outputs/stage19-projection-diagnostic-v1
 weights:
   directory: /home/dcg/dcg_data/GOFA-F/data/weights/chattime-7b-20baa88
   revision: 20baa88d6ab838b34abbd1d2b1f4cea57c8ff870
@@ -49,7 +50,7 @@ training:
   relative_min_delta: 0.001
   checkpoint_seconds: 30
 optimizations:
-  training_logits: observed_numeric_slots_finite_vocabulary_v1
+  training_logits: observed_numeric_slots_native_width_v2
   teacher_attention: isolated_rows_original_capacity_v1
 cache:
   disk_limit_gib: 128

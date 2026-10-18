@@ -179,7 +179,7 @@ def test_migration_rejects_unsafe_sources(tmp_path, change):
         migrate(cfg, target)
 
 
-def test_projection_only_computes_finite_vocabulary(codec, monkeypatch):
+def test_projection_only_selects_observed_positions_but_retains_native_width(codec, monkeypatch):
     import gofa_f.short_training as training
     model = tiny()
     records, graphs = inputs(codec)
@@ -188,11 +188,11 @@ def test_projection_only_computes_finite_vocabulary(codec, monkeypatch):
     original, widths = training.F.linear, []
     def linear(x, weight, bias=None):
         if weight.shape[0] >= 10000:
-            widths.append(weight.shape[0])
+            widths.append((x.shape[0], weight.shape[0]))
         return original(x, weight, bias)
     monkeypatch.setattr(training.F, "linear", linear)
     result = compact_forward(model, codec, tokens, contexts)
-    assert widths == [10000]
+    assert widths == [(128, model.native.lm_head.out_features)]
     assert result[0].shape[1] == 10000
     assert codec.nan_id not in codec.finite_set
 
@@ -282,3 +282,62 @@ def test_failed_acceptance_migration_retains_all_costs_and_checks_ancestor(tmp_p
         assert record["failed_acceptance_repair"]
         assert record["activity_retained"]["spent_seconds"] == 1980.
         assert record["activity_retained"]["waiting_seconds"] == 190.
+
+
+def test_projection_diagnostic_costs_are_migrated_once_with_training_state_unchanged(tmp_path, monkeypatch):
+    import gofa_f.short_migration as migration
+    cfg, _, target, original = migration_fixture(tmp_path)
+    diagnostic = {"activity": dict(spent_seconds=8., waiting_seconds=30., resource_pause_count=1,
+                                   peak_group_mib=700), "output": "verified_probe"}
+    monkeypatch.setattr(migration, "projection_diagnostic", lambda cfg: diagnostic)
+    result = migrate(cfg, target)
+    ledger = json.loads((target/"activity.json").read_text())
+    assert ledger["spent_seconds"] == 1978. and ledger["waiting_seconds"] == 110.
+    assert ledger["resource_pause_count"] == 1 and ledger["peak_group_mib"] == 17246
+    assert result["prior_projection_diagnostic"] == diagnostic
+    assert migrate(cfg, target) == result
+    assert json.loads((target/"activity.json").read_text()) == ledger
+    actual = torch.load(target/"last.pt", weights_only=False)
+    for key in ("adapter", "optimizer", "gradients", "rng", "parameter_version"):
+        assert_equal(original[key], actual[key])
+
+
+@pytest.mark.parametrize("change", [None, "live", "head", "alphabet", "gpu", "result"])
+def test_projection_diagnostic_requires_stopped_bound_rejection(tmp_path, monkeypatch, change):
+    import gofa_f.short_migration as migration
+    probe, source, weights = (tmp_path/name for name in ("probe", "source", "weights"))
+    for root in (probe, source, weights):
+        root.mkdir()
+    def write(root, name, value):
+        (root/name).write_text(json.dumps(value))
+    probe.with_suffix(".launch.json").write_text(json.dumps(
+        dict(pid=12345, start_ticks="100", code_revision="fixed_probe_code")))
+    monkeypatch.setattr(migration, "process_identity", lambda pid: "100" if change == "live" else None)
+    write(probe, "activity.json", dict(worker=None, spent_seconds=5., waiting_seconds=30.))
+    write(probe, "launcher.json", dict(state="complete"))
+    write(probe, "status.json", dict(state="complete"))
+    write(probe, "launcher_manifest.json", dict(worker_mode="projection_probe", admission_policy="idle",
+        resource_check_seconds=10, admission_samples=3, memory_cap_gib=40, torch_cap_gib=38))
+    report = dict(candidate_passed=False, tolerance=.002, finite_tokens=10000, native_vocabulary=42001,
+        candidate="finite_plus_one_zero_work_row", weight_shard_sha256="head", alphabet_sha256="alphabet",
+        cases={str(n): {"tail_one_10001": {"logits": {"violations": 1}}} for n in (1, 25, 48)})
+    if change in ("head", "alphabet"):
+        report["weight_shard_sha256" if change == "head" else "alphabet_sha256"] = "wrong"
+    if change == "result":
+        for case in report["cases"].values():
+            case["tail_one_10001"]["logits"]["violations"] = 0
+    write(probe, "projection_probe.json", report)
+    write(probe, "gpu_identity.json", dict(uuid="other" if change == "gpu" else "gpu"))
+    write(source, "gpu_identity.json", dict(uuid="gpu"))
+    write(source, "cpu_preflight.json", dict(alphabet=dict(alphabet_sha256="alphabet")))
+    write(weights, "model.safetensors.index.json", dict(weight_map={"lm_head.weight": "head.safetensors"}))
+    write(weights, "snapshot.json", dict(files={"head.safetensors": {"sha256": "head"}}))
+    cfg = dict(continuation=dict(prior_projection_diagnostic=str(probe), source_output=str(source)),
+               weights=dict(directory=str(weights)))
+    if change:
+        with pytest.raises(ValueError):
+            migration.projection_diagnostic(cfg)
+    else:
+        result = migration.projection_diagnostic(cfg)
+        assert result["activity"]["spent_seconds"] == 5.
+        assert result["report_sha256"] == sha(probe/"projection_probe.json")

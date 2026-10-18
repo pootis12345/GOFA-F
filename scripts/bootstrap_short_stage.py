@@ -30,6 +30,26 @@ def main():
     env = dict(os.environ, CUDA_VISIBLE_DEVICES="", OMP_NUM_THREADS="2", MKL_NUM_THREADS="2",
         PYTHONPATH=str(snapshot/"src"), PYTHONDONTWRITEBYTECODE="1", HF_HUB_OFFLINE="1",
         TRANSFORMERS_OFFLINE="1", TOKENIZERS_PARALLELISM="false")
+    import yaml
+    cfg = yaml.safe_load(config.read_text())
+    prior = cfg.get("continuation", {}).get("prior_projection_diagnostic")
+    if prior:
+        prior = Path(prior)
+        launch = json.loads(prior.with_suffix(".launch.json").read_text())
+        status("waiting_for_projection_diagnostic", source_output=str(prior))
+        while not stopped[0]:
+            alive = identity(launch["pid"]) == str(launch["start_ticks"])
+            state_path = prior/"status.json"
+            prior_state = json.loads(state_path.read_text()) if state_path.exists() else {}
+            if not alive:
+                if prior_state.get("state") != "complete":
+                    status("failed", error="Projection diagnostic incomplete; no CPU handoff")
+                    return 1
+                break
+            time.sleep(1)
+        if stopped[0]:
+            status("stopped_by_user")
+            return 1
     status("cpu_preflight")
     cpu = subprocess.Popen([sys.executable, "-u", str(snapshot/"scripts/check_short_cpu.py"),
         "--config", str(config), "--output", str(output)], cwd=snapshot, env=env, start_new_session=True)
