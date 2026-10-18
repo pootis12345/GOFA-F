@@ -1,6 +1,6 @@
 # 运行交接记录
 
-## Stage19 图增量与目标一致性诊断实现及 CPU 验收通过（2026-10-18，Asia/Shanghai）
+## Stage19 图增量与目标一致性诊断完成（2026-10-18 22:47，Asia/Shanghai）
 
 独立入口 short_stability_diagnostic、固定配置 stage19_stability_diagnostic.yaml；
 固定1000更新最佳，不修改生产图模块、旧快照、损失、解码或训练恢复入口。
@@ -8,10 +8,18 @@
 两层全节点缩放、第二层重新计算、上下文失效及原始绑定均已实现。
 C禁CUDA/OMP和MKL各2线程：Ruff通过，完整回归506通过/21旧可选依赖跳过；
 真实7B FP32的PEMS04变量102与NN5变量92首轨迹通过1e-6容差和实际token一致。
-GPU尚待独立固定快照部署及三次10秒完全空闲准入，BF16新增结果不提前宣称完成。
+独立固定快照stage19-stability-diagnostic-v1，运行源码c55fab1f617ed668bd15d44beccb51ca93d13371。
+三次10秒完全空闲准入后完成102/102教师、272/272新增轨迹；两BF16完整逐步生成/KV对照logits差0、采样token一致。
+4次原生/原幅度首轨迹精确重放；68条新教师CE及argmax逐条精确复现旧记录，故障0。
+alpha1→alpha0.25查询等权MAE：Solar1.188772→0.902364，NN56.412708→7.636907，
+PEMS0428.116404→35.151563，AQ11.383619→10.920616；影响混杂，不设为默认幅度。
+Solar教师中位数改善但自由误差仍较原生差，AQ的CE改善未带来教师中位数改善；不能单因归于增量过大。
+诊断活动122.073649秒，等待20.001656秒，项目组峰14488MiB；Torch reserved峰14564720640字节，资源暂停0。
+监督器2457459/start_ticks625576693与worker2457641/start_ticks625578741均核实退出，activity.worker为空。
 原训练仍1177更新/pending30查询390标签暂停；last/best哈希锁定，每小时跟进仍PAUSED，目标评价0。
 [协议](STAGE19_STABILITY_DIAGNOSTIC_PROTOCOL.md)，[阶段报告](STAGE19_STABILITY_DIAGNOSTIC_RESULTS.md)，
-[CPU证明](results/stage19-stability-diagnostic-v1-cpu.json)，[已有结果零GPU分析](results/stage19-stability-existing-analysis.json)。
+[CPU证明](results/stage19-stability-diagnostic-v1-cpu.json)，[完整证据](results/stage19-stability-diagnostic-v1-result.json)，
+[逐源/模板补充统计](results/stage19-stability-derived.json)，[已有结果零GPU分析](results/stage19-stability-existing-analysis.json)。
 
 ## Stage19固定源配对采样诊断已完成（2026-10-18 21:11，Asia/Shanghai）
 

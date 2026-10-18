@@ -1,61 +1,140 @@
-# Stage19 graph-amplitude/target consistency diagnostic
+# Stage19：图增量与目标一致性诊断结果
 
-Status: implemented; CPU verification passed. New BF16 teacher and alpha=0.25 sampling results are pending GPU admission.
-Training remains user-paused; no target task, optimizer update or hourly automation is enabled.
+已完成，未恢复训练。固定1000更新源最佳；32条主查询，另列2条NN5病例。仅诊断，不选新系数或新模型。
 
-## Zero-GPU reanalysis of existing evidence
+## 核心结果
 
-The same 32 ID-stratified source queries are used throughout. Two known NN5 cases remain separate.
-MAE below is an equal average over the eight queries within each source; raw errors are not averaged across sources.
-These numbers reuse old teacher and sampling shards and are not new free forecasts.
+下表均为每源8条查询的等权原始单位MAE；不跨源平均。自由预测统一8次采样、逐步中位数。
 
-| Source | Native teacher CE | 500 CE | 1000 CE | Native sample8 MAE | 1000 sample8 MAE |
-|---|---:|---:|---:|---:|---:|
-| Solar | 3.371194 | 3.074551 | 3.062278 | 0.907423 | 1.188772 |
-| NN5 | 9.074735 | 8.287375 | 8.183745 | 8.343070 | 6.412708 |
-| PEMS04 | 5.430347 | 4.875037 | 4.915436 | 43.265623 | 28.116404 |
-| AQShunyi | 4.517262 | 3.652372 | 3.729999 | 10.042120 | 11.383619 |
+| 源 | 原生 | α=1 | α=0.25 | 缩小后改善/持平/退化 |
+|---|---|---|---|---|
+| Solar | 0.907423 | 1.188772 | 0.902364 | 1/4/3 |
+| NN5 | 8.343070 | 6.412708 | 7.636907 | 3/0/5 |
+| PEMS04 | 43.265623 | 28.116404 | 35.151563 | 1/0/7 |
+| AQShunyi | 10.042120 | 11.383619 | 10.920616 | 2/0/6 |
 
-Thus lower CE and worse free sample8 error remain paired at the source level for Solar and AQShunyi;
-NN5 and PEMS04 have improved sample8 error on this small subset. Teacher argmax is not a conditional median.
-The new full/top100 conditional-median measurements are required before distinguishing numeric decision effects
-from generation-prefix effects. The existing findings alone cannot establish that large graph increments are harmful.
+Solar均值改善主要来自一条12→12查询；4条持平、3条退化。AQ均值稍改善但6/8查询退化，说明均值并不代表普遍收益。
+NN5和PEMS04缩小后整体变差。两源原幅度明显优于同采样原生，因此不能将接近或超过1的增量范数直接认定为预测损害。
 
-| Source | 1000 exchange1 delta/input norm | Exchange2 delta/input norm | Gate1 | Gate2 |
-|---|---:|---:|---:|---:|
-| Solar | 1.395636 | 0.761902 | 0.923252 | 0.854896 |
-| NN5 | 0.903147 | 0.974840 | 0.848476 | 0.913683 |
-| PEMS04 | 1.018229 | 0.655036 | 0.885235 | 0.859388 |
-| AQShunyi | 1.126460 | 0.643235 | 0.917719 | 0.845675 |
+## 教师条件：概率目标与数值决策
 
-Each ratio uses the actual input to its respective exchange; these are averages of per-query ratios.
-The historical 500 model has no eight-sample trajectories in this evidence set, so its sample8 score stays unavailable.
-Existing per-query teacher/greedy/sample8 evidence, source/template and first/later/H24-segment summaries,
-with original file paths and hashes, are saved in `results/stage19-stability-existing-analysis.json`.
+教师含真实前序回答，仅为诊断；与自由预测分数分开。CE始终在全部10000个有限数值token上计算。
 
-## Fixed new measurements
+| 源 | 条件 | CE | argmax MAE | 全分布中位数MAE | top100中位数MAE | 真标签进入top100 |
+|---|---|---|---|---|---|---|
+| Solar | 原生 | 3.371194 | 1.105231 | 0.703567 | 0.692067 | 78.42% |
+| Solar | α=1 | 3.062278 | 1.107591 | 0.611694 | 0.619203 | 88.10% |
+| Solar | α=0.25 | 3.182587 | 0.689745 | 0.639722 | 0.622920 | 76.34% |
+| NN5 | 原生 | 9.074735 | 12.028723 | 6.272087 | 6.486286 | 5.43% |
+| NN5 | α=1 | 8.183745 | 16.350412 | 6.356106 | 6.137835 | 16.89% |
+| NN5 | α=0.25 | 8.722675 | 12.190478 | 6.455889 | 6.351778 | 3.13% |
+| PEMS04 | 原生 | 5.430347 | 46.038084 | 30.863605 | 30.550978 | 82.89% |
+| PEMS04 | α=1 | 4.915436 | 37.505293 | 24.327175 | 25.480765 | 87.80% |
+| PEMS04 | α=0.25 | 5.170628 | 41.183935 | 28.167236 | 27.649992 | 81.85% |
+| AQShunyi | 原生 | 4.517262 | 6.187920 | 5.305773 | 5.261263 | 82.59% |
+| AQShunyi | α=1 | 3.729999 | 5.673266 | 5.827267 | 5.803715 | 98.96% |
+| AQShunyi | α=0.25 | 4.228234 | 5.720973 | 5.310760 | 5.284182 | 84.67% |
 
-102 teacher forwards: native, alpha=1 and alpha=0.25 on 34 queries each. Only alpha=0.25 adds 272 sample trajectories.
-Reused native/alpha=1 samples retain original query, weight, data, code, scale and seed provenance.
-The BF16 amplitude intervention, mechanisms, new metrics, actual GPU activity/wait/peak and exit audit are pending.
-No alpha=0.25 result, best checkpoint or training recommendation is inferred before those measurements exist.
+- Solar：原幅度的CE、教师全分布中位数误差都优于原生，但自由采样误差较差，支持生成前缀/自由生成路径是重要因素；同时混合top-k截断及有限8样本估计波动，不是前缀因素的因果隔离证明。
+- AQShunyi：原幅度CE下降，教师全分布及top100中位数误差均上升，自由误差也变差，支持概率训练目标与数值点预测目标存在差异。缩小后教师中位数与自由均值均改善，但收益集中，且仍弱于原生。
+- NN5：原幅度教师argmax明显变差，而全分布中位数接近原生、top100中位数和自由8采样更好。仅用argmax诊断会夸大问题；数值决策方式确实影响结论。
+- PEMS04：原幅度CE、教师中位数、自由误差均改善；缩小后这些收益部分丢失，不支持统一压低图幅度。
 
-CPU Ruff and complete regression: 506 passed, 21 optional-dependency skips. Both real 7B FP32 cases
-(PEMS04 variable102 and NN5 variable92, H24, first fixed sample) passed original 1e-6 tolerances
-and exact actual sampled tokens. The complete causal CPU path replays the actual sampled prefix in one forward;
-the GPU checks retain actual stepwise full generation versus KV generation. No CPU CUDA context was created.
-[CPU evidence](results/stage19-stability-diagnostic-v1-cpu.json).
+这些解释可以并存，不能据小样本把剩余差异全部归因于一个环节。完整分布熵、上下端点概率、首步集中度、逐槽CE及top100标签命中均保存在逐查询证据。
 
-The adapter remains locked at the source-best 1000-update SHA256
-`18128f46578da279f842e9b2efe3cfa3d5c6a27f7404b67e135ab5c07f765db9`.
-Production last SHA256 remains
-`a37c4f4e793d073d20c8bc2af9ba437977a068f953518e134fd4794ac278cd3b`.
+## 幅度、门值及重复/端点
 
-## Limits
+| 源 | 条件 | 层1原始/实际缩放比 | 层2原始/实际缩放比 | 门1/门2 |
+|---|---|---|---|---|
+| Solar | α=1 | 1.395636/1.395636 | 0.761902/0.761902 | 0.923252/0.854896 |
+| Solar | α=0.25 | 1.395636/0.348909 | 1.240833/0.310208 | 0.923252/0.866799 |
+| NN5 | α=1 | 0.903147/0.903147 | 0.974840/0.974840 | 0.848476/0.913683 |
+| NN5 | α=0.25 | 0.903147/0.225787 | 1.138789/0.284697 | 0.848476/0.878135 |
+| PEMS04 | α=1 | 1.018229/1.018229 | 0.655036/0.655036 | 0.885235/0.859388 |
+| PEMS04 | α=0.25 | 1.018229/0.254557 | 0.997771/0.249443 | 0.885235/0.830369 |
+| AQShunyi | α=1 | 1.126460/1.126460 | 0.643235/0.643235 | 0.917719/0.845675 |
+| AQShunyi | α=0.25 | 1.126460/0.281615 | 0.874100/0.218525 | 0.917719/0.827247 |
 
-Single fixed seed family, 32 small source-development queries and two separately disclosed cases.
-The Stage19 BF16/prompt/finite-grammar/single-block sampling protocol differs from official FP16/rolling blocks.
-This does not replace complete source validation, relabel an adapter as best, test targets or establish graph-enhanced QA.
-Future training/validation sampling-policy intent is recorded, but no training or production evaluation path is resumed here.
+比值分母均为该层实际输入，每列为查询等权均值；α=0.25时第二层从改变后的全节点状态重新计算，故其原始输出也会变化。逐位置分布及全节点比例保存在exchanges字段。
 
-[Preregistered protocol](STAGE19_STABILITY_DIAGNOSTIC_PROTOCOL.md).
+三条件的主查询中位数均有3/24条多步整段恒值，全部在Solar，不能把恒值一概视为失败；H=1不在分母。
+原幅度Solar上端点3/88槽，缩小后0/88；其他源三条件上下端点均为0。主查询整体为3/352→0/352，但不是跨源误差平均。减少端点并未带来各源一致MAE收益。
+
+## 分模板及误差位置
+
+每个源—模板2条主查询。下表是自由8采样的查询等权MAE。
+
+| 源 | 历史→预测 | 原生 | α=1 | α=0.25 |
+|---|---|---|---|---|
+| Solar | 10->1 | 0.675025 | 0.162535 | 0.600115 |
+| Solar | 12->12 | 2.308690 | 3.903688 | 2.224131 |
+| Solar | 14->7 | 0.644739 | 0.687626 | 0.783969 |
+| Solar | 48->24 | 0.001240 | 0.001240 | 0.001240 |
+| NN5 | 10->1 | 6.598851 | 10.914716 | 7.927880 |
+| NN5 | 12->12 | 8.610948 | 4.226310 | 7.838081 |
+| NN5 | 14->7 | 9.851453 | 4.419745 | 7.409009 |
+| NN5 | 48->24 | 8.311026 | 6.090062 | 7.372656 |
+| PEMS04 | 10->1 | 53.245396 | 26.987396 | 26.000401 |
+| PEMS04 | 12->12 | 34.090549 | 30.594217 | 37.770765 |
+| PEMS04 | 14->7 | 39.393715 | 36.858699 | 39.309377 |
+| PEMS04 | 48->24 | 46.332831 | 18.025305 | 37.525710 |
+| AQShunyi | 10->1 | 11.048758 | 15.049896 | 11.574506 |
+| AQShunyi | 12->12 | 7.924141 | 5.815577 | 8.355022 |
+| AQShunyi | 14->7 | 8.154517 | 14.006568 | 9.886679 |
+| AQShunyi | 48->24 | 13.041062 | 10.662435 | 13.866259 |
+
+以下分段按有效预测点汇总，故不等同于上面的查询等权MAE；原掩码不变。
+
+| 源 | 条件 | 首步 | 后续步 | H24前16步 | H24后8步 |
+|---|---|---|---|---|---|
+| Solar | 原生 | 0.956507 | 0.727405 | 0.001240 | 0.001240 |
+| Solar | α=1 | 1.747159 | 1.121532 | 0.001240 | 0.001240 |
+| Solar | α=0.25 | 1.267449 | 0.693436 | 0.001240 | 0.001240 |
+| NN5 | 原生 | 6.723386 | 8.786537 | 7.597731 | 9.737616 |
+| NN5 | α=1 | 5.569819 | 5.411271 | 5.440485 | 7.389214 |
+| NN5 | α=0.25 | 7.300403 | 7.539751 | 7.036363 | 8.045243 |
+| PEMS04 | 原生 | 35.561797 | 42.695718 | 40.124094 | 58.750306 |
+| PEMS04 | α=1 | 25.933549 | 24.525050 | 19.029681 | 16.016552 |
+| PEMS04 | α=0.25 | 27.623888 | 38.613418 | 30.413144 | 51.750843 |
+| AQShunyi | 原生 | 6.389821 | 11.266157 | 17.388321 | 4.346545 |
+| AQShunyi | α=1 | 5.168836 | 10.452647 | 11.965589 | 8.056127 |
+| AQShunyi | α=0.25 | 7.293941 | 12.116399 | 15.476280 | 10.646216 |
+
+各源/模板的相同分段及其有效点数量亦在JSON的summary.by_source.*.by_template中保留。
+
+## 已知病例单列
+
+| NN5变量 | 原生8采样MAE | α=1 | α=0.25 |
+|---|---|---|---|
+| 16 | 8.546308 | 7.861025 | 8.369937 |
+| 92 | 9.680213 | 8.085985 | 9.441762 |
+
+两病例不计入主32条汇总，缩小均未优于原幅度。
+
+## 验收、资源与退出
+
+- CPU：506通过、21旧可选依赖跳过；两真实7B FP32病例logits最大差0、实际采样token一致，原1e-6容差。
+- CUDA：两干预首轨迹完整逐步生成/KV logits最大差0、实际token一致，原BF16 2e-3容差；4个原生/α=1重放原始token精确复现。
+- 新原生/α=1共68条教师CE及argmax token逐条精确复现旧诊断；所有复用输入、检查点、数据、推理代码、尺度与种子绑定已核验。
+- 102/102教师记录、272/272新增轨迹完整；34×3中位数预测与全部轨迹均有限、槽数完整，无反变换回退。100%格式/反变换覆盖是解码机制属性，不表示预测准确。
+- GPU活动122.073649秒，等待20.001656秒，资源暂停0；项目组峰14488MiB，低于40GiB。
+- Torch allocated峰14218753536字节，reserved峰14564720640字节，低于38GiB。
+- 固定快照stage19-stability-diagnostic-v1，运行提交c55fab1f617ed668bd15d44beccb51ca93d13371；监督器2457459、worker均核实退出，activity.worker为空。
+- 原训练仍1177更新/pending30查询390标签暂停，last/best及1000候选SHA未变；本次无反传、优化器更新、目标预测或新选模。诊断成本独立保存，不改原活动账本。
+
+## 后续建议与结论边界
+
+保留生成式头，不把0.25设为训练默认值，不自动修改损失/架构，也不恢复训练。
+后续若另行批准继续，应先落实相同8采样的源验证/最终测试协议，保留无采样教师强制训练；
+不要用原贪心结论否定整个图分支，也不要把采样小样本收益当成完整源验证或零样本目标收益。
+幅度控制在AQ部分查询有研究价值，但本次不足以选择系数；Solar需区分教师条件收益与自由生成前缀偏移。
+单种子族、小样本、已看源数据、两条已披露病例；未运行完整源验证或九目标评价。
+本Stage19 BF16/提示/有限词表/单块≤24协议不同于官方FP16/滚动块；图条件问答未验证。
+训练、目标评价和每小时跟进均继续暂停；不替换原完整源验证分数或最佳检查点。
+
+[完整逐查询/逐轨迹证据](results/stage19-stability-diagnostic-v1-result.json)，
+[CPU证明](results/stage19-stability-diagnostic-v1-cpu.json)，
+[已有结果零GPU分析](results/stage19-stability-existing-analysis.json)，
+[固定协议](STAGE19_STABILITY_DIAGNOSTIC_PROTOCOL.md)。
+
+[补充CPU派生统计](results/stage19-stability-derived.json)：逐源/模板的教师三种数值决策及自由采样首步/后续/H24分段、三组配对改善/持平/退化计数和覆盖计数，绑定上述完整证据SHA。
