@@ -25,6 +25,9 @@
 无failures，资源暂停0，项目组观测峰17246MiB<40GiB。运行源码仍384205872c3d53c7bab91e592da7a8e07d629194，
 未重启或修改健康任务；每小时跟进仍关闭。
 实际证据：[stage19-v5-validation-000500.json](results/stage19-v5-validation-000500.json)。
+后续仅CPU分解见[首轮初步诊断](STAGE19_FIRST_VALIDATION_DIAGNOSIS.md)：NN5四模板均退化，
+48→24从第1步即偏高；上端点聚集远超真值超界，原生与图模型均有明显重复数值现象。
+未执行新模型前向或更改训练；PEMS04/AQShunyi的相对指标略优不代表其原始汇总MAE降低。
 以下15:31及更早记录为历史状态，当前进度以固定快照short_progress读取为准。
 
 ## Stage19 v5 修复：仅选有效位置，恢复原语言头投影宽度（2026-10-18，Asia/Shanghai）
