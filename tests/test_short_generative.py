@@ -268,3 +268,88 @@ def test_single_block_24_reports_late_steps_separately():
     r = summarize([e])
     assert r["steps_1_to_16"]["mae"] == 0.
     assert r["steps_17_to_24"]["mae"] == 2.
+
+
+@pytest.mark.parametrize("pending", [0, 23, 64])
+def test_actual_training_entry_consumes_queries_and_recovers_full_accumulation(tmp_path, monkeypatch, pending):
+    """Execute the real run loop through two updates, including partial/full recovery."""
+    import json
+    from types import SimpleNamespace
+    import gofa_f.short_generative_stage as stage
+    cfg = yaml.safe_load(Path("configs/stage19_short_generative_chattime.yaml").read_text())
+    manifest = dict(configuration=cfg, weights_sha256="frozen",
+        code={p.name: stage.sha(p) for p in Path(stage.__file__).parent.glob("*.py")})
+    (tmp_path/"manifest.json").write_text(json.dumps(manifest))
+    (tmp_path/"cpu_preflight.json").write_text(json.dumps(dict(passed=True,
+        manifest_sha256=stage.sha(tmp_path/"manifest.json"), alphabet={"alphabet_sha256": "alphabet"})))
+    (tmp_path/"mechanisms.json").write_text('{"passed": true}')
+    (tmp_path/"pools").mkdir()
+    (tmp_path/"pools/queries.json").write_text('{"train": {}, "validation": []}')
+    (tmp_path/"pools/metric_epsilons.json").write_text('{}')
+    model = SimpleNamespace(adapter=torch.nn.Linear(1, 1, bias=False), parameter_version=0)
+    model.trainable_state = lambda: {n: p.detach().clone() for n, p in model.adapter.named_parameters()}
+    model.load_trainable = lambda values: model.adapter.load_state_dict(values)
+    model.mark_updated = lambda: setattr(model, "parameter_version", model.parameter_version+1)
+    model.parameter_counts = lambda: {}
+    model.cached_prefix = lambda *a: None
+    model.encode_origins = lambda *a: []
+    codec = SimpleNamespace(alphabet_sha="alphabet", record=lambda *a: None)
+    batch = SimpleNamespace(labels=None)
+    batch.to = lambda device: batch
+    codec.batch = lambda rows: batch
+    model_type = type("Forward", (), {"__call__": lambda self, *a, **k: SimpleNamespace(logits=model.adapter.weight)})
+    forward = model_type()
+    forward.__dict__.update(model.__dict__)
+    monkeypatch.setattr(stage, "load_model", lambda *a: (forward, codec))
+    monkeypatch.setattr(stage, "frozen_cache_binding", lambda *a: {})
+    monkeypatch.setattr(stage, "Series", lambda *a: source(1))
+    consumed = []
+    def schedule(pool, offset, seed):
+        consumed.append(offset)
+        return Query("pems04", 0, 500, 10, 1)
+    monkeypatch.setattr(stage, "schedule", schedule)
+    monkeypatch.setattr(stage, "build_graph", lambda *a: SimpleNamespace(variable_ids=[0]))
+    monkeypatch.setattr(stage, "numeric_loss", lambda logits, *a: (logits.square().sum(), 1))
+    monkeypatch.setattr(stage, "evaluate", lambda *a, **k: {"errors": []})
+    monkeypatch.setattr(stage, "supervisor_alive", lambda *a: True)
+    class CPUProxy:
+        cuda = SimpleNamespace(set_per_process_memory_fraction=lambda *a: None,
+            get_device_properties=lambda *a: SimpleNamespace(total_memory=80*2**30),
+            max_memory_allocated=lambda: 0, max_memory_reserved=lambda: 0)
+        device = staticmethod(lambda *a: torch.device("cpu"))
+        def __getattr__(self, name):
+            return getattr(torch, name)
+    monkeypatch.setattr(stage, "torch", CPUProxy())
+    class Progress:
+        def __init__(self, *a):
+            self.state, self.phase, self.calls = {"measured_updates": 0}, "train", 0
+        def tick(self, *a, **fields):
+            self.calls += 1
+            assert self.calls < 1000, "Training loop failed to consume the next query"
+            if fields.get("updates") == 2:
+                raise stage.Paused("test_completed_two_updates")
+    monkeypatch.setattr(stage, "Progress", Progress)
+    captured = []
+    monkeypatch.setattr(stage, "save_checkpoint", lambda p, m, o, s, *a: captured.append(deepcopy(s)))
+    if pending:
+        torch.save({"parameter_version": 0}, tmp_path/"last.pt")
+        state = dict(updates=0, pending=pending, pending_tokens=pending, pending_loss=float(pending),
+            peak_memory={}, last_validated_update=0, bad_validations=0, best_score=None, early_reference=None)
+        forward.adapter.weight.grad = torch.ones_like(forward.adapter.weight)
+        monkeypatch.setattr(stage, "restore_checkpoint", lambda *a: (state, None))
+    for name in ("GOFA_STAGE19_ADMITTED", "GOFA_STAGE19_SUPERVISOR_PID", "GOFA_STAGE19_SUPERVISOR_TICKS"):
+        monkeypatch.setenv(name, "1")
+    stage.run(cfg, tmp_path, resume=bool(pending))
+    assert consumed == list(range(pending, 128))
+    assert captured[-1]["updates"] == 2 and captured[-1]["pending"] == 0
+
+
+def test_original_sample_budget_and_single_origin_uncertainty():
+    cfg = yaml.safe_load(Path("configs/stage19_short_generative_chattime.yaml").read_text())
+    assert cfg["sampling"]["source_origins_per_variable_template"] == 1
+    assert cfg["sampling"]["target_origins_per_variable_minimum"] == 1
+    queries = [dict(source="a", variable=0, length=length, horizon=horizon, origin=100)
+               for length, horizon in TEMPLATES]
+    result = relative_score([1.]*4, [1.]*4, queries, {"a": [1e-6]}, 1, 10)
+    assert result["origins_per_variable_template"] == 1
+    assert "cannot estimate temporal" in result["uncertainty_note"]

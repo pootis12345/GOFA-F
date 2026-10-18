@@ -181,4 +181,6 @@ def relative_score(current, baseline, queries, epsilons, repeats, bootstrap_repl
         "paired_bootstrap_95pct": np.quantile(boot, [.025, .975]).tolist() if boot else None,
         "bootstrap_method": "paired variable resampling and common temporal-stratum blocks within each source",
         "bootstrap_replicates": bootstrap_replicates, "bootstrap_seed": 19042,
-        "uncertainty_note": "Three fixed strata reduce but do not eliminate time dependence or adaptive-validation bias"}
+        "origins_per_variable_template": repeats,
+        "uncertainty_note": "One fixed origin per variable/template cannot estimate temporal variability; the interval mainly reflects variable resampling" if repeats == 1 else
+            "Fixed temporal strata do not eliminate time dependence or adaptive-validation bias"}

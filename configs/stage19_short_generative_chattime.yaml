@@ -1,4 +1,4 @@
-protocol: stage19-short-generative-chattime-v1
+protocol: stage19-short-generative-chattime-v2
 seed: 42
 weights:
   directory: /home/dcg/dcg_data/GOFA-F/data/weights/chattime-7b-20baa88
@@ -12,9 +12,9 @@ data:
   target_evaluation_after_lock: true
 sampling:
   source_train_queries: 8192
-  source_origins_per_variable_template: 3
+  source_origins_per_variable_template: 1
   target_queries_minimum: 2048
-  target_origins_per_variable_minimum: 8
+  target_origins_per_variable_minimum: 1
 architecture:
   graph_layers: [30, 31]
   injection_side: before

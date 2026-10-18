@@ -45,9 +45,9 @@ def config_check(cfg):
             or cfg["data"]["sources"] != list(SOURCES) or cfg["data"]["target_training_enabled"] \
             or cfg["data"]["target_evaluation_after_lock"] is not True:
         raise ValueError("Fixed short-source-only training changed")
-    if cfg["sampling"] != {"source_train_queries": 8192, "source_origins_per_variable_template": 3,
-                           "target_queries_minimum": 2048, "target_origins_per_variable_minimum": 8}:
-        raise ValueError("User-approved enhanced query budget changed")
+    if cfg["sampling"] != {"source_train_queries": 8192, "source_origins_per_variable_template": 1,
+                           "target_queries_minimum": 2048, "target_origins_per_variable_minimum": 1}:
+        raise ValueError("User-approved original query budget changed")
     if cfg["decode"] != {"maximum_numeric_slots": 24, "block_size": 24,
         "grammar": "finite_numeric_tokens_with_canonical_delimiters", "scale": "immutable_origin",
         "missing_teacher_inputs": "causal_forward_fill", "loss": "observed_numeric_slots_conditional_cross_entropy"}:
@@ -240,7 +240,7 @@ def run(cfg, output, resume):
                 digest = sha(candidate)
                 result = evaluate(model, codec, series, pools["validation"], output,
                     f"update-{state['updates']:06d}", binding+":"+digest, progress, check)
-                scores = relative_score(result["errors"], baseline["errors"], pools["validation"], eps, 3)
+                scores = relative_score(result["errors"], baseline["errors"], pools["validation"], eps, 1)
                 record = {"updates": state["updates"], "checkpoint_sha256": digest,
                           "checkpoint": str(candidate), **scores}
                 atomic_json(output/f"validation-{state['updates']:06d}.json", record)
@@ -257,8 +257,6 @@ def run(cfg, output, resume):
             progress.tick("train", updates=state["updates"], pending_queries=state["pending"])
             if state["pending"] == 64:
                 apply_update(model, optimizer, state, progress)
-            else:
-                progress.tick(pending_queries=state["pending"])
                 continue
             q = schedule(pools["train"], state["updates"]*64+state["pending"], cfg["seed"])
             data = series[q.source]
@@ -298,7 +296,7 @@ def run(cfg, output, resume):
             raise RuntimeError("Cannot seal without complete source validation")
         atomic_json(output/"final_selection.json", {"checkpoint": str(output/"best.pt"), "sha256": sha(output/"best.pt"),
             "manifest_sha256": binding, "best_validation": best, "stop_reason": state["stop_reason"],
-            "trained_source_only": True, "source_queries_complete": 6792})
+            "trained_source_only": True, "source_queries_complete": len(pools["validation"])})
         status("source_locked", stop_reason=state["stop_reason"])
         progress.tick("source_locked", force=True)
     except Paused as exc:
