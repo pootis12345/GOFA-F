@@ -1,6 +1,6 @@
 # 运行交接记录
 
-## Stage19 已授权1500采样验证后继续，自动交接准备完成（2026-10-19，Asia/Shanghai）
+## Stage19 已部署1500采样验证后自动继续（2026-10-19 00:22，Asia/Shanghai）
 
 用户最新授权取代v1的1500人工复核停止规则。当前v1健康且继续原流程，不中断GPU任务。
 新v2 CPU接续器等待v1完成1500完整8采样验证、监督器及worker退出后，精确迁移并重新完全空闲准入。
@@ -8,8 +8,13 @@
 α=1、生成头、教师强制训练不采样、原损失和学习率不变；保留已完成采样、最佳/早停、优化器/RNG、游标及累计成本，不重算或重复计账。
 无时间硬截止，40GiB项目组/38GiB Torch和10秒资源审计不变。不运行九目标，不恢复每小时跟进。
 C禁CUDA且OMP/MKL各2线程，Ruff与完整CPU回归522通过/21旧可选依赖跳过；张量/训练/采样路径哈希与v1一致。
-真实1500迁移留待旧任务完成后执行并核验，当前不宣称1500已完成或后续训练已启动。
-[新授权执行协议](STAGE19_SAMPLED_CONTINUATION_V2.md)，[CPU证明](results/stage19-sampled-continuation-v2-cpu.json)。
+运行源码e5333db48bc09a4c6e62c87cd4e4b4a04427eee4，固定快照与输出stage19-sampled-continuation-v2。
+CPU交接器PID2519647/start_ticks626154672已实际部署且身份健康，handoff=waiting_for_sampled_1500_validation，无CUDA上下文。
+旧v1监督器2489771/start_ticks625874964、worker2489960/start_ticks625877022继续健康，未重启。
+00:22原生源基线1123/2264查询已保存，正式仍1177更新/pending30；真实1500迁移在旧任务完成后执行并核验。
+当前不宣称1500已完成或后续训练已启动；完成后自动交接并重新等待完全空闲，无需人工批准。
+[新授权执行协议](STAGE19_SAMPLED_CONTINUATION_V2.md)，[CPU证明](results/stage19-sampled-continuation-v2-cpu.json)，
+[实际部署与身份核验](results/stage19-sampled-continuation-v2-deployment.json)。
 
 ## Stage19 8采样源验证和1177→1500接续已部署运行（2026-10-18 23:37，Asia/Shanghai）
 
