@@ -1,7 +1,4 @@
-"""Rebaseline sample8, exact 1177 continuation, review after sampled update1500.
-
-No target evaluation and no automatic continuation beyond the authorized review.
-"""
+"""Sample8 source selection with exact continuation and explicit training authority."""
 import argparse
 import json
 import os
@@ -48,17 +45,28 @@ def commit_validation(output,ledger,score,update,candidate):
 def report(output):
     checkpoint=output/'last.pt'
     saved=torch.load(checkpoint,map_location='cpu',weights_only=False)
-    values={str(u):read(output/f'validation-{u:06d}.json') for u in (1000,1500)}
-    complete=saved['state']['updates']==1500 and saved['state']['pending']==0 and \
-        saved['sampling_ledger']['last_validated_update']==1500 and values['1500'] is not None
-    value=dict(complete=complete,authorized_segment='1177_to_1500_then_review',
+    ledger,state=saved['sampling_ledger'],saved['state']
+    values={str(u):read(output/f'validation-{u:06d}.json') for u in ledger['validated_updates']}
+    review=state.get('stop_reason')=='review_at_1500'
+    complete=state['pending']==0 and ledger['last_validated_update']==state['updates'] and \
+        state.get('stop_reason') in ('review_at_1500','max_updates','source_early_stopping') and \
+        values.get(str(state['updates'])) is not None
+    value=dict(complete=complete,authorized_segment='to_1500_review' if review else 'to_4000_or_source_early_stop',
         updates=saved['state']['updates'],pending=saved['state']['pending'],
         sampling_ledger=saved['sampling_ledger'],validations=values,
         sampled_best_sha256=sha(output/'sampled_best.pt') if (output/'sampled_best.pt').exists() else None,
         last_sha256=sha(checkpoint),activity=read(output/'activity.json'),
-        target_evaluations=0,training_requires_new_authorization_after_review=True,
+        stop_reason=state.get('stop_reason'),
+        target_evaluations=0,training_requires_new_authorization_after_review=review,
         no_final_target_checkpoint_sealed=True)
     atomic_json(output/'report.json',value)
+    if complete and not review:
+        best=read(output/'sampled_best_validation.json')
+        if best['checkpoint_sha256']!=value['sampled_best_sha256'] or best['updates']!=ledger['best_update']:
+            raise ValueError('Final source best checkpoint/ledger mismatch')
+        atomic_json(output/'source_final_selection.json',dict(best,
+            adapter_sha256=value['sampled_best_sha256'],manifest_sha256=sha(output/'manifest.json'),
+            stop_reason=state['stop_reason'],actual_updates=state['updates'],target_evaluation_authorized=False))
     return value
 
 
@@ -101,7 +109,8 @@ def run(cfg,output,resume=False):
         atomic_json(output/'restore_audit.json',dict(passed=True,updates=state['updates'],pending=state['pending'],
             pending_tokens=state['pending_tokens'],state_exact=True,cuda_bitwise_future_replay_claimed=False))
         del saved
-        progress=Progress(output,restored_progress)
+        cap=cfg.get('review_at_update',1500) or 4000
+        progress=Progress(output,restored_progress,cap=cap)
         pools=read(output/'pools/queries.json')
         series={s:Series(Path(base['data']['directory'])/'sources'/(s+'.npz')) for s in SOURCES}
         eps=read(output/'pools/metric_epsilons.json')
@@ -139,8 +148,25 @@ def run(cfg,output,resume=False):
             commit_validation(output,ledger,anchor_score,1000,output/'reference-001000.pt')
         checkpoint()
         last_save=time.monotonic()
-        while state['updates']<1500:
+        while True:
             check()
+            # Validate before another update, including resumes at an unfinished boundary.
+            update=state['updates']
+            if update>=1500 and update%500==0 and ledger['last_validated_update']<update:
+                if state['pending']:
+                    raise ValueError('Validation boundary has an unexpected pending batch')
+                candidate=output/f'candidate-{update:06d}.pt'
+                if not candidate.exists():
+                    atomic_torch(candidate,model.trainable_state())
+                assert_equal(torch.load(candidate,map_location='cpu',weights_only=False),model.trainable_state())
+                current=evaluation(f'sampled-update-{update:06d}',checkpoint_path=candidate)
+                score=relative_score(current['errors'],baseline['errors'],pools['validation'],eps,1)
+                commit_validation(output,ledger,score,update,candidate)
+                checkpoint()
+            if update>=cap or (update>=1000 and ledger['bad_validations']>=5):
+                state['stop_reason']=('review_at_1500' if cap==1500 else
+                    'max_updates' if update>=4000 else 'source_early_stopping')
+                break
             status('running',phase='train')
             progress.tick('train',updates=state['updates'],pending_queries=state['pending'])
             previous_update=state['updates']
@@ -179,25 +205,18 @@ def run(cfg,output,resume=False):
                     stream.write(json.dumps(dict(updates=state['updates'],loss=progress.state.get('loss'),
                         learning_rate=progress.state.get('learning_rate'),at=time.time(),
                         parameter_version=model.parameter_version))+'\n')
-            if time.monotonic()-last_save>=30 or state['updates']==1500:
+            if time.monotonic()-last_save>=30 or state['updates']%500==0:
                 memory('train')
                 checkpoint()
                 last_save=time.monotonic()
-        if state['updates']!=1500 or state['pending']:
-            raise ValueError('Authorized review cannot exceed update1500 or retain an extra batch')
-        candidate=output/'candidate-001500.pt'
-        if not candidate.exists():
-            atomic_torch(candidate,model.trainable_state())
-        assert_equal(torch.load(candidate,map_location='cpu',weights_only=False),model.trainable_state())
-        current=evaluation('sampled-update-001500',checkpoint_path=candidate)
-        score=relative_score(current['errors'],baseline['errors'],pools['validation'],eps,1)
-        commit_validation(output,ledger,score,1500,candidate)
-        state['stop_reason']='review_at_1500'
-        progress.tick('review_paused',force=True)
+        if state['pending'] or ledger['last_validated_update']!=state['updates']:
+            raise ValueError('Training may finish only after complete source validation')
+        review=cap==1500
+        progress.tick('review_paused' if review else 'source_training_complete',force=True)
         checkpoint()
         report(output)
-        status('complete',phase='review_paused',stop_reason='review_at_1500',target_evaluations=0,
-               requires_new_authorization=True)
+        status('complete',phase='review_paused' if review else 'source_training_complete',
+               stop_reason=state['stop_reason'],target_evaluations=0,requires_new_authorization=review)
     except Paused as exc:
         if model is not None and optimizer is not None and progress is not None:
             save(output/'last.pt',model,optimizer,state,progress,ledger,binding)

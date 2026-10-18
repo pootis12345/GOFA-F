@@ -53,6 +53,9 @@ def migrated_payload(original,binding):
 
 
 def prepare(cfg,output):
+    if cfg['protocol']=='stage19-sampled-continuation-v2':
+        from gofa_f.short_sampled_handoff import migrate
+        return migrate(cfg,output)
     if cfg['protocol']!='stage19-sampled-continuation-v1' or cfg['sampling']!=SETTINGS \
             or cfg['review_at_update']!=1500 or any(cfg['data'].values()):
         raise ValueError('Only the authorized sampled source continuation to 1500 is allowed')
@@ -152,6 +155,9 @@ def prepare(cfg,output):
 
 
 def verify(cfg,output):
+    if cfg['protocol']=='stage19-sampled-continuation-v2':
+        from gofa_f.short_sampled_handoff import verify_migration
+        return verify_migration(cfg,output)
     manifest=read(output/'manifest.json')
     source=Path(cfg['source_output'])
     exited(source,True)

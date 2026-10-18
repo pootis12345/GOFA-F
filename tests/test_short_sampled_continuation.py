@@ -178,17 +178,18 @@ def test_unadmitted_training_is_impossible(tmp_path,monkeypatch):
         run({},tmp_path,True)
 
 
-def test_end_to_end_evaluation_before_training_and_hard_review_stop(codec,tmp_path,monkeypatch):
+@pytest.mark.parametrize('cap',[1500,4000])
+def test_end_to_end_evaluation_before_training_and_authorized_stop(codec,tmp_path,monkeypatch,cap):
     monkeypatch.setattr(continuation.signal,'signal',lambda *_:None)
     model=tiny()
     opt=torch.optim.AdamW(model.adapter.parameters(),lr=2e-4,weight_decay=1e-4)
     for p in model.adapter.parameters():
         p.grad=torch.ones_like(p)
-    state=dict(updates=1499,pending=64,pending_tokens=64,pending_loss=64.,microbatch=2,
+    state=dict(updates=cap-1,pending=64,pending_tokens=64,pending_loss=64.,microbatch=2,
         peak_memory={},best_score=1.0285,early_reference=1.0285,bad_validations=0,last_validated_update=1000)
-    progress=dict(updates=1499,pending_queries=64,measured_updates=1499,train_seconds=100.,
-        throughput_anchor_updates=1499,throughput_anchor_seconds=100.,sampled_evaluation_durations={})
-    model.parameter_version=1499
+    progress=dict(updates=cap-1,pending_queries=64,measured_updates=cap-1,train_seconds=100.,
+        throughput_anchor_updates=cap-1,throughput_anchor_seconds=100.,sampled_evaluation_durations={})
+    model.parameter_version=cap-1
     class P:
         def __init__(self):
             self.state=progress
@@ -227,13 +228,15 @@ def test_end_to_end_evaluation_before_training_and_hard_review_stop(codec,tmp_pa
     monkeypatch.setattr(continuation,'apply_update',apply)
     for key in ('GOFA_STAGE19_ADMITTED','GOFA_STAGE19_SUPERVISOR_PID','GOFA_STAGE19_SUPERVISOR_TICKS'):
         monkeypatch.setenv(key,'1')
-    run({},tmp_path,True)
-    assert events==['sampled-native','sampled-update-001000','one_update','sampled-update-001500']
+    run({'review_at_update':1500 if cap==1500 else None},tmp_path,True)
+    assert events==['sampled-native','sampled-update-001000','one_update',f'sampled-update-{cap:06d}']
     status=read(tmp_path/'status.json')
     saved=torch.load(tmp_path/'last.pt',weights_only=False)
-    assert status['state']=='complete' and status['phase']=='review_paused'
-    assert saved['state']['updates']==1500 and saved['state']['pending']==0
+    assert status['state']=='complete'
+    assert status['phase']==('review_paused' if cap==1500 else 'source_training_complete')
+    assert saved['state']['updates']==cap and saved['state']['pending']==0
     assert saved['state']['best_score']==1.0285
     assert saved['sampling_ledger']['best_update']==1000  # Exact tie keeps earlier.
     assert saved['sampling_ledger']['bad_validations']==1
     assert not (tmp_path/'final_selection.json').exists()
+    assert (tmp_path/'source_final_selection.json').exists()==(cap==4000)

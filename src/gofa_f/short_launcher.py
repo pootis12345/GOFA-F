@@ -54,7 +54,7 @@ def supervise(output, config, snapshot, worker_mode="train"):
         "activity_limit_seconds": None, "wall_deadline": None, "maximum_updates": 4000,
         "worker_mode": worker_mode}
     if worker_mode == "sampled_continuation":
-        binding.update(authorized_review_update=1500,target_evaluation_enabled=False)
+        binding.update(authorized_review_update=cfg.get('review_at_update',1500),target_evaluation_enabled=False)
     if read(output/"launcher_manifest.json", binding) != binding:
         raise ValueError("Launcher recovery policy differs")
     atomic_json(output/"launcher_manifest.json", binding)

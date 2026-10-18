@@ -1,0 +1,40 @@
+{
+  "passed": true,
+  "manifest_sha256": "33d142d031e29cd7790e6d7808e437a660c9e834b05f50b508a10681492a7e5f",
+  "cases": 543,
+  "skipped": 21,
+  "cuda_initialized": false,
+  "alphabet": {
+    "finite_tokens": 10000,
+    "alphabet_sha256": "add5643ae352306b6e4ef714df79233350116f659a83ec2f0efbbd5c07612ab7",
+    "nan_excluded": true,
+    "first_separator": [],
+    "separator": [
+      29871
+    ],
+    "whole_and_incremental_checked": true
+  },
+  "unchanged_tensor_files": {
+    "allnode_model.py": "1a7583d5a2f21f4118a107a955b95c5c915743e8476cd9935badf4fdf57d0271",
+    "allnode_codec.py": "79a0593568312a98171fefdc2c080d0400b3c9c044142d0dd643d18223ce7347",
+    "allnode_graph.py": "0d452b6f72bf0301198e27e394b7f357a9da30bb9b1ae89653cd1b06ade0d490",
+    "allnode_kernel.py": "ff4b0d9bcf770b039ea957e28613e2bfdbdb5d181c5738f77b6445bc69fcab6c",
+    "generative_model.py": "4c9e10a3640ad38da334401b3194e21d72c1e4d58eaee0f0041b8cdbb3b693d5",
+    "generative_kernel.py": "84ca389c8a9b800cefd1b19a6fe6a0d84a917236da931377207d6b9d093bee09",
+    "generative_graph.py": "621239f066dd601c489e4f52c7e2b22136ba71bbb0a09af549c9d5358537b3fc",
+    "generative_data.py": "e14571e3189db9b02bfbdbee23f21dfaef489c65ccf0c5258204e3303a44bdec",
+    "chattime.py": "73ef5dfaeda8eed019e885fb3ba24912806bf812ab6dc650706ec4b0f734f5e9",
+    "short_codec.py": "0366d2c67aa813dca004476ef844b1d4c3ca124d5e0a3d5396a6da8e99bf98b9",
+    "short_forecast.py": "bcf225b21e8a44538a6f0bdaf77e6db2539a905a4ead7eb87e09d99945dd3f4f",
+    "short_data.py": "f2c618475fa4a163937be1d4051b8f6df773026e885ebffee99c90b3b0ef4dff",
+    "short_training.py": "73a394dfc73aebacc32d947d6b8aa576ca38fbeed1cfba287197b25cd4748550",
+    "allnode_stage.py": "366ac529669336edafabb2379534c2d57933a8738a300aa13e80e8597413d1af",
+    "short_sampled_forecast.py": "eff64577cb4e16331d6e28eefab6317bbbd79b69dcbee277dc46b7bbe84d49a7",
+    "short_sampling_diagnostic.py": "566b5f19eab5b60d3827ae94f94ca79168f4dd370e77d3632a659d50f7381a61"
+  },
+  "inherited_cpu_proof_sha256": "3eb61b06ce7debfa5d32da47dce60dd869c5dedcfd212ea43a8c579beb4ad57c",
+  "proof_scope": "orchestration, post-review state/shard migration and unchanged accepted numerical paths",
+  "real_post1500_state_audit": "deferred until source completes and all controllers/workers exit",
+  "numerical_tolerances_unchanged": true,
+  "target_evaluation_enabled": false
+}

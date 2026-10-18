@@ -1,0 +1,29 @@
+protocol: stage19-sampled-continuation-v2
+source_output: /home/dcg/dcg_data/GOFA-F/outputs/stage19-sampled-continuation-v1
+source_manifest_sha256: 8bad49370250029d6019a7f6b6339311e791de0e3470c5b3708a1657f338302e
+source_revision: 01f89fa696803bf78e2a1e5099651f6d0e9cfb5b
+reference_1000_sha256: 18128f46578da279f842e9b2efe3cfa3d5c6a27f7404b67e135ab5c07f765db9
+review_at_update: null
+sampling:
+  samples: 8
+  top_k: 100
+  temperature: 1.0
+  top_p: 1.0
+  seed: 42
+  aggregate: pointwise_median
+  execution: serial_single_query_independent_kv
+training:
+  max_updates: 4000
+data:
+  target_training_enabled: false
+  target_evaluation_enabled: false
+resources:
+  admission_policy: idle
+  resource_check_seconds: 10
+  admission_samples: 3
+  memory_cap_gib: 40
+  torch_cap_gib: 38
+  yield_on_foreign: false
+  leave_free_gib: 0
+  activity_limit_seconds: null
+  wall_deadline: null
