@@ -1,0 +1,63 @@
+{
+  "observed_at_bj": "2026-10-18T11:04:41.957203+08:00",
+  "reason": "user_requested_stop",
+  "user_instruction": "先停止本轮运行",
+  "runtime_code_revision": "e92d5937c38210ca2c1c58ed83be091827ec6a14",
+  "snapshot": "/home/dcg/dcg_data/GOFA-F-runs/stage18-allnode-chattime-v4",
+  "output": "/home/dcg/dcg_data/GOFA-F/outputs/stage18-allnode-chattime-v4",
+  "automation": {"id": "gofa-f-stage18", "deleted": true},
+  "processes": [
+    {"pid": 1297535, "expected_start_ticks": "616521051", "exists_after_stop": false},
+    {"pid": 1315456, "expected_start_ticks": "616655267", "exists_after_stop": false},
+    {"pid": 1294987, "expected_start_ticks": "616503439", "exists_after_stop": false}
+  ],
+  "stop_signal": "SIGTERM to identity-verified supervisor; supervisor cooperatively stopped verified worker",
+  "launcher_state": "stopped_by_user",
+  "worker_status": "resource_paused",
+  "worker_status_reason": "cooperative_resource_or_user_stop",
+  "checkpoint": {
+    "path": "last.pt",
+    "sha256": "41f539ce7758c91f8a4d026a7a87f30136e0dc6b7984132448e97c0cef47d8ac",
+    "bytes": 17011550,
+    "cpu_read_verified": true,
+    "updates": 399,
+    "pending_queries": 23,
+    "pending_tokens": 631,
+    "pending_loss": 59.281581399962306,
+    "gradient_tensor_count": 16,
+    "optimizer_state_count": 16,
+    "saved_keys": ["binding", "adapter", "optimizer", "gradients", "state", "progress", "rng", "parameter_version"],
+    "last_validated_update": 250,
+    "early_reference": 1.079568231221103,
+    "bad_validations": 0
+  },
+  "best_validation": {
+    "updates": 250,
+    "score": 1.079568231221103,
+    "source_scores": {
+      "solar": 0.9590008300351786,
+      "nn5": 1.1800971062562549,
+      "pems04": 1.1768417750037927,
+      "aq_shunyi": 1.0198717894070919
+    },
+    "best_sha256_verified": "5c3831192c1e2595b9f750ced179857138734277ce151c31143b436fe167923e",
+    "final_selection_exists": false,
+    "update_399_evaluated": false
+  },
+  "native_source_queries_complete": 3396,
+  "update_250_source_queries_complete": 3396,
+  "target_predictions": 0,
+  "failures_exists": false,
+  "activity": {
+    "worker": null,
+    "spent_seconds": 47197.91121226456,
+    "waiting_seconds": 1320.0994174182415,
+    "resource_pause_count": 0,
+    "peak_group_mib": 39540,
+    "includes_inherited_failure_and_diagnostics_seconds": 46.355011691339314
+  },
+  "gpu_compute_process_query": {"returncode": 0, "stdout": "", "stderr": ""},
+  "policy_changed": false,
+  "automatic_resume_enabled": false,
+  "note": "User stop is not resource failure or completed training. No final checkpoint selection was manufactured. Saved-state contents were inspected on CPU; this is not a resumed CUDA replay test."
+}
