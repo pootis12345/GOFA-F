@@ -271,7 +271,8 @@ def test_single_block_24_reports_late_steps_separately():
 
 
 @pytest.mark.parametrize("pending", [0, 23, 64])
-def test_actual_training_entry_consumes_queries_and_recovers_full_accumulation(tmp_path, monkeypatch, pending):
+@pytest.mark.parametrize("oom", [False, True])
+def test_actual_training_entry_consumes_queries_and_recovers_full_accumulation(tmp_path, monkeypatch, pending, oom):
     """Execute the real run loop through two updates, including partial/full recovery."""
     import json
     from types import SimpleNamespace
@@ -308,14 +309,20 @@ def test_actual_training_entry_consumes_queries_and_recovers_full_accumulation(t
         consumed.append(offset)
         return Query("pems04", 0, 500, 10, 1)
     monkeypatch.setattr(stage, "schedule", schedule)
-    monkeypatch.setattr(stage, "build_graph", lambda *a: SimpleNamespace(variable_ids=[0]))
-    monkeypatch.setattr(stage, "numeric_loss", lambda logits, *a: (logits.square().sum(), 1))
+    attempted = []
+    def training_batch(m, c, s, qs, *a):
+        attempted.append(len(qs))
+        if oom and len(attempted) == 1:
+            raise torch.cuda.OutOfMemoryError("diagnostic rollback")
+        return m.adapter.weight.square().sum()*len(qs), len(qs)
+    monkeypatch.setattr(stage, "training_batch", training_batch)
     monkeypatch.setattr(stage, "evaluate", lambda *a, **k: {"errors": []})
     monkeypatch.setattr(stage, "supervisor_alive", lambda *a: True)
     class CPUProxy:
         cuda = SimpleNamespace(set_per_process_memory_fraction=lambda *a: None,
             get_device_properties=lambda *a: SimpleNamespace(total_memory=80*2**30),
-            max_memory_allocated=lambda: 0, max_memory_reserved=lambda: 0)
+            max_memory_allocated=lambda: 0, max_memory_reserved=lambda: 0, empty_cache=lambda: None,
+            OutOfMemoryError=torch.cuda.OutOfMemoryError)
         device = staticmethod(lambda *a: torch.device("cpu"))
         def __getattr__(self, name):
             return getattr(torch, name)
@@ -333,15 +340,19 @@ def test_actual_training_entry_consumes_queries_and_recovers_full_accumulation(t
     monkeypatch.setattr(stage, "save_checkpoint", lambda p, m, o, s, *a: captured.append(deepcopy(s)))
     if pending:
         torch.save({"parameter_version": 0}, tmp_path/"last.pt")
-        state = dict(updates=0, pending=pending, pending_tokens=pending, pending_loss=float(pending),
+        state = dict(updates=0, pending=pending, pending_tokens=pending, pending_loss=float(pending), microbatch=2,
             peak_memory={}, last_validated_update=0, bad_validations=0, best_score=None, early_reference=None)
         forward.adapter.weight.grad = torch.ones_like(forward.adapter.weight)
         monkeypatch.setattr(stage, "restore_checkpoint", lambda *a: (state, None))
     for name in ("GOFA_STAGE19_ADMITTED", "GOFA_STAGE19_SUPERVISOR_PID", "GOFA_STAGE19_SUPERVISOR_TICKS"):
         monkeypatch.setenv(name, "1")
     stage.run(cfg, tmp_path, resume=bool(pending))
-    assert consumed == list(range(pending, 128))
+    assert consumed == (list(range(pending, pending+2)) if oom else [])+list(range(pending, 128))
     assert captured[-1]["updates"] == 2 and captured[-1]["pending"] == 0
+    assert attempted[0] == 2
+    if oom:
+        assert captured[-1]["microbatch"] == 1
+        assert len(captured[-1]["microbatch_fallbacks"]) == 1
 
 
 def test_original_sample_budget_and_single_origin_uncertainty():

@@ -76,6 +76,9 @@ def mechanisms(model, codec, series, queries, tolerance, diagnostic=None, check=
                            for p in getattr(exchange, name).parameters()):
                     raise AssertionError(f"Unused branch after actual updates: {i}/{name}")
         proof["actual_nonzero_diagnostic_updates"] = 3
+        from gofa_f.short_training_checks import optimization_checks
+        proof["training_optimizations_fresh"] = optimization_checks(model, codec, series, queries,
+            tolerance, check=check)
         def training_path(kind, current=None):
             check()
             current = tokens if current is None else current

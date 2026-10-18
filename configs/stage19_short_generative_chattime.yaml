@@ -1,5 +1,8 @@
-protocol: stage19-short-generative-chattime-v2
+protocol: stage19-short-generative-chattime-v3
 seed: 42
+continuation:
+  source_output: /home/dcg/dcg_data/GOFA-F/outputs/stage19-short-generative-chattime-v2
+  checkpoint_sha256: 8a1bd0cb4f3105b0d596bf238a948acbcffa9759864efa5cab28f9117328a961
 weights:
   directory: /home/dcg/dcg_data/GOFA-F/data/weights/chattime-7b-20baa88
   revision: 20baa88d6ab838b34abbd1d2b1f4cea57c8ff870
@@ -35,7 +38,7 @@ decode:
 training:
   max_updates: 4000
   effective_batch: 64
-  microbatch: 1
+  microbatch: 2
   learning_rate: 0.0002
   weight_decay: 0.0001
   gradient_clip: 1.0
@@ -45,6 +48,9 @@ training:
   minimum_updates: 1000
   relative_min_delta: 0.001
   checkpoint_seconds: 30
+optimizations:
+  training_logits: observed_numeric_slots_finite_vocabulary_v1
+  teacher_attention: isolated_rows_original_capacity_v1
 cache:
   disk_limit_gib: 128
   ram_limit_gib: 32

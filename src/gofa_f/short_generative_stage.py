@@ -14,17 +14,17 @@ import torch
 import yaml
 
 from gofa_f.allnode_kernel import EXECUTION
-from gofa_f.allnode_graph import build_graph
 from gofa_f.allnode_model import frozen_cache_binding
 from gofa_f.allnode_stage import (Paused, apply_update, read, rng_state, restore_rng, save_checkpoint,
     restore_checkpoint, schedule, supervisor_alive, verify_weights, load_model as base_load_model)
 from gofa_f.generative_data import SOURCES, Series, sha
 from gofa_f.generative_model import GenerativePrefixLRU
 from gofa_f.prefix_cache import atomic_json
-from gofa_f.short_codec import ShortCodec, numeric_loss
+from gofa_f.short_codec import ShortCodec
 from gofa_f.short_data import TEMPLATES, TARGETS, build_queries, relative_score
 from gofa_f.short_forecast import evaluate
 from gofa_f.short_progress import Progress
+from gofa_f.short_training import training_batch
 
 
 def config_check(cfg):
@@ -36,11 +36,14 @@ def config_check(cfg):
              "graph_top_k": 8, "max_subgraph_nodes": 9}
     if any(a[k] != v for k, v in fixed.items()):
         raise ValueError("Fixed graph architecture changed")
-    fixed = {"max_updates": 4000, "effective_batch": 64, "microbatch": 1,
+    fixed = {"max_updates": 4000, "effective_batch": 64, "microbatch": 2,
         "learning_rate": 2e-4, "weight_decay": 1e-4, "gradient_clip": 1., "warmup_updates": 100,
         "validation_every": 500, "patience": 5, "minimum_updates": 1000, "relative_min_delta": .001}
     if any(t[k] != v for k, v in fixed.items()):
         raise ValueError("Fixed optimization protocol changed")
+    if cfg.get("optimizations") != {"training_logits": "observed_numeric_slots_finite_vocabulary_v1",
+                                    "teacher_attention": "isolated_rows_original_capacity_v1"}:
+        raise ValueError("Training-only optimization binding changed")
     if tuple(map(tuple, cfg["data"]["templates"])) != TEMPLATES or cfg["seed"] != 42 \
             or cfg["data"]["sources"] != list(SOURCES) or cfg["data"]["target_training_enabled"] \
             or cfg["data"]["target_evaluation_after_lock"] is not True:
@@ -100,7 +103,8 @@ def prepare(cfg, output):
         "target_queries": {k: len(v) for k, v in pools["targets"].items()},
         "dependencies": {"torch": torch.__version__, "transformers": __import__("transformers").__version__,
                          "numpy": np.__version__},
-        "old_adapter_imported": False, "baseline_imported": False,
+        "old_adapter_imported": False, "baseline_imported": bool(cfg.get("continuation")),
+        "continuation_source": cfg.get("continuation"),
         "target_training_enabled": False, "target_evaluation_requires_sealed_source_checkpoint": True,
         "stop_rule": "4000_updates_or_complete_source_patience_or_user_or_unrecoverable_failure"}
     if read(output/"manifest.json", manifest) != manifest:
@@ -149,7 +153,8 @@ def run(cfg, output, resume):
     series = {name: Series(root/"sources"/(name+".npz")) for name in SOURCES}
     pools = read(output/"pools/queries.json")
     optimizer = torch.optim.AdamW(model.adapter.parameters(), lr=2e-4, weight_decay=1e-4)
-    state = {"updates": 0, "pending": 0, "pending_tokens": 0, "pending_loss": 0., "microbatch": 1,
+    initial_adapter = model.trainable_state()
+    state = {"updates": 0, "pending": 0, "pending_tokens": 0, "pending_loss": 0., "microbatch": 2,
         "best_score": None, "early_reference": None, "bad_validations": 0, "last_validated_update": 0,
         "peak_memory": {}, "stop_reason": None}
     saved_progress = None
@@ -195,8 +200,20 @@ def run(cfg, output, resume):
             from gofa_f.short_checks import mechanisms
             status("running", phase="gpu_mechanisms")
             progress.tick("gpu_mechanisms", force=True)
-            proof = mechanisms(model, codec, series, pools["validation"], 2e-3, check=check,
-                diagnostic=lambda v: atomic_json(output/"mechanism_diagnostics.json", v))
+            continued_adapter, continued_version = model.trainable_state(), model.parameter_version
+            model.load_trainable(initial_adapter)
+            model.parameter_version = 0
+            try:
+                proof = mechanisms(model, codec, series, pools["validation"], 2e-3, check=check,
+                    diagnostic=lambda v: atomic_json(output/"mechanism_diagnostics.json", v))
+            finally:
+                model.load_trainable(continued_adapter)
+                model.parameter_version = continued_version
+            from gofa_f.short_training_checks import optimization_checks
+            proof["training_optimizations"] = optimization_checks(model, codec, series,
+                pools["validation"], 2e-3, check=check,
+                checkpoint=output/"last.pt" if (output/"last.pt").exists() else None,
+                diagnostic=lambda v: atomic_json(output/"optimization_diagnostics.json", v))
             atomic_json(output/"mechanisms.json", proof)
             memory("mechanisms")
             torch.cuda.reset_peak_memory_stats()
@@ -258,21 +275,15 @@ def run(cfg, output, resume):
             if state["pending"] == 64:
                 apply_update(model, optimizer, state, progress)
                 continue
-            q = schedule(pools["train"], state["updates"]*64+state["pending"], cfg["seed"])
-            data = series[q.source]
-            history = np.where(data.mask[q.origin-q.length:q.origin, q.variable],
-                               data.values[q.origin-q.length:q.origin, q.variable], np.nan)
-            response = np.where(data.mask[q.origin:q.origin+q.horizon, q.variable],
-                                data.values[q.origin:q.origin+q.horizon, q.variable], np.nan)
-            tokens = codec.batch([codec.record(history, response)]).to(device)
-            graph = build_graph(data, q)
-            progress.tick(current_nodes=len(graph.variable_ids), current_history=q.length, current_horizon=q.horizon)
+            size = min(state["microbatch"], 64-state["pending"])
+            queries = [schedule(pools["train"], state["updates"]*64+state["pending"]+i, cfg["seed"])
+                       for i in range(size)]
+            progress.tick(current_microbatch=size, current_history=[q.length for q in queries],
+                          current_horizon=[q.horizon for q in queries])
             gradients = {n: p.grad.detach().clone() if p.grad is not None else None for n, p in model.adapter.named_parameters()}
             before_rng = rng_state()
             try:
-                prefix = model.cached_prefix(tokens, cache, "stage19_teacher_numeric")
-                contexts = model.encode_origins([graph], codec, cache, check)
-                loss, count = numeric_loss(model(tokens, contexts=contexts, prefix=prefix).logits, tokens.labels, codec)
+                loss, count = training_batch(model, codec, series, queries, cache, check)
                 if not torch.isfinite(loss):
                     raise FloatingPointError("Nonfinite numeric loss")
                 loss.backward()
@@ -280,8 +291,14 @@ def run(cfg, output, resume):
                 for name, p in model.adapter.named_parameters():
                     p.grad = gradients[name]
                 restore_rng(before_rng)
+                if size > 1:
+                    state["microbatch"] = 1
+                    state.setdefault("microbatch_fallbacks", []).append({"updates": state["updates"],
+                        "pending": state["pending"], "from": size, "to": 1, "reason": "cuda_oom_rolled_back"})
+                    torch.cuda.empty_cache()
+                    continue
                 raise
-            state["pending"] += 1
+            state["pending"] += size
             state["pending_tokens"] += count
             state["pending_loss"] += float(loss.detach())
             if state["pending"] == 64:

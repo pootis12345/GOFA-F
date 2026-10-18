@@ -31,7 +31,9 @@ class Progress:
         epoch = min(consumed//p["epoch_queries"], (total-1)//p["epoch_queries"])
         size = min(p["epoch_queries"], total-epoch*p["epoch_queries"])
         done = consumed-epoch*p["epoch_queries"]
-        rate = p["train_seconds"]/p["measured_updates"] if p["measured_updates"] else None
+        measured = p["measured_updates"]-p.get("throughput_anchor_updates", 0)
+        seconds = p["train_seconds"]-p.get("throughput_anchor_seconds", 0.)
+        rate = seconds/measured if measured > 0 else None
         validation_mean = p["validation_seconds"]/p["validation_runs"] if p["validation_runs"] else None
         remaining_rounds = cap//p["validation_every"]-p["validation_runs"]
         p.update(state=self.phase, epoch=epoch+1, maximum_epochs=math.ceil(total/p["epoch_queries"]),

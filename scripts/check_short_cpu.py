@@ -33,6 +33,9 @@ def main():
     cases = ET.parse(xml).getroot().findall(".//testcase")
     proof = {"passed": False, "cases": len(cases), "skipped": sum(x.find("skipped") is not None for x in cases),
         "cuda_disabled": True, "real_weight_dtype": "float32", "manifest_sha256": sha(output/"manifest.json")}
+    if cfg.get("continuation"):
+        from gofa_f.short_migration import migrate
+        proof["migration"] = migrate(cfg, output)
     atomic_json(output/"cpu_preflight.json", proof)
     model, codec = load_model(cfg, "cpu", torch.float32)
     try:
@@ -42,6 +45,11 @@ def main():
         proof["real_weights"] = mechanisms(model, codec, series,
             read(output/"pools/queries.json")["validation"], 1e-6,
             diagnostic=lambda v: atomic_json(output/"cpu_mechanisms.json", v))
+        if (output/"last.pt").exists():
+            from gofa_f.short_training_checks import optimization_checks
+            proof["continued_training_optimizations"] = optimization_checks(model, codec, series,
+                read(output/"pools/queries.json")["validation"], 1e-6, checkpoint=output/"last.pt",
+                diagnostic=lambda v: atomic_json(output/"cpu_optimization_continued.json", v))
         proof["passed"] = True
     except Exception as exc:
         proof.update(error_type=type(exc).__name__, error=str(exc))
