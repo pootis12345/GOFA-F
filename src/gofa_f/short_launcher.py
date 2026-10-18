@@ -46,13 +46,15 @@ def supervise(output, config, snapshot, worker_mode="train"):
         fcntl.flock(stream, fcntl.LOCK_EX | fcntl.LOCK_NB)
         locks.append(stream)
     if worker_mode not in ("train", "projection_probe", "source_diagnostic", "native_case_probe",
-                           "sampling_diagnostic", "stability_diagnostic"):
+                           "sampling_diagnostic", "stability_diagnostic", "sampled_continuation"):
         raise ValueError("Unknown supervised worker mode")
     binding = {"snapshot": str(snapshot), "config": str(config), "admission_policy": "idle",
         "resource_check_seconds": 10, "admission_samples": 3, "idle_max_used_mib": 256,
         "memory_cap_gib": 40, "torch_cap_gib": 38, "yield_on_foreign": False,
         "activity_limit_seconds": None, "wall_deadline": None, "maximum_updates": 4000,
         "worker_mode": worker_mode}
+    if worker_mode == "sampled_continuation":
+        binding.update(authorized_review_update=1500,target_evaluation_enabled=False)
     if read(output/"launcher_manifest.json", binding) != binding:
         raise ValueError("Launcher recovery policy differs")
     atomic_json(output/"launcher_manifest.json", binding)
@@ -124,7 +126,8 @@ def supervise(output, config, snapshot, worker_mode="train"):
                   "source_diagnostic": "gofa_f.short_source_diagnostic",
                   "native_case_probe": "gofa_f.short_native_case_probe",
                   "sampling_diagnostic": "gofa_f.short_sampling_diagnostic",
-                  "stability_diagnostic": "gofa_f.short_stability_diagnostic"}[worker_mode]
+                  "stability_diagnostic": "gofa_f.short_stability_diagnostic",
+                  "sampled_continuation": "gofa_f.short_sampled_continuation"}[worker_mode]
         command = [sys.executable, "-u", "-m", module,
                    "--config", str(config), "--output", str(output)]
         if worker_mode == "train":
@@ -132,6 +135,8 @@ def supervise(output, config, snapshot, worker_mode="train"):
             if (output/"last.pt").exists():
                 command.append("--resume")
         elif worker_mode == "stability_diagnostic" and any((output/"teachers").glob("*.json")):
+            command.append("--resume")
+        elif worker_mode == "sampled_continuation":
             command.append("--resume")
         child = subprocess.Popen(command, cwd=snapshot, env=environment, start_new_session=True)
         tick = process_identity(child.pid)
@@ -177,6 +182,9 @@ def supervise(output, config, snapshot, worker_mode="train"):
         ledger.stop()
         previous = ledger.state
         final = read(output/"status.json", {}).get("state")
+        if worker_mode == "sampled_continuation" and final == "resource_paused" and reason is None:
+            ledger.state["resource_pause_count"] += 1
+            ledger.save()
         if reason == "stopped_by_user":
             break
         if final in ("complete", "failed", "incomplete") or (child.returncode not in (0, 75) and reason is None):
@@ -203,7 +211,7 @@ def main():
     parser.add_argument("--snapshot", required=True)
     parser.add_argument("--worker-mode", choices=("train", "projection_probe", "source_diagnostic",
                                                 "native_case_probe", "sampling_diagnostic",
-                                                "stability_diagnostic"), default="train")
+                                                "stability_diagnostic", "sampled_continuation"), default="train")
     args = parser.parse_args()
     supervise(args.output, args.config, args.snapshot, args.worker_mode)
 

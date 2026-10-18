@@ -1,5 +1,18 @@
 # 运行交接记录
 
+## Stage19 已批准8采样源验证和1177→1500接续，CPU验收通过（2026-10-18，Asia/Shanghai）
+
+新独立stage19-sampled-continuation-v1：先原2264条原生8采样源基线，再固定1000更新8采样验证；
+然后从1177更新/pending30查询390标签精确接续，1500更新完成同协议源验证后停止复核。
+α=1、生成式头、教师强制训练不采样，原优化器/梯度/RNG/游标/训练损失及学习率不变。
+新的sampling_ledger与历史贪心best/早停账本隔离，只比较1000和1500同采样完整S，不混入旧分数。
+四次暂停后诊断成本一次性合并，原账本/快照/检查点不改；不运行九目标、不自动越过1500、每小时跟进仍PAUSED。
+C禁CUDA、OMP/MKL各2线程：Ruff通过，最终完整回归515通过/21旧可选依赖跳过，
+真实1177模型/AdamW/部分梯度/RNG/状态序列化精确迁移；新增端到端CPU测试确认先评价、再更新、1500必停。
+张量模型/训练/采样路径均未改，依据文件哈希复用既有真实FP32/BF16非零预测/梯度、训练优化与8采样KV证明。
+GPU待固定快照部署后由三次10秒完全空闲准入；保持40GiB项目组/38GiB Torch、10秒审计、无时间硬限制。
+[执行协议](STAGE19_SAMPLED_CONTINUATION_PROTOCOL.md)，[CPU证明](results/stage19-sampled-continuation-v1-cpu.json)。
+
 ## Stage19 图增量与目标一致性诊断完成（2026-10-18 22:47，Asia/Shanghai）
 
 独立入口 short_stability_diagnostic、固定配置 stage19_stability_diagnostic.yaml；
