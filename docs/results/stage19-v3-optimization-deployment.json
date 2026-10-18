@@ -1,0 +1,105 @@
+{
+  "verified_at_bj": "2026-10-18T13:32:11.442269+08:00",
+  "deployment": {
+    "pid": 2016888,
+    "start_ticks": "622235747",
+    "uid": 1006,
+    "snapshot": "/home/dcg/dcg_data/GOFA-F-runs/stage19-short-generative-chattime-v3",
+    "output": "/home/dcg/dcg_data/GOFA-F/outputs/stage19-short-generative-chattime-v3",
+    "config": "/home/dcg/dcg_data/GOFA-F-runs/stage19-short-generative-chattime-v3/configs/stage19_short_generative_chattime.yaml",
+    "code_revision": "88311f4bbb60a57b0f00500c8ac04b5332546064",
+    "command": [
+      "/home/dcg/dcg_data/GOFA-F/.venv-chat/bin/python",
+      "-u",
+      "/home/dcg/dcg_data/GOFA-F-runs/stage19-short-generative-chattime-v3/scripts/bootstrap_short_stage.py",
+      "--snapshot",
+      "/home/dcg/dcg_data/GOFA-F-runs/stage19-short-generative-chattime-v3",
+      "--output",
+      "/home/dcg/dcg_data/GOFA-F/outputs/stage19-short-generative-chattime-v3",
+      "--config",
+      "/home/dcg/dcg_data/GOFA-F-runs/stage19-short-generative-chattime-v3/configs/stage19_short_generative_chattime.yaml"
+    ],
+    "started_at": 1792301296.7091346,
+    "started_at_bj": "2026-10-18T13:28:16.709212+08:00",
+    "admission_policy": "idle",
+    "microbatch": 2,
+    "effective_batch": 64,
+    "activity_limit_seconds": null,
+    "wall_deadline": null
+  },
+  "bootstrap": {
+    "state": "cpu_preflight",
+    "pid": 2016888,
+    "start_ticks": "622235747",
+    "updated_at": 1792301296.7312636
+  },
+  "cpu_preflight": {
+    "passed": false,
+    "cases": 471,
+    "skipped": 21,
+    "error_type": null,
+    "error": null
+  },
+  "cpu_mechanisms": null,
+  "cpu_optimization_continued": null,
+  "migration": {
+    "source": "/mnt/sevenT/dcg_data/GOFA-F/outputs/stage19-short-generative-chattime-v2",
+    "source_checkpoint_sha256": "8a1bd0cb4f3105b0d596bf238a948acbcffa9759864efa5cab28f9117328a961",
+    "source_manifest_sha256": "7d7d2df989d37be4bc001964b36eea175057fa02aa21019e42c1ca989cb280f0",
+    "target_manifest_sha256": "53e386fef313b932c46a1af3f6274131fd94d2d03a548fa00c85d20e5b3c8848",
+    "target_checkpoint_sha256": "54680c1968dbf68889ab4500aa692cf1ca4fe14bcd6fd33518172e99f35fdcd8",
+    "state_restore": "exact",
+    "operational_changes": [
+      "microbatch1_to2",
+      "compact_training_projection",
+      "post_migration_eta_anchor"
+    ],
+    "updates": 98,
+    "pending": 48,
+    "pending_tokens": 482,
+    "source_baseline_sha256": "5f45222a4fe05f5d130c96fab7e3b1ad605d575e1a8f3b5da2fbf3db79302314",
+    "baseline_queries_preserved": 2264,
+    "baseline_predictions_changed": false,
+    "inference_code_sha_unchanged": [
+      "allnode_model.py",
+      "allnode_codec.py",
+      "allnode_graph.py",
+      "allnode_kernel.py",
+      "generative_model.py",
+      "generative_kernel.py",
+      "generative_graph.py",
+      "generative_data.py",
+      "chattime.py",
+      "short_codec.py",
+      "short_forecast.py",
+      "short_data.py"
+    ],
+    "activity_retained": {
+      "spent_seconds": 1970.8228173693642,
+      "worker": null,
+      "waiting_seconds": 80.00603230856359,
+      "resource_pause_count": 0,
+      "peak_group_mib": 17246
+    },
+    "old_processes_exited": true
+  },
+  "processes": [
+    {
+      "pid": 2016888,
+      "start_ticks": "622235747",
+      "cpu_ticks": 2,
+      "command": "/home/dcg/dcg_data/GOFA-F/.venv-chat/bin/python -u /home/dcg/dcg_data/GOFA-F-runs/stage19-short-generative-chattime-v3/scripts/bootstrap_short_stage.py --snapshot /home/dcg/dcg_data/GOFA-F-runs/stage19-short-generative-chattime-v3 --output /home/dcg/dcg_data/GOFA-F/outputs/stage19-short-generative-chattime-v3 --config /home/dcg/dcg_data/GOFA-F-runs/stage19-short-generative-chattime-v3/configs/stage19_short_generative_chattime.yaml "
+    },
+    {
+      "pid": 2016889,
+      "start_ticks": "622235749",
+      "cpu_ticks": 40889,
+      "command": "/home/dcg/dcg_data/GOFA-F/.venv-chat/bin/python -u /mnt/sevenT/dcg_data/GOFA-F-runs/stage19-short-generative-chattime-v3/scripts/check_short_cpu.py --config /mnt/sevenT/dcg_data/GOFA-F-runs/stage19-short-generative-chattime-v3/configs/stage19_short_generative_chattime.yaml --output /mnt/sevenT/dcg_data/GOFA-F/outputs/stage19-short-generative-chattime-v3 "
+    }
+  ],
+  "regression_passed": 450,
+  "regression_skipped": 21,
+  "specialized_passed": 40,
+  "training_resumed": false,
+  "speedup_measured": false
+}

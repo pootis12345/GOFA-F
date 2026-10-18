@@ -19,6 +19,10 @@ v3仅改变训练投影与微批处理：有效数值位置×10000有限词表�
 98更新/pending48/482有效数值、完整2264基线、活动/等待/峰值和模型优化器/RNG/部分梯度均保留。
 真实7B FP32和新鲜/实际98更新BF16证明以实际后续文件为准。
 未通过真实CUDA前不能称已恢复训练或已测得提速，不原地编辑v2固定快照。
+固定源码88311f4bbb60a57b0f00500c8ac04b5332546064；快照与输出后缀均为
+stage19-short-generative-chattime-v3。CPU控制器13:28:16启动，PID2016888/start_ticks622235747，
+固定快照完整回归450通过/21跳过，migration.state_restore=exact，真实7B证明正在进行。
+详见[优化部署证据](results/stage19-v3-optimization-deployment.json)。自动跟进已转向v3，禁止重复启动。
 
 ## Stage19 v2 取消增强样本预算并修正训练调度（2026-10-18，Asia/Shanghai）
 
