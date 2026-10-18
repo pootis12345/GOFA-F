@@ -1,0 +1,4792 @@
+{
+  "checked_beijing": "2026-10-18T19:33:57.359804+08:00",
+  "scope": "read-only CPU comparison of existing source predictions; no new forward, target evaluation, training or protocol changes",
+  "selection_score_500": 1.0388702934242557,
+  "selection_score_1000": 1.028535690530102,
+  "score_ratio_1000_to_500": 0.9900520758370234,
+  "sources": {
+    "solar": {
+      "score_500": 0.8865810922341781,
+      "score_1000": 0.871246913822549,
+      "log_score_change_contribution": -0.004361794026168721,
+      "relative_change_pct": -1.7295855445086268,
+      "variables_better_worse_equal_1000_vs_500": [
+        47,
+        29,
+        61
+      ],
+      "top5_improving_variables": [
+        {
+          "variable": "solar:3",
+          "ratio_500": 2.0653981977399862,
+          "ratio_1000": 0.5736579905279637
+        },
+        {
+          "variable": "solar:26",
+          "ratio_500": 2.7159705704161925,
+          "ratio_1000": 0.8720023393357375
+        },
+        {
+          "variable": "solar:44",
+          "ratio_500": 0.9840836291138324,
+          "ratio_1000": 0.3368386183834861
+        },
+        {
+          "variable": "solar:127",
+          "ratio_500": 0.8042813786748267,
+          "ratio_1000": 0.36614199566582123
+        },
+        {
+          "variable": "solar:110",
+          "ratio_500": 1.9807806526794192,
+          "ratio_1000": 0.947362448712747
+        }
+      ],
+      "top5_worsening_variables": [
+        {
+          "variable": "solar:52",
+          "ratio_500": 0.06621529472568197,
+          "ratio_1000": 1.7437680230727906
+        },
+        {
+          "variable": "solar:19",
+          "ratio_500": 0.41203954300067236,
+          "ratio_1000": 1.0
+        },
+        {
+          "variable": "solar:29",
+          "ratio_500": 0.9685394377317322,
+          "ratio_1000": 1.6557733876452856
+        },
+        {
+          "variable": "solar:34",
+          "ratio_500": 0.5664490222251441,
+          "ratio_1000": 0.8599800541307685
+        },
+        {
+          "variable": "solar:91",
+          "ratio_500": 1.1282368294338747,
+          "ratio_1000": 1.7094812161059787
+        }
+      ],
+      "native": {
+        "mae": 2.8884164901207914,
+        "boundary": 0.0077969475779694755
+      },
+      "rounds": {
+        "500": {
+          "all": {
+            "queries": 548,
+            "observed_slots": 6028,
+            "native_mae": 2.8884164901207914,
+            "gofa_mae": 2.698089282402565,
+            "variable_geomean_ratio": 0.8865810922341781,
+            "variables_better_worse_equal": [
+              72,
+              38,
+              27
+            ],
+            "variable_ratio_quantiles_10_50_90": [
+              0.4449587996417942,
+              0.9838439464994847,
+              1.563420399492408
+            ],
+            "queries_better_worse_equal_full_horizon": [
+              114,
+              68,
+              366
+            ],
+            "native_boundary_fraction": 0.0077969475779694755,
+            "gofa_boundary_fraction": 0.16423357664233576,
+            "native_lower_upper_counts": [
+              0,
+              47
+            ],
+            "gofa_lower_upper_counts": [
+              119,
+              871
+            ],
+            "boundary_requested_denominator": 6028,
+            "true_outside_fraction_observed": 0.14349701393497014,
+            "range_only_mae_lower_bound": 0.9046180494280845,
+            "identical_queries": 366,
+            "identical_slot_fraction": 0.6551094890510949,
+            "native_constant_multistep_queries": 379,
+            "gofa_constant_multistep_queries": 369,
+            "native_mean_unique_numeric_ids": 1.094890510948905,
+            "gofa_mean_unique_numeric_ids": 1.102189781021898,
+            "native_first_slot_mae": 0.9701215640061857,
+            "gofa_first_slot_mae": 0.8739165299378986
+          },
+          "by_template": {
+            "10->1": {
+              "queries": 137,
+              "observed_slots": 137,
+              "native_mae": 1.105881984379711,
+              "gofa_mae": 0.8290638542183025,
+              "variable_geomean_ratio": 0.7683876917890694,
+              "variables_better_worse_equal": [
+                24,
+                15,
+                98
+              ],
+              "variable_ratio_quantiles_10_50_90": [
+                0.2150858617563319,
+                1.0,
+                1.4998403267847547
+              ],
+              "queries_better_worse_equal_full_horizon": [
+                24,
+                15,
+                98
+              ],
+              "native_boundary_fraction": 0.0,
+              "gofa_boundary_fraction": 0.0948905109489051,
+              "native_lower_upper_counts": [
+                0,
+                0
+              ],
+              "gofa_lower_upper_counts": [
+                1,
+                12
+              ],
+              "boundary_requested_denominator": 137,
+              "true_outside_fraction_observed": 0.0072992700729927005,
+              "range_only_mae_lower_bound": 0.0020102561707044295,
+              "identical_queries": 98,
+              "identical_slot_fraction": 0.7153284671532847,
+              "native_constant_multistep_queries": 0,
+              "gofa_constant_multistep_queries": 0,
+              "native_mean_unique_numeric_ids": 1.0,
+              "gofa_mean_unique_numeric_ids": 1.0,
+              "native_first_slot_mae": 1.105881984379711,
+              "gofa_first_slot_mae": 0.8290638542183025
+            },
+            "12->12": {
+              "queries": 137,
+              "observed_slots": 1644,
+              "native_mae": 2.3776298871319863,
+              "gofa_mae": 1.8568359773174354,
+              "variable_geomean_ratio": 0.9275526791139701,
+              "variables_better_worse_equal": [
+                32,
+                12,
+                93
+              ],
+              "variable_ratio_quantiles_10_50_90": [
+                0.6897349965531692,
+                1.0,
+                1.0
+              ],
+              "queries_better_worse_equal_full_horizon": [
+                32,
+                12,
+                93
+              ],
+              "native_boundary_fraction": 0.0,
+              "gofa_boundary_fraction": 0.12226277372262774,
+              "native_lower_upper_counts": [
+                0,
+                0
+              ],
+              "gofa_lower_upper_counts": [
+                71,
+                130
+              ],
+              "boundary_requested_denominator": 1644,
+              "true_outside_fraction_observed": 0.16058394160583941,
+              "range_only_mae_lower_bound": 0.796552689199323,
+              "identical_queries": 93,
+              "identical_slot_fraction": 0.683698296836983,
+              "native_constant_multistep_queries": 128,
+              "gofa_constant_multistep_queries": 124,
+              "native_mean_unique_numeric_ids": 1.0802919708029197,
+              "gofa_mean_unique_numeric_ids": 1.145985401459854,
+              "native_first_slot_mae": 1.039188138382114,
+              "gofa_first_slot_mae": 0.6947252371503626
+            },
+            "14->7": {
+              "queries": 137,
+              "observed_slots": 959,
+              "native_mae": 1.8560726369982854,
+              "gofa_mae": 1.5980471752701306,
+              "variable_geomean_ratio": 0.9389540472889245,
+              "variables_better_worse_equal": [
+                30,
+                15,
+                92
+              ],
+              "variable_ratio_quantiles_10_50_90": [
+                0.6285745617891547,
+                1.0,
+                1.0196930992990842
+              ],
+              "queries_better_worse_equal_full_horizon": [
+                30,
+                15,
+                92
+              ],
+              "native_boundary_fraction": 0.0,
+              "gofa_boundary_fraction": 0.14077163712200208,
+              "native_lower_upper_counts": [
+                0,
+                0
+              ],
+              "gofa_lower_upper_counts": [
+                24,
+                111
+              ],
+              "boundary_requested_denominator": 959,
+              "true_outside_fraction_observed": 0.12408759124087591,
+              "range_only_mae_lower_bound": 0.28246166730945554,
+              "identical_queries": 92,
+              "identical_slot_fraction": 0.6819603753910324,
+              "native_constant_multistep_queries": 125,
+              "gofa_constant_multistep_queries": 126,
+              "native_mean_unique_numeric_ids": 1.102189781021898,
+              "gofa_mean_unique_numeric_ids": 1.094890510948905,
+              "native_first_slot_mae": 0.939961667967217,
+              "gofa_first_slot_mae": 0.9426340527157384
+            },
+            "48->24": {
+              "queries": 137,
+              "observed_slots": 3288,
+              "native_mae": 3.5191823531818036,
+              "gofa_mae": 3.5174376090331005,
+              "variable_geomean_ratio": 1.0035301865290756,
+              "variables_better_worse_equal": [
+                28,
+                26,
+                83
+              ],
+              "variable_ratio_quantiles_10_50_90": [
+                0.7250539076413695,
+                1.0,
+                1.2015454411703839
+              ],
+              "queries_better_worse_equal_full_horizon": [
+                28,
+                26,
+                83
+              ],
+              "native_boundary_fraction": 0.014294403892944039,
+              "gofa_boundary_fraction": 0.19495133819951338,
+              "native_lower_upper_counts": [
+                0,
+                47
+              ],
+              "gofa_lower_upper_counts": [
+                23,
+                618
+              ],
+              "boundary_requested_denominator": 3288,
+              "true_outside_fraction_observed": 0.14628953771289538,
+              "range_only_mae_lower_bound": 1.177721665712789,
+              "identical_queries": 83,
+              "identical_slot_fraction": 0.6304744525547445,
+              "native_constant_multistep_queries": 126,
+              "gofa_constant_multistep_queries": 119,
+              "native_mean_unique_numeric_ids": 1.197080291970803,
+              "gofa_mean_unique_numeric_ids": 1.167883211678832,
+              "native_first_slot_mae": 0.7954544652957006,
+              "gofa_first_slot_mae": 1.0292429756671906
+            }
+          },
+          "h24_steps_1_16": {
+            "queries": 137,
+            "observed_slots": 2192,
+            "native_mae": 2.707319433514684,
+            "gofa_mae": 2.673523666576044,
+            "variable_geomean_ratio": 1.0038593323118001,
+            "variables_better_worse_equal": [
+              32,
+              22,
+              83
+            ],
+            "variable_ratio_quantiles_10_50_90": [
+              0.8019744029562216,
+              1.0,
+              1.2354765928169646
+            ],
+            "queries_better_worse_equal_full_horizon": [
+              28,
+              26,
+              83
+            ],
+            "native_boundary_fraction": 0.014142335766423358,
+            "gofa_boundary_fraction": 0.19388686131386862,
+            "native_lower_upper_counts": [
+              0,
+              31
+            ],
+            "gofa_lower_upper_counts": [
+              15,
+              410
+            ],
+            "boundary_requested_denominator": 2192,
+            "true_outside_fraction_observed": 0.114507299270073,
+            "range_only_mae_lower_bound": 0.7651858490865152,
+            "identical_queries": 83,
+            "identical_slot_fraction": 0.6318430656934306,
+            "native_constant_multistep_queries": 126,
+            "gofa_constant_multistep_queries": 119,
+            "native_mean_unique_numeric_ids": 1.197080291970803,
+            "gofa_mean_unique_numeric_ids": 1.167883211678832,
+            "native_first_slot_mae": 0.7954544652957006,
+            "gofa_first_slot_mae": 1.0292429756671906
+          },
+          "h24_steps_17_24": {
+            "queries": 137,
+            "observed_slots": 1096,
+            "native_mae": 5.1429081925160425,
+            "gofa_mae": 5.205265493947214,
+            "variable_geomean_ratio": 0.9888402468448869,
+            "variables_better_worse_equal": [
+              28,
+              23,
+              86
+            ],
+            "variable_ratio_quantiles_10_50_90": [
+              0.7295294827891387,
+              1.0,
+              1.1900170018443337
+            ],
+            "queries_better_worse_equal_full_horizon": [
+              28,
+              26,
+              83
+            ],
+            "native_boundary_fraction": 0.014598540145985401,
+            "gofa_boundary_fraction": 0.19708029197080293,
+            "native_lower_upper_counts": [
+              0,
+              16
+            ],
+            "gofa_lower_upper_counts": [
+              8,
+              208
+            ],
+            "boundary_requested_denominator": 1096,
+            "true_outside_fraction_observed": 0.20985401459854014,
+            "range_only_mae_lower_bound": 2.002793298965336,
+            "identical_queries": 86,
+            "identical_slot_fraction": 0.6277372262773723,
+            "native_constant_multistep_queries": 137,
+            "gofa_constant_multistep_queries": 137,
+            "native_mean_unique_numeric_ids": 1.0,
+            "gofa_mean_unique_numeric_ids": 1.0,
+            "native_first_slot_mae": 4.526321335873454,
+            "gofa_first_slot_mae": 4.558983717265971
+          }
+        },
+        "1000": {
+          "all": {
+            "queries": 548,
+            "observed_slots": 6028,
+            "native_mae": 2.8884164901207914,
+            "gofa_mae": 2.5543658251884827,
+            "variable_geomean_ratio": 0.871246913822549,
+            "variables_better_worse_equal": [
+              81,
+              31,
+              25
+            ],
+            "variable_ratio_quantiles_10_50_90": [
+              0.43260040351765217,
+              0.9705268277331908,
+              1.435749492488314
+            ],
+            "queries_better_worse_equal_full_horizon": [
+              128,
+              51,
+              369
+            ],
+            "native_boundary_fraction": 0.0077969475779694755,
+            "gofa_boundary_fraction": 0.13188453881884538,
+            "native_lower_upper_counts": [
+              0,
+              47
+            ],
+            "gofa_lower_upper_counts": [
+              60,
+              735
+            ],
+            "boundary_requested_denominator": 6028,
+            "true_outside_fraction_observed": 0.14349701393497014,
+            "range_only_mae_lower_bound": 0.9046180494280845,
+            "identical_queries": 369,
+            "identical_slot_fraction": 0.6746848042468481,
+            "native_constant_multistep_queries": 379,
+            "gofa_constant_multistep_queries": 373,
+            "native_mean_unique_numeric_ids": 1.094890510948905,
+            "gofa_mean_unique_numeric_ids": 1.1094890510948905,
+            "native_first_slot_mae": 0.9701215640061857,
+            "gofa_first_slot_mae": 0.8076652018671401
+          },
+          "by_template": {
+            "10->1": {
+              "queries": 137,
+              "observed_slots": 137,
+              "native_mae": 1.105881984379711,
+              "gofa_mae": 0.7325460851287221,
+              "variable_geomean_ratio": 0.699791172412424,
+              "variables_better_worse_equal": [
+                29,
+                10,
+                98
+              ],
+              "variable_ratio_quantiles_10_50_90": [
+                0.21073371665568608,
+                1.0,
+                1.0
+              ],
+              "queries_better_worse_equal_full_horizon": [
+                29,
+                10,
+                98
+              ],
+              "native_boundary_fraction": 0.0,
+              "gofa_boundary_fraction": 0.072992700729927,
+              "native_lower_upper_counts": [
+                0,
+                0
+              ],
+              "gofa_lower_upper_counts": [
+                1,
+                9
+              ],
+              "boundary_requested_denominator": 137,
+              "true_outside_fraction_observed": 0.0072992700729927005,
+              "range_only_mae_lower_bound": 0.0020102561707044295,
+              "identical_queries": 98,
+              "identical_slot_fraction": 0.7153284671532847,
+              "native_constant_multistep_queries": 0,
+              "gofa_constant_multistep_queries": 0,
+              "native_mean_unique_numeric_ids": 1.0,
+              "gofa_mean_unique_numeric_ids": 1.0,
+              "native_first_slot_mae": 1.105881984379711,
+              "gofa_first_slot_mae": 0.7325460851287221
+            },
+            "12->12": {
+              "queries": 137,
+              "observed_slots": 1644,
+              "native_mae": 2.3776298871319863,
+              "gofa_mae": 1.9230650320625318,
+              "variable_geomean_ratio": 0.9371336384930194,
+              "variables_better_worse_equal": [
+                35,
+                12,
+                90
+              ],
+              "variable_ratio_quantiles_10_50_90": [
+                0.6685371738188179,
+                1.0,
+                1.0
+              ],
+              "queries_better_worse_equal_full_horizon": [
+                35,
+                12,
+                90
+              ],
+              "native_boundary_fraction": 0.0,
+              "gofa_boundary_fraction": 0.12226277372262774,
+              "native_lower_upper_counts": [
+                0,
+                0
+              ],
+              "gofa_lower_upper_counts": [
+                46,
+                155
+              ],
+              "boundary_requested_denominator": 1644,
+              "true_outside_fraction_observed": 0.16058394160583941,
+              "range_only_mae_lower_bound": 0.796552689199323,
+              "identical_queries": 90,
+              "identical_slot_fraction": 0.6599756690997567,
+              "native_constant_multistep_queries": 128,
+              "gofa_constant_multistep_queries": 124,
+              "native_mean_unique_numeric_ids": 1.0802919708029197,
+              "gofa_mean_unique_numeric_ids": 1.1386861313868613,
+              "native_first_slot_mae": 1.039188138382114,
+              "gofa_first_slot_mae": 0.7925538690038978
+            },
+            "14->7": {
+              "queries": 137,
+              "observed_slots": 959,
+              "native_mae": 1.8560726369982854,
+              "gofa_mae": 1.6420024728844183,
+              "variable_geomean_ratio": 0.9509414765537674,
+              "variables_better_worse_equal": [
+                29,
+                15,
+                93
+              ],
+              "variable_ratio_quantiles_10_50_90": [
+                0.6800324935408322,
+                1.0,
+                1.0196930992990842
+              ],
+              "queries_better_worse_equal_full_horizon": [
+                29,
+                15,
+                93
+              ],
+              "native_boundary_fraction": 0.0,
+              "gofa_boundary_fraction": 0.11261730969760167,
+              "native_lower_upper_counts": [
+                0,
+                0
+              ],
+              "gofa_lower_upper_counts": [
+                13,
+                95
+              ],
+              "boundary_requested_denominator": 959,
+              "true_outside_fraction_observed": 0.12408759124087591,
+              "range_only_mae_lower_bound": 0.28246166730945554,
+              "identical_queries": 93,
+              "identical_slot_fraction": 0.7017726798748697,
+              "native_constant_multistep_queries": 125,
+              "gofa_constant_multistep_queries": 126,
+              "native_mean_unique_numeric_ids": 1.102189781021898,
+              "gofa_mean_unique_numeric_ids": 1.094890510948905,
+              "native_first_slot_mae": 0.939961667967217,
+              "gofa_first_slot_mae": 0.8579311502490271
+            },
+            "48->24": {
+              "queries": 137,
+              "observed_slots": 3288,
+              "native_mae": 3.5191823531818036,
+              "gofa_mae": 3.212031355342634,
+              "variable_geomean_ratio": 0.9211303086979186,
+              "variables_better_worse_equal": [
+                35,
+                14,
+                88
+              ],
+              "variable_ratio_quantiles_10_50_90": [
+                0.7027651420346884,
+                1.0,
+                1.0001173027456425
+              ],
+              "queries_better_worse_equal_full_horizon": [
+                35,
+                14,
+                88
+              ],
+              "native_boundary_fraction": 0.014294403892944039,
+              "gofa_boundary_fraction": 0.14476885644768855,
+              "native_lower_upper_counts": [
+                0,
+                47
+              ],
+              "gofa_lower_upper_counts": [
+                0,
+                476
+              ],
+              "boundary_requested_denominator": 3288,
+              "true_outside_fraction_observed": 0.14628953771289538,
+              "range_only_mae_lower_bound": 1.177721665712789,
+              "identical_queries": 88,
+              "identical_slot_fraction": 0.6724452554744526,
+              "native_constant_multistep_queries": 126,
+              "gofa_constant_multistep_queries": 123,
+              "native_mean_unique_numeric_ids": 1.197080291970803,
+              "gofa_mean_unique_numeric_ids": 1.2043795620437956,
+              "native_first_slot_mae": 0.7954544652957006,
+              "gofa_first_slot_mae": 0.8476297030869132
+            }
+          },
+          "h24_steps_1_16": {
+            "queries": 137,
+            "observed_slots": 2192,
+            "native_mae": 2.707319433514684,
+            "gofa_mae": 2.386070049171421,
+            "variable_geomean_ratio": 0.9187270356600119,
+            "variables_better_worse_equal": [
+              35,
+              14,
+              88
+            ],
+            "variable_ratio_quantiles_10_50_90": [
+              0.6345436541084443,
+              1.0,
+              1.00027722580753
+            ],
+            "queries_better_worse_equal_full_horizon": [
+              35,
+              14,
+              88
+            ],
+            "native_boundary_fraction": 0.014142335766423358,
+            "gofa_boundary_fraction": 0.14416058394160583,
+            "native_lower_upper_counts": [
+              0,
+              31
+            ],
+            "gofa_lower_upper_counts": [
+              0,
+              316
+            ],
+            "boundary_requested_denominator": 2192,
+            "true_outside_fraction_observed": 0.114507299270073,
+            "range_only_mae_lower_bound": 0.7651858490865152,
+            "identical_queries": 88,
+            "identical_slot_fraction": 0.6729014598540146,
+            "native_constant_multistep_queries": 126,
+            "gofa_constant_multistep_queries": 123,
+            "native_mean_unique_numeric_ids": 1.197080291970803,
+            "gofa_mean_unique_numeric_ids": 1.2043795620437956,
+            "native_first_slot_mae": 0.7954544652957006,
+            "gofa_first_slot_mae": 0.8476297030869132
+          },
+          "h24_steps_17_24": {
+            "queries": 137,
+            "observed_slots": 1096,
+            "native_mae": 5.1429081925160425,
+            "gofa_mae": 4.8639539676850605,
+            "variable_geomean_ratio": 0.8830263225580288,
+            "variables_better_worse_equal": [
+              32,
+              13,
+              92
+            ],
+            "variable_ratio_quantiles_10_50_90": [
+              0.6923044936337883,
+              1.0,
+              1.0
+            ],
+            "queries_better_worse_equal_full_horizon": [
+              35,
+              14,
+              88
+            ],
+            "native_boundary_fraction": 0.014598540145985401,
+            "gofa_boundary_fraction": 0.145985401459854,
+            "native_lower_upper_counts": [
+              0,
+              16
+            ],
+            "gofa_lower_upper_counts": [
+              0,
+              160
+            ],
+            "boundary_requested_denominator": 1096,
+            "true_outside_fraction_observed": 0.20985401459854014,
+            "range_only_mae_lower_bound": 2.002793298965336,
+            "identical_queries": 92,
+            "identical_slot_fraction": 0.6715328467153284,
+            "native_constant_multistep_queries": 137,
+            "gofa_constant_multistep_queries": 137,
+            "native_mean_unique_numeric_ids": 1.0,
+            "gofa_mean_unique_numeric_ids": 1.0,
+            "native_first_slot_mae": 4.526321335873454,
+            "gofa_first_slot_mae": 4.112165560294246
+          }
+        }
+      }
+    },
+    "nn5": {
+      "score_500": 1.3397675780178058,
+      "score_1000": 1.3512514983973882,
+      "log_score_change_contribution": 0.0021337622973958137,
+      "relative_change_pct": 0.857157656895453,
+      "variables_better_worse_equal_1000_vs_500": [
+        40,
+        40,
+        31
+      ],
+      "top5_improving_variables": [
+        {
+          "variable": "nn5:71",
+          "ratio_500": 1.9026373164053008,
+          "ratio_1000": 0.5764364792524722
+        },
+        {
+          "variable": "nn5:110",
+          "ratio_500": 2.4815797366323866,
+          "ratio_1000": 1.0
+        },
+        {
+          "variable": "nn5:103",
+          "ratio_500": 2.5322720934479745,
+          "ratio_1000": 1.1117418882141175
+        },
+        {
+          "variable": "nn5:82",
+          "ratio_500": 1.9380896360361446,
+          "ratio_1000": 1.0022532045848866
+        },
+        {
+          "variable": "nn5:22",
+          "ratio_500": 1.5440604915633496,
+          "ratio_1000": 0.9295572981115554
+        }
+      ],
+      "top5_worsening_variables": [
+        {
+          "variable": "nn5:75",
+          "ratio_500": 1.0,
+          "ratio_1000": 2.2482426146490435
+        },
+        {
+          "variable": "nn5:97",
+          "ratio_500": 1.0,
+          "ratio_1000": 1.80901817496049
+        },
+        {
+          "variable": "nn5:63",
+          "ratio_500": 1.2158047972281925,
+          "ratio_1000": 2.099617464898684
+        },
+        {
+          "variable": "nn5:32",
+          "ratio_500": 1.8798081402213636,
+          "ratio_1000": 3.205653351924329
+        },
+        {
+          "variable": "nn5:24",
+          "ratio_500": 1.0,
+          "ratio_1000": 1.6668320476180796
+        }
+      ],
+      "native": {
+        "mae": 15.745744947138322,
+        "boundary": 0.20147420147420148
+      },
+      "rounds": {
+        "500": {
+          "all": {
+            "queries": 444,
+            "observed_slots": 4805,
+            "native_mae": 15.745744947138322,
+            "gofa_mae": 22.56542030938147,
+            "variable_geomean_ratio": 1.3397675780178058,
+            "variables_better_worse_equal": [
+              12,
+              80,
+              19
+            ],
+            "variable_ratio_quantiles_10_50_90": [
+              0.9993035167110556,
+              1.27472644281049,
+              2.0017747317903094
+            ],
+            "queries_better_worse_equal_full_horizon": [
+              27,
+              115,
+              302
+            ],
+            "native_boundary_fraction": 0.20147420147420148,
+            "gofa_boundary_fraction": 0.5303030303030303,
+            "native_lower_upper_counts": [
+              0,
+              984
+            ],
+            "gofa_lower_upper_counts": [
+              0,
+              2590
+            ],
+            "boundary_requested_denominator": 4884,
+            "true_outside_fraction_observed": 0.006867845993756503,
+            "range_only_mae_lower_bound": 0.047205219653945314,
+            "identical_queries": 302,
+            "identical_slot_fraction": 0.6079033579033579,
+            "native_constant_multistep_queries": 320,
+            "gofa_constant_multistep_queries": 319,
+            "native_mean_unique_numeric_ids": 1.045045045045045,
+            "gofa_mean_unique_numeric_ids": 1.045045045045045,
+            "native_first_slot_mae": 12.269310134113502,
+            "gofa_first_slot_mae": 15.92474701934359
+          },
+          "by_template": {
+            "10->1": {
+              "queries": 111,
+              "observed_slots": 111,
+              "native_mae": 10.224206314566922,
+              "gofa_mae": 11.71003836434259,
+              "variable_geomean_ratio": 1.1381573134830087,
+              "variables_better_worse_equal": [
+                10,
+                14,
+                87
+              ],
+              "variable_ratio_quantiles_10_50_90": [
+                1.0,
+                1.0,
+                1.6120029655861516
+              ],
+              "queries_better_worse_equal_full_horizon": [
+                10,
+                14,
+                87
+              ],
+              "native_boundary_fraction": 0.0,
+              "gofa_boundary_fraction": 0.15315315315315314,
+              "native_lower_upper_counts": [
+                0,
+                0
+              ],
+              "gofa_lower_upper_counts": [
+                0,
+                17
+              ],
+              "boundary_requested_denominator": 111,
+              "true_outside_fraction_observed": 0.009009009009009009,
+              "range_only_mae_lower_bound": 0.012339298253445999,
+              "identical_queries": 87,
+              "identical_slot_fraction": 0.7837837837837838,
+              "native_constant_multistep_queries": 0,
+              "gofa_constant_multistep_queries": 0,
+              "native_mean_unique_numeric_ids": 1.0,
+              "gofa_mean_unique_numeric_ids": 1.0,
+              "native_first_slot_mae": 10.224206314566922,
+              "gofa_first_slot_mae": 11.71003836434259
+            },
+            "12->12": {
+              "queries": 111,
+              "observed_slots": 1314,
+              "native_mae": 11.268706804730744,
+              "gofa_mae": 14.855395626589653,
+              "variable_geomean_ratio": 1.2365887217389626,
+              "variables_better_worse_equal": [
+                4,
+                26,
+                81
+              ],
+              "variable_ratio_quantiles_10_50_90": [
+                1.0,
+                1.0,
+                2.778781753786454
+              ],
+              "queries_better_worse_equal_full_horizon": [
+                4,
+                26,
+                81
+              ],
+              "native_boundary_fraction": 0.0,
+              "gofa_boundary_fraction": 0.22522522522522523,
+              "native_lower_upper_counts": [
+                0,
+                0
+              ],
+              "gofa_lower_upper_counts": [
+                0,
+                300
+              ],
+              "boundary_requested_denominator": 1332,
+              "true_outside_fraction_observed": 0.0182648401826484,
+              "range_only_mae_lower_bound": 0.1468190625201803,
+              "identical_queries": 81,
+              "identical_slot_fraction": 0.7432432432432432,
+              "native_constant_multistep_queries": 110,
+              "gofa_constant_multistep_queries": 108,
+              "native_mean_unique_numeric_ids": 1.009009009009009,
+              "gofa_mean_unique_numeric_ids": 1.027027027027027,
+              "native_first_slot_mae": 10.234398995597452,
+              "gofa_first_slot_mae": 11.591881985901981
+            },
+            "14->7": {
+              "queries": 111,
+              "observed_slots": 763,
+              "native_mae": 11.19026205828932,
+              "gofa_mae": 14.613028793817271,
+              "variable_geomean_ratio": 1.1489662657102866,
+              "variables_better_worse_equal": [
+                9,
+                22,
+                80
+              ],
+              "variable_ratio_quantiles_10_50_90": [
+                1.0,
+                1.0,
+                1.9726778502658966
+              ],
+              "queries_better_worse_equal_full_horizon": [
+                9,
+                22,
+                80
+              ],
+              "native_boundary_fraction": 0.0,
+              "gofa_boundary_fraction": 0.21621621621621623,
+              "native_lower_upper_counts": [
+                0,
+                0
+              ],
+              "gofa_lower_upper_counts": [
+                0,
+                168
+              ],
+              "boundary_requested_denominator": 777,
+              "true_outside_fraction_observed": 0.003931847968545216,
+              "range_only_mae_lower_bound": 0.008528862376231822,
+              "identical_queries": 80,
+              "identical_slot_fraction": 0.7348777348777349,
+              "native_constant_multistep_queries": 109,
+              "gofa_constant_multistep_queries": 108,
+              "native_mean_unique_numeric_ids": 1.018018018018018,
+              "gofa_mean_unique_numeric_ids": 1.0360360360360361,
+              "native_first_slot_mae": 11.154324686978097,
+              "gofa_first_slot_mae": 12.420169521339067
+            },
+            "48->24": {
+              "queries": 111,
+              "observed_slots": 2617,
+              "native_mae": 19.556043896901702,
+              "gofa_mae": 29.215628393242092,
+              "variable_geomean_ratio": 1.5597764876751565,
+              "variables_better_worse_equal": [
+                4,
+                53,
+                54
+              ],
+              "variable_ratio_quantiles_10_50_90": [
+                1.0,
+                1.0,
+                4.2060389844997115
+              ],
+              "queries_better_worse_equal_full_horizon": [
+                4,
+                53,
+                54
+              ],
+              "native_boundary_fraction": 0.36936936936936937,
+              "gofa_boundary_fraction": 0.7901651651651652,
+              "native_lower_upper_counts": [
+                0,
+                984
+              ],
+              "gofa_lower_upper_counts": [
+                0,
+                2105
+              ],
+              "boundary_requested_denominator": 2664,
+              "true_outside_fraction_observed": 0.0019105846388995033,
+              "range_only_mae_lower_bound": 0.009944076494647658,
+              "identical_queries": 54,
+              "identical_slot_fraction": 0.4958708708708709,
+              "native_constant_multistep_queries": 101,
+              "gofa_constant_multistep_queries": 103,
+              "native_mean_unique_numeric_ids": 1.1531531531531531,
+              "gofa_mean_unique_numeric_ids": 1.117117117117117,
+              "native_first_slot_mae": 17.549402423378147,
+              "gofa_first_slot_mae": 28.16588650739521
+            }
+          },
+          "h24_steps_1_16": {
+            "queries": 111,
+            "observed_slots": 1748,
+            "native_mae": 19.46403974398131,
+            "gofa_mae": 29.29418679730843,
+            "variable_geomean_ratio": 1.5777804072707813,
+            "variables_better_worse_equal": [
+              4,
+              53,
+              54
+            ],
+            "variable_ratio_quantiles_10_50_90": [
+              1.0,
+              1.0,
+              4.497113949460973
+            ],
+            "queries_better_worse_equal_full_horizon": [
+              4,
+              53,
+              54
+            ],
+            "native_boundary_fraction": 0.36936936936936937,
+            "gofa_boundary_fraction": 0.7888513513513513,
+            "native_lower_upper_counts": [
+              0,
+              656
+            ],
+            "gofa_lower_upper_counts": [
+              0,
+              1401
+            ],
+            "boundary_requested_denominator": 1776,
+            "true_outside_fraction_observed": 0.0011441647597254005,
+            "range_only_mae_lower_bound": 0.0016854612393019143,
+            "identical_queries": 54,
+            "identical_slot_fraction": 0.49605855855855857,
+            "native_constant_multistep_queries": 101,
+            "gofa_constant_multistep_queries": 103,
+            "native_mean_unique_numeric_ids": 1.1531531531531531,
+            "gofa_mean_unique_numeric_ids": 1.117117117117117,
+            "native_first_slot_mae": 17.549402423378147,
+            "gofa_first_slot_mae": 28.16588650739521
+          },
+          "h24_steps_17_24": {
+            "queries": 111,
+            "observed_slots": 869,
+            "native_mae": 19.74111093867943,
+            "gofa_mae": 29.05760757585664,
+            "variable_geomean_ratio": 1.5379814518066013,
+            "variables_better_worse_equal": [
+              4,
+              51,
+              56
+            ],
+            "variable_ratio_quantiles_10_50_90": [
+              1.0,
+              1.0,
+              4.092053389561177
+            ],
+            "queries_better_worse_equal_full_horizon": [
+              4,
+              53,
+              54
+            ],
+            "native_boundary_fraction": 0.36936936936936937,
+            "gofa_boundary_fraction": 0.7927927927927928,
+            "native_lower_upper_counts": [
+              0,
+              328
+            ],
+            "gofa_lower_upper_counts": [
+              0,
+              704
+            ],
+            "boundary_requested_denominator": 888,
+            "true_outside_fraction_observed": 0.0034522439585730723,
+            "range_only_mae_lower_bound": 0.026556342854077302,
+            "identical_queries": 55,
+            "identical_slot_fraction": 0.4954954954954955,
+            "native_constant_multistep_queries": 111,
+            "gofa_constant_multistep_queries": 111,
+            "native_mean_unique_numeric_ids": 1.0,
+            "gofa_mean_unique_numeric_ids": 1.0,
+            "native_first_slot_mae": 19.90559660426893,
+            "gofa_first_slot_mae": 29.379860509600903
+          }
+        },
+        "1000": {
+          "all": {
+            "queries": 444,
+            "observed_slots": 4805,
+            "native_mae": 15.745744947138322,
+            "gofa_mae": 22.470143927430634,
+            "variable_geomean_ratio": 1.3512514983973882,
+            "variables_better_worse_equal": [
+              16,
+              88,
+              7
+            ],
+            "variable_ratio_quantiles_10_50_90": [
+              0.9605829979388953,
+              1.2795713634259525,
+              2.062917425190096
+            ],
+            "queries_better_worse_equal_full_horizon": [
+              62,
+              150,
+              232
+            ],
+            "native_boundary_fraction": 0.20147420147420148,
+            "gofa_boundary_fraction": 0.5677723177723177,
+            "native_lower_upper_counts": [
+              0,
+              984
+            ],
+            "gofa_lower_upper_counts": [
+              0,
+              2773
+            ],
+            "boundary_requested_denominator": 4884,
+            "true_outside_fraction_observed": 0.006867845993756503,
+            "range_only_mae_lower_bound": 0.047205219653945314,
+            "identical_queries": 232,
+            "identical_slot_fraction": 0.5221130221130221,
+            "native_constant_multistep_queries": 320,
+            "gofa_constant_multistep_queries": 308,
+            "native_mean_unique_numeric_ids": 1.045045045045045,
+            "gofa_mean_unique_numeric_ids": 1.09009009009009,
+            "native_first_slot_mae": 12.269310134113502,
+            "gofa_first_slot_mae": 15.034283924675199
+          },
+          "by_template": {
+            "10->1": {
+              "queries": 111,
+              "observed_slots": 111,
+              "native_mae": 10.224206314566922,
+              "gofa_mae": 10.587125768314477,
+              "variable_geomean_ratio": 1.03849829707597,
+              "variables_better_worse_equal": [
+                27,
+                23,
+                61
+              ],
+              "variable_ratio_quantiles_10_50_90": [
+                0.5546737188215094,
+                1.0,
+                1.8775171969605509
+              ],
+              "queries_better_worse_equal_full_horizon": [
+                27,
+                23,
+                61
+              ],
+              "native_boundary_fraction": 0.0,
+              "gofa_boundary_fraction": 0.36036036036036034,
+              "native_lower_upper_counts": [
+                0,
+                0
+              ],
+              "gofa_lower_upper_counts": [
+                0,
+                40
+              ],
+              "boundary_requested_denominator": 111,
+              "true_outside_fraction_observed": 0.009009009009009009,
+              "range_only_mae_lower_bound": 0.012339298253445999,
+              "identical_queries": 61,
+              "identical_slot_fraction": 0.5495495495495496,
+              "native_constant_multistep_queries": 0,
+              "gofa_constant_multistep_queries": 0,
+              "native_mean_unique_numeric_ids": 1.0,
+              "gofa_mean_unique_numeric_ids": 1.0,
+              "native_first_slot_mae": 10.224206314566922,
+              "gofa_first_slot_mae": 10.587125768314477
+            },
+            "12->12": {
+              "queries": 111,
+              "observed_slots": 1314,
+              "native_mae": 11.268706804730744,
+              "gofa_mae": 15.563199715629642,
+              "variable_geomean_ratio": 1.2661018239563546,
+              "variables_better_worse_equal": [
+                8,
+                33,
+                70
+              ],
+              "variable_ratio_quantiles_10_50_90": [
+                1.0,
+                1.0,
+                2.8230887010099996
+              ],
+              "queries_better_worse_equal_full_horizon": [
+                8,
+                33,
+                70
+              ],
+              "native_boundary_fraction": 0.0,
+              "gofa_boundary_fraction": 0.2972972972972973,
+              "native_lower_upper_counts": [
+                0,
+                0
+              ],
+              "gofa_lower_upper_counts": [
+                0,
+                396
+              ],
+              "boundary_requested_denominator": 1332,
+              "true_outside_fraction_observed": 0.0182648401826484,
+              "range_only_mae_lower_bound": 0.1468190625201803,
+              "identical_queries": 70,
+              "identical_slot_fraction": 0.6366366366366366,
+              "native_constant_multistep_queries": 110,
+              "gofa_constant_multistep_queries": 109,
+              "native_mean_unique_numeric_ids": 1.009009009009009,
+              "gofa_mean_unique_numeric_ids": 1.018018018018018,
+              "native_first_slot_mae": 10.234398995597452,
+              "gofa_first_slot_mae": 11.152167918729
+            },
+            "14->7": {
+              "queries": 111,
+              "observed_slots": 763,
+              "native_mae": 11.19026205828932,
+              "gofa_mae": 16.373167983584015,
+              "variable_geomean_ratio": 1.3127339457967662,
+              "variables_better_worse_equal": [
+                18,
+                43,
+                50
+              ],
+              "variable_ratio_quantiles_10_50_90": [
+                0.8284894230507117,
+                1.0,
+                3.121937189078285
+              ],
+              "queries_better_worse_equal_full_horizon": [
+                18,
+                43,
+                50
+              ],
+              "native_boundary_fraction": 0.0,
+              "gofa_boundary_fraction": 0.39253539253539255,
+              "native_lower_upper_counts": [
+                0,
+                0
+              ],
+              "gofa_lower_upper_counts": [
+                0,
+                305
+              ],
+              "boundary_requested_denominator": 777,
+              "true_outside_fraction_observed": 0.003931847968545216,
+              "range_only_mae_lower_bound": 0.008528862376231822,
+              "identical_queries": 50,
+              "identical_slot_fraction": 0.47619047619047616,
+              "native_constant_multistep_queries": 109,
+              "gofa_constant_multistep_queries": 102,
+              "native_mean_unique_numeric_ids": 1.018018018018018,
+              "gofa_mean_unique_numeric_ids": 1.117117117117117,
+              "native_first_slot_mae": 11.154324686978097,
+              "gofa_first_slot_mae": 12.607232192653994
+            },
+            "48->24": {
+              "queries": 111,
+              "observed_slots": 2617,
+              "native_mae": 19.556043896901702,
+              "gofa_mae": 28.219755068096806,
+              "variable_geomean_ratio": 1.4685294658015775,
+              "variables_better_worse_equal": [
+                9,
+                51,
+                51
+              ],
+              "variable_ratio_quantiles_10_50_90": [
+                1.0,
+                1.0,
+                4.2060389844997115
+              ],
+              "queries_better_worse_equal_full_horizon": [
+                9,
+                51,
+                51
+              ],
+              "native_boundary_fraction": 0.36936936936936937,
+              "gofa_boundary_fraction": 0.7627627627627628,
+              "native_lower_upper_counts": [
+                0,
+                984
+              ],
+              "gofa_lower_upper_counts": [
+                0,
+                2032
+              ],
+              "boundary_requested_denominator": 2664,
+              "true_outside_fraction_observed": 0.0019105846388995033,
+              "range_only_mae_lower_bound": 0.009944076494647658,
+              "identical_queries": 51,
+              "identical_slot_fraction": 0.4771021021021021,
+              "native_constant_multistep_queries": 101,
+              "gofa_constant_multistep_queries": 97,
+              "native_mean_unique_numeric_ids": 1.1531531531531531,
+              "gofa_mean_unique_numeric_ids": 1.2252252252252251,
+              "native_first_slot_mae": 17.549402423378147,
+              "gofa_first_slot_mae": 25.96570706722933
+            }
+          },
+          "h24_steps_1_16": {
+            "queries": 111,
+            "observed_slots": 1748,
+            "native_mae": 19.46403974398131,
+            "gofa_mae": 28.22601066417225,
+            "variable_geomean_ratio": 1.4753608051843041,
+            "variables_better_worse_equal": [
+              9,
+              51,
+              51
+            ],
+            "variable_ratio_quantiles_10_50_90": [
+              1.0,
+              1.0,
+              4.497113949460973
+            ],
+            "queries_better_worse_equal_full_horizon": [
+              9,
+              51,
+              51
+            ],
+            "native_boundary_fraction": 0.36936936936936937,
+            "gofa_boundary_fraction": 0.7612612612612613,
+            "native_lower_upper_counts": [
+              0,
+              656
+            ],
+            "gofa_lower_upper_counts": [
+              0,
+              1352
+            ],
+            "boundary_requested_denominator": 1776,
+            "true_outside_fraction_observed": 0.0011441647597254005,
+            "range_only_mae_lower_bound": 0.0016854612393019143,
+            "identical_queries": 51,
+            "identical_slot_fraction": 0.4769144144144144,
+            "native_constant_multistep_queries": 101,
+            "gofa_constant_multistep_queries": 97,
+            "native_mean_unique_numeric_ids": 1.1531531531531531,
+            "gofa_mean_unique_numeric_ids": 1.2252252252252251,
+            "native_first_slot_mae": 17.549402423378147,
+            "gofa_first_slot_mae": 25.96570706722933
+          },
+          "h24_steps_17_24": {
+            "queries": 111,
+            "observed_slots": 869,
+            "native_mae": 19.74111093867943,
+            "gofa_mae": 28.20717188980006,
+            "variable_geomean_ratio": 1.4653755116887097,
+            "variables_better_worse_equal": [
+              8,
+              48,
+              55
+            ],
+            "variable_ratio_quantiles_10_50_90": [
+              1.0,
+              1.0,
+              4.131707731616216
+            ],
+            "queries_better_worse_equal_full_horizon": [
+              9,
+              51,
+              51
+            ],
+            "native_boundary_fraction": 0.36936936936936937,
+            "gofa_boundary_fraction": 0.7657657657657657,
+            "native_lower_upper_counts": [
+              0,
+              328
+            ],
+            "gofa_lower_upper_counts": [
+              0,
+              680
+            ],
+            "boundary_requested_denominator": 888,
+            "true_outside_fraction_observed": 0.0034522439585730723,
+            "range_only_mae_lower_bound": 0.026556342854077302,
+            "identical_queries": 53,
+            "identical_slot_fraction": 0.4774774774774775,
+            "native_constant_multistep_queries": 111,
+            "gofa_constant_multistep_queries": 111,
+            "native_mean_unique_numeric_ids": 1.0,
+            "gofa_mean_unique_numeric_ids": 1.0,
+            "native_first_slot_mae": 19.90559660426893,
+            "gofa_first_slot_mae": 28.599530020521748
+          }
+        }
+      }
+    },
+    "pems04": {
+      "score_500": 0.9886121376277651,
+      "score_1000": 0.9399934117581848,
+      "log_score_change_contribution": -0.012607302979551977,
+      "relative_change_pct": -4.917876689865848,
+      "variables_better_worse_equal_1000_vs_500": [
+        161,
+        110,
+        36
+      ],
+      "top5_improving_variables": [
+        {
+          "variable": "pems04:242",
+          "ratio_500": 1.0,
+          "ratio_1000": 0.2761518024122153
+        },
+        {
+          "variable": "pems04:147",
+          "ratio_500": 2.110792399138034,
+          "ratio_1000": 0.7632503631504005
+        },
+        {
+          "variable": "pems04:238",
+          "ratio_500": 1.2985957604852874,
+          "ratio_1000": 0.5406164147746569
+        },
+        {
+          "variable": "pems04:6",
+          "ratio_500": 2.1633313166000643,
+          "ratio_1000": 0.9337200163877076
+        },
+        {
+          "variable": "pems04:210",
+          "ratio_500": 1.2661394416736447,
+          "ratio_1000": 0.5764154962096835
+        }
+      ],
+      "top5_worsening_variables": [
+        {
+          "variable": "pems04:79",
+          "ratio_500": 0.9369880186615234,
+          "ratio_1000": 2.2101772244092053
+        },
+        {
+          "variable": "pems04:122",
+          "ratio_500": 0.6742747489261222,
+          "ratio_1000": 1.523426276138501
+        },
+        {
+          "variable": "pems04:297",
+          "ratio_500": 0.6199852736156863,
+          "ratio_1000": 1.2231093424072352
+        },
+        {
+          "variable": "pems04:216",
+          "ratio_500": 0.7506623201614502,
+          "ratio_1000": 1.334126045043053
+        },
+        {
+          "variable": "pems04:57",
+          "ratio_500": 0.43220692022894214,
+          "ratio_1000": 0.7618443747904995
+        }
+      ],
+      "native": {
+        "mae": 41.56409463673513,
+        "boundary": 0.0017767249037607344
+      },
+      "rounds": {
+        "500": {
+          "all": {
+            "queries": 1228,
+            "observed_slots": 13508,
+            "native_mae": 41.56409463673513,
+            "gofa_mae": 42.674849146061,
+            "variable_geomean_ratio": 0.9886121376277651,
+            "variables_better_worse_equal": [
+              161,
+              141,
+              5
+            ],
+            "variable_ratio_quantiles_10_50_90": [
+              0.6946113389814941,
+              0.9874546055880881,
+              1.4202628950772866
+            ],
+            "queries_better_worse_equal_full_horizon": [
+              428,
+              363,
+              437
+            ],
+            "native_boundary_fraction": 0.0017767249037607344,
+            "gofa_boundary_fraction": 0.08180337577731714,
+            "native_lower_upper_counts": [
+              0,
+              24
+            ],
+            "gofa_lower_upper_counts": [
+              531,
+              574
+            ],
+            "boundary_requested_denominator": 13508,
+            "true_outside_fraction_observed": 0.08831803375777317,
+            "range_only_mae_lower_bound": 3.1227347275688486,
+            "identical_queries": 435,
+            "identical_slot_fraction": 0.42619188628960614,
+            "native_constant_multistep_queries": 718,
+            "gofa_constant_multistep_queries": 723,
+            "native_mean_unique_numeric_ids": 1.2223127035830619,
+            "gofa_mean_unique_numeric_ids": 1.2141693811074918,
+            "native_first_slot_mae": 25.118336212524568,
+            "gofa_first_slot_mae": 28.084600026046132
+          },
+          "by_template": {
+            "10->1": {
+              "queries": 307,
+              "observed_slots": 307,
+              "native_mae": 27.78357431409243,
+              "gofa_mae": 24.842875479324764,
+              "variable_geomean_ratio": 0.9185522201952685,
+              "variables_better_worse_equal": [
+                115,
+                80,
+                112
+              ],
+              "variable_ratio_quantiles_10_50_90": [
+                0.2689998758106856,
+                1.0,
+                2.5007873756660968
+              ],
+              "queries_better_worse_equal_full_horizon": [
+                115,
+                80,
+                112
+              ],
+              "native_boundary_fraction": 0.0,
+              "gofa_boundary_fraction": 0.1270358306188925,
+              "native_lower_upper_counts": [
+                0,
+                0
+              ],
+              "gofa_lower_upper_counts": [
+                23,
+                16
+              ],
+              "boundary_requested_denominator": 307,
+              "true_outside_fraction_observed": 0.035830618892508145,
+              "range_only_mae_lower_bound": 0.3731221498371332,
+              "identical_queries": 112,
+              "identical_slot_fraction": 0.36482084690553745,
+              "native_constant_multistep_queries": 0,
+              "gofa_constant_multistep_queries": 0,
+              "native_mean_unique_numeric_ids": 1.0,
+              "gofa_mean_unique_numeric_ids": 1.0,
+              "native_first_slot_mae": 27.78357431409243,
+              "gofa_first_slot_mae": 24.842875479324764
+            },
+            "12->12": {
+              "queries": 307,
+              "observed_slots": 3684,
+              "native_mae": 39.30440692861454,
+              "gofa_mae": 41.09405645772897,
+              "variable_geomean_ratio": 0.999687046007506,
+              "variables_better_worse_equal": [
+                108,
+                94,
+                105
+              ],
+              "variable_ratio_quantiles_10_50_90": [
+                0.6063303058735664,
+                1.0,
+                1.9953987078149293
+              ],
+              "queries_better_worse_equal_full_horizon": [
+                108,
+                94,
+                105
+              ],
+              "native_boundary_fraction": 0.0,
+              "gofa_boundary_fraction": 0.15580890336590664,
+              "native_lower_upper_counts": [
+                0,
+                0
+              ],
+              "gofa_lower_upper_counts": [
+                334,
+                240
+              ],
+              "boundary_requested_denominator": 3684,
+              "true_outside_fraction_observed": 0.13463626492942454,
+              "range_only_mae_lower_bound": 3.6234651465798033,
+              "identical_queries": 104,
+              "identical_slot_fraction": 0.3775787187839305,
+              "native_constant_multistep_queries": 251,
+              "gofa_constant_multistep_queries": 251,
+              "native_mean_unique_numeric_ids": 1.254071661237785,
+              "gofa_mean_unique_numeric_ids": 1.254071661237785,
+              "native_first_slot_mae": 28.8230106001306,
+              "gofa_first_slot_mae": 33.53679256436751
+            },
+            "14->7": {
+              "queries": 307,
+              "observed_slots": 2149,
+              "native_mae": 31.99324110245906,
+              "gofa_mae": 32.57422236806476,
+              "variable_geomean_ratio": 0.9993868223788552,
+              "variables_better_worse_equal": [
+                114,
+                96,
+                97
+              ],
+              "variable_ratio_quantiles_10_50_90": [
+                0.5694877437264773,
+                1.0,
+                1.6239260598128813
+              ],
+              "queries_better_worse_equal_full_horizon": [
+                114,
+                96,
+                97
+              ],
+              "native_boundary_fraction": 0.0,
+              "gofa_boundary_fraction": 0.10749185667752444,
+              "native_lower_upper_counts": [
+                0,
+                0
+              ],
+              "gofa_lower_upper_counts": [
+                102,
+                129
+              ],
+              "boundary_requested_denominator": 2149,
+              "true_outside_fraction_observed": 0.07166123778501629,
+              "range_only_mae_lower_bound": 1.8904372731503025,
+              "identical_queries": 96,
+              "identical_slot_fraction": 0.39646347138203814,
+              "native_constant_multistep_queries": 224,
+              "gofa_constant_multistep_queries": 233,
+              "native_mean_unique_numeric_ids": 1.3973941368078175,
+              "gofa_mean_unique_numeric_ids": 1.3485342019543973,
+              "native_first_slot_mae": 23.000732854139216,
+              "gofa_first_slot_mae": 26.64215955789213
+            },
+            "48->24": {
+              "queries": 307,
+              "observed_slots": 7368,
+              "native_mae": 46.059625785069386,
+              "gofa_mae": 47.15426053658993,
+              "variable_geomean_ratio": 1.0043218596221277,
+              "variables_better_worse_equal": [
+                91,
+                93,
+                123
+              ],
+              "variable_ratio_quantiles_10_50_90": [
+                0.670213277674013,
+                1.0,
+                1.393586962610085
+              ],
+              "queries_better_worse_equal_full_horizon": [
+                91,
+                93,
+                123
+              ],
+              "native_boundary_fraction": 0.003257328990228013,
+              "gofa_boundary_fraction": 0.035423452768729644,
+              "native_lower_upper_counts": [
+                0,
+                24
+              ],
+              "gofa_lower_upper_counts": [
+                72,
+                189
+              ],
+              "boundary_requested_denominator": 7368,
+              "true_outside_fraction_observed": 0.0722041259500543,
+              "range_only_mae_lower_bound": 3.3463567996742674,
+              "identical_queries": 123,
+              "identical_slot_fraction": 0.46172638436482083,
+              "native_constant_multistep_queries": 243,
+              "gofa_constant_multistep_queries": 239,
+              "native_mean_unique_numeric_ids": 1.237785016286645,
+              "gofa_mean_unique_numeric_ids": 1.254071661237785,
+              "native_first_slot_mae": 20.866027081736018,
+              "gofa_first_slot_mae": 27.316572502600135
+            }
+          },
+          "h24_steps_1_16": {
+            "queries": 307,
+            "observed_slots": 4912,
+            "native_mae": 38.92183914164185,
+            "gofa_mae": 40.43424151639313,
+            "variable_geomean_ratio": 1.0140296568559668,
+            "variables_better_worse_equal": [
+              91,
+              92,
+              124
+            ],
+            "variable_ratio_quantiles_10_50_90": [
+              0.6736758968458658,
+              1.0,
+              1.485992805021031
+            ],
+            "queries_better_worse_equal_full_horizon": [
+              91,
+              93,
+              123
+            ],
+            "native_boundary_fraction": 0.003257328990228013,
+            "gofa_boundary_fraction": 0.03521986970684039,
+            "native_lower_upper_counts": [
+              0,
+              16
+            ],
+            "gofa_lower_upper_counts": [
+              48,
+              125
+            ],
+            "boundary_requested_denominator": 4912,
+            "true_outside_fraction_observed": 0.04682410423452769,
+            "range_only_mae_lower_bound": 1.695838049674267,
+            "identical_queries": 123,
+            "identical_slot_fraction": 0.46254071661237783,
+            "native_constant_multistep_queries": 243,
+            "gofa_constant_multistep_queries": 239,
+            "native_mean_unique_numeric_ids": 1.237785016286645,
+            "gofa_mean_unique_numeric_ids": 1.254071661237785,
+            "native_first_slot_mae": 20.866027081736018,
+            "gofa_first_slot_mae": 27.316572502600135
+          },
+          "h24_steps_17_24": {
+            "queries": 307,
+            "observed_slots": 2456,
+            "native_mae": 60.33519907192447,
+            "gofa_mae": 60.594298576983526,
+            "variable_geomean_ratio": 1.0042704686209691,
+            "variables_better_worse_equal": [
+              85,
+              80,
+              142
+            ],
+            "variable_ratio_quantiles_10_50_90": [
+              0.6908017608007139,
+              1.0,
+              1.2877439641623583
+            ],
+            "queries_better_worse_equal_full_horizon": [
+              91,
+              93,
+              123
+            ],
+            "native_boundary_fraction": 0.003257328990228013,
+            "gofa_boundary_fraction": 0.035830618892508145,
+            "native_lower_upper_counts": [
+              0,
+              8
+            ],
+            "gofa_lower_upper_counts": [
+              24,
+              64
+            ],
+            "boundary_requested_denominator": 2456,
+            "true_outside_fraction_observed": 0.12296416938110749,
+            "range_only_mae_lower_bound": 6.647394299674265,
+            "identical_queries": 141,
+            "identical_slot_fraction": 0.4600977198697068,
+            "native_constant_multistep_queries": 306,
+            "gofa_constant_multistep_queries": 306,
+            "native_mean_unique_numeric_ids": 1.006514657980456,
+            "gofa_mean_unique_numeric_ids": 1.009771986970684,
+            "native_first_slot_mae": 55.699003978045766,
+            "gofa_first_slot_mae": 54.884314168455816
+          }
+        },
+        "1000": {
+          "all": {
+            "queries": 1228,
+            "observed_slots": 13508,
+            "native_mae": 41.56409463673513,
+            "gofa_mae": 41.94324906214861,
+            "variable_geomean_ratio": 0.9399934117581848,
+            "variables_better_worse_equal": [
+              174,
+              129,
+              4
+            ],
+            "variable_ratio_quantiles_10_50_90": [
+              0.6310277537499674,
+              0.9521533243278754,
+              1.359915968736273
+            ],
+            "queries_better_worse_equal_full_horizon": [
+              469,
+              338,
+              421
+            ],
+            "native_boundary_fraction": 0.0017767249037607344,
+            "gofa_boundary_fraction": 0.05189517323067812,
+            "native_lower_upper_counts": [
+              0,
+              24
+            ],
+            "gofa_lower_upper_counts": [
+              101,
+              600
+            ],
+            "boundary_requested_denominator": 13508,
+            "true_outside_fraction_observed": 0.08831803375777317,
+            "range_only_mae_lower_bound": 3.1227347275688486,
+            "identical_queries": 419,
+            "identical_slot_fraction": 0.43485342019543977,
+            "native_constant_multistep_queries": 718,
+            "gofa_constant_multistep_queries": 699,
+            "native_mean_unique_numeric_ids": 1.2223127035830619,
+            "gofa_mean_unique_numeric_ids": 1.248371335504886,
+            "native_first_slot_mae": 25.118336212524568,
+            "gofa_first_slot_mae": 25.727239176325135
+          },
+          "by_template": {
+            "10->1": {
+              "queries": 307,
+              "observed_slots": 307,
+              "native_mae": 27.78357431409243,
+              "gofa_mae": 24.106408544178162,
+              "variable_geomean_ratio": 0.8132372762219588,
+              "variables_better_worse_equal": [
+                126,
+                77,
+                104
+              ],
+              "variable_ratio_quantiles_10_50_90": [
+                0.1979086825492102,
+                1.0,
+                2.3999543326241723
+              ],
+              "queries_better_worse_equal_full_horizon": [
+                126,
+                77,
+                104
+              ],
+              "native_boundary_fraction": 0.0,
+              "gofa_boundary_fraction": 0.09120521172638436,
+              "native_lower_upper_counts": [
+                0,
+                0
+              ],
+              "gofa_lower_upper_counts": [
+                6,
+                22
+              ],
+              "boundary_requested_denominator": 307,
+              "true_outside_fraction_observed": 0.035830618892508145,
+              "range_only_mae_lower_bound": 0.3731221498371332,
+              "identical_queries": 104,
+              "identical_slot_fraction": 0.33876221498371334,
+              "native_constant_multistep_queries": 0,
+              "gofa_constant_multistep_queries": 0,
+              "native_mean_unique_numeric_ids": 1.0,
+              "gofa_mean_unique_numeric_ids": 1.0,
+              "native_first_slot_mae": 27.78357431409243,
+              "gofa_first_slot_mae": 24.106408544178162
+            },
+            "12->12": {
+              "queries": 307,
+              "observed_slots": 3684,
+              "native_mae": 39.30440692861454,
+              "gofa_mae": 39.55602990905282,
+              "variable_geomean_ratio": 0.9693012081748923,
+              "variables_better_worse_equal": [
+                113,
+                97,
+                97
+              ],
+              "variable_ratio_quantiles_10_50_90": [
+                0.5665466762963763,
+                1.0,
+                1.5326461686743698
+              ],
+              "queries_better_worse_equal_full_horizon": [
+                113,
+                97,
+                97
+              ],
+              "native_boundary_fraction": 0.0,
+              "gofa_boundary_fraction": 0.09391965255157438,
+              "native_lower_upper_counts": [
+                0,
+                0
+              ],
+              "gofa_lower_upper_counts": [
+                60,
+                286
+              ],
+              "boundary_requested_denominator": 3684,
+              "true_outside_fraction_observed": 0.13463626492942454,
+              "range_only_mae_lower_bound": 3.6234651465798033,
+              "identical_queries": 97,
+              "identical_slot_fraction": 0.3707926167209555,
+              "native_constant_multistep_queries": 251,
+              "gofa_constant_multistep_queries": 227,
+              "native_mean_unique_numeric_ids": 1.254071661237785,
+              "gofa_mean_unique_numeric_ids": 1.3778501628664495,
+              "native_first_slot_mae": 28.8230106001306,
+              "gofa_first_slot_mae": 28.64466308554628
+            },
+            "14->7": {
+              "queries": 307,
+              "observed_slots": 2149,
+              "native_mae": 31.99324110245906,
+              "gofa_mae": 30.884221177645774,
+              "variable_geomean_ratio": 0.9243226896054177,
+              "variables_better_worse_equal": [
+                132,
+                80,
+                95
+              ],
+              "variable_ratio_quantiles_10_50_90": [
+                0.5299082961987649,
+                1.0,
+                1.3272996617499917
+              ],
+              "queries_better_worse_equal_full_horizon": [
+                132,
+                80,
+                95
+              ],
+              "native_boundary_fraction": 0.0,
+              "gofa_boundary_fraction": 0.07398790134946487,
+              "native_lower_upper_counts": [
+                0,
+                0
+              ],
+              "gofa_lower_upper_counts": [
+                35,
+                124
+              ],
+              "boundary_requested_denominator": 2149,
+              "true_outside_fraction_observed": 0.07166123778501629,
+              "range_only_mae_lower_bound": 1.8904372731503025,
+              "identical_queries": 95,
+              "identical_slot_fraction": 0.4025127966496045,
+              "native_constant_multistep_queries": 224,
+              "gofa_constant_multistep_queries": 231,
+              "native_mean_unique_numeric_ids": 1.3973941368078175,
+              "gofa_mean_unique_numeric_ids": 1.3778501628664495,
+              "native_first_slot_mae": 23.000732854139216,
+              "gofa_first_slot_mae": 25.069217103588148
+            },
+            "48->24": {
+              "queries": 307,
+              "observed_slots": 7368,
+              "native_mae": 46.059625785069386,
+              "gofa_mae": 47.105610126591934,
+              "variable_geomean_ratio": 0.9911121113607231,
+              "variables_better_worse_equal": [
+                98,
+                84,
+                125
+              ],
+              "variable_ratio_quantiles_10_50_90": [
+                0.690481837542731,
+                1.0,
+                1.25932539986472
+              ],
+              "queries_better_worse_equal_full_horizon": [
+                98,
+                84,
+                125
+              ],
+              "native_boundary_fraction": 0.003257328990228013,
+              "gofa_boundary_fraction": 0.02280130293159609,
+              "native_lower_upper_counts": [
+                0,
+                24
+              ],
+              "gofa_lower_upper_counts": [
+                0,
+                168
+              ],
+              "boundary_requested_denominator": 7368,
+              "true_outside_fraction_observed": 0.0722041259500543,
+              "range_only_mae_lower_bound": 3.3463567996742674,
+              "identical_queries": 123,
+              "identical_slot_fraction": 0.4803203040173724,
+              "native_constant_multistep_queries": 243,
+              "gofa_constant_multistep_queries": 241,
+              "native_mean_unique_numeric_ids": 1.237785016286645,
+              "gofa_mean_unique_numeric_ids": 1.237785016286645,
+              "native_first_slot_mae": 20.866027081736018,
+              "gofa_first_slot_mae": 25.08866797198795
+            }
+          },
+          "h24_steps_1_16": {
+            "queries": 307,
+            "observed_slots": 4912,
+            "native_mae": 38.92183914164185,
+            "gofa_mae": 40.2364782059572,
+            "variable_geomean_ratio": 0.993039401355634,
+            "variables_better_worse_equal": [
+              95,
+              87,
+              125
+            ],
+            "variable_ratio_quantiles_10_50_90": [
+              0.6607646599120092,
+              1.0,
+              1.2705209702073292
+            ],
+            "queries_better_worse_equal_full_horizon": [
+              98,
+              84,
+              125
+            ],
+            "native_boundary_fraction": 0.003257328990228013,
+            "gofa_boundary_fraction": 0.02280130293159609,
+            "native_lower_upper_counts": [
+              0,
+              16
+            ],
+            "gofa_lower_upper_counts": [
+              0,
+              112
+            ],
+            "boundary_requested_denominator": 4912,
+            "true_outside_fraction_observed": 0.04682410423452769,
+            "range_only_mae_lower_bound": 1.695838049674267,
+            "identical_queries": 123,
+            "identical_slot_fraction": 0.4802524429967427,
+            "native_constant_multistep_queries": 243,
+            "gofa_constant_multistep_queries": 241,
+            "native_mean_unique_numeric_ids": 1.237785016286645,
+            "gofa_mean_unique_numeric_ids": 1.237785016286645,
+            "native_first_slot_mae": 20.866027081736018,
+            "gofa_first_slot_mae": 25.08866797198795
+          },
+          "h24_steps_17_24": {
+            "queries": 307,
+            "observed_slots": 2456,
+            "native_mae": 60.33519907192447,
+            "gofa_mae": 60.84387396786139,
+            "variable_geomean_ratio": 1.001162855074621,
+            "variables_better_worse_equal": [
+              85,
+              75,
+              147
+            ],
+            "variable_ratio_quantiles_10_50_90": [
+              0.7107860545427268,
+              1.0,
+              1.238382684060135
+            ],
+            "queries_better_worse_equal_full_horizon": [
+              98,
+              84,
+              125
+            ],
+            "native_boundary_fraction": 0.003257328990228013,
+            "gofa_boundary_fraction": 0.02280130293159609,
+            "native_lower_upper_counts": [
+              0,
+              8
+            ],
+            "gofa_lower_upper_counts": [
+              0,
+              56
+            ],
+            "boundary_requested_denominator": 2456,
+            "true_outside_fraction_observed": 0.12296416938110749,
+            "range_only_mae_lower_bound": 6.647394299674265,
+            "identical_queries": 147,
+            "identical_slot_fraction": 0.4804560260586319,
+            "native_constant_multistep_queries": 306,
+            "gofa_constant_multistep_queries": 306,
+            "native_mean_unique_numeric_ids": 1.006514657980456,
+            "gofa_mean_unique_numeric_ids": 1.006514657980456,
+            "native_first_slot_mae": 55.699003978045766,
+            "gofa_first_slot_mae": 54.93162430138957
+          }
+        }
+      }
+    },
+    "aq_shunyi": {
+      "score_500": 0.9919081166517337,
+      "score_1000": 1.01128884041839,
+      "log_score_change_contribution": 0.004837599326973568,
+      "relative_change_pct": 1.9538829697328706,
+      "variables_better_worse_equal_1000_vs_500": [
+        5,
+        5,
+        1
+      ],
+      "top5_improving_variables": [
+        {
+          "variable": "aq_shunyi:3",
+          "ratio_500": 1.1051354746610673,
+          "ratio_1000": 0.7346697944135275
+        },
+        {
+          "variable": "aq_shunyi:8",
+          "ratio_500": 1.1104029504122115,
+          "ratio_1000": 0.9115280579472291
+        },
+        {
+          "variable": "aq_shunyi:2",
+          "ratio_500": 1.1267126864995036,
+          "ratio_1000": 1.0633563281262748
+        },
+        {
+          "variable": "aq_shunyi:4",
+          "ratio_500": 1.5131818160027737,
+          "ratio_1000": 1.494879543078248
+        },
+        {
+          "variable": "aq_shunyi:0",
+          "ratio_500": 0.9642286193054178,
+          "ratio_1000": 0.9604016953096293
+        }
+      ],
+      "top5_worsening_variables": [
+        {
+          "variable": "aq_shunyi:5",
+          "ratio_500": 0.7656402595286728,
+          "ratio_1000": 1.0787709076952559
+        },
+        {
+          "variable": "aq_shunyi:7",
+          "ratio_500": 0.8654798992348601,
+          "ratio_1000": 1.0992085949307768
+        },
+        {
+          "variable": "aq_shunyi:6",
+          "ratio_500": 0.8272693339172611,
+          "ratio_1000": 0.9433248625449087
+        },
+        {
+          "variable": "aq_shunyi:1",
+          "ratio_500": 0.8839155499558536,
+          "ratio_1000": 0.9939284118567343
+        },
+        {
+          "variable": "aq_shunyi:10",
+          "ratio_500": 0.9355478268683959,
+          "ratio_1000": 0.9954087933482189
+        }
+      ],
+      "native": {
+        "mae": 29.89641437595692,
+        "boundary": 0.0
+      },
+      "rounds": {
+        "500": {
+          "all": {
+            "queries": 44,
+            "observed_slots": 480,
+            "native_mae": 29.89641437595692,
+            "gofa_mae": 37.36594630805757,
+            "variable_geomean_ratio": 0.9919081166517337,
+            "variables_better_worse_equal": [
+              6,
+              4,
+              1
+            ],
+            "variable_ratio_quantiles_10_50_90": [
+              0.8272693339172611,
+              0.9642286193054178,
+              1.1267126864995036
+            ],
+            "queries_better_worse_equal_full_horizon": [
+              10,
+              10,
+              24
+            ],
+            "native_boundary_fraction": 0.0,
+            "gofa_boundary_fraction": 0.05991735537190083,
+            "native_lower_upper_counts": [
+              0,
+              0
+            ],
+            "gofa_lower_upper_counts": [
+              0,
+              29
+            ],
+            "boundary_requested_denominator": 484,
+            "true_outside_fraction_observed": 0.0875,
+            "range_only_mae_lower_bound": 2.331510141867795,
+            "identical_queries": 24,
+            "identical_slot_fraction": 0.5909090909090909,
+            "native_constant_multistep_queries": 23,
+            "gofa_constant_multistep_queries": 22,
+            "native_mean_unique_numeric_ids": 1.4090909090909092,
+            "gofa_mean_unique_numeric_ids": 1.4772727272727273,
+            "native_first_slot_mae": 26.79352226025168,
+            "gofa_first_slot_mae": 21.233746280570234
+          },
+          "by_template": {
+            "10->1": {
+              "queries": 11,
+              "observed_slots": 11,
+              "native_mae": 26.355013070981922,
+              "gofa_mae": 26.37319870819589,
+              "variable_geomean_ratio": 0.3630762757259728,
+              "variables_better_worse_equal": [
+                2,
+                2,
+                7
+              ],
+              "variable_ratio_quantiles_10_50_90": [
+                0.036826214663078186,
+                1.0,
+                1.6660226391619664
+              ],
+              "queries_better_worse_equal_full_horizon": [
+                2,
+                2,
+                7
+              ],
+              "native_boundary_fraction": 0.0,
+              "gofa_boundary_fraction": 0.0,
+              "native_lower_upper_counts": [
+                0,
+                0
+              ],
+              "gofa_lower_upper_counts": [
+                0,
+                0
+              ],
+              "boundary_requested_denominator": 11,
+              "true_outside_fraction_observed": 0.0,
+              "range_only_mae_lower_bound": 0.0,
+              "identical_queries": 7,
+              "identical_slot_fraction": 0.6363636363636364,
+              "native_constant_multistep_queries": 0,
+              "gofa_constant_multistep_queries": 0,
+              "native_mean_unique_numeric_ids": 1.0,
+              "gofa_mean_unique_numeric_ids": 1.0,
+              "native_first_slot_mae": 26.355013070981922,
+              "gofa_first_slot_mae": 26.37319870819589
+            },
+            "12->12": {
+              "queries": 11,
+              "observed_slots": 132,
+              "native_mae": 15.348587550633194,
+              "gofa_mae": 49.68077637002716,
+              "variable_geomean_ratio": 0.9735040418237728,
+              "variables_better_worse_equal": [
+                3,
+                3,
+                5
+              ],
+              "variable_ratio_quantiles_10_50_90": [
+                0.3365699753189144,
+                1.0,
+                1.2500481918775335
+              ],
+              "queries_better_worse_equal_full_horizon": [
+                3,
+                3,
+                5
+              ],
+              "native_boundary_fraction": 0.0,
+              "gofa_boundary_fraction": 0.17424242424242425,
+              "native_lower_upper_counts": [
+                0,
+                0
+              ],
+              "gofa_lower_upper_counts": [
+                0,
+                23
+              ],
+              "boundary_requested_denominator": 132,
+              "true_outside_fraction_observed": 0.22727272727272727,
+              "range_only_mae_lower_bound": 0.6548050544998834,
+              "identical_queries": 5,
+              "identical_slot_fraction": 0.4621212121212121,
+              "native_constant_multistep_queries": 9,
+              "gofa_constant_multistep_queries": 9,
+              "native_mean_unique_numeric_ids": 1.2727272727272727,
+              "gofa_mean_unique_numeric_ids": 1.2727272727272727,
+              "native_first_slot_mae": 38.35839448041026,
+              "gofa_first_slot_mae": 20.93283656359563
+            },
+            "14->7": {
+              "queries": 11,
+              "observed_slots": 73,
+              "native_mae": 60.17021281123235,
+              "gofa_mae": 61.72794480952572,
+              "variable_geomean_ratio": 1.9120256010388572,
+              "variables_better_worse_equal": [
+                3,
+                3,
+                5
+              ],
+              "variable_ratio_quantiles_10_50_90": [
+                0.8339342907315793,
+                1.0,
+                1.8567537292862963
+              ],
+              "queries_better_worse_equal_full_horizon": [
+                3,
+                3,
+                5
+              ],
+              "native_boundary_fraction": 0.0,
+              "gofa_boundary_fraction": 0.07792207792207792,
+              "native_lower_upper_counts": [
+                0,
+                0
+              ],
+              "gofa_lower_upper_counts": [
+                0,
+                6
+              ],
+              "boundary_requested_denominator": 77,
+              "true_outside_fraction_observed": 0.1095890410958904,
+              "range_only_mae_lower_bound": 14.125861356102925,
+              "identical_queries": 5,
+              "identical_slot_fraction": 0.6233766233766234,
+              "native_constant_multistep_queries": 8,
+              "gofa_constant_multistep_queries": 5,
+              "native_mean_unique_numeric_ids": 1.7272727272727273,
+              "gofa_mean_unique_numeric_ids": 2.0,
+              "native_first_slot_mae": 29.38444979473438,
+              "gofa_first_slot_mae": 27.736573038976612
+            },
+            "48->24": {
+              "queries": 11,
+              "observed_slots": 264,
+              "native_mae": 28.94672221505673,
+              "gofa_mae": 24.93010072022166,
+              "variable_geomean_ratio": 0.9604697434661847,
+              "variables_better_worse_equal": [
+                2,
+                2,
+                7
+              ],
+              "variable_ratio_quantiles_10_50_90": [
+                0.8705158631383696,
+                1.0,
+                1.0349590069528753
+              ],
+              "queries_better_worse_equal_full_horizon": [
+                2,
+                2,
+                7
+              ],
+              "native_boundary_fraction": 0.0,
+              "gofa_boundary_fraction": 0.0,
+              "native_lower_upper_counts": [
+                0,
+                0
+              ],
+              "gofa_lower_upper_counts": [
+                0,
+                0
+              ],
+              "boundary_requested_denominator": 264,
+              "true_outside_fraction_observed": 0.015151515151515152,
+              "range_only_mae_lower_bound": 0.005692128435770648,
+              "identical_queries": 7,
+              "identical_slot_fraction": 0.6439393939393939,
+              "native_constant_multistep_queries": 6,
+              "gofa_constant_multistep_queries": 8,
+              "native_mean_unique_numeric_ids": 1.6363636363636365,
+              "gofa_mean_unique_numeric_ids": 1.6363636363636365,
+              "native_first_slot_mae": 13.07623169488017,
+              "gofa_first_slot_mae": 9.892376811512804
+            }
+          },
+          "h24_steps_1_16": {
+            "queries": 11,
+            "observed_slots": 176,
+            "native_mae": 31.61787041075017,
+            "gofa_mae": 26.114876841972134,
+            "variable_geomean_ratio": 0.9324571492727568,
+            "variables_better_worse_equal": [
+              3,
+              1,
+              7
+            ],
+            "variable_ratio_quantiles_10_50_90": [
+              0.7255080733929213,
+              1.0,
+              1.0
+            ],
+            "queries_better_worse_equal_full_horizon": [
+              2,
+              2,
+              7
+            ],
+            "native_boundary_fraction": 0.0,
+            "gofa_boundary_fraction": 0.0,
+            "native_lower_upper_counts": [
+              0,
+              0
+            ],
+            "gofa_lower_upper_counts": [
+              0,
+              0
+            ],
+            "boundary_requested_denominator": 176,
+            "true_outside_fraction_observed": 0.022727272727272728,
+            "range_only_mae_lower_bound": 0.008538192653655973,
+            "identical_queries": 7,
+            "identical_slot_fraction": 0.6477272727272727,
+            "native_constant_multistep_queries": 6,
+            "gofa_constant_multistep_queries": 8,
+            "native_mean_unique_numeric_ids": 1.6363636363636365,
+            "gofa_mean_unique_numeric_ids": 1.6363636363636365,
+            "native_first_slot_mae": 13.07623169488017,
+            "gofa_first_slot_mae": 9.892376811512804
+          },
+          "h24_steps_17_24": {
+            "queries": 11,
+            "observed_slots": 88,
+            "native_mae": 23.604425823669853,
+            "gofa_mae": 22.56054847672071,
+            "variable_geomean_ratio": 0.9996170571156091,
+            "variables_better_worse_equal": [
+              1,
+              3,
+              7
+            ],
+            "variable_ratio_quantiles_10_50_90": [
+              1.0,
+              1.0,
+              1.2702702110574737
+            ],
+            "queries_better_worse_equal_full_horizon": [
+              2,
+              2,
+              7
+            ],
+            "native_boundary_fraction": 0.0,
+            "gofa_boundary_fraction": 0.0,
+            "native_lower_upper_counts": [
+              0,
+              0
+            ],
+            "gofa_lower_upper_counts": [
+              0,
+              0
+            ],
+            "boundary_requested_denominator": 88,
+            "true_outside_fraction_observed": 0.0,
+            "range_only_mae_lower_bound": 0.0,
+            "identical_queries": 7,
+            "identical_slot_fraction": 0.6363636363636364,
+            "native_constant_multistep_queries": 11,
+            "gofa_constant_multistep_queries": 11,
+            "native_mean_unique_numeric_ids": 1.0,
+            "gofa_mean_unique_numeric_ids": 1.0,
+            "native_first_slot_mae": 22.453731378216947,
+            "gofa_first_slot_mae": 17.999512947264353
+          }
+        },
+        "1000": {
+          "all": {
+            "queries": 44,
+            "observed_slots": 480,
+            "native_mae": 29.89641437595692,
+            "gofa_mae": 39.323996996165384,
+            "variable_geomean_ratio": 1.01128884041839,
+            "variables_better_worse_equal": [
+              6,
+              4,
+              1
+            ],
+            "variable_ratio_quantiles_10_50_90": [
+              0.9115280579472291,
+              0.9954087933482189,
+              1.0992085949307768
+            ],
+            "queries_better_worse_equal_full_horizon": [
+              13,
+              10,
+              21
+            ],
+            "native_boundary_fraction": 0.0,
+            "gofa_boundary_fraction": 0.049586776859504134,
+            "native_lower_upper_counts": [
+              0,
+              0
+            ],
+            "gofa_lower_upper_counts": [
+              0,
+              24
+            ],
+            "boundary_requested_denominator": 484,
+            "true_outside_fraction_observed": 0.0875,
+            "range_only_mae_lower_bound": 2.331510141867795,
+            "identical_queries": 21,
+            "identical_slot_fraction": 0.5557851239669421,
+            "native_constant_multistep_queries": 23,
+            "gofa_constant_multistep_queries": 23,
+            "native_mean_unique_numeric_ids": 1.4090909090909092,
+            "gofa_mean_unique_numeric_ids": 1.4772727272727273,
+            "native_first_slot_mae": 26.79352226025168,
+            "gofa_first_slot_mae": 19.72332791426809
+          },
+          "by_template": {
+            "10->1": {
+              "queries": 11,
+              "observed_slots": 11,
+              "native_mae": 26.355013070981922,
+              "gofa_mae": 26.159342292880783,
+              "variable_geomean_ratio": 0.41202392982656416,
+              "variables_better_worse_equal": [
+                4,
+                0,
+                7
+              ],
+              "variable_ratio_quantiles_10_50_90": [
+                0.665856078955098,
+                1.0,
+                1.0
+              ],
+              "queries_better_worse_equal_full_horizon": [
+                4,
+                0,
+                7
+              ],
+              "native_boundary_fraction": 0.0,
+              "gofa_boundary_fraction": 0.09090909090909091,
+              "native_lower_upper_counts": [
+                0,
+                0
+              ],
+              "gofa_lower_upper_counts": [
+                0,
+                1
+              ],
+              "boundary_requested_denominator": 11,
+              "true_outside_fraction_observed": 0.0,
+              "range_only_mae_lower_bound": 0.0,
+              "identical_queries": 7,
+              "identical_slot_fraction": 0.6363636363636364,
+              "native_constant_multistep_queries": 0,
+              "gofa_constant_multistep_queries": 0,
+              "native_mean_unique_numeric_ids": 1.0,
+              "gofa_mean_unique_numeric_ids": 1.0,
+              "native_first_slot_mae": 26.355013070981922,
+              "gofa_first_slot_mae": 26.159342292880783
+            },
+            "12->12": {
+              "queries": 11,
+              "observed_slots": 132,
+              "native_mae": 15.348587550633194,
+              "gofa_mae": 50.88374138393578,
+              "variable_geomean_ratio": 1.1402016345974602,
+              "variables_better_worse_equal": [
+                3,
+                4,
+                4
+              ],
+              "variable_ratio_quantiles_10_50_90": [
+                0.912018607446966,
+                1.0,
+                1.970316806017678
+              ],
+              "queries_better_worse_equal_full_horizon": [
+                3,
+                4,
+                4
+              ],
+              "native_boundary_fraction": 0.0,
+              "gofa_boundary_fraction": 0.17424242424242425,
+              "native_lower_upper_counts": [
+                0,
+                0
+              ],
+              "gofa_lower_upper_counts": [
+                0,
+                23
+              ],
+              "boundary_requested_denominator": 132,
+              "true_outside_fraction_observed": 0.22727272727272727,
+              "range_only_mae_lower_bound": 0.6548050544998834,
+              "identical_queries": 4,
+              "identical_slot_fraction": 0.4318181818181818,
+              "native_constant_multistep_queries": 9,
+              "gofa_constant_multistep_queries": 8,
+              "native_mean_unique_numeric_ids": 1.2727272727272727,
+              "gofa_mean_unique_numeric_ids": 1.6363636363636365,
+              "native_first_slot_mae": 38.35839448041026,
+              "gofa_first_slot_mae": 21.032817698183695
+            },
+            "14->7": {
+              "queries": 11,
+              "observed_slots": 73,
+              "native_mae": 60.17021281123235,
+              "gofa_mae": 57.0074405713448,
+              "variable_geomean_ratio": 1.581840634348523,
+              "variables_better_worse_equal": [
+                6,
+                2,
+                3
+              ],
+              "variable_ratio_quantiles_10_50_90": [
+                0.5662171700259993,
+                0.9714742606026786,
+                1.0832208365028317
+              ],
+              "queries_better_worse_equal_full_horizon": [
+                6,
+                2,
+                3
+              ],
+              "native_boundary_fraction": 0.0,
+              "gofa_boundary_fraction": 0.0,
+              "native_lower_upper_counts": [
+                0,
+                0
+              ],
+              "gofa_lower_upper_counts": [
+                0,
+                0
+              ],
+              "boundary_requested_denominator": 77,
+              "true_outside_fraction_observed": 0.1095890410958904,
+              "range_only_mae_lower_bound": 14.125861356102925,
+              "identical_queries": 3,
+              "identical_slot_fraction": 0.45454545454545453,
+              "native_constant_multistep_queries": 8,
+              "gofa_constant_multistep_queries": 6,
+              "native_mean_unique_numeric_ids": 1.7272727272727273,
+              "gofa_mean_unique_numeric_ids": 1.9090909090909092,
+              "native_first_slot_mae": 29.38444979473438,
+              "gofa_first_slot_mae": 18.288597186703885
+            },
+            "48->24": {
+              "queries": 11,
+              "observed_slots": 264,
+              "native_mae": 28.94672221505673,
+              "gofa_mae": 29.202912002083337,
+              "variable_geomean_ratio": 1.0174251645515735,
+              "variables_better_worse_equal": [
+                0,
+                4,
+                7
+              ],
+              "variable_ratio_quantiles_10_50_90": [
+                1.0,
+                1.0,
+                1.0513230564594527
+              ],
+              "queries_better_worse_equal_full_horizon": [
+                0,
+                4,
+                7
+              ],
+              "native_boundary_fraction": 0.0,
+              "gofa_boundary_fraction": 0.0,
+              "native_lower_upper_counts": [
+                0,
+                0
+              ],
+              "gofa_lower_upper_counts": [
+                0,
+                0
+              ],
+              "boundary_requested_denominator": 264,
+              "true_outside_fraction_observed": 0.015151515151515152,
+              "range_only_mae_lower_bound": 0.005692128435770648,
+              "identical_queries": 7,
+              "identical_slot_fraction": 0.6439393939393939,
+              "native_constant_multistep_queries": 6,
+              "gofa_constant_multistep_queries": 9,
+              "native_mean_unique_numeric_ids": 1.6363636363636365,
+              "gofa_mean_unique_numeric_ids": 1.3636363636363635,
+              "native_first_slot_mae": 13.07623169488017,
+              "gofa_first_slot_mae": 13.412554479303997
+            }
+          },
+          "h24_steps_1_16": {
+            "queries": 11,
+            "observed_slots": 176,
+            "native_mae": 31.61787041075017,
+            "gofa_mae": 31.576067993601928,
+            "variable_geomean_ratio": 1.0084821922480018,
+            "variables_better_worse_equal": [
+              1,
+              3,
+              7
+            ],
+            "variable_ratio_quantiles_10_50_90": [
+              1.0,
+              1.0,
+              1.0440467857130646
+            ],
+            "queries_better_worse_equal_full_horizon": [
+              0,
+              4,
+              7
+            ],
+            "native_boundary_fraction": 0.0,
+            "gofa_boundary_fraction": 0.0,
+            "native_lower_upper_counts": [
+              0,
+              0
+            ],
+            "gofa_lower_upper_counts": [
+              0,
+              0
+            ],
+            "boundary_requested_denominator": 176,
+            "true_outside_fraction_observed": 0.022727272727272728,
+            "range_only_mae_lower_bound": 0.008538192653655973,
+            "identical_queries": 7,
+            "identical_slot_fraction": 0.6477272727272727,
+            "native_constant_multistep_queries": 6,
+            "gofa_constant_multistep_queries": 9,
+            "native_mean_unique_numeric_ids": 1.6363636363636365,
+            "gofa_mean_unique_numeric_ids": 1.3636363636363635,
+            "native_first_slot_mae": 13.07623169488017,
+            "gofa_first_slot_mae": 13.412554479303997
+          },
+          "h24_steps_17_24": {
+            "queries": 11,
+            "observed_slots": 88,
+            "native_mae": 23.604425823669853,
+            "gofa_mae": 24.456600019046164,
+            "variable_geomean_ratio": 1.0249051719299298,
+            "variables_better_worse_equal": [
+              1,
+              3,
+              7
+            ],
+            "variable_ratio_quantiles_10_50_90": [
+              1.0,
+              1.0,
+              1.0700328012187499
+            ],
+            "queries_better_worse_equal_full_horizon": [
+              0,
+              4,
+              7
+            ],
+            "native_boundary_fraction": 0.0,
+            "gofa_boundary_fraction": 0.0,
+            "native_lower_upper_counts": [
+              0,
+              0
+            ],
+            "gofa_lower_upper_counts": [
+              0,
+              0
+            ],
+            "boundary_requested_denominator": 88,
+            "true_outside_fraction_observed": 0.0,
+            "range_only_mae_lower_bound": 0.0,
+            "identical_queries": 7,
+            "identical_slot_fraction": 0.6363636363636364,
+            "native_constant_multistep_queries": 11,
+            "gofa_constant_multistep_queries": 11,
+            "native_mean_unique_numeric_ids": 1.0,
+            "gofa_mean_unique_numeric_ids": 1.0,
+            "native_first_slot_mae": 22.453731378216947,
+            "gofa_first_slot_mae": 23.31725104679605
+          }
+        }
+      }
+    }
+  },
+  "round1000_diagnostic": {
+    "checked_beijing": "2026-10-18T19:32:45.901108+08:00",
+    "diagnostic_scope": "existing source-only predictions and raw source training labels; no GPU, new predictions, target labels or training changes",
+    "input_hashes": {
+      "native": "7f51baee06a8ca10137c8fadf93c27451774025b4859291736878eaeed587d10",
+      "update-001000": "5a3dd0555618aee0bb11bd497703e5531816e87d152d9c0f5e506c181c8a372c"
+    },
+    "sources": {
+      "solar": {
+        "all": {
+          "queries": 548,
+          "observed_slots": 6028,
+          "native_mae": 2.8884164901207914,
+          "gofa_mae": 2.5543658251884827,
+          "variable_geomean_ratio": 0.871246913822549,
+          "variables_better_worse_equal": [
+            81,
+            31,
+            25
+          ],
+          "variable_ratio_quantiles_10_50_90": [
+            0.43260040351765217,
+            0.9705268277331908,
+            1.435749492488314
+          ],
+          "queries_better_worse_equal_full_horizon": [
+            128,
+            51,
+            369
+          ],
+          "native_boundary_fraction": 0.0077969475779694755,
+          "gofa_boundary_fraction": 0.13188453881884538,
+          "native_lower_upper_counts": [
+            0,
+            47
+          ],
+          "gofa_lower_upper_counts": [
+            60,
+            735
+          ],
+          "boundary_requested_denominator": 6028,
+          "true_outside_fraction_observed": 0.14349701393497014,
+          "range_only_mae_lower_bound": 0.9046180494280845,
+          "identical_queries": 369,
+          "identical_slot_fraction": 0.6746848042468481,
+          "native_constant_multistep_queries": 379,
+          "gofa_constant_multistep_queries": 373,
+          "native_mean_unique_numeric_ids": 1.094890510948905,
+          "gofa_mean_unique_numeric_ids": 1.1094890510948905,
+          "native_first_slot_mae": 0.9701215640061857,
+          "gofa_first_slot_mae": 0.8076652018671401
+        },
+        "by_template": {
+          "10->1": {
+            "queries": 137,
+            "observed_slots": 137,
+            "native_mae": 1.105881984379711,
+            "gofa_mae": 0.7325460851287221,
+            "variable_geomean_ratio": 0.699791172412424,
+            "variables_better_worse_equal": [
+              29,
+              10,
+              98
+            ],
+            "variable_ratio_quantiles_10_50_90": [
+              0.21073371665568608,
+              1.0,
+              1.0
+            ],
+            "queries_better_worse_equal_full_horizon": [
+              29,
+              10,
+              98
+            ],
+            "native_boundary_fraction": 0.0,
+            "gofa_boundary_fraction": 0.072992700729927,
+            "native_lower_upper_counts": [
+              0,
+              0
+            ],
+            "gofa_lower_upper_counts": [
+              1,
+              9
+            ],
+            "boundary_requested_denominator": 137,
+            "true_outside_fraction_observed": 0.0072992700729927005,
+            "range_only_mae_lower_bound": 0.0020102561707044295,
+            "identical_queries": 98,
+            "identical_slot_fraction": 0.7153284671532847,
+            "native_constant_multistep_queries": 0,
+            "gofa_constant_multistep_queries": 0,
+            "native_mean_unique_numeric_ids": 1.0,
+            "gofa_mean_unique_numeric_ids": 1.0,
+            "native_first_slot_mae": 1.105881984379711,
+            "gofa_first_slot_mae": 0.7325460851287221
+          },
+          "12->12": {
+            "queries": 137,
+            "observed_slots": 1644,
+            "native_mae": 2.3776298871319863,
+            "gofa_mae": 1.9230650320625318,
+            "variable_geomean_ratio": 0.9371336384930194,
+            "variables_better_worse_equal": [
+              35,
+              12,
+              90
+            ],
+            "variable_ratio_quantiles_10_50_90": [
+              0.6685371738188179,
+              1.0,
+              1.0
+            ],
+            "queries_better_worse_equal_full_horizon": [
+              35,
+              12,
+              90
+            ],
+            "native_boundary_fraction": 0.0,
+            "gofa_boundary_fraction": 0.12226277372262774,
+            "native_lower_upper_counts": [
+              0,
+              0
+            ],
+            "gofa_lower_upper_counts": [
+              46,
+              155
+            ],
+            "boundary_requested_denominator": 1644,
+            "true_outside_fraction_observed": 0.16058394160583941,
+            "range_only_mae_lower_bound": 0.796552689199323,
+            "identical_queries": 90,
+            "identical_slot_fraction": 0.6599756690997567,
+            "native_constant_multistep_queries": 128,
+            "gofa_constant_multistep_queries": 124,
+            "native_mean_unique_numeric_ids": 1.0802919708029197,
+            "gofa_mean_unique_numeric_ids": 1.1386861313868613,
+            "native_first_slot_mae": 1.039188138382114,
+            "gofa_first_slot_mae": 0.7925538690038978
+          },
+          "14->7": {
+            "queries": 137,
+            "observed_slots": 959,
+            "native_mae": 1.8560726369982854,
+            "gofa_mae": 1.6420024728844183,
+            "variable_geomean_ratio": 0.9509414765537674,
+            "variables_better_worse_equal": [
+              29,
+              15,
+              93
+            ],
+            "variable_ratio_quantiles_10_50_90": [
+              0.6800324935408322,
+              1.0,
+              1.0196930992990842
+            ],
+            "queries_better_worse_equal_full_horizon": [
+              29,
+              15,
+              93
+            ],
+            "native_boundary_fraction": 0.0,
+            "gofa_boundary_fraction": 0.11261730969760167,
+            "native_lower_upper_counts": [
+              0,
+              0
+            ],
+            "gofa_lower_upper_counts": [
+              13,
+              95
+            ],
+            "boundary_requested_denominator": 959,
+            "true_outside_fraction_observed": 0.12408759124087591,
+            "range_only_mae_lower_bound": 0.28246166730945554,
+            "identical_queries": 93,
+            "identical_slot_fraction": 0.7017726798748697,
+            "native_constant_multistep_queries": 125,
+            "gofa_constant_multistep_queries": 126,
+            "native_mean_unique_numeric_ids": 1.102189781021898,
+            "gofa_mean_unique_numeric_ids": 1.094890510948905,
+            "native_first_slot_mae": 0.939961667967217,
+            "gofa_first_slot_mae": 0.8579311502490271
+          },
+          "48->24": {
+            "queries": 137,
+            "observed_slots": 3288,
+            "native_mae": 3.5191823531818036,
+            "gofa_mae": 3.212031355342634,
+            "variable_geomean_ratio": 0.9211303086979186,
+            "variables_better_worse_equal": [
+              35,
+              14,
+              88
+            ],
+            "variable_ratio_quantiles_10_50_90": [
+              0.7027651420346884,
+              1.0,
+              1.0001173027456425
+            ],
+            "queries_better_worse_equal_full_horizon": [
+              35,
+              14,
+              88
+            ],
+            "native_boundary_fraction": 0.014294403892944039,
+            "gofa_boundary_fraction": 0.14476885644768855,
+            "native_lower_upper_counts": [
+              0,
+              47
+            ],
+            "gofa_lower_upper_counts": [
+              0,
+              476
+            ],
+            "boundary_requested_denominator": 3288,
+            "true_outside_fraction_observed": 0.14628953771289538,
+            "range_only_mae_lower_bound": 1.177721665712789,
+            "identical_queries": 88,
+            "identical_slot_fraction": 0.6724452554744526,
+            "native_constant_multistep_queries": 126,
+            "gofa_constant_multistep_queries": 123,
+            "native_mean_unique_numeric_ids": 1.197080291970803,
+            "gofa_mean_unique_numeric_ids": 1.2043795620437956,
+            "native_first_slot_mae": 0.7954544652957006,
+            "gofa_first_slot_mae": 0.8476297030869132
+          }
+        },
+        "h24_steps_1_16": {
+          "queries": 137,
+          "observed_slots": 2192,
+          "native_mae": 2.707319433514684,
+          "gofa_mae": 2.386070049171421,
+          "variable_geomean_ratio": 0.9187270356600119,
+          "variables_better_worse_equal": [
+            35,
+            14,
+            88
+          ],
+          "variable_ratio_quantiles_10_50_90": [
+            0.6345436541084443,
+            1.0,
+            1.00027722580753
+          ],
+          "queries_better_worse_equal_full_horizon": [
+            35,
+            14,
+            88
+          ],
+          "native_boundary_fraction": 0.014142335766423358,
+          "gofa_boundary_fraction": 0.14416058394160583,
+          "native_lower_upper_counts": [
+            0,
+            31
+          ],
+          "gofa_lower_upper_counts": [
+            0,
+            316
+          ],
+          "boundary_requested_denominator": 2192,
+          "true_outside_fraction_observed": 0.114507299270073,
+          "range_only_mae_lower_bound": 0.7651858490865152,
+          "identical_queries": 88,
+          "identical_slot_fraction": 0.6729014598540146,
+          "native_constant_multistep_queries": 126,
+          "gofa_constant_multistep_queries": 123,
+          "native_mean_unique_numeric_ids": 1.197080291970803,
+          "gofa_mean_unique_numeric_ids": 1.2043795620437956,
+          "native_first_slot_mae": 0.7954544652957006,
+          "gofa_first_slot_mae": 0.8476297030869132
+        },
+        "h24_steps_17_24": {
+          "queries": 137,
+          "observed_slots": 1096,
+          "native_mae": 5.1429081925160425,
+          "gofa_mae": 4.8639539676850605,
+          "variable_geomean_ratio": 0.8830263225580288,
+          "variables_better_worse_equal": [
+            32,
+            13,
+            92
+          ],
+          "variable_ratio_quantiles_10_50_90": [
+            0.6923044936337883,
+            1.0,
+            1.0
+          ],
+          "queries_better_worse_equal_full_horizon": [
+            35,
+            14,
+            88
+          ],
+          "native_boundary_fraction": 0.014598540145985401,
+          "gofa_boundary_fraction": 0.145985401459854,
+          "native_lower_upper_counts": [
+            0,
+            16
+          ],
+          "gofa_lower_upper_counts": [
+            0,
+            160
+          ],
+          "boundary_requested_denominator": 1096,
+          "true_outside_fraction_observed": 0.20985401459854014,
+          "range_only_mae_lower_bound": 2.002793298965336,
+          "identical_queries": 92,
+          "identical_slot_fraction": 0.6715328467153284,
+          "native_constant_multistep_queries": 137,
+          "gofa_constant_multistep_queries": 137,
+          "native_mean_unique_numeric_ids": 1.0,
+          "gofa_mean_unique_numeric_ids": 1.0,
+          "native_first_slot_mae": 4.526321335873454,
+          "gofa_first_slot_mae": 4.112165560294246
+        },
+        "fixed_training_label_distribution": {
+          "10->1": {
+            "observed": 2048,
+            "true_outside_fraction": 0.03076171875,
+            "quantized_endpoint_fraction": 0.03076171875,
+            "zero_fraction": 0.52685546875
+          },
+          "12->12": {
+            "observed": 24576,
+            "true_outside_fraction": 0.1953125,
+            "quantized_endpoint_fraction": 0.1953125,
+            "zero_fraction": 0.5236002604166666
+          },
+          "14->7": {
+            "observed": 14336,
+            "true_outside_fraction": 0.12151227678571429,
+            "quantized_endpoint_fraction": 0.12151227678571429,
+            "zero_fraction": 0.5411551339285714
+          },
+          "48->24": {
+            "observed": 49152,
+            "true_outside_fraction": 0.16481526692708334,
+            "quantized_endpoint_fraction": 0.16481526692708334,
+            "zero_fraction": 0.5359293619791666
+          }
+        },
+        "validation_history_mean_coverage": 1.0
+      },
+      "nn5": {
+        "all": {
+          "queries": 444,
+          "observed_slots": 4805,
+          "native_mae": 15.745744947138322,
+          "gofa_mae": 22.470143927430634,
+          "variable_geomean_ratio": 1.3512514983973882,
+          "variables_better_worse_equal": [
+            16,
+            88,
+            7
+          ],
+          "variable_ratio_quantiles_10_50_90": [
+            0.9605829979388953,
+            1.2795713634259525,
+            2.062917425190096
+          ],
+          "queries_better_worse_equal_full_horizon": [
+            62,
+            150,
+            232
+          ],
+          "native_boundary_fraction": 0.20147420147420148,
+          "gofa_boundary_fraction": 0.5677723177723177,
+          "native_lower_upper_counts": [
+            0,
+            984
+          ],
+          "gofa_lower_upper_counts": [
+            0,
+            2773
+          ],
+          "boundary_requested_denominator": 4884,
+          "true_outside_fraction_observed": 0.006867845993756503,
+          "range_only_mae_lower_bound": 0.047205219653945314,
+          "identical_queries": 232,
+          "identical_slot_fraction": 0.5221130221130221,
+          "native_constant_multistep_queries": 320,
+          "gofa_constant_multistep_queries": 308,
+          "native_mean_unique_numeric_ids": 1.045045045045045,
+          "gofa_mean_unique_numeric_ids": 1.09009009009009,
+          "native_first_slot_mae": 12.269310134113502,
+          "gofa_first_slot_mae": 15.034283924675199
+        },
+        "by_template": {
+          "10->1": {
+            "queries": 111,
+            "observed_slots": 111,
+            "native_mae": 10.224206314566922,
+            "gofa_mae": 10.587125768314477,
+            "variable_geomean_ratio": 1.03849829707597,
+            "variables_better_worse_equal": [
+              27,
+              23,
+              61
+            ],
+            "variable_ratio_quantiles_10_50_90": [
+              0.5546737188215094,
+              1.0,
+              1.8775171969605509
+            ],
+            "queries_better_worse_equal_full_horizon": [
+              27,
+              23,
+              61
+            ],
+            "native_boundary_fraction": 0.0,
+            "gofa_boundary_fraction": 0.36036036036036034,
+            "native_lower_upper_counts": [
+              0,
+              0
+            ],
+            "gofa_lower_upper_counts": [
+              0,
+              40
+            ],
+            "boundary_requested_denominator": 111,
+            "true_outside_fraction_observed": 0.009009009009009009,
+            "range_only_mae_lower_bound": 0.012339298253445999,
+            "identical_queries": 61,
+            "identical_slot_fraction": 0.5495495495495496,
+            "native_constant_multistep_queries": 0,
+            "gofa_constant_multistep_queries": 0,
+            "native_mean_unique_numeric_ids": 1.0,
+            "gofa_mean_unique_numeric_ids": 1.0,
+            "native_first_slot_mae": 10.224206314566922,
+            "gofa_first_slot_mae": 10.587125768314477
+          },
+          "12->12": {
+            "queries": 111,
+            "observed_slots": 1314,
+            "native_mae": 11.268706804730744,
+            "gofa_mae": 15.563199715629642,
+            "variable_geomean_ratio": 1.2661018239563546,
+            "variables_better_worse_equal": [
+              8,
+              33,
+              70
+            ],
+            "variable_ratio_quantiles_10_50_90": [
+              1.0,
+              1.0,
+              2.8230887010099996
+            ],
+            "queries_better_worse_equal_full_horizon": [
+              8,
+              33,
+              70
+            ],
+            "native_boundary_fraction": 0.0,
+            "gofa_boundary_fraction": 0.2972972972972973,
+            "native_lower_upper_counts": [
+              0,
+              0
+            ],
+            "gofa_lower_upper_counts": [
+              0,
+              396
+            ],
+            "boundary_requested_denominator": 1332,
+            "true_outside_fraction_observed": 0.0182648401826484,
+            "range_only_mae_lower_bound": 0.1468190625201803,
+            "identical_queries": 70,
+            "identical_slot_fraction": 0.6366366366366366,
+            "native_constant_multistep_queries": 110,
+            "gofa_constant_multistep_queries": 109,
+            "native_mean_unique_numeric_ids": 1.009009009009009,
+            "gofa_mean_unique_numeric_ids": 1.018018018018018,
+            "native_first_slot_mae": 10.234398995597452,
+            "gofa_first_slot_mae": 11.152167918729
+          },
+          "14->7": {
+            "queries": 111,
+            "observed_slots": 763,
+            "native_mae": 11.19026205828932,
+            "gofa_mae": 16.373167983584015,
+            "variable_geomean_ratio": 1.3127339457967662,
+            "variables_better_worse_equal": [
+              18,
+              43,
+              50
+            ],
+            "variable_ratio_quantiles_10_50_90": [
+              0.8284894230507117,
+              1.0,
+              3.121937189078285
+            ],
+            "queries_better_worse_equal_full_horizon": [
+              18,
+              43,
+              50
+            ],
+            "native_boundary_fraction": 0.0,
+            "gofa_boundary_fraction": 0.39253539253539255,
+            "native_lower_upper_counts": [
+              0,
+              0
+            ],
+            "gofa_lower_upper_counts": [
+              0,
+              305
+            ],
+            "boundary_requested_denominator": 777,
+            "true_outside_fraction_observed": 0.003931847968545216,
+            "range_only_mae_lower_bound": 0.008528862376231822,
+            "identical_queries": 50,
+            "identical_slot_fraction": 0.47619047619047616,
+            "native_constant_multistep_queries": 109,
+            "gofa_constant_multistep_queries": 102,
+            "native_mean_unique_numeric_ids": 1.018018018018018,
+            "gofa_mean_unique_numeric_ids": 1.117117117117117,
+            "native_first_slot_mae": 11.154324686978097,
+            "gofa_first_slot_mae": 12.607232192653994
+          },
+          "48->24": {
+            "queries": 111,
+            "observed_slots": 2617,
+            "native_mae": 19.556043896901702,
+            "gofa_mae": 28.219755068096806,
+            "variable_geomean_ratio": 1.4685294658015775,
+            "variables_better_worse_equal": [
+              9,
+              51,
+              51
+            ],
+            "variable_ratio_quantiles_10_50_90": [
+              1.0,
+              1.0,
+              4.2060389844997115
+            ],
+            "queries_better_worse_equal_full_horizon": [
+              9,
+              51,
+              51
+            ],
+            "native_boundary_fraction": 0.36936936936936937,
+            "gofa_boundary_fraction": 0.7627627627627628,
+            "native_lower_upper_counts": [
+              0,
+              984
+            ],
+            "gofa_lower_upper_counts": [
+              0,
+              2032
+            ],
+            "boundary_requested_denominator": 2664,
+            "true_outside_fraction_observed": 0.0019105846388995033,
+            "range_only_mae_lower_bound": 0.009944076494647658,
+            "identical_queries": 51,
+            "identical_slot_fraction": 0.4771021021021021,
+            "native_constant_multistep_queries": 101,
+            "gofa_constant_multistep_queries": 97,
+            "native_mean_unique_numeric_ids": 1.1531531531531531,
+            "gofa_mean_unique_numeric_ids": 1.2252252252252251,
+            "native_first_slot_mae": 17.549402423378147,
+            "gofa_first_slot_mae": 25.96570706722933
+          }
+        },
+        "h24_steps_1_16": {
+          "queries": 111,
+          "observed_slots": 1748,
+          "native_mae": 19.46403974398131,
+          "gofa_mae": 28.22601066417225,
+          "variable_geomean_ratio": 1.4753608051843041,
+          "variables_better_worse_equal": [
+            9,
+            51,
+            51
+          ],
+          "variable_ratio_quantiles_10_50_90": [
+            1.0,
+            1.0,
+            4.497113949460973
+          ],
+          "queries_better_worse_equal_full_horizon": [
+            9,
+            51,
+            51
+          ],
+          "native_boundary_fraction": 0.36936936936936937,
+          "gofa_boundary_fraction": 0.7612612612612613,
+          "native_lower_upper_counts": [
+            0,
+            656
+          ],
+          "gofa_lower_upper_counts": [
+            0,
+            1352
+          ],
+          "boundary_requested_denominator": 1776,
+          "true_outside_fraction_observed": 0.0011441647597254005,
+          "range_only_mae_lower_bound": 0.0016854612393019143,
+          "identical_queries": 51,
+          "identical_slot_fraction": 0.4769144144144144,
+          "native_constant_multistep_queries": 101,
+          "gofa_constant_multistep_queries": 97,
+          "native_mean_unique_numeric_ids": 1.1531531531531531,
+          "gofa_mean_unique_numeric_ids": 1.2252252252252251,
+          "native_first_slot_mae": 17.549402423378147,
+          "gofa_first_slot_mae": 25.96570706722933
+        },
+        "h24_steps_17_24": {
+          "queries": 111,
+          "observed_slots": 869,
+          "native_mae": 19.74111093867943,
+          "gofa_mae": 28.20717188980006,
+          "variable_geomean_ratio": 1.4653755116887097,
+          "variables_better_worse_equal": [
+            8,
+            48,
+            55
+          ],
+          "variable_ratio_quantiles_10_50_90": [
+            1.0,
+            1.0,
+            4.131707731616216
+          ],
+          "queries_better_worse_equal_full_horizon": [
+            9,
+            51,
+            51
+          ],
+          "native_boundary_fraction": 0.36936936936936937,
+          "gofa_boundary_fraction": 0.7657657657657657,
+          "native_lower_upper_counts": [
+            0,
+            328
+          ],
+          "gofa_lower_upper_counts": [
+            0,
+            680
+          ],
+          "boundary_requested_denominator": 888,
+          "true_outside_fraction_observed": 0.0034522439585730723,
+          "range_only_mae_lower_bound": 0.026556342854077302,
+          "identical_queries": 53,
+          "identical_slot_fraction": 0.4774774774774775,
+          "native_constant_multistep_queries": 111,
+          "gofa_constant_multistep_queries": 111,
+          "native_mean_unique_numeric_ids": 1.0,
+          "gofa_mean_unique_numeric_ids": 1.0,
+          "native_first_slot_mae": 19.90559660426893,
+          "gofa_first_slot_mae": 28.599530020521748
+        },
+        "fixed_training_label_distribution": {
+          "10->1": {
+            "observed": 2048,
+            "true_outside_fraction": 0.01318359375,
+            "quantized_endpoint_fraction": 0.01318359375,
+            "zero_fraction": 0.00634765625
+          },
+          "12->12": {
+            "observed": 23913,
+            "true_outside_fraction": 0.013674570317400577,
+            "quantized_endpoint_fraction": 0.013674570317400577,
+            "zero_fraction": 0.005101827457868105
+          },
+          "14->7": {
+            "observed": 13994,
+            "true_outside_fraction": 0.011433471487780478,
+            "quantized_endpoint_fraction": 0.011433471487780478,
+            "zero_fraction": 0.005002143775903959
+          },
+          "48->24": {
+            "observed": 48065,
+            "true_outside_fraction": 0.002808696556746073,
+            "quantized_endpoint_fraction": 0.002808696556746073,
+            "zero_fraction": 0.0049308228440653286
+          }
+        },
+        "validation_history_mean_coverage": 0.9863403582153583,
+        "worst_three_h24_examples": [
+          {
+            "query": {
+              "source": "nn5",
+              "variable": 92,
+              "origin": 568,
+              "length": 48,
+              "horizon": 24,
+              "chunk": 0
+            },
+            "native_mae": 8.225460301274838,
+            "gofa_mae": 75.78839559140413,
+            "history": [
+              21.291425704956055,
+              27.051551818847656,
+              23.540241241455078,
+              17.635454177856445,
+              12.80904769897461,
+              20.83114242553711,
+              16.76749038696289,
+              20.870594024658203,
+              30.89163589477539,
+              28.051025390625,
+              23.908470153808594,
+              24.697526931762695,
+              20.71278190612793,
+              13.40084171295166,
+              18.3587589263916,
+              22.22514533996582,
+              17.58285140991211,
+              0.0,
+              7.535507678985596,
+              7.351394176483154,
+              16.504470825195312,
+              16.991056442260742,
+              20.265649795532227,
+              31.78590202331543,
+              20.160442352294922,
+              19.410837173461914,
+              21.212520599365234,
+              18.27985191345215,
+              18.398210525512695,
+              26.59126853942871,
+              34.00841522216797,
+              20.84429168701172,
+              16.793792724609375,
+              19.371383666992188,
+              18.819042205810547,
+              27.275117874145508,
+              52.064701080322266,
+              69.48973846435547,
+              57.50920486450195,
+              25.473434448242188,
+              43.06943893432617,
+              52.74855422973633,
+              52.051551818847656,
+              34.521305084228516,
+              41.82009506225586,
+              29.076801300048828,
+              21.60704803466797,
+              24.210941314697266
+            ],
+            "history_observed": [
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true
+            ],
+            "target": [
+              21.33087921142578,
+              27.48553466796875,
+              31.65439224243164,
+              39.110992431640625,
+              24.631772994995117,
+              17.556549072265625,
+              30.81273078918457,
+              20.462913513183594,
+              27.682798385620117,
+              30.81273078918457,
+              18.713834762573242,
+              0.0,
+              13.045764923095703,
+              23.96107292175293,
+              21.33087921142578,
+              31.628089904785156,
+              36.19147872924805,
+              45.607574462890625,
+              44.95002746582031,
+              13.479747772216797,
+              24.671226501464844,
+              27.748554229736328,
+              34.573909759521484,
+              46.65965270996094
+            ],
+            "observed": [
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              false,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true
+            ],
+            "native_prediction": [
+              23.675153732299805,
+              23.675153732299805,
+              23.675153732299805,
+              23.675153732299805,
+              23.675153732299805,
+              23.675153732299805,
+              23.675153732299805,
+              23.675153732299805,
+              23.675153732299805,
+              23.675153732299805,
+              23.675153732299805,
+              23.675153732299805,
+              23.675153732299805,
+              23.675153732299805,
+              23.675153732299805,
+              23.675153732299805,
+              23.675153732299805,
+              23.675153732299805,
+              23.675153732299805,
+              23.675153732299805,
+              23.675153732299805,
+              23.675153732299805,
+              23.675153732299805,
+              23.675153732299805
+            ],
+            "gofa_prediction": [
+              104.2276611328125,
+              104.2276611328125,
+              104.2276611328125,
+              104.2276611328125,
+              104.2276611328125,
+              104.2276611328125,
+              104.2276611328125,
+              104.2276611328125,
+              104.2276611328125,
+              104.2276611328125,
+              104.2276611328125,
+              104.2276611328125,
+              104.2276611328125,
+              104.2276611328125,
+              104.2276611328125,
+              104.2276611328125,
+              104.2276611328125,
+              104.2276611328125,
+              104.2276611328125,
+              104.2276611328125,
+              104.2276611328125,
+              104.2276611328125,
+              104.2276611328125,
+              104.2276611328125
+            ],
+            "range": [
+              -34.7379202583313,
+              104.22765872268677
+            ]
+          },
+          {
+            "query": {
+              "source": "nn5",
+              "variable": 16,
+              "origin": 582,
+              "length": 48,
+              "horizon": 24,
+              "chunk": 0
+            },
+            "native_mae": 22.92198972080065,
+            "gofa_mae": 84.81117416464764,
+            "history": [
+              32.695579528808594,
+              36.692176818847656,
+              19.430273056030273,
+              9.523809432983398,
+              4.719387531280518,
+              24.773242950439453,
+              21.045917510986328,
+              27.097505569458008,
+              34.155330657958984,
+              36.87641906738281,
+              9.367914199829102,
+              19.458616256713867,
+              15.348639488220215,
+              2.267573595046997,
+              17.176870346069336,
+              35.048187255859375,
+              37.5,
+              10.119047164916992,
+              18.083900451660156,
+              21.683673858642578,
+              20.790817260742188,
+              32.99319839477539,
+              3.387188196182251,
+              74.06462860107422,
+              12.57086181640625,
+              26.65816307067871,
+              24.900793075561523,
+              21.782878875732422,
+              30.017005920410156,
+              37.188209533691406,
+              36.11111068725586,
+              11.267006874084473,
+              22.85997772216797,
+              10.274943351745605,
+              19.345237731933594,
+              29.32256317138672,
+              36.52210998535156,
+              36.38038635253906,
+              11.337868690490723,
+              19.331066131591797,
+              20.096372604370117,
+              21.145124435424805,
+              26.417234420776367,
+              35.331634521484375,
+              5.031178951263428,
+              12.003968238830566,
+              11.295351028442383,
+              12.627551078796387
+            ],
+            "history_observed": [
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true
+            ],
+            "target": [
+              15.802154541015625,
+              22.108842849731445,
+              38.83219909667969,
+              40.29195022583008,
+              14.002267837524414,
+              23.54024887084961,
+              26.077096939086914,
+              19.742063522338867,
+              30.98072624206543,
+              43.69330978393555,
+              39.07312774658203,
+              16.82256317138672,
+              23.100906372070312,
+              21.79705238342285,
+              22.491497039794922,
+              28.869047164916992,
+              37.13151931762695,
+              38.74716567993164,
+              14.739229202270508,
+              20.578231811523438,
+              19.472789764404297,
+              1.8282313346862793,
+              18.6082763671875,
+              0.0
+            ],
+            "observed": [
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              false
+            ],
+            "native_prediction": [
+              2.2603938579559326,
+              2.2603938579559326,
+              2.2603938579559326,
+              2.2603938579559326,
+              2.2603938579559326,
+              2.2603938579559326,
+              2.2603938579559326,
+              2.2603938579559326,
+              2.2603938579559326,
+              2.2603938579559326,
+              2.2603938579559326,
+              2.2603938579559326,
+              2.2603938579559326,
+              2.2603938579559326,
+              2.2603938579559326,
+              2.2603938579559326,
+              2.2603938579559326,
+              2.2603938579559326,
+              2.2603938579559326,
+              2.2603938579559326,
+              2.2603938579559326,
+              2.2603938579559326,
+              2.2603938579559326,
+              2.2603938579559326
+            ],
+            "gofa_prediction": [
+              109.95597839355469,
+              109.95597839355469,
+              109.95597839355469,
+              109.95597839355469,
+              109.95597839355469,
+              109.95597839355469,
+              109.95597839355469,
+              109.95597839355469,
+              109.95597839355469,
+              109.95597839355469,
+              109.95597839355469,
+              109.95597839355469,
+              109.95597839355469,
+              109.95597839355469,
+              109.95597839355469,
+              109.95597839355469,
+              109.95597839355469,
+              109.95597839355469,
+              109.95597839355469,
+              109.95597839355469,
+              109.95597839355469,
+              109.95597839355469,
+              109.95597839355469,
+              109.95597839355469
+            ],
+            "range": [
+              -33.62377420246601,
+              109.95597639858723
+            ]
+          },
+          {
+            "query": {
+              "source": "nn5",
+              "variable": 2,
+              "origin": 563,
+              "length": 48,
+              "horizon": 24,
+              "chunk": 0
+            },
+            "native_mae": 24.685707264579833,
+            "gofa_mae": 70.65867698192596,
+            "history": [
+              16.794218063354492,
+              0.0,
+              10.317460060119629,
+              13.903060913085938,
+              21.10260772705078,
+              32.667232513427734,
+              43.14059066772461,
+              24.09296989440918,
+              17.50283432006836,
+              13.421201705932617,
+              18.905895233154297,
+              17.85714340209961,
+              30.612245559692383,
+              47.29308319091797,
+              26.147958755493164,
+              17.672903060913086,
+              15.476190567016602,
+              8.503401756286621,
+              20.393991470336914,
+              31.476757049560547,
+              47.831634521484375,
+              21.357709884643555,
+              9.764739036560059,
+              1.771541953086853,
+              16.383220672607422,
+              22.0096378326416,
+              30.385486602783203,
+              42.92800521850586,
+              28.68480682373047,
+              15.362812042236328,
+              15.759636878967285,
+              12.5,
+              20.493196487426758,
+              33.092403411865234,
+              46.85374069213867,
+              32.2562370300293,
+              16.496599197387695,
+              17.488662719726562,
+              13.251133918762207,
+              21.17346954345703,
+              33.39002227783203,
+              4.931972980499268,
+              63.562923431396484,
+              19.37358283996582,
+              16.865079879760742,
+              15.107709884643555,
+              21.612812042236328,
+              33.85770797729492
+            ],
+            "history_observed": [
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true
+            ],
+            "target": [
+              45.22392272949219,
+              27.8344669342041,
+              16.1989803314209,
+              17.205215454101562,
+              10.189908981323242,
+              20.54988670349121,
+              33.021541595458984,
+              43.721656799316406,
+              31.816892623901367,
+              16.765872955322266,
+              15.986394882202148,
+              12.443310737609863,
+              22.959182739257812,
+              31.94444465637207,
+              43.21145248413086,
+              7.369614601135254,
+              18.990930557250977,
+              17.729591369628906,
+              13.038548469543457,
+              20.379817962646484,
+              36.23866271972656,
+              42.36111068725586,
+              27.380952835083008,
+              19.742063522338867
+            ],
+            "observed": [
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true
+            ],
+            "native_prediction": [
+              -0.006356292404234409,
+              -0.006356292404234409,
+              -0.006356292404234409,
+              -0.006356292404234409,
+              -0.006356292404234409,
+              -0.006356292404234409,
+              -0.006356292404234409,
+              -0.006356292404234409,
+              -0.006356292404234409,
+              -0.006356292404234409,
+              -0.006356292404234409,
+              -0.006356292404234409,
+              -0.006356292404234409,
+              -0.006356292404234409,
+              -0.006356292404234409,
+              -0.006356292404234409,
+              -0.006356292404234409,
+              -0.006356292404234409,
+              -0.006356292404234409,
+              -0.006356292404234409,
+              -0.006356292404234409,
+              -0.006356292404234409,
+              -0.006356292404234409,
+              -0.006356292404234409
+            ],
+            "gofa_prediction": [
+              95.33802795410156,
+              95.33802795410156,
+              95.33802795410156,
+              95.33802795410156,
+              95.33802795410156,
+              95.33802795410156,
+              95.33802795410156,
+              95.33802795410156,
+              95.33802795410156,
+              95.33802795410156,
+              95.33802795410156,
+              95.33802795410156,
+              95.33802795410156,
+              95.33802795410156,
+              95.33802795410156,
+              95.33802795410156,
+              95.33802795410156,
+              95.33802795410156,
+              95.33802795410156,
+              95.33802795410156,
+              95.33802795410156,
+              95.33802795410156,
+              95.33802795410156,
+              95.33802795410156
+            ],
+            "range": [
+              -31.775105423355104,
+              95.33802885475158
+            ]
+          }
+        ]
+      },
+      "pems04": {
+        "all": {
+          "queries": 1228,
+          "observed_slots": 13508,
+          "native_mae": 41.56409463673513,
+          "gofa_mae": 41.94324906214861,
+          "variable_geomean_ratio": 0.9399934117581848,
+          "variables_better_worse_equal": [
+            174,
+            129,
+            4
+          ],
+          "variable_ratio_quantiles_10_50_90": [
+            0.6310277537499674,
+            0.9521533243278754,
+            1.359915968736273
+          ],
+          "queries_better_worse_equal_full_horizon": [
+            469,
+            338,
+            421
+          ],
+          "native_boundary_fraction": 0.0017767249037607344,
+          "gofa_boundary_fraction": 0.05189517323067812,
+          "native_lower_upper_counts": [
+            0,
+            24
+          ],
+          "gofa_lower_upper_counts": [
+            101,
+            600
+          ],
+          "boundary_requested_denominator": 13508,
+          "true_outside_fraction_observed": 0.08831803375777317,
+          "range_only_mae_lower_bound": 3.1227347275688486,
+          "identical_queries": 419,
+          "identical_slot_fraction": 0.43485342019543977,
+          "native_constant_multistep_queries": 718,
+          "gofa_constant_multistep_queries": 699,
+          "native_mean_unique_numeric_ids": 1.2223127035830619,
+          "gofa_mean_unique_numeric_ids": 1.248371335504886,
+          "native_first_slot_mae": 25.118336212524568,
+          "gofa_first_slot_mae": 25.727239176325135
+        },
+        "by_template": {
+          "10->1": {
+            "queries": 307,
+            "observed_slots": 307,
+            "native_mae": 27.78357431409243,
+            "gofa_mae": 24.106408544178162,
+            "variable_geomean_ratio": 0.8132372762219588,
+            "variables_better_worse_equal": [
+              126,
+              77,
+              104
+            ],
+            "variable_ratio_quantiles_10_50_90": [
+              0.1979086825492102,
+              1.0,
+              2.3999543326241723
+            ],
+            "queries_better_worse_equal_full_horizon": [
+              126,
+              77,
+              104
+            ],
+            "native_boundary_fraction": 0.0,
+            "gofa_boundary_fraction": 0.09120521172638436,
+            "native_lower_upper_counts": [
+              0,
+              0
+            ],
+            "gofa_lower_upper_counts": [
+              6,
+              22
+            ],
+            "boundary_requested_denominator": 307,
+            "true_outside_fraction_observed": 0.035830618892508145,
+            "range_only_mae_lower_bound": 0.3731221498371332,
+            "identical_queries": 104,
+            "identical_slot_fraction": 0.33876221498371334,
+            "native_constant_multistep_queries": 0,
+            "gofa_constant_multistep_queries": 0,
+            "native_mean_unique_numeric_ids": 1.0,
+            "gofa_mean_unique_numeric_ids": 1.0,
+            "native_first_slot_mae": 27.78357431409243,
+            "gofa_first_slot_mae": 24.106408544178162
+          },
+          "12->12": {
+            "queries": 307,
+            "observed_slots": 3684,
+            "native_mae": 39.30440692861454,
+            "gofa_mae": 39.55602990905282,
+            "variable_geomean_ratio": 0.9693012081748923,
+            "variables_better_worse_equal": [
+              113,
+              97,
+              97
+            ],
+            "variable_ratio_quantiles_10_50_90": [
+              0.5665466762963763,
+              1.0,
+              1.5326461686743698
+            ],
+            "queries_better_worse_equal_full_horizon": [
+              113,
+              97,
+              97
+            ],
+            "native_boundary_fraction": 0.0,
+            "gofa_boundary_fraction": 0.09391965255157438,
+            "native_lower_upper_counts": [
+              0,
+              0
+            ],
+            "gofa_lower_upper_counts": [
+              60,
+              286
+            ],
+            "boundary_requested_denominator": 3684,
+            "true_outside_fraction_observed": 0.13463626492942454,
+            "range_only_mae_lower_bound": 3.6234651465798033,
+            "identical_queries": 97,
+            "identical_slot_fraction": 0.3707926167209555,
+            "native_constant_multistep_queries": 251,
+            "gofa_constant_multistep_queries": 227,
+            "native_mean_unique_numeric_ids": 1.254071661237785,
+            "gofa_mean_unique_numeric_ids": 1.3778501628664495,
+            "native_first_slot_mae": 28.8230106001306,
+            "gofa_first_slot_mae": 28.64466308554628
+          },
+          "14->7": {
+            "queries": 307,
+            "observed_slots": 2149,
+            "native_mae": 31.99324110245906,
+            "gofa_mae": 30.884221177645774,
+            "variable_geomean_ratio": 0.9243226896054177,
+            "variables_better_worse_equal": [
+              132,
+              80,
+              95
+            ],
+            "variable_ratio_quantiles_10_50_90": [
+              0.5299082961987649,
+              1.0,
+              1.3272996617499917
+            ],
+            "queries_better_worse_equal_full_horizon": [
+              132,
+              80,
+              95
+            ],
+            "native_boundary_fraction": 0.0,
+            "gofa_boundary_fraction": 0.07398790134946487,
+            "native_lower_upper_counts": [
+              0,
+              0
+            ],
+            "gofa_lower_upper_counts": [
+              35,
+              124
+            ],
+            "boundary_requested_denominator": 2149,
+            "true_outside_fraction_observed": 0.07166123778501629,
+            "range_only_mae_lower_bound": 1.8904372731503025,
+            "identical_queries": 95,
+            "identical_slot_fraction": 0.4025127966496045,
+            "native_constant_multistep_queries": 224,
+            "gofa_constant_multistep_queries": 231,
+            "native_mean_unique_numeric_ids": 1.3973941368078175,
+            "gofa_mean_unique_numeric_ids": 1.3778501628664495,
+            "native_first_slot_mae": 23.000732854139216,
+            "gofa_first_slot_mae": 25.069217103588148
+          },
+          "48->24": {
+            "queries": 307,
+            "observed_slots": 7368,
+            "native_mae": 46.059625785069386,
+            "gofa_mae": 47.105610126591934,
+            "variable_geomean_ratio": 0.9911121113607231,
+            "variables_better_worse_equal": [
+              98,
+              84,
+              125
+            ],
+            "variable_ratio_quantiles_10_50_90": [
+              0.690481837542731,
+              1.0,
+              1.25932539986472
+            ],
+            "queries_better_worse_equal_full_horizon": [
+              98,
+              84,
+              125
+            ],
+            "native_boundary_fraction": 0.003257328990228013,
+            "gofa_boundary_fraction": 0.02280130293159609,
+            "native_lower_upper_counts": [
+              0,
+              24
+            ],
+            "gofa_lower_upper_counts": [
+              0,
+              168
+            ],
+            "boundary_requested_denominator": 7368,
+            "true_outside_fraction_observed": 0.0722041259500543,
+            "range_only_mae_lower_bound": 3.3463567996742674,
+            "identical_queries": 123,
+            "identical_slot_fraction": 0.4803203040173724,
+            "native_constant_multistep_queries": 243,
+            "gofa_constant_multistep_queries": 241,
+            "native_mean_unique_numeric_ids": 1.237785016286645,
+            "gofa_mean_unique_numeric_ids": 1.237785016286645,
+            "native_first_slot_mae": 20.866027081736018,
+            "gofa_first_slot_mae": 25.08866797198795
+          }
+        },
+        "h24_steps_1_16": {
+          "queries": 307,
+          "observed_slots": 4912,
+          "native_mae": 38.92183914164185,
+          "gofa_mae": 40.2364782059572,
+          "variable_geomean_ratio": 0.993039401355634,
+          "variables_better_worse_equal": [
+            95,
+            87,
+            125
+          ],
+          "variable_ratio_quantiles_10_50_90": [
+            0.6607646599120092,
+            1.0,
+            1.2705209702073292
+          ],
+          "queries_better_worse_equal_full_horizon": [
+            98,
+            84,
+            125
+          ],
+          "native_boundary_fraction": 0.003257328990228013,
+          "gofa_boundary_fraction": 0.02280130293159609,
+          "native_lower_upper_counts": [
+            0,
+            16
+          ],
+          "gofa_lower_upper_counts": [
+            0,
+            112
+          ],
+          "boundary_requested_denominator": 4912,
+          "true_outside_fraction_observed": 0.04682410423452769,
+          "range_only_mae_lower_bound": 1.695838049674267,
+          "identical_queries": 123,
+          "identical_slot_fraction": 0.4802524429967427,
+          "native_constant_multistep_queries": 243,
+          "gofa_constant_multistep_queries": 241,
+          "native_mean_unique_numeric_ids": 1.237785016286645,
+          "gofa_mean_unique_numeric_ids": 1.237785016286645,
+          "native_first_slot_mae": 20.866027081736018,
+          "gofa_first_slot_mae": 25.08866797198795
+        },
+        "h24_steps_17_24": {
+          "queries": 307,
+          "observed_slots": 2456,
+          "native_mae": 60.33519907192447,
+          "gofa_mae": 60.84387396786139,
+          "variable_geomean_ratio": 1.001162855074621,
+          "variables_better_worse_equal": [
+            85,
+            75,
+            147
+          ],
+          "variable_ratio_quantiles_10_50_90": [
+            0.7107860545427268,
+            1.0,
+            1.238382684060135
+          ],
+          "queries_better_worse_equal_full_horizon": [
+            98,
+            84,
+            125
+          ],
+          "native_boundary_fraction": 0.003257328990228013,
+          "gofa_boundary_fraction": 0.02280130293159609,
+          "native_lower_upper_counts": [
+            0,
+            8
+          ],
+          "gofa_lower_upper_counts": [
+            0,
+            56
+          ],
+          "boundary_requested_denominator": 2456,
+          "true_outside_fraction_observed": 0.12296416938110749,
+          "range_only_mae_lower_bound": 6.647394299674265,
+          "identical_queries": 147,
+          "identical_slot_fraction": 0.4804560260586319,
+          "native_constant_multistep_queries": 306,
+          "gofa_constant_multistep_queries": 306,
+          "native_mean_unique_numeric_ids": 1.006514657980456,
+          "gofa_mean_unique_numeric_ids": 1.006514657980456,
+          "native_first_slot_mae": 55.699003978045766,
+          "gofa_first_slot_mae": 54.93162430138957
+        },
+        "fixed_training_label_distribution": {
+          "10->1": {
+            "observed": 2048,
+            "true_outside_fraction": 0.0361328125,
+            "quantized_endpoint_fraction": 0.0361328125,
+            "zero_fraction": 0.01611328125
+          },
+          "12->12": {
+            "observed": 24576,
+            "true_outside_fraction": 0.1485595703125,
+            "quantized_endpoint_fraction": 0.1485595703125,
+            "zero_fraction": 0.013671875
+          },
+          "14->7": {
+            "observed": 14336,
+            "true_outside_fraction": 0.07756696428571429,
+            "quantized_endpoint_fraction": 0.07756696428571429,
+            "zero_fraction": 0.017578125
+          },
+          "48->24": {
+            "observed": 49152,
+            "true_outside_fraction": 0.08443196614583333,
+            "quantized_endpoint_fraction": 0.08443196614583333,
+            "zero_fraction": 0.019775390625
+          }
+        },
+        "validation_history_mean_coverage": 1.0
+      },
+      "aq_shunyi": {
+        "all": {
+          "queries": 44,
+          "observed_slots": 480,
+          "native_mae": 29.89641437595692,
+          "gofa_mae": 39.323996996165384,
+          "variable_geomean_ratio": 1.01128884041839,
+          "variables_better_worse_equal": [
+            6,
+            4,
+            1
+          ],
+          "variable_ratio_quantiles_10_50_90": [
+            0.9115280579472291,
+            0.9954087933482189,
+            1.0992085949307768
+          ],
+          "queries_better_worse_equal_full_horizon": [
+            13,
+            10,
+            21
+          ],
+          "native_boundary_fraction": 0.0,
+          "gofa_boundary_fraction": 0.049586776859504134,
+          "native_lower_upper_counts": [
+            0,
+            0
+          ],
+          "gofa_lower_upper_counts": [
+            0,
+            24
+          ],
+          "boundary_requested_denominator": 484,
+          "true_outside_fraction_observed": 0.0875,
+          "range_only_mae_lower_bound": 2.331510141867795,
+          "identical_queries": 21,
+          "identical_slot_fraction": 0.5557851239669421,
+          "native_constant_multistep_queries": 23,
+          "gofa_constant_multistep_queries": 23,
+          "native_mean_unique_numeric_ids": 1.4090909090909092,
+          "gofa_mean_unique_numeric_ids": 1.4772727272727273,
+          "native_first_slot_mae": 26.79352226025168,
+          "gofa_first_slot_mae": 19.72332791426809
+        },
+        "by_template": {
+          "10->1": {
+            "queries": 11,
+            "observed_slots": 11,
+            "native_mae": 26.355013070981922,
+            "gofa_mae": 26.159342292880783,
+            "variable_geomean_ratio": 0.41202392982656416,
+            "variables_better_worse_equal": [
+              4,
+              0,
+              7
+            ],
+            "variable_ratio_quantiles_10_50_90": [
+              0.665856078955098,
+              1.0,
+              1.0
+            ],
+            "queries_better_worse_equal_full_horizon": [
+              4,
+              0,
+              7
+            ],
+            "native_boundary_fraction": 0.0,
+            "gofa_boundary_fraction": 0.09090909090909091,
+            "native_lower_upper_counts": [
+              0,
+              0
+            ],
+            "gofa_lower_upper_counts": [
+              0,
+              1
+            ],
+            "boundary_requested_denominator": 11,
+            "true_outside_fraction_observed": 0.0,
+            "range_only_mae_lower_bound": 0.0,
+            "identical_queries": 7,
+            "identical_slot_fraction": 0.6363636363636364,
+            "native_constant_multistep_queries": 0,
+            "gofa_constant_multistep_queries": 0,
+            "native_mean_unique_numeric_ids": 1.0,
+            "gofa_mean_unique_numeric_ids": 1.0,
+            "native_first_slot_mae": 26.355013070981922,
+            "gofa_first_slot_mae": 26.159342292880783
+          },
+          "12->12": {
+            "queries": 11,
+            "observed_slots": 132,
+            "native_mae": 15.348587550633194,
+            "gofa_mae": 50.88374138393578,
+            "variable_geomean_ratio": 1.1402016345974602,
+            "variables_better_worse_equal": [
+              3,
+              4,
+              4
+            ],
+            "variable_ratio_quantiles_10_50_90": [
+              0.912018607446966,
+              1.0,
+              1.970316806017678
+            ],
+            "queries_better_worse_equal_full_horizon": [
+              3,
+              4,
+              4
+            ],
+            "native_boundary_fraction": 0.0,
+            "gofa_boundary_fraction": 0.17424242424242425,
+            "native_lower_upper_counts": [
+              0,
+              0
+            ],
+            "gofa_lower_upper_counts": [
+              0,
+              23
+            ],
+            "boundary_requested_denominator": 132,
+            "true_outside_fraction_observed": 0.22727272727272727,
+            "range_only_mae_lower_bound": 0.6548050544998834,
+            "identical_queries": 4,
+            "identical_slot_fraction": 0.4318181818181818,
+            "native_constant_multistep_queries": 9,
+            "gofa_constant_multistep_queries": 8,
+            "native_mean_unique_numeric_ids": 1.2727272727272727,
+            "gofa_mean_unique_numeric_ids": 1.6363636363636365,
+            "native_first_slot_mae": 38.35839448041026,
+            "gofa_first_slot_mae": 21.032817698183695
+          },
+          "14->7": {
+            "queries": 11,
+            "observed_slots": 73,
+            "native_mae": 60.17021281123235,
+            "gofa_mae": 57.0074405713448,
+            "variable_geomean_ratio": 1.581840634348523,
+            "variables_better_worse_equal": [
+              6,
+              2,
+              3
+            ],
+            "variable_ratio_quantiles_10_50_90": [
+              0.5662171700259993,
+              0.9714742606026786,
+              1.0832208365028317
+            ],
+            "queries_better_worse_equal_full_horizon": [
+              6,
+              2,
+              3
+            ],
+            "native_boundary_fraction": 0.0,
+            "gofa_boundary_fraction": 0.0,
+            "native_lower_upper_counts": [
+              0,
+              0
+            ],
+            "gofa_lower_upper_counts": [
+              0,
+              0
+            ],
+            "boundary_requested_denominator": 77,
+            "true_outside_fraction_observed": 0.1095890410958904,
+            "range_only_mae_lower_bound": 14.125861356102925,
+            "identical_queries": 3,
+            "identical_slot_fraction": 0.45454545454545453,
+            "native_constant_multistep_queries": 8,
+            "gofa_constant_multistep_queries": 6,
+            "native_mean_unique_numeric_ids": 1.7272727272727273,
+            "gofa_mean_unique_numeric_ids": 1.9090909090909092,
+            "native_first_slot_mae": 29.38444979473438,
+            "gofa_first_slot_mae": 18.288597186703885
+          },
+          "48->24": {
+            "queries": 11,
+            "observed_slots": 264,
+            "native_mae": 28.94672221505673,
+            "gofa_mae": 29.202912002083337,
+            "variable_geomean_ratio": 1.0174251645515735,
+            "variables_better_worse_equal": [
+              0,
+              4,
+              7
+            ],
+            "variable_ratio_quantiles_10_50_90": [
+              1.0,
+              1.0,
+              1.0513230564594527
+            ],
+            "queries_better_worse_equal_full_horizon": [
+              0,
+              4,
+              7
+            ],
+            "native_boundary_fraction": 0.0,
+            "gofa_boundary_fraction": 0.0,
+            "native_lower_upper_counts": [
+              0,
+              0
+            ],
+            "gofa_lower_upper_counts": [
+              0,
+              0
+            ],
+            "boundary_requested_denominator": 264,
+            "true_outside_fraction_observed": 0.015151515151515152,
+            "range_only_mae_lower_bound": 0.005692128435770648,
+            "identical_queries": 7,
+            "identical_slot_fraction": 0.6439393939393939,
+            "native_constant_multistep_queries": 6,
+            "gofa_constant_multistep_queries": 9,
+            "native_mean_unique_numeric_ids": 1.6363636363636365,
+            "gofa_mean_unique_numeric_ids": 1.3636363636363635,
+            "native_first_slot_mae": 13.07623169488017,
+            "gofa_first_slot_mae": 13.412554479303997
+          }
+        },
+        "h24_steps_1_16": {
+          "queries": 11,
+          "observed_slots": 176,
+          "native_mae": 31.61787041075017,
+          "gofa_mae": 31.576067993601928,
+          "variable_geomean_ratio": 1.0084821922480018,
+          "variables_better_worse_equal": [
+            1,
+            3,
+            7
+          ],
+          "variable_ratio_quantiles_10_50_90": [
+            1.0,
+            1.0,
+            1.0440467857130646
+          ],
+          "queries_better_worse_equal_full_horizon": [
+            0,
+            4,
+            7
+          ],
+          "native_boundary_fraction": 0.0,
+          "gofa_boundary_fraction": 0.0,
+          "native_lower_upper_counts": [
+            0,
+            0
+          ],
+          "gofa_lower_upper_counts": [
+            0,
+            0
+          ],
+          "boundary_requested_denominator": 176,
+          "true_outside_fraction_observed": 0.022727272727272728,
+          "range_only_mae_lower_bound": 0.008538192653655973,
+          "identical_queries": 7,
+          "identical_slot_fraction": 0.6477272727272727,
+          "native_constant_multistep_queries": 6,
+          "gofa_constant_multistep_queries": 9,
+          "native_mean_unique_numeric_ids": 1.6363636363636365,
+          "gofa_mean_unique_numeric_ids": 1.3636363636363635,
+          "native_first_slot_mae": 13.07623169488017,
+          "gofa_first_slot_mae": 13.412554479303997
+        },
+        "h24_steps_17_24": {
+          "queries": 11,
+          "observed_slots": 88,
+          "native_mae": 23.604425823669853,
+          "gofa_mae": 24.456600019046164,
+          "variable_geomean_ratio": 1.0249051719299298,
+          "variables_better_worse_equal": [
+            1,
+            3,
+            7
+          ],
+          "variable_ratio_quantiles_10_50_90": [
+            1.0,
+            1.0,
+            1.0700328012187499
+          ],
+          "queries_better_worse_equal_full_horizon": [
+            0,
+            4,
+            7
+          ],
+          "native_boundary_fraction": 0.0,
+          "gofa_boundary_fraction": 0.0,
+          "native_lower_upper_counts": [
+            0,
+            0
+          ],
+          "gofa_lower_upper_counts": [
+            0,
+            0
+          ],
+          "boundary_requested_denominator": 88,
+          "true_outside_fraction_observed": 0.0,
+          "range_only_mae_lower_bound": 0.0,
+          "identical_queries": 7,
+          "identical_slot_fraction": 0.6363636363636364,
+          "native_constant_multistep_queries": 11,
+          "gofa_constant_multistep_queries": 11,
+          "native_mean_unique_numeric_ids": 1.0,
+          "gofa_mean_unique_numeric_ids": 1.0,
+          "native_first_slot_mae": 22.453731378216947,
+          "gofa_first_slot_mae": 23.31725104679605
+        },
+        "fixed_training_label_distribution": {
+          "10->1": {
+            "observed": 2048,
+            "true_outside_fraction": 0.0595703125,
+            "quantized_endpoint_fraction": 0.0595703125,
+            "zero_fraction": 0.09130859375
+          },
+          "12->12": {
+            "observed": 24310,
+            "true_outside_fraction": 0.16375976964212258,
+            "quantized_endpoint_fraction": 0.16375976964212258,
+            "zero_fraction": 0.09197860962566845
+          },
+          "14->7": {
+            "observed": 14196,
+            "true_outside_fraction": 0.10453648915187377,
+            "quantized_endpoint_fraction": 0.10453648915187377,
+            "zero_fraction": 0.09150464919695689
+          },
+          "48->24": {
+            "observed": 48679,
+            "true_outside_fraction": 0.03397769058526264,
+            "quantized_endpoint_fraction": 0.03397769058526264,
+            "zero_fraction": 0.09170278764970521
+          }
+        },
+        "validation_history_mean_coverage": 0.9806818181818181
+      }
+    },
+    "live_progress": {
+      "updates": 1131,
+      "max_updates": 4000,
+      "effective_batch": 64,
+      "epoch_queries": 32768,
+      "train_seconds": 13647.280848019756,
+      "validation_seconds": 2279.1245176652446,
+      "validation_runs": 2,
+      "measured_updates": 1131,
+      "validation_every": 500,
+      "state": "train",
+      "epoch": 3,
+      "maximum_epochs": 8,
+      "epoch_queries_done": 6888,
+      "epoch_queries_total": 32768,
+      "overall_queries_done": 72424,
+      "overall_queries_total": 256000,
+      "overall_fraction": 0.28290625,
+      "updated_at": 1792323163.7672124,
+      "epoch_eta_seconds": 4853.532953884296,
+      "training_eta_seconds": 34435.328704034735,
+      "overall_eta_seconds": 41272.70225703047,
+      "eta_excludes_unknown_idle_wait": true,
+      "eta_basis": "to_4000_plus_source_validation; target ETA shown separately",
+      "evaluation_done": 2264,
+      "evaluation_total": 2264,
+      "evaluation_work_done": 24904,
+      "evaluation_work_total": 24904,
+      "evaluation_round": 2,
+      "evaluation_maximum_rounds": 8,
+      "evaluation_eta_seconds": 0.0,
+      "evaluation_eta_basis": "numeric_slots",
+      "evaluation_kind": "update-001000",
+      "evaluation_current_step": 0,
+      "evaluation_current_horizon": 0,
+      "pending_queries": 40,
+      "current_nodes": 9,
+      "current_history": [
+        12,
+        48
+      ],
+      "current_horizon": [
+        12,
+        24
+      ],
+      "loss": 4.5287754982709885,
+      "learning_rate": 0.0002,
+      "gradient_norm": 0.6618605852127075,
+      "throughput_anchor_updates": 98,
+      "throughput_anchor_seconds": 1248.642105855979,
+      "current_microbatch": 2
+    }
+  },
+  "paired_bootstrap_1000_to_500_ratio_95pct": [
+    0.9542758694912571,
+    1.025248986469774
+  ],
+  "bootstrap_seed": 19043,
+  "bootstrap_replicates": 1000,
+  "bootstrap_note": "Post-hoc paired variable resampling, same source query origins; no temporal variation estimate or correction for adaptive checkpoint selection; not used for selection"
+}

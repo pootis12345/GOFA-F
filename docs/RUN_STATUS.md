@@ -22,6 +22,9 @@ NN5边界预测从首轮53.03%升至56.78%，原生20.15%；此前端点聚集�
 已按严格改善自动替换源最佳；尚未final_selection或进行目标评价，未修改架构或训练协议。
 19:28只读观测继续训练1111/4000更新，下次完整验证1500更新；无failures，资源暂停0，观测组峰17246MiB。
 每小时跟进仍关闭。完整证据：[stage19-v5-validation-001000.json](results/stage19-v5-validation-001000.json)。
+两轮CPU配对诊断：[STAGE19_TWO_ROUND_DIAGNOSIS.md](STAGE19_TWO_ROUND_DIAGNOSIS.md)。
+整体改善主要来自PEMS04/Solar；NN5中间两短模板进一步退化，48→24略恢复，上端点偏置扩散但非所有模板同步恶化。
+原生与图模型均有重复数值，不能仅归因图模块；未改变训练或执行新增GPU诊断。
 
 ## Stage19 v5 首次完整源验证（2026-10-18 17:41，Asia/Shanghai）
 
