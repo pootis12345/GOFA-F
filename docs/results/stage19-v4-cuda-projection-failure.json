@@ -1,0 +1,102 @@
+{
+  "checked_at_beijing": "2026-10-18T14:25:35.244383+08:00",
+  "code_revision": "72c7b874fc2f75fece2461cb0c67b7a8a75dd584",
+  "output": "/home/dcg/dcg_data/GOFA-F/outputs/stage19-short-generative-chattime-v4",
+  "checkpoint_sha256": "4316568f0394f2b05e729ce0bde28ba21bba0075c123f30d196d7056cec35e8c",
+  "state_exact_against_v2_root": true,
+  "training_resumed": false,
+  "launcher": {
+    "state": "failed",
+    "pid": 2055070,
+    "start_ticks": "622508163",
+    "spent_seconds": 1989.1416897289455,
+    "waiting_seconds": 630.0466600563377,
+    "updated_at": 1792304477.784495,
+    "worker_returncode": 1
+  },
+  "status": {
+    "state": "failed",
+    "updates": 98,
+    "pending_queries": 48,
+    "updated_at": 1792304476.9928796,
+    "error": "mixed:compact1:numeric_logits\nTensor-likes are not close!\n\nMismatched elements: 46539 / 250000 (18.6%)\nGreatest absolute difference: 0.0625 at index (0, 238) (up to 0.002 allowed)\nGreatest relative difference: 12.080459594726562 at index (5, 2527) (up to 0.002 allowed)"
+  },
+  "activity": {
+    "spent_seconds": 1989.1416897289455,
+    "worker": null,
+    "waiting_seconds": 630.0466600563377,
+    "resource_pause_count": 0,
+    "peak_group_mib": 17246
+  },
+  "failures": {
+    "type": "AssertionError",
+    "error": "mixed:compact1:numeric_logits\nTensor-likes are not close!\n\nMismatched elements: 46539 / 250000 (18.6%)\nGreatest absolute difference: 0.0625 at index (0, 238) (up to 0.002 allowed)\nGreatest relative difference: 12.080459594726562 at index (5, 2527) (up to 0.002 allowed)",
+    "updates": 98,
+    "phase": "gpu_mechanisms"
+  },
+  "mechanism_diagnostics": {
+    "passed": false,
+    "dtype": "torch.bfloat16",
+    "tolerance": 0.002,
+    "differences": {
+      "initial_identity_L10": 0.0,
+      "initial_identity_L12": 0.0,
+      "initial_identity_L14": 0.0,
+      "initial_identity_L48": 0.0
+    },
+    "gradient_checks_retain_graph": true,
+    "production_generation_no_grad": true,
+    "actual_nonzero_diagnostic_updates": 3,
+    "training_optimizations_fresh": {
+      "passed": false,
+      "tolerance": 0.002,
+      "differences": {
+        "mixed:compact1:frozen_prefix": 0.0,
+        "mixed:compact1:final_hidden": 0.0,
+        "mixed:compact1:same_hidden_native_projection": 0.0,
+        "mixed:compact1:numeric_logits": 0.0625
+      },
+      "microbatch": 2,
+      "finite_vocabulary": 10000,
+      "generation_path_changed": false,
+      "diagnostics": {
+        "mixed:compact1:frozen_prefix": {
+          "violations": 0,
+          "elements": 102400,
+          "actual_dtype": "torch.bfloat16",
+          "reference_dtype": "torch.bfloat16",
+          "actual_at_max": 0.73046875,
+          "reference_at_max": 0.73046875
+        },
+        "mixed:compact1:final_hidden": {
+          "violations": 0,
+          "elements": 102400,
+          "actual_dtype": "torch.bfloat16",
+          "reference_dtype": "torch.bfloat16",
+          "actual_at_max": 0.5859375,
+          "reference_at_max": 0.5859375
+        },
+        "mixed:compact1:same_hidden_native_projection": {
+          "violations": 0,
+          "elements": 250000,
+          "actual_dtype": "torch.bfloat16",
+          "reference_dtype": "torch.bfloat16",
+          "actual_at_max": 1.8046875,
+          "reference_at_max": 1.8046875
+        },
+        "mixed:compact1:numeric_logits": {
+          "violations": 46539,
+          "elements": 250000,
+          "actual_dtype": "torch.float32",
+          "reference_dtype": "torch.bfloat16",
+          "actual_at_max": -8.0,
+          "reference_at_max": -8.0625
+        }
+      },
+      "error_type": "AssertionError",
+      "error": "mixed:compact1:numeric_logits\nTensor-likes are not close!\n\nMismatched elements: 46539 / 250000 (18.6%)\nGreatest absolute difference: 0.0625 at index (0, 238) (up to 0.002 allowed)\nGreatest relative difference: 12.080459594726562 at index (5, 2527) (up to 0.002 allowed)"
+    },
+    "error_type": "AssertionError",
+    "error": "mixed:compact1:numeric_logits\nTensor-likes are not close!\n\nMismatched elements: 46539 / 250000 (18.6%)\nGreatest absolute difference: 0.0625 at index (0, 238) (up to 0.002 allowed)\nGreatest relative difference: 12.080459594726562 at index (5, 2527) (up to 0.002 allowed)"
+  }
+}

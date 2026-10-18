@@ -1,5 +1,21 @@
 # 运行交接记录
 
+## Stage19 v4 真实 CUDA 投影验收失败，训练尚未恢复（2026-10-18 14:23，Asia/Shanghai）
+
+v4等待后成功获得完全空闲准入，但CUDA fresh三次非零诊断更新后仍在
+mixed:compact1:numeric_logits失败：46539/250000元素超差，最大绝对差0.0625，原2e-3容差未放宽。
+新诊断已区分：冻结prefix、末层hidden及相同hidden的原全词表头投影差均为0，
+真实差异发生于10000有限词表紧凑投影。之前修复dtype误判有效，但不足以消除真实CUDA差异。
+GEMM列数、布局及归约差异待查，不能当已证实根因，不原样重启或关闭检查。
+
+监督器2055070/start_ticks622508163及GPUworker已退出，activity.worker=null。
+正式仍98更新/pending48查询/482标签，2264原生基线完整；无首次源验证、最佳或目标预测。
+失败后last SHA4316568f0394f2b05e729ce0bde28ba21bba0075c123f30d196d7056cec35e8c；
+CPU逐张量核验adapter/AdamW/部分梯度/RNG/参数版本及全部语义游标仍与v2根状态精确一致。
+累计活动1989.1416897289455秒、等待630.0466600563377秒、峰17246MiB、资源暂停0。
+已更新自动跟进，按原授权继续安全同架构实现修复，所有新GPU诊断仍须3×10秒完全空闲准入。
+证据：[stage19-v4-cuda-projection-failure.json](results/stage19-v4-cuda-projection-failure.json)。以下部署状态为历史。
+
 ## Stage19 v4 修复 CUDA 验收 dtype 误判并重新部署（2026-10-18，Asia/Shanghai）
 
 用户明确要求“直接修复并重新部署”。v3真实CPU验收全部通过，但GPU fresh三次诊断更新后，
