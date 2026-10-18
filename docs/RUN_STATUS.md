@@ -19,6 +19,14 @@ v4只接续已退出且失败阶段为gpu_mechanisms、无新评价/选模的v3�
 保留完整2264基线。完整回归重新执行；仅当全部张量执行代码SHA、权重、查询、依赖和状态一致时，
 才移交v3已通过的真实FP32证明；记录原证明SHA和当前等价checkpointSHA，不复用任何CUDA验收。
 每新GPUworker仍三次完全空闲/10秒准入，40GiB组/38GiB Torch上限，v3旧快照和失败证据保留。
+固定运行源码72c7b874fc2f75fece2461cb0c67b7a8a75dd584；独立快照及输出均为stage19-short-generative-chattime-v4。
+2026-10-18 14:13:00 CPU控制器2054482/start_ticks622504161启动，固定快照回归456通过/21旧可选跳过，
+完整CPU证明passed=true，符合上述严格哈希条件的真实FP32证明移交已记录；新CUDA证明未复用。
+14:13:40自动部署监督器2055070/start_ticks622508163，身份已核实，当前waiting_for_idle、consecutive=0、worker=null。
+迁移state_restore=exact：98更新/pending48/482标签，2264原生基线保留，累计活动及显存峰值不变。
+新last.pt SHA abd3e6bc4228e43f1a4034162b6b5bd53b9553a064b4cfb7f48f846ec690f501。
+跟进已更新为v4并恢复启用；空闲后自动执行fresh和continued真实CUDA验收，通过才恢复训练。
+部署、CPU来源证明和迁移证据：[stage19-v4-repair-deployment.json](results/stage19-v4-repair-deployment.json)。
 未通过真实CUDA前不称已恢复训练或已测得提速。以下为历史。
 
 ## Stage19 v3 实现紧凑训练输出与微批量2（2026-10-18，Asia/Shanghai）
