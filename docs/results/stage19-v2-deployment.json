@@ -1,0 +1,69 @@
+{
+  "verified_at_bj": "2026-10-18T12:34:12.448058+08:00",
+  "deployment": {
+    "pid": 1973198,
+    "start_ticks": "621905211",
+    "uid": 1006,
+    "snapshot": "/home/dcg/dcg_data/GOFA-F-runs/stage19-short-generative-chattime-v2",
+    "output": "/home/dcg/dcg_data/GOFA-F/outputs/stage19-short-generative-chattime-v2",
+    "config": "/home/dcg/dcg_data/GOFA-F-runs/stage19-short-generative-chattime-v2/configs/stage19_short_generative_chattime.yaml",
+    "code_revision": "af41765e4f19911c7c0084942f130463e990713d",
+    "command": [
+      "/home/dcg/dcg_data/GOFA-F/.venv-chat/bin/python",
+      "-u",
+      "/home/dcg/dcg_data/GOFA-F-runs/stage19-short-generative-chattime-v2/scripts/bootstrap_short_stage.py",
+      "--snapshot",
+      "/home/dcg/dcg_data/GOFA-F-runs/stage19-short-generative-chattime-v2",
+      "--output",
+      "/home/dcg/dcg_data/GOFA-F/outputs/stage19-short-generative-chattime-v2",
+      "--config",
+      "/home/dcg/dcg_data/GOFA-F-runs/stage19-short-generative-chattime-v2/configs/stage19_short_generative_chattime.yaml"
+    ],
+    "started_at": 1792297991.3534687,
+    "started_at_bj": "2026-10-18T12:33:11.353545+08:00",
+    "admission_policy": "idle",
+    "admission_samples": 3,
+    "admission_interval_seconds": 10,
+    "activity_limit_seconds": null,
+    "wall_deadline": null,
+    "source_validation_queries": 2264,
+    "target_queries_each": 2048,
+    "target_queries_total": 18432
+  },
+  "live_files": {
+    "bootstrap.json": {
+      "state": "cpu_preflight",
+      "pid": 1973198,
+      "start_ticks": "621905211",
+      "updated_at": 1792297991.3744383
+    },
+    "cpu_preflight.json": {
+      "passed": false,
+      "cases": 460,
+      "skipped": 21,
+      "cuda_disabled": true,
+      "real_weight_dtype": "float32",
+      "manifest_sha256": "7d7d2df989d37be4bc001964b36eea175057fa02aa21019e42c1ca989cb280f0"
+    },
+    "cpu_mechanisms.json": null,
+    "launcher.json": null,
+    "status.json": null
+  },
+  "processes": [
+    {
+      "pid": 1973198,
+      "start_ticks": "621905211",
+      "command": "/home/dcg/dcg_data/GOFA-F/.venv-chat/bin/python -u /home/dcg/dcg_data/GOFA-F-runs/stage19-short-generative-chattime-v2/scripts/bootstrap_short_stage.py --snapshot /home/dcg/dcg_data/GOFA-F-runs/stage19-short-generative-chattime-v2 --output /home/dcg/dcg_data/GOFA-F/outputs/stage19-short-generative-chattime-v2 --config /home/dcg/dcg_data/GOFA-F-runs/stage19-short-generative-chattime-v2/configs/stage19_short_generative_chattime.yaml "
+    }
+  ],
+  "source_queries": 2264,
+  "target_queries_each": 2048,
+  "total_target_queries": 18432,
+  "old_v1_gpu_activity": 0,
+  "development_regression": {
+    "passed": 439,
+    "skipped": 21,
+    "short_specialized": 29
+  },
+  "old_stage18_reused": false
+}
