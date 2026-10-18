@@ -34,8 +34,17 @@ def main():
     proof = {"passed": False, "cases": len(cases), "skipped": sum(x.find("skipped") is not None for x in cases),
         "cuda_disabled": True, "real_weight_dtype": "float32", "manifest_sha256": sha(output/"manifest.json")}
     if cfg.get("continuation"):
-        from gofa_f.short_migration import migrate
+        from gofa_f.short_migration import migrate, reusable_cpu_proof
         proof["migration"] = migrate(cfg, output)
+        reused = reusable_cpu_proof(cfg, output)
+        if reused is not None:
+            proof.update(reused, passed=True)
+            atomic_json(output/"cpu_preflight.json", proof)
+            atomic_json(output/"cpu_mechanisms.json", dict(proof["real_weights"], reused=proof["cpu_proof_reuse"]))
+            atomic_json(output/"cpu_optimization_continued.json", dict(
+                proof["continued_training_optimizations"], reused=proof["cpu_proof_reuse"]))
+            print(json.dumps(proof, indent=2), flush=True)
+            return 0
     atomic_json(output/"cpu_preflight.json", proof)
     model, codec = load_model(cfg, "cpu", torch.float32)
     try:

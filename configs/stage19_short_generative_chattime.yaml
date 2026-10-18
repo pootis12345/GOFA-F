@@ -1,8 +1,8 @@
-protocol: stage19-short-generative-chattime-v3
+protocol: stage19-short-generative-chattime-v4
 seed: 42
 continuation:
-  source_output: /home/dcg/dcg_data/GOFA-F/outputs/stage19-short-generative-chattime-v2
-  checkpoint_sha256: 8a1bd0cb4f3105b0d596bf238a948acbcffa9759864efa5cab28f9117328a961
+  source_output: /home/dcg/dcg_data/GOFA-F/outputs/stage19-short-generative-chattime-v3
+  checkpoint_sha256: d9532487337bc15544d8bc48756a4b3345deb8b4a85233f4891942f463ae340c
 weights:
   directory: /home/dcg/dcg_data/GOFA-F/data/weights/chattime-7b-20baa88
   revision: 20baa88d6ab838b34abbd1d2b1f4cea57c8ff870

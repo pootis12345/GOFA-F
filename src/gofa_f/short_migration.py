@@ -1,4 +1,4 @@
-"""Exact stopped-v2 to optimized-v3 continuation; never accepts a live source."""
+"""Exact stopped or failed-acceptance continuation; never accepts a live source."""
 import copy
 from pathlib import Path
 
@@ -37,26 +37,66 @@ def assert_equal(a, b):
         raise ValueError("Migration scalar changed")
 
 
+def reusable_cpu_proof(cfg, output):
+    """Reuse FP32 only when every tensor execution module and input is unchanged."""
+    output = Path(output)
+    migration = read(output/"migration.json", {})
+    if not migration.get("failed_acceptance_repair"):
+        return None
+    source = Path(cfg["continuation"]["source_output"])
+    before, after = read(source/"manifest.json"), read(output/"manifest.json")
+    old_cfg, new_cfg = copy.deepcopy(before["configuration"]), copy.deepcopy(cfg)
+    for value in (old_cfg, new_cfg):
+        value.pop("protocol", None)
+        value.pop("continuation", None)
+    if old_cfg != new_cfg or set(before["code"]) != set(after["code"]):
+        return None
+    diagnostic_only = {"short_migration.py", "short_checks.py", "short_training_checks.py"}
+    unchanged = set(before["code"])-diagnostic_only
+    if "short_training.py" not in unchanged or any(before["code"][n] != after["code"][n] for n in unchanged):
+        return None
+    proof = read(source/"cpu_preflight.json", {})
+    if not proof.get("passed") or proof.get("manifest_sha256") != sha(source/"manifest.json") \
+            or not proof.get("real_weights", {}).get("passed") \
+            or not proof.get("continued_training_optimizations", {}).get("passed"):
+        return None
+    for key in ("weights_sha256", "raw_hashes", "query_sha256", "epsilon_sha256", "dependencies"):
+        if before[key] != after[key]:
+            return None
+    record = {"source_proof": str(source/"cpu_preflight.json"),
+        "source_proof_sha256": sha(source/"cpu_preflight.json"),
+        "unchanged_tensor_code": {n: after["code"][n] for n in sorted(unchanged)},
+        "reason": "only acceptance value upcast/diagnostics and exact migration changed; FP32 execution unchanged",
+        "current_equivalent_checkpoint_sha256": sha(output/"last.pt"),
+        "gpu_acceptance_reused": False}
+    result = {k: copy.deepcopy(proof[k]) for k in ("alphabet", "real_weights", "continued_training_optimizations")}
+    result["cpu_proof_reuse"] = record
+    return result
+
+
 def migrate(cfg, output):
     output = Path(output)
     source = Path(cfg["continuation"]["source_output"]).resolve()
     expected = cfg["continuation"]["checkpoint_sha256"]
     if source == output.resolve() or sha(source/"last.pt") != expected:
         raise ValueError("Stopped source checkpoint SHA differs")
+    for suffix in (".bootstrap.launch.json", ".launch.json"):
+        identity = read(Path(str(source)+suffix), {})
+        if identity.get("pid") and process_identity(identity["pid"]) == str(identity["start_ticks"]):
+            raise ValueError("Source controller is still alive")
+    ledger = read(source/"activity.json")
+    launcher, status = read(source/"launcher.json"), read(source/"status.json")
+    stopped = launcher["state"] == "stopped_by_user" and status["state"] == "resource_paused"
+    failed = launcher["state"] == status["state"] == "failed" and \
+        read(source/"failures.json", {}).get("phase") == "gpu_mechanisms"
+    if ledger.get("worker") is not None or not (stopped or failed):
+        raise ValueError("Source did not safely stop or fail only acceptance")
     existing = read(output/"migration.json")
     if existing is not None:
         if existing["source_checkpoint_sha256"] != expected or \
                 existing["target_checkpoint_sha256"] != sha(output/"last.pt"):
             raise ValueError("Do not migrate over an already progressed destination")
         return existing
-    for suffix in (".bootstrap.launch.json", ".launch.json"):
-        identity = read(Path(str(source)+suffix), {})
-        if identity.get("pid") and process_identity(identity["pid"]) == str(identity["start_ticks"]):
-            raise ValueError("Source controller is still alive")
-    ledger = read(source/"activity.json")
-    if ledger.get("worker") is not None or read(source/"launcher.json")["state"] != "stopped_by_user" \
-            or read(source/"status.json")["state"] != "resource_paused":
-        raise ValueError("Source did not cooperatively stop")
     if (source/"final_selection.json").exists() or (source/"best_validation.json").exists():
         raise ValueError("This migration requires the current pre-first-validation training state")
     before, after = read(source/"manifest.json"), read(output/"manifest.json")
@@ -79,6 +119,21 @@ def migrate(cfg, output):
     if payload["binding"] != old_binding or payload["state"]["last_validated_update"] != 0 \
             or not 0 < payload["state"]["updates"] < 500 or not 0 <= payload["state"]["pending"] <= 64:
         raise ValueError("Unexpected trained source state")
+    if failed:
+        ancestor = read(source/"migration.json")
+        if not ancestor or not read(source/"cpu_preflight.json", {}).get("passed"):
+            raise ValueError("Failed acceptance source lacks validated migration")
+        ancestor_path = Path(ancestor["source"])/"last.pt"
+        if sha(ancestor_path) != ancestor["source_checkpoint_sha256"]:
+            raise ValueError("Ancestor checkpoint changed")
+        reference = torch.load(ancestor_path, map_location="cpu", weights_only=False)
+        for key in ("adapter", "optimizer", "gradients", "rng", "parameter_version"):
+            assert_equal(payload[key], reference[key])
+        for key in ("updates", "pending", "pending_tokens", "pending_loss", "best_score",
+                    "early_reference", "bad_validations", "last_validated_update"):
+            assert_equal(payload["state"][key], reference["state"][key])
+        if any((source/"evaluations").glob("update-*")) or any((source/"evaluations").glob("target-*")):
+            raise ValueError("Failed preflight migration cannot contain new evaluations")
     original = copy.deepcopy(payload)
     payload["binding"], payload["state"]["microbatch"] = new_binding, 2
     payload["progress"]["throughput_anchor_updates"] = payload["progress"]["measured_updates"]
@@ -121,6 +176,8 @@ def migrate(cfg, output):
         "pending_tokens": payload["state"]["pending_tokens"],
         "source_baseline_sha256": sha(baseline/"complete.json"), "baseline_queries_preserved": len(queries),
         "baseline_predictions_changed": False, "inference_code_sha_unchanged": list(INFERENCE_FILES),
-        "activity_retained": ledger, "old_processes_exited": True}
+        "activity_retained": ledger, "old_processes_exited": True,
+        "failed_acceptance_repair": failed,
+        "source_migration": read(source/"migration.json") if failed else None}
     atomic_json(output/"migration.json", record)
     return record

@@ -11,7 +11,7 @@ from gofa_f.allnode_graph import build_graph
 from gofa_f.generative_data import Query, sha
 from gofa_f.generative_model import GenerativePrefixLRU
 from gofa_f.short_codec import ShortCodec, numeric_loss
-from gofa_f.short_migration import INFERENCE_FILES, assert_equal, migrate
+from gofa_f.short_migration import INFERENCE_FILES, assert_equal, migrate, reusable_cpu_proof
 from gofa_f.short_training import compact_forward, compact_loss, teacher_prefix
 from test_allnode import tiny, source
 
@@ -119,7 +119,8 @@ def migration_fixture(tmp_path):
         optimizer={"state": {1: {"exp_avg": torch.ones(3)}}}, gradients={"w": torch.ones(3)*2},
         rng={"torch": torch.get_rng_state(), "numpy": np.random.get_state(), "cuda": None},
         state=dict(updates=98, pending=48, pending_tokens=482, pending_loss=230.882,
-                   last_validated_update=0, microbatch=1), parameter_version=98,
+                   last_validated_update=0, microbatch=1, best_score=None,
+                   early_reference=None, bad_validations=0), parameter_version=98,
         progress=dict(measured_updates=98, train_seconds=1248., updates=98))
     torch.save(payload, source/"last.pt")
     current["continuation"] = dict(source_output=str(source), checkpoint_sha256=sha(source/"last.pt"))
@@ -176,3 +177,108 @@ def test_migration_rejects_unsafe_sources(tmp_path, change):
         cfg["training"]["learning_rate"] = .01
     with pytest.raises(ValueError):
         migrate(cfg, target)
+
+
+def test_projection_only_computes_finite_vocabulary(codec, monkeypatch):
+    import gofa_f.short_training as training
+    model = tiny()
+    records, graphs = inputs(codec)
+    tokens = codec.batch(records)
+    contexts = model.encode_origins(graphs, codec)
+    original, widths = training.F.linear, []
+    def linear(x, weight, bias=None):
+        if weight.shape[0] >= 10000:
+            widths.append(weight.shape[0])
+        return original(x, weight, bias)
+    monkeypatch.setattr(training.F, "linear", linear)
+    result = compact_forward(model, codec, tokens, contexts)
+    assert widths == [10000]
+    assert result[0].shape[1] == 10000
+    assert codec.nan_id not in codec.finite_set
+
+
+def test_value_comparison_accepts_exact_bf16_upcast_but_not_real_errors():
+    from gofa_f.short_training_checks import assert_value_close
+    expected = torch.tensor([1., -2., 0.], dtype=torch.bfloat16)
+    actual = expected.float()
+    assert_value_close(actual, expected, .002, "same_values")
+    with pytest.raises(AssertionError, match="real_error"):
+        assert_value_close(actual+.01, expected, .002, "real_error")
+
+
+def test_cpu_bf16_optimization_acceptance_checks_values_across_loss_dtypes(codec):
+    from gofa_f.short_training_checks import optimization_checks
+    model = tiny()
+    model.native.to(dtype=torch.bfloat16)
+    with torch.no_grad():
+        for layer in model.adapter.exchanges:
+            layer.up.weight.normal_(std=.001)
+    data = source(9)
+    queries = [dict(source="pems04", variable=v, origin=o, length=length, horizon=horizon, chunk=0)
+               for v, o, length, horizon in [(0, 500, 10, 1), (0, 500, 48, 24), (1, 600, 48, 24)]]
+    proof = optimization_checks(model, codec, {"pems04": data}, queries, .002)
+    assert proof["passed"]
+    assert all(v["violations"] == 0 for v in proof["diagnostics"].values())
+
+
+def test_cpu_proof_reuse_rejects_changed_tensor_execution(tmp_path):
+    cfg, source, target, _ = migration_fixture(tmp_path)
+    before = json.loads((source/"manifest.json").read_text())
+    before["configuration"] = deepcopy(cfg)
+    before["code"]["short_training.py"] = "same_tensor_execution"
+    for name in ("short_migration.py", "short_checks.py", "short_training_checks.py"):
+        before["code"][name] = "old_diagnostics"
+    after = deepcopy(before)
+    cfg["protocol"] = "v4"
+    after["configuration"] = cfg
+    after["code"]["short_training_checks.py"] = "value_comparison_and_diagnostics_only"
+    (source/"manifest.json").write_text(json.dumps(before))
+    (target/"manifest.json").write_text(json.dumps(after))
+    (source/"cpu_preflight.json").write_text(json.dumps(dict(passed=True,
+        manifest_sha256=sha(source/"manifest.json"), alphabet={"alphabet_sha256": "same"},
+        real_weights={"passed": True}, continued_training_optimizations={"passed": True})))
+    (target/"migration.json").write_text('{"failed_acceptance_repair": true}')
+    torch.save({"preserved": True}, target/"last.pt")
+    proof = reusable_cpu_proof(cfg, target)
+    assert proof and not proof["cpu_proof_reuse"]["gpu_acceptance_reused"]
+    after["code"]["short_training.py"] = "changed_tensor_execution"
+    (target/"manifest.json").write_text(json.dumps(after))
+    assert reusable_cpu_proof(cfg, target) is None
+
+
+@pytest.mark.parametrize("corrupt", [False, True])
+def test_failed_acceptance_migration_retains_all_costs_and_checks_ancestor(tmp_path, corrupt):
+    cfg, _, failed, _ = migration_fixture(tmp_path)
+    migrate(cfg, failed)
+    def write(root, name, value):
+        (root/name).write_text(json.dumps(value))
+    write(failed, "launcher.json", {"state": "failed"})
+    write(failed, "status.json", {"state": "failed"})
+    write(failed, "failures.json", {"phase": "gpu_mechanisms"})
+    write(failed, "cpu_preflight.json", {"passed": True, "alphabet": {"alphabet_sha256": "alphabet"}})
+    ledger = json.loads((failed/"activity.json").read_text())
+    ledger["spent_seconds"] += 10.
+    ledger["waiting_seconds"] += 110.
+    write(failed, "activity.json", ledger)
+    if corrupt:
+        payload = torch.load(failed/"last.pt", weights_only=False)
+        payload["gradients"]["w"] += 1
+        torch.save(payload, failed/"last.pt")
+    target = tmp_path/"repaired"
+    target.mkdir()
+    following = deepcopy(cfg)
+    following["protocol"] = "v4"
+    following["continuation"] = dict(source_output=str(failed), checkpoint_sha256=sha(failed/"last.pt"))
+    manifest = json.loads((failed/"manifest.json").read_text())
+    manifest["configuration"] = following
+    write(target, "manifest.json", manifest)
+    (target/"pools").mkdir()
+    (target/"pools/queries.json").write_text((failed/"pools/queries.json").read_text())
+    if corrupt:
+        with pytest.raises(ValueError, match="tensor"):
+            migrate(following, target)
+    else:
+        record = migrate(following, target)
+        assert record["failed_acceptance_repair"]
+        assert record["activity_retained"]["spent_seconds"] == 1980.
+        assert record["activity_retained"]["waiting_seconds"] == 190.

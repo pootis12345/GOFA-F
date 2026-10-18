@@ -3,6 +3,7 @@ import random
 
 import numpy as np
 import torch
+from torch.nn import functional as F
 
 from gofa_f.allnode_graph import build_graph
 from gofa_f.allnode_model import frozen_cache_binding
@@ -10,6 +11,12 @@ from gofa_f.generative_data import Query, sha
 from gofa_f.generative_model import GenerativePrefixLRU
 from gofa_f.short_codec import numeric_loss
 from gofa_f.short_training import compact_forward, compact_loss, teacher_prefix
+
+
+def assert_value_close(actual, expected, tolerance, name):
+    """BF16->FP32 is exact: compare values, not CE preparation tensor dtypes."""
+    torch.testing.assert_close(actual.float(), expected.float(),
+        rtol=tolerance, atol=tolerance, msg=lambda message: name+"\n"+message)
 
 
 def optimization_checks(model, codec, series, queries, tolerance, check=lambda: None,
@@ -20,11 +27,19 @@ def optimization_checks(model, codec, series, queries, tolerance, check=lambda: 
     rng = (random.getstate(), np.random.get_state(), torch.get_rng_state(),
            torch.cuda.get_rng_state_all() if device.type == "cuda" else None)
     proof = {"passed": False, "tolerance": tolerance, "differences": {},
-             "microbatch": 2, "finite_vocabulary": 10000, "generation_path_changed": False}
+             "microbatch": 2, "finite_vocabulary": 10000, "generation_path_changed": False,
+             "diagnostics": {}}
     cache = GenerativePrefixLRU(frozen_cache_binding(model, "optimization-proof"), max_bytes=2*2**30)
     def compare(a, b, name):
-        proof["differences"][name] = float((a.detach().float()-b.detach().float()).abs().max())
-        torch.testing.assert_close(a, b, rtol=tolerance, atol=tolerance, msg=name)
+        error = (a.detach().float()-b.detach().float()).abs()
+        proof["differences"][name] = float(error.max())
+        bad = error > tolerance+tolerance*b.detach().float().abs()
+        flat = int(error.flatten().argmax())
+        proof["diagnostics"][name] = {"violations": int(bad.sum()), "elements": bad.numel(),
+            "actual_dtype": str(a.dtype), "reference_dtype": str(b.dtype),
+            "actual_at_max": float(a.detach().flatten()[flat]),
+            "reference_at_max": float(b.detach().flatten()[flat])}
+        assert_value_close(a, b, tolerance, name)
     try:
         if checkpoint is not None:
             saved = torch.load(checkpoint, map_location="cpu", weights_only=False)
@@ -51,31 +66,54 @@ def optimization_checks(model, codec, series, queries, tolerance, check=lambda: 
                 graphs.append(build_graph(data, q))
             def execute(kind):
                 model.zero_grad(set_to_none=True)
-                scores, total = [], 0.
+                scores, total, prefixes, hidden_states, native_projections = [], 0., [], [], []
                 groups = [(records, graphs)] if kind == "batch2" else \
                     [([r], [g]) for r, g in zip(records, graphs)]
                 for own_records, own_graphs in groups:
                     check()
                     tokens = codec.batch(own_records).to(device)
                     contexts = model.encode_origins(own_graphs, codec, cache, check)
-                    if kind == "dense":
-                        prefix = model.cached_prefix(tokens, cache, "stage19_teacher_numeric")
-                        logits = model(tokens, contexts=contexts, prefix=prefix).logits
-                        loss, _ = numeric_loss(logits, tokens.labels, codec)
-                        valid = tokens.labels[:, 1:] != -100
-                        scores.append(logits[:, :-1][valid].index_select(-1, codec.alphabet(device)).detach())
-                    else:
-                        result = compact_forward(model, codec, tokens, contexts, teacher_prefix(model, tokens, cache))
-                        scores.append(result[0].detach())
-                        loss, _ = compact_loss(result)
+                    valid = tokens.labels[:, 1:] != -100
+                    captured = []
+                    handle = model.native.model.norm.register_forward_hook(
+                        lambda module, args, value: captured.append(value.detach()))
+                    try:
+                        if kind == "dense":
+                            prefix = model.cached_prefix(tokens, cache, "stage19_teacher_numeric")
+                            logits = model(tokens, contexts=contexts, prefix=prefix).logits
+                            loss, _ = numeric_loss(logits, tokens.labels, codec)
+                            scores.append(logits[:, :-1][valid].index_select(-1, codec.alphabet(device)).detach())
+                        else:
+                            prefix = teacher_prefix(model, tokens, cache)
+                            result = compact_forward(model, codec, tokens, contexts, prefix)
+                            scores.append(result[0].detach())
+                            loss, _ = compact_loss(result)
+                    finally:
+                        handle.remove()
+                    prefixes.append(prefix[0][:, :-1][valid].detach())
+                    selected = captured[-1][:, :-1][valid]
+                    hidden_states.append(selected)
+                    with torch.no_grad():
+                        # Isolate the projection from all hidden-state differences.
+                        parts = []
+                        for first in range(0, len(selected), 128):
+                            own = selected[first:first+128]
+                            full = F.linear(F.pad(own, (0, 0, 0, 128-len(own))),
+                                model.native.lm_head.weight, model.native.lm_head.bias)
+                            parts.append(full[:len(own)].index_select(-1, codec.alphabet(device)))
+                        native_projections.append(torch.cat(parts))
                     total += float(loss.detach())
                     loss.backward()
                 gradients = {n: p.grad.detach().clone() if p.grad is not None else torch.zeros_like(p)
                              for n, p in model.adapter.named_parameters()}
-                return torch.cat(scores), torch.tensor(total), gradients
-            expected, loss, expected_gradients = execute("dense")
+                return (torch.cat(scores), torch.tensor(total), gradients,
+                        torch.cat(prefixes), torch.cat(hidden_states), torch.cat(native_projections))
+            expected, loss, expected_gradients, expected_prefix, expected_hidden, expected_native = execute("dense")
             for kind in ("compact1", "batch2"):
-                actual, actual_loss, gradients = execute(kind)
+                actual, actual_loss, gradients, prefix, hidden, native = execute(kind)
+                compare(prefix, expected_prefix, name+":"+kind+":frozen_prefix")
+                compare(hidden, expected_hidden, name+":"+kind+":final_hidden")
+                compare(native, expected_native, name+":"+kind+":same_hidden_native_projection")
                 compare(actual, expected, name+":"+kind+":numeric_logits")
                 compare(actual_loss, loss, name+":"+kind+":loss")
                 for key, value in gradients.items():
