@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "manifest_sha256": "863fd5603ad009ba4ec369c7487f9172199958d097cb84cded93a41c6b817a35",
+  "cpu_tests_sha256": "387d523f350dfb9c0f93abb5eb48e3536ef70910f16348af05b29a7ecbb7210d",
+  "official_defaults": {
+    "hist_len": null,
+    "pred_len": null,
+    "max_pred_len": 16,
+    "num_samples": 8,
+    "top_k": 100,
+    "top_p": 1.0,
+    "temperature": 1.0
+  },
+  "prompt_token_lengths": {
+    "official": 149,
+    "stage19_style": 147
+  },
+  "official_blobs_verified": true,
+  "no_training_resume": true,
+  "cuda_initialized": false,
+  "scope": "official parsing/rolling tested with mocked generation; real FP16 inference only after idle admission"
+}

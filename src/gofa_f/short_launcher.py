@@ -45,7 +45,7 @@ def supervise(output, config, snapshot, worker_mode="train"):
         stream = path.open("a")
         fcntl.flock(stream, fcntl.LOCK_EX | fcntl.LOCK_NB)
         locks.append(stream)
-    if worker_mode not in ("train", "projection_probe", "source_diagnostic"):
+    if worker_mode not in ("train", "projection_probe", "source_diagnostic", "native_case_probe"):
         raise ValueError("Unknown supervised worker mode")
     binding = {"snapshot": str(snapshot), "config": str(config), "admission_policy": "idle",
         "resource_check_seconds": 10, "admission_samples": 3, "idle_max_used_mib": 256,
@@ -120,7 +120,8 @@ def supervise(output, config, snapshot, worker_mode="train"):
             GOFA_STAGE19_SUPERVISOR_PID=str(os.getpid()),
             GOFA_STAGE19_SUPERVISOR_TICKS=str(process_identity(os.getpid())))
         module = {"train": "gofa_f.short_generative_stage", "projection_probe": "gofa_f.short_projection_probe",
-                  "source_diagnostic": "gofa_f.short_source_diagnostic"}[worker_mode]
+                  "source_diagnostic": "gofa_f.short_source_diagnostic",
+                  "native_case_probe": "gofa_f.short_native_case_probe"}[worker_mode]
         command = [sys.executable, "-u", "-m", module,
                    "--config", str(config), "--output", str(output)]
         if worker_mode == "train":
@@ -195,7 +196,8 @@ def main():
     parser.add_argument("--output", required=True)
     parser.add_argument("--config", required=True)
     parser.add_argument("--snapshot", required=True)
-    parser.add_argument("--worker-mode", choices=("train", "projection_probe", "source_diagnostic"), default="train")
+    parser.add_argument("--worker-mode", choices=("train", "projection_probe", "source_diagnostic",
+                                                "native_case_probe"), default="train")
     args = parser.parse_args()
     supervise(args.output, args.config, args.snapshot, args.worker_mode)
 

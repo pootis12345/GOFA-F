@@ -1,0 +1,26 @@
+protocol: stage19-native-case-probe-v1
+source_output: /home/dcg/dcg_data/GOFA-F/outputs/stage19-short-generative-chattime-v5
+source_revision: 384205872c3d53c7bab91e592da7a8e07d629194
+paused_last_sha256: a37c4f4e793d073d20c8bc2af9ba437977a068f953518e134fd4794ac278cd3b
+checkpoints:
+  '500': 3f54dcc99e0a1fe818a477b106ed92ea82fc8761f552ef66b9eb45e295bddfdf
+  '1000': 18128f46578da279f842e9b2efe3cfa3d5c6a27f7404b67e135ab5c07f765db9
+official_directory: /home/dcg/dcg_data/GOFA-F/external/ChatTime
+official_revision: 8c2d4c209302d2b2bd6cc3c154586842341e3247
+query: {source: nn5, variable: 92, origin: 568, length: 48, horizon: 24, chunk: 0}
+protocols: [official_sample8, official_greedy1, stage19_prompt_greedy1]
+seed: 42
+training: {max_updates: 4000}  # Supervisor compatibility; no optimizer is constructed.
+data: {target_training_enabled: false, target_evaluation_enabled: false}
+diagnostic_updates: 0
+resume_training_after_diagnostic: false
+resources:
+  admission_policy: idle
+  resource_check_seconds: 10
+  admission_samples: 3
+  memory_cap_gib: 40
+  torch_cap_gib: 38
+  yield_on_foreign: false
+  leave_free_gib: 0
+  activity_limit_seconds: null
+  wall_deadline: null

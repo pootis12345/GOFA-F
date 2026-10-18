@@ -1,5 +1,17 @@
 # 运行交接记录
 
+## 用户要求用官方原生ChatTime测试重复病例（2026-10-18，Asia/Shanghai）
+
+生产训练仍用户暂停于1177更新/pending30查询390标签，源last SHA不变，不恢复训练。
+新增独立stage19-native-case-probe-v1：NN5变量92/起点568/48→24，直接官方FP16构造器和predict，
+默认每块8样本、逐步nanmedian、16+8滚动；另做同FP16官方提示单次贪心及仅替换当前Stage19提示格式的窄对照。
+官方8c2d4c2三文件已用GitHub固定提交Git blob核验，已有环境依赖可用；
+CPU487通过/21旧可选跳过，观测包装捕获不改变原输出，禁止参数更新或目标预测。
+发现实际协议差异：当前Stage19提示少两处空行；本病例官方149token、当前格式147token，
+此前称“官方模板完全一致”不准确。此处不修改旧提示、缓存、训练或结果，不把新旧差异全部归于采样。
+CPU通过尚不等于已完成真实GPU病例测试；部署后以独立输出实际结果为准。
+[病例协议](STAGE19_NATIVE_CASE_PROTOCOL.md)，[CPU证明](results/stage19-native-case-probe-v1-cpu.json)。
+
 ## Stage19暂停后的检查已完成，训练仍暂停（2026-10-18 20:04，Asia/Shanghai）
 
 独立stage19-source-diagnostic-v1共34查询/170记录已完成，0优化器更新、0目标预测。
