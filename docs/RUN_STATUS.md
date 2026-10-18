@@ -2,6 +2,26 @@
 
 ## Stage19 v5 修复：仅选有效位置，恢复原语言头投影宽度（2026-10-18，Asia/Shanghai）
 
+最新15:31只读核验：v5已通过全部真实CUDA验收并恢复训练，监督器2108414/start_ticks622906415、
+worker2114376/start_ticks622953202身份正常。fresh及实际98更新continued优化检查均passed，
+数值logits对照差0，全部命名梯度通过原BF16 2e-3，真实24数值/47token完整与增量生成原始token一致。
+当前约114/4000更新，实际微2、有效64；第1/8 epoch约7280/32768（22.2%），无failures、资源暂停0。
+项目组观测约17152MiB（16.75GiB）、历史峰17246MiB，低于40GiB限制。
+首次完整源验证在500更新，目前尚无Stage19源验证/最佳/最终锁定；2264原生基线完整保留。
+当前epoch纯训练剩余约1小时20分，到4000更新纯训练剩余约13.1小时，为恢复初期估计。
+总体ETA尚estimating：首次源验证未完成，尚不能估算验证轮次耗时；不含未知空闲等待及目标评价，可早停。
+每小时跟进仍关闭。证据：[stage19-v5-cuda-passed-training.json](results/stage19-v5-cuda-passed-training.json)。
+在C查看当前固定快照进度（Ctrl+C仅退出查看）：
+
+```bash
+STAGE19_RUN=/home/dcg/dcg_data/GOFA-F/outputs/stage19-short-generative-chattime-v5
+STAGE19_CODE=/home/dcg/dcg_data/GOFA-F-runs/stage19-short-generative-chattime-v5
+CUDA_VISIBLE_DEVICES='' OMP_NUM_THREADS=2 MKL_NUM_THREADS=2 PYTHONPATH="$STAGE19_CODE/src" \
+  /home/dcg/dcg_data/GOFA-F/.venv-chat/bin/python -m gofa_f.short_progress "$STAGE19_RUN" --watch --interval 10
+```
+
+输出native 2264/2264表示旧原生基线完成，不代表训练后的源验证已完成。以下为修复与部署历史。
+
 用户再次要求继续修复；每小时自动跟进保持关闭。
 独立冻结头CUDA诊断已经完全空闲准入后完成：10000列和10001零尾行在固定1/25/48位置对照均有真实超差，
 后者最大logits差0.03125，未过2e-3；CE及hidden梯度通过不能替代logits验收，零尾行候选已否决。
