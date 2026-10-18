@@ -20,6 +20,17 @@ v5采用原42001列×128行冻结头执行，仅投影有效数值标签前一�
 诊断完成不等于训练修复验收通过；部署后以v5实际文件为准。
 证据：[stage19-head-projection-diagnostic-v1.json](results/stage19-head-projection-diagnostic-v1.json)。
 
+v5固定源码384205872c3d53c7bab91e592da7a8e07d629194，快照/输出stage19-short-generative-chattime-v5。
+15:01:07 CPU控制器2093252/start_ticks622792802启动，固定快照466通过/21旧可选跳过。
+15:20:03完整真实7B FP32 fresh及98更新/pending48 continued均passed，未复用旧真实CPU证明；
+四组mixed/maximum × compact1/batch2数值logits差均0，全部命名梯度、生成token和恢复机制通过1e-6。
+新last.pt SHA b9211fdfb25a06f6edd841c230f696990699f1c5c113dff66ba6e208d25bc922，状态精确接续。
+监督器2108414/start_ticks622906415已自动部署且身份正常；15:23观测waiting_for_idle/consecutive0、worker=null。
+GPU当时有其他任务约47GiB，故新CUDA机制尚未开始，不能声称已恢复训练或已经测得提速。
+监督器继续按3×10秒完全空闲准入，之后必须CUDA fresh和continued全部通过才恢复训练。
+每小时跟进仍PAUSED。实际CPU证明、迁移和等待器证据：
+[stage19-v5-repair-deployment.json](results/stage19-v5-repair-deployment.json)。
+
 ## Stage19 继续修复：先隔离冻结语言头诊断（2026-10-18，Asia/Shanghai）
 
 用户要求继续修复，每小时自动跟进保持关闭。新增projection_probe独立诊断worker，
