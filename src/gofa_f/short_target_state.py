@@ -6,6 +6,7 @@ import numpy as np
 
 from gofa_f.allnode_stage import read
 from gofa_f.generative_data import Series,sha
+from gofa_f.idle_launcher import process_identity
 from gofa_f.prefix_cache import atomic_json
 from gofa_f.short_data import TARGETS,origins,stratified
 from gofa_f.short_sampled_state import TENSOR_FILES,exited
@@ -103,6 +104,8 @@ def prepare(cfg,output):
         total_paired_queries=4242,total_trajectories=33936,
         total_numeric_work=16*sum(q['horizon'] for rows in queries['targets'].values() for q in rows),
         interpretation='fixed source-only checkpoint; target results cannot change model or protocol')
+    if cfg.get('repair_source_output'):
+        failed_preflight(cfg,output,manifest)
     if read(output/'manifest.json',manifest)!=manifest:
         raise ValueError('Immutable target evaluation binding changed')
     atomic_json(output/'manifest.json',manifest)
@@ -112,6 +115,33 @@ def prepare(cfg,output):
         shutil.copyfile(source/'sampled_best.pt',output/'adapter.pt')
     atomic_json(output/'gpu_identity.json',read(source/'gpu_identity.json'))
     return manifest
+
+
+def failed_preflight(cfg,output,manifest):
+    """Carry costs only from an exited pre-target failure, never erase predictions."""
+    previous=Path(cfg['repair_source_output'])
+    if previous.resolve()==output.resolve() or sha(previous/'manifest.json')!=cfg['repair_source_manifest_sha256']:
+        raise ValueError('Repair must use a separate bound failed output')
+    prior=read(previous/'manifest.json')
+    activity=read(previous/'activity.json')
+    launch=read(Path(str(previous)+'.launch.json'))
+    failure=read(previous/'failures.json',{})
+    if process_identity(launch['pid'])==str(launch['start_ticks']) or activity['worker'] is not None \
+            or read(previous/'launcher.json')['state']!='failed' \
+            or failure.get('phase')!='source_replay_mechanisms' \
+            or list((previous/'evaluations').rglob('*.json')) \
+            or sha(previous/'adapter.pt')!=cfg['adapter_sha256'] \
+            or prior['queries']!=manifest['queries'] or prior['source_selection']!=manifest['source_selection']:
+        raise ValueError('Only exited pre-target failures with unchanged adapter/subset may migrate')
+    migration=dict(source=str(previous),manifest_sha256=cfg['repair_source_manifest_sha256'],
+        failures_sha256=sha(previous/'failures.json'),activity_sha256=sha(previous/'activity.json'),
+        inherited_activity=activity,adapter_sha256=cfg['adapter_sha256'],target_predictions=0)
+    manifest['repair']=migration
+    if read(output/'migration.json',migration)!=migration:
+        raise ValueError('Repair evidence changed')
+    atomic_json(output/'migration.json',migration)
+    if not (output/'activity.json').exists():
+        atomic_json(output/'activity.json',activity)
 
 
 def verify(cfg,output):

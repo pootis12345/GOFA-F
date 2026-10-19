@@ -11,7 +11,7 @@ from gofa_f.prefix_cache import atomic_json
 from gofa_f.short_codec import ShortCodec
 from gofa_f.short_data import TARGETS
 from gofa_f.short_sampling_diagnostic import SETTINGS,generate,sample_seed
-from gofa_f.short_target_state import subset
+from gofa_f.short_target_state import failed_preflight,subset
 from gofa_f.short_target_progress import Progress
 import gofa_f.short_sampled_targets as target
 from test_allnode import tiny,source
@@ -105,6 +105,30 @@ def test_no_gpu_admission_no_evaluation(tmp_path,monkeypatch):
         target.run({},tmp_path)
 
 
+def test_failed_preflight_carries_costs_without_predictions_or_live_worker(tmp_path,monkeypatch):
+    old,new=tmp_path/'failed',tmp_path/'new'
+    old.mkdir()
+    new.mkdir()
+    manifest=dict(queries={'fixed':[1]},source_selection={'update':3500})
+    atomic_json(old/'manifest.json',manifest)
+    (old/'adapter.pt').write_bytes(b'locked')
+    atomic_json(Path(str(old)+'.launch.json'),dict(pid=123,start_ticks='123'))
+    activity=dict(worker=None,spent_seconds=10.1,waiting_seconds=20.,peak_group_mib=12)
+    atomic_json(old/'activity.json',activity)
+    atomic_json(old/'launcher.json',dict(state='failed'))
+    atomic_json(old/'failures.json',dict(phase='source_replay_mechanisms'))
+    monkeypatch.setattr('gofa_f.short_target_state.process_identity',lambda _:None)
+    cfg=dict(repair_source_output=str(old),repair_source_manifest_sha256=sha(old/'manifest.json'),
+        adapter_sha256=sha(old/'adapter.pt'))
+    failed_preflight(cfg,new,copy.deepcopy(manifest))
+    assert read(new/'activity.json')==activity
+    assert read(new/'migration.json')['target_predictions']==0
+    (old/'evaluations').mkdir()
+    atomic_json(old/'evaluations/prediction.json',{})
+    with pytest.raises(ValueError,match='Only exited'):
+        failed_preflight(cfg,new,copy.deepcopy(manifest))
+
+
 def test_target_only_end_to_end_same_adapter_two_models_nine_datasets(codec,tmp_path,monkeypatch):
     monkeypatch.setattr(target.signal,'signal',lambda *_:None)
     for name in ('GOFA_STAGE19_ADMITTED','GOFA_STAGE19_SUPERVISOR_PID','GOFA_STAGE19_SUPERVISOR_TICKS'):
@@ -125,7 +149,7 @@ def test_target_only_end_to_end_same_adapter_two_models_nine_datasets(codec,tmp_
     monkeypatch.setattr(torch.cuda,'max_memory_allocated',lambda:0)
     monkeypatch.setattr(torch.cuda,'max_memory_reserved',lambda:0)
     events=[]
-    def checks(*_):
+    def checks(*_,**kwargs):
         assert not list(tmp_path.glob('target-*-result.json'))
         events.append('acceptance')
         return dict(passed=True,gradients_created=False)

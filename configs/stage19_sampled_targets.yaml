@@ -9,6 +9,8 @@ target_pool_manifest_sha256: f571622baebdd182c783ddd02cbebcdf9791587c8b6991c6d55
 target_pool_sha256: 798dcc4ddbb4fd40b6b1020dc4f50a180de4511d2fe68b4fc63de1125aff9714
 minimum_queries_per_dataset: 128
 expected_queries: 2121
+repair_source_output: /home/dcg/dcg_data/GOFA-F/outputs/stage19-nine-targets-sample8-balanced-v1
+repair_source_manifest_sha256: 4c6428218ead2755d4e10d90344d1b422a9daa0804d6e3026ce0c9868b2a58c4
 sampling:
   samples: 8
   top_k: 100

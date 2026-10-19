@@ -1,0 +1,32 @@
+{
+  "failures.json": {
+    "type": "ValueError",
+    "phase": "source_replay_mechanisms",
+    "error": "3500 source replay/full-incremental sampling failed: {'max_abs': 0.0, 'violations': 0, 'argmax_equal': True}"
+  },
+  "activity.json": {
+    "spent_seconds": 10.153333117254078,
+    "worker": null,
+    "waiting_seconds": 20.00162445101887,
+    "resource_pause_count": 0,
+    "peak_group_mib": 0
+  },
+  "status.json": {
+    "state": "failed",
+    "phase": "source_replay_mechanisms",
+    "updated_at": 1792426657.7906442,
+    "selected_update": 3500,
+    "optimizer_updates": 0,
+    "error": "3500 source replay/full-incremental sampling failed: {'max_abs': 0.0, 'violations': 0, 'argmax_equal': True}"
+  },
+  "restore_audit.json": {
+    "passed": true,
+    "adapter_sha256": "816d38b577a6664f30dd6e6b6d50986a77b098ce9c4c0b0ffb63d70078b26f15",
+    "selected_update": 3500,
+    "all_parameters_frozen": true,
+    "optimizer_updates": 0
+  },
+  "snapshot": "stage19-nine-targets-sample8-balanced-v1",
+  "target_predictions": 0,
+  "processes_exited": true
+}

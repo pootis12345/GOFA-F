@@ -24,7 +24,7 @@ from gofa_f.short_target_state import prepare,verify
 
 
 @torch.no_grad()
-def mechanisms(model,codec,manifest,check,rtol=2e-3,atol=2e-3):
+def mechanisms(model,codec,manifest,check,rtol=2e-3,atol=2e-3,audit=lambda _:None):
     root=Path(manifest['source_configuration']['data']['directory'])
     records=[]
     for probe in manifest['probes']:
@@ -39,17 +39,29 @@ def mechanisms(model,codec,manifest,check,rtol=2e-3,atol=2e-3):
             if sha(Path(ref['path']))!=ref['sha256']:
                 raise ValueError('Locked source replay trajectory changed')
             expected=read(ref['path'])
+            seed=sample_seed(probe['query'],0)
+            if expected.get('query',probe['query'])!=probe['query'] or expected.get('seed',seed)!=seed:
+                raise ValueError('Source replay query/seed identity differs')
             context=model.encode_origins([build_graph(data,q)],codec,check=check) if mode=='gofa' else None
             traces,other=[],[]
-            kwargs=dict(contexts=context,seed=sample_seed(probe['query'],0),check=check)
+            kwargs=dict(contexts=context,seed=seed,check=check)
+            untraced=generate(model,codec,history,q.horizon,**kwargs)
             cached=generate(model,codec,history,q.horizon,trace=traces,**kwargs)
             full=generate(model,codec,history,q.horizon,cached=False,trace=other,**kwargs)
             equal=cached['generated_ids']==full['generated_ids']==expected['generated_ids']
             # compare_scores uses the pre-registered BF16 tolerance.
             comparison=compare_scores(traces,other,rtol)
-            if comparison['violations'] or not equal:
-                raise ValueError('3500 source replay/full-incremental sampling failed: '+str(comparison))
-            records.append(dict(query=probe['query'],mode=mode,comparison=comparison,raw_tokens_equal=equal))
+            record=dict(query=probe['query'],mode=mode,seed=seed,comparison=comparison,raw_tokens_equal=equal,
+                tracing_unchanged=untraced['generated_ids']==cached['generated_ids'],
+                expected=expected,cached=cached,full=full,untraced=untraced)
+            records.append(record)
+            audit(dict(records=records,passed=equal and record['tracing_unchanged'] and not comparison['violations']))
+            if comparison['violations'] or not equal or not record['tracing_unchanged']:
+                raise ValueError('3500 source replay/full-incremental sampling failed: '+str(dict(
+                    query=probe['query'],mode=mode,comparison=comparison,
+                    cached_full_equal=cached['generated_ids']==full['generated_ids'],
+                    cached_reference_equal=cached['generated_ids']==expected['generated_ids'],
+                    tracing_unchanged=record['tracing_unchanged'])))
     return dict(passed=True,rtol=rtol,atol=atol,records=records,
         target_predictions_before_acceptance=0,gradients_created=any(p.grad is not None for p in model.parameters()))
 
@@ -130,7 +142,8 @@ def run(cfg,output):
         status('running')
         old=read(output/'mechanisms.json')
         if old is None:
-            old=mechanisms(model,codec,manifest,check)
+            old=mechanisms(model,codec,manifest,check,
+                audit=lambda value:atomic_json(output/'mechanism_diagnostics.json',value))
             old['binding']=binding
             atomic_json(output/'mechanisms.json',old)
         if not old['passed'] or old['binding']!=binding or old['gradients_created']:
@@ -176,6 +189,7 @@ def run(cfg,output):
             status('failed',error='Repeated identical OOM; no blind restart')
             raise
     except Exception as exc:
+        save_memory()
         atomic_json(output/'failures.json',dict(type=type(exc).__name__,phase=phase,error=str(exc)))
         status('failed',error=str(exc))
         raise
