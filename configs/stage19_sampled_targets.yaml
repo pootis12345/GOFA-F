@@ -1,0 +1,34 @@
+protocol: stage19-nine-targets-sample8-balanced-v1
+seed: 42
+source_output: /home/dcg/dcg_data/GOFA-F/outputs/stage19-sampled-continuation-v2
+source_manifest_sha256: 33d142d031e29cd7790e6d7808e437a660c9e834b05f50b508a10681492a7e5f
+source_selection_sha256: 140c1feb048ee1d7f6ca0737a83e7418d9c311ed3fac6de53e356623c343471f
+adapter_sha256: 816d38b577a6664f30dd6e6b6d50986a77b098ce9c4c0b0ffb63d70078b26f15
+target_pool_output: /home/dcg/dcg_data/GOFA-F/outputs/stage19-short-generative-chattime-v5
+target_pool_manifest_sha256: f571622baebdd182c783ddd02cbebcdf9791587c8b6991c6d55cd735aa1e43f8
+target_pool_sha256: 798dcc4ddbb4fd40b6b1020dc4f50a180de4511d2fe68b4fc63de1125aff9714
+minimum_queries_per_dataset: 128
+expected_queries: 2121
+sampling:
+  samples: 8
+  top_k: 100
+  temperature: 1.0
+  top_p: 1.0
+  seed: 42
+  aggregate: pointwise_median
+  execution: serial_single_query_independent_kv
+training:
+  max_updates: 4000 # Original source cap, required by the legacy supervisor; no training entry exists here.
+data:
+  target_training_enabled: false
+  target_evaluation_enabled: true
+resources:
+  admission_policy: idle
+  resource_check_seconds: 10
+  admission_samples: 3
+  memory_cap_gib: 40
+  torch_cap_gib: 38
+  yield_on_foreign: false
+  leave_free_gib: 0
+  activity_limit_seconds: null
+  wall_deadline: null

@@ -1,0 +1,114 @@
+{
+  "passed": true,
+  "manifest_sha256": "4c6428218ead2755d4e10d90344d1b422a9daa0804d6e3026ce0c9868b2a58c4",
+  "cases": 550,
+  "skipped": 21,
+  "alphabet": {
+    "finite_tokens": 10000,
+    "alphabet_sha256": "add5643ae352306b6e4ef714df79233350116f659a83ec2f0efbbd5c07612ab7",
+    "nan_excluded": true,
+    "first_separator": [],
+    "separator": [
+      29871
+    ],
+    "whole_and_incremental_checked": true
+  },
+  "cuda_initialized": false,
+  "coverage": {
+    "etth1": {
+      "queries": 128,
+      "variables": 7,
+      "min_origins_per_variable": 18,
+      "max_origins_per_variable": 19,
+      "history": 48,
+      "horizon": 24
+    },
+    "etth2": {
+      "queries": 128,
+      "variables": 7,
+      "min_origins_per_variable": 18,
+      "max_origins_per_variable": 19,
+      "history": 48,
+      "horizon": 24
+    },
+    "electric": {
+      "queries": 321,
+      "variables": 321,
+      "min_origins_per_variable": 1,
+      "max_origins_per_variable": 1,
+      "history": 48,
+      "horizon": 24
+    },
+    "exchange": {
+      "queries": 128,
+      "variables": 8,
+      "min_origins_per_variable": 16,
+      "max_origins_per_variable": 16,
+      "history": 14,
+      "horizon": 7
+    },
+    "nasdaq100": {
+      "queries": 128,
+      "variables": 1,
+      "min_origins_per_variable": 128,
+      "max_origins_per_variable": 128,
+      "history": 10,
+      "horizon": 1
+    },
+    "traffic": {
+      "queries": 862,
+      "variables": 862,
+      "min_origins_per_variable": 1,
+      "max_origins_per_variable": 1,
+      "history": 48,
+      "horizon": 24
+    },
+    "pems08": {
+      "queries": 170,
+      "variables": 170,
+      "min_origins_per_variable": 1,
+      "max_origins_per_variable": 1,
+      "history": 12,
+      "horizon": 12
+    },
+    "weather": {
+      "queries": 128,
+      "variables": 21,
+      "min_origins_per_variable": 6,
+      "max_origins_per_variable": 7,
+      "history": 48,
+      "horizon": 24
+    },
+    "noaa2025": {
+      "queries": 128,
+      "variables": 16,
+      "min_origins_per_variable": 8,
+      "max_origins_per_variable": 8,
+      "history": 48,
+      "horizon": 24
+    }
+  },
+  "selected_update": 3500,
+  "adapter_sha256": "816d38b577a6664f30dd6e6b6d50986a77b098ce9c4c0b0ffb63d70078b26f15",
+  "optimizer_updates": 0,
+  "inherited_source_proof_sha256": "c53e495934a6dbedf83c1c866e7a4a4bba8ea3d95b58e82d64abdb0e0a2eba57",
+  "unchanged_numerical_files": {
+    "allnode_model.py": "1a7583d5a2f21f4118a107a955b95c5c915743e8476cd9935badf4fdf57d0271",
+    "allnode_codec.py": "79a0593568312a98171fefdc2c080d0400b3c9c044142d0dd643d18223ce7347",
+    "allnode_graph.py": "0d452b6f72bf0301198e27e394b7f357a9da30bb9b1ae89653cd1b06ade0d490",
+    "allnode_kernel.py": "ff4b0d9bcf770b039ea957e28613e2bfdbdb5d181c5738f77b6445bc69fcab6c",
+    "generative_model.py": "4c9e10a3640ad38da334401b3194e21d72c1e4d58eaee0f0041b8cdbb3b693d5",
+    "generative_kernel.py": "84ca389c8a9b800cefd1b19a6fe6a0d84a917236da931377207d6b9d093bee09",
+    "generative_graph.py": "621239f066dd601c489e4f52c7e2b22136ba71bbb0a09af549c9d5358537b3fc",
+    "generative_data.py": "e14571e3189db9b02bfbdbee23f21dfaef489c65ccf0c5258204e3303a44bdec",
+    "chattime.py": "73ef5dfaeda8eed019e885fb3ba24912806bf812ab6dc650706ec4b0f734f5e9",
+    "short_codec.py": "0366d2c67aa813dca004476ef844b1d4c3ca124d5e0a3d5396a6da8e99bf98b9",
+    "short_forecast.py": "bcf225b21e8a44538a6f0bdaf77e6db2539a905a4ead7eb87e09d99945dd3f4f",
+    "short_data.py": "f2c618475fa4a163937be1d4051b8f6df773026e885ebffee99c90b3b0ef4dff",
+    "short_training.py": "73a394dfc73aebacc32d947d6b8aa576ca38fbeed1cfba287197b25cd4748550",
+    "allnode_stage.py": "366ac529669336edafabb2379534c2d57933a8738a300aa13e80e8597413d1af",
+    "short_sampled_forecast.py": "eff64577cb4e16331d6e28eefab6317bbbd79b69dcbee277dc46b7bbe84d49a7",
+    "short_sampling_diagnostic.py": "566b5f19eab5b60d3827ae94f94ca79168f4dd370e77d3632a659d50f7381a61"
+  },
+  "actual_gpu_source_replay_required": true
+}
