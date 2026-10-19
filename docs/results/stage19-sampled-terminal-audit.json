@@ -1,0 +1,67 @@
+{
+  "checked_beijing": "2026-10-19T23:52:34.391232+08:00",
+  "supervisor_identity": null,
+  "worker_identity": null,
+  "gpu_applications": "",
+  "selected_sha256": "816d38b577a6664f30dd6e6b6d50986a77b098ce9c4c0b0ffb63d70078b26f15",
+  "selection_file_sha256": "140c1feb048ee1d7f6ca0737a83e7418d9c311ed3fac6de53e356623c343471f",
+  "report_complete": true,
+  "activity": {
+    "spent_seconds": 100227.01128224842,
+    "worker": null,
+    "waiting_seconds": 2420.168597190641,
+    "resource_pause_count": 0,
+    "peak_group_mib": 17246
+  },
+  "counts": {
+    "sampled-native": {
+      "complete": true,
+      "declared_queries": 2264,
+      "query_files": 2264,
+      "trajectory_files": 18112
+    },
+    "sampled-update-001000": {
+      "complete": true,
+      "declared_queries": 2264,
+      "query_files": 2264,
+      "trajectory_files": 18112
+    },
+    "sampled-update-001500": {
+      "complete": true,
+      "declared_queries": 2264,
+      "query_files": 2264,
+      "trajectory_files": 18112
+    },
+    "sampled-update-002000": {
+      "complete": true,
+      "declared_queries": 2264,
+      "query_files": 2264,
+      "trajectory_files": 18112
+    },
+    "sampled-update-002500": {
+      "complete": true,
+      "declared_queries": 2264,
+      "query_files": 2264,
+      "trajectory_files": 18112
+    },
+    "sampled-update-003000": {
+      "complete": true,
+      "declared_queries": 2264,
+      "query_files": 2264,
+      "trajectory_files": 18112
+    },
+    "sampled-update-003500": {
+      "complete": true,
+      "declared_queries": 2264,
+      "query_files": 2264,
+      "trajectory_files": 18112
+    },
+    "sampled-update-004000": {
+      "complete": true,
+      "declared_queries": 2264,
+      "query_files": 2264,
+      "trajectory_files": 18112
+    }
+  },
+  "target_evaluation_authorized": false
+}
