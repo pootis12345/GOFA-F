@@ -153,10 +153,17 @@ def run(cfg,output):
         adapter=torch.load(output/'adapter.pt',map_location='cpu',weights_only=False)
         model.load_trainable(adapter)
         model.parameter_version=3500
-        model.eval().requires_grad_(False)
+        # Preserve source-validation module/parameter flags. Changing them can
+        # change FP32 graph kernel rounding and sampled BF16 trajectories. The
+        # entire entry and both evaluators are no_grad; no optimizer exists.
+        if not model.training or model.native.training or not model.adapter.training \
+                or any(p.requires_grad for p in model.native.parameters()) \
+                or not all(p.requires_grad for p in model.adapter.parameters()):
+            raise ValueError('Source validation execution flags must be retained')
         assert_equal(adapter,model.trainable_state())
         atomic_json(output/'restore_audit.json',dict(passed=True,adapter_sha256=sha(output/'adapter.pt'),
-            selected_update=3500,all_parameters_frozen=True,optimizer_updates=0))
+            selected_update=3500,backbone_frozen=True,adapter_requires_grad_preserved=True,
+            evaluation_grad_enabled=torch.is_grad_enabled(),optimizer_updates=0))
         phase='source_replay_mechanisms'
         status('running')
         old=read(output/'mechanisms.json')
@@ -184,6 +191,9 @@ def run(cfg,output):
                 progress.evaluation(result['queries'],result['queries'],result['numeric_slots_in_eight_paths'],
                     result['numeric_slots_in_eight_paths'],result['active_seconds'],evaluation_kind=phase,evaluation_sample=8)
                 atomic_json(output/(phase+'-result.json'),result)
+                assert_equal(adapter,model.trainable_state())
+                if any(p.grad is not None for p in model.parameters()):
+                    raise ValueError('Read-only target phase created gradients')
                 save_memory()
                 report(output)
             verify(cfg,output)

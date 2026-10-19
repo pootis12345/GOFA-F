@@ -155,7 +155,10 @@ def test_target_only_end_to_end_same_adapter_two_models_nine_datasets(codec,tmp_
         return dict(passed=True,gradients_created=False)
     monkeypatch.setattr(target,'mechanisms',checks)
     def evaluate(*args,**kwargs):
-        assert events[0]=='acceptance' and not any(p.requires_grad for p in model.parameters())
+        assert events[0]=='acceptance' and not torch.is_grad_enabled()
+        assert model.training and model.adapter.training and not model.native.training
+        assert all(p.requires_grad for p in model.adapter.parameters())
+        assert not any(p.requires_grad for p in model.native.parameters())
         events.append((args[5],args[9]))
         return dict(complete=True,queries=1,numeric_slots_in_eight_paths=8,active_seconds=1.,metrics={},
             binding=args[6],sampling=SETTINGS,errors=[.1])
