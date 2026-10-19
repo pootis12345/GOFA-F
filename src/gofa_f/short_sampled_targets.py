@@ -57,6 +57,25 @@ def mechanisms(model,codec,manifest,check,rtol=2e-3,atol=2e-3,audit=lambda _:Non
             records.append(record)
             audit(dict(records=records,passed=equal and record['tracing_unchanged'] and not comparison['violations']))
             if comparison['violations'] or not equal or not record['tracing_unchanged']:
+                if mode=='gofa':
+                    # Diagnose the sole execution-state difference from source
+                    # validation, without training or accepting a mismatched run.
+                    flags={name:p.requires_grad for name,p in model.named_parameters()}
+                    training=model.training
+                    try:
+                        model.train()
+                        model.adapter.requires_grad_(True)
+                        source_context=model.encode_origins([build_graph(data,q)],codec,check=check)
+                        replay=generate(model,codec,history,q.horizon,source_context,seed=seed,check=check)
+                        record['source_training_flags_replay']=replay
+                        record['source_training_flags_match']=replay['generated_ids']==expected['generated_ids']
+                        record['source_training_flags_delta_max_abs']=[float((a-b).abs().max())
+                            for a,b in zip(context[0].deltas,source_context[0].deltas)]
+                    finally:
+                        model.train(training)
+                        for name,p in model.named_parameters():
+                            p.requires_grad_(flags[name])
+                    audit(dict(records=records,passed=False))
                 raise ValueError('3500 source replay/full-incremental sampling failed: '+str(dict(
                     query=probe['query'],mode=mode,comparison=comparison,
                     cached_full_equal=cached['generated_ids']==full['generated_ids'],
