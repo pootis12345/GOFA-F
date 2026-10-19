@@ -1,5 +1,28 @@
 # 运行交接记录
 
+## Stage19 九目标均衡版已开始（2026-10-20 00:38，Asia/Shanghai）
+
+固定运行源码9d5b5ef9d3b818a51f85620a10a48dc3cb8f15a9，快照/输出`stage19-nine-targets-sample8-balanced-v4`。
+监督器3469946/start_ticks634887041、GPU worker3470222/start_ticks634889093身份均已核验健康。
+3500源最佳SHA816d38b577a6664f30dd6e6b6d50986a77b098ce9c4c0b0ffb63d70078b26f15不变，源选模封存SHA也未变；优化器更新0。
+完整CPU回归530通过/21旧可选依赖跳过，全部2121查询覆盖和官方数值词表通过。
+真实CUDA先完成NN5变量92/PEMS04变量102的原生及图模型四项源重放：
+历史轨迹、无概率观测/有观测采样及完整/缓存token全部精确一致，logits最大差0，原2e-3容差未放宽，gradients_created=false。
+v1–v3只有源病例诊断，无目标预测，均已退出；额外切换全模型eval/requires_grad标志引起图增量微差，
+恢复原源执行标志可精确重放。v4保留原标志，整个评价no_grad，无优化器，每阶段核对权重逐张量不变/梯度全空。
+旧失败证据保留，累计活动33.7633756725秒及等待60.0049701212秒已一次性继承，未复制失败状态。
+00:38正在target-etth1-native，进度7/128（另有当前查询部分轨迹）；其他目标尚未完成，正式结果表继续留空。
+当前项目组14306MiB，累计活动96.005秒/等待80.006秒/资源暂停0；整体ETA约5.75小时只是当前原生阶段速率粗估。
+九集/全部目标变量/8采样/2121查询预算固定，完全空闲10秒连续3次准入，项目40GiB/Torch38GiB及10秒审计不变。
+训练保持完成，每小时跟进保持PAUSED，不根据目标结果调整检查点或协议。
+[运行证据](results/stage19-nine-targets-balanced-v4-deployed.json)、[CPU证明](results/stage19-nine-targets-balanced-v4-cpu.json)、
+[执行状态诊断](results/stage19-nine-targets-source-flags-diagnostic.json)、[评价协议及限制](STAGE19_NINE_TARGETS_PROTOCOL.md)。
+
+在C查看当前阶段/采样进度和总体ETA：
+```bash
+PYTHONPATH=/home/dcg/dcg_data/GOFA-F-runs/stage19-nine-targets-sample8-balanced-v4/src /home/dcg/dcg_data/GOFA-F/.venv-chat/bin/python -m gofa_f.short_target_progress /home/dcg/dcg_data/GOFA-F/outputs/stage19-nine-targets-sample8-balanced-v4 --watch --interval 10
+```
+
 ## Stage19 九目标均衡版准备通过（2026-10-20，Asia/Shanghai）
 
 用户选择均衡版：共2121查询、两模型33936条8采样轨迹，九集/全部变量/领域3-2-2-2保持。

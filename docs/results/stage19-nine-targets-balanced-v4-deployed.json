@@ -1,0 +1,222 @@
+{
+  "checked_beijing": "2026-10-20T00:38:13.327363+08:00",
+  "launch": {
+    "pid": 3469946,
+    "start_ticks": "634887041",
+    "code_revision": "9d5b5ef9d3b818a51f85620a10a48dc3cb8f15a9",
+    "snapshot": "/home/dcg/dcg_data/GOFA-F-runs/stage19-nine-targets-sample8-balanced-v4",
+    "output": "/home/dcg/dcg_data/GOFA-F/outputs/stage19-nine-targets-sample8-balanced-v4",
+    "command": [
+      "/home/dcg/dcg_data/GOFA-F/.venv-chat/bin/python",
+      "-u",
+      "-m",
+      "gofa_f.short_launcher",
+      "--snapshot",
+      "/home/dcg/dcg_data/GOFA-F-runs/stage19-nine-targets-sample8-balanced-v4",
+      "--output",
+      "/home/dcg/dcg_data/GOFA-F/outputs/stage19-nine-targets-sample8-balanced-v4",
+      "--config",
+      "/home/dcg/dcg_data/GOFA-F-runs/stage19-nine-targets-sample8-balanced-v4/configs/stage19_sampled_targets.yaml",
+      "--worker-mode",
+      "sampled_targets"
+    ],
+    "started_at": 1792427809.6503828,
+    "worker_mode": "sampled_targets",
+    "admission_policy": "idle",
+    "target_queries": 2121,
+    "total_trajectories": 33936,
+    "selected_source_update": 3500,
+    "adapter_sha256": "816d38b577a6664f30dd6e6b6d50986a77b098ce9c4c0b0ffb63d70078b26f15",
+    "optimizer_updates": 0,
+    "hourly_followup_remains_paused": true
+  },
+  "supervisor_identity": {
+    "pid": 3469946,
+    "start_ticks": "634887041",
+    "matches": true,
+    "state": "S"
+  },
+  "worker_identity": {
+    "pid": 3470222,
+    "start_ticks": "634889093",
+    "matches": true,
+    "state": "R"
+  },
+  "launcher": {
+    "state": "running",
+    "pid": 3469946,
+    "start_ticks": "634887041",
+    "spent_seconds": 94.86112617701292,
+    "waiting_seconds": 80.00642542541027,
+    "updated_at": 1792427891.412544,
+    "worker_pid": 3470222,
+    "group_used_mib": 14306,
+    "peak_group_mib": 14306,
+    "gpu_utilization": 88,
+    "total_used_mib": 14315
+  },
+  "status": {
+    "state": "running",
+    "phase": "target-etth1-native",
+    "updated_at": 1792427846.1543863,
+    "selected_update": 3500,
+    "optimizer_updates": 0,
+    "dataset": "etth1",
+    "model": "native"
+  },
+  "activity": {
+    "spent_seconds": 96.00544095225632,
+    "worker": {
+      "pid": 3470222,
+      "start_ticks": "634889093",
+      "last_monotonic": 6348953.177698338,
+      "charging": true
+    },
+    "waiting_seconds": 80.00642542541027,
+    "resource_pause_count": 0,
+    "peak_group_mib": 14306
+  },
+  "progress": {
+    "state": "target-etth1-native",
+    "dataset": "etth1",
+    "model": "native",
+    "updated_at": 1792427890.3014705,
+    "evaluation_done": 7,
+    "evaluation_total": 128,
+    "evaluation_work_done": 1488,
+    "evaluation_work_total": 24576,
+    "evaluation_eta_seconds": 684.3122997463892,
+    "overall_work_done": 1488,
+    "overall_work_total": 699904,
+    "overall_fraction": 0.002126005852231163,
+    "overall_eta_seconds": 20700.565624552757,
+    "completed_model_datasets": 0,
+    "total_model_datasets": 18,
+    "eta_basis": "numeric slots across eight paths; excludes unknown idle waits; approximate",
+    "evaluation_kind": "target-etth1-native",
+    "evaluation_sample": 6,
+    "evaluation_current_horizon": 24
+  },
+  "failures": null,
+  "manifest_sha256": "1d80bd7c1c2aeba53a69e240cb584d5a650a940070c5f4d7ed1f35bed4fe45ab",
+  "adapter_actual_sha256": "816d38b577a6664f30dd6e6b6d50986a77b098ce9c4c0b0ffb63d70078b26f15",
+  "source_selection_actual_sha256": "140c1feb048ee1d7f6ca0737a83e7418d9c311ed3fac6de53e356623c343471f",
+  "mechanisms": {
+    "passed": true,
+    "rtol": 0.002,
+    "atol": 0.002,
+    "gradients_created": false,
+    "binding": "1d80bd7c1c2aeba53a69e240cb584d5a650a940070c5f4d7ed1f35bed4fe45ab",
+    "target_predictions_before_acceptance": 0,
+    "records": [
+      {
+        "query": {
+          "source": "nn5",
+          "variable": 92,
+          "origin": 568,
+          "length": 48,
+          "horizon": 24,
+          "chunk": 0
+        },
+        "mode": "native",
+        "seed": 4329713871947429781,
+        "comparison": {
+          "max_abs": 0.0,
+          "violations": 0,
+          "argmax_equal": true
+        },
+        "raw_tokens_equal": true,
+        "tracing_unchanged": true
+      },
+      {
+        "query": {
+          "source": "nn5",
+          "variable": 92,
+          "origin": 568,
+          "length": 48,
+          "horizon": 24,
+          "chunk": 0
+        },
+        "mode": "gofa",
+        "seed": 4329713871947429781,
+        "comparison": {
+          "max_abs": 0.0,
+          "violations": 0,
+          "argmax_equal": true
+        },
+        "raw_tokens_equal": true,
+        "tracing_unchanged": true
+      },
+      {
+        "query": {
+          "source": "pems04",
+          "variable": 102,
+          "origin": 10318,
+          "length": 48,
+          "horizon": 24,
+          "chunk": 0
+        },
+        "mode": "native",
+        "seed": 2407345944272044973,
+        "comparison": {
+          "max_abs": 0.0,
+          "violations": 0,
+          "argmax_equal": true
+        },
+        "raw_tokens_equal": true,
+        "tracing_unchanged": true
+      },
+      {
+        "query": {
+          "source": "pems04",
+          "variable": 102,
+          "origin": 10318,
+          "length": 48,
+          "horizon": 24,
+          "chunk": 0
+        },
+        "mode": "gofa",
+        "seed": 2407345944272044973,
+        "comparison": {
+          "max_abs": 0.0,
+          "violations": 0,
+          "argmax_equal": true
+        },
+        "raw_tokens_equal": true,
+        "tracing_unchanged": true
+      }
+    ]
+  },
+  "restore_audit": {
+    "passed": true,
+    "adapter_sha256": "816d38b577a6664f30dd6e6b6d50986a77b098ce9c4c0b0ffb63d70078b26f15",
+    "selected_update": 3500,
+    "backbone_frozen": true,
+    "adapter_requires_grad_preserved": true,
+    "evaluation_grad_enabled": false,
+    "optimizer_updates": 0
+  },
+  "memory": {
+    "source_replay_mechanisms": {
+      "allocated_bytes": 14204261376,
+      "reserved_bytes": 14375976960
+    }
+  },
+  "migration": {
+    "source": "/home/dcg/dcg_data/GOFA-F/outputs/stage19-nine-targets-sample8-balanced-v3",
+    "manifest_sha256": "f6a1be4e6665a78135a310eb0b2ec863ce40f5a68ec76277a70dfa3ebef0f34c",
+    "failures_sha256": "980466ab62a3221f495b9c1fb2f41da41960ab3d05d856bb201f87fa3f4d96e9",
+    "activity_sha256": "64912410d003cdc5e6107d8c51a3e5dda33918117961200e34567c55ac89d778",
+    "inherited_activity": {
+      "spent_seconds": 33.763375672511756,
+      "worker": null,
+      "waiting_seconds": 60.0049701211974,
+      "resource_pause_count": 0,
+      "peak_group_mib": 14306
+    },
+    "adapter_sha256": "816d38b577a6664f30dd6e6b6d50986a77b098ce9c4c0b0ffb63d70078b26f15",
+    "target_predictions": 0
+  },
+  "formal_target_results_not_complete": true,
+  "hourly_followup_remains_paused": true
+}
