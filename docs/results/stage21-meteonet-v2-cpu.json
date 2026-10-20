@@ -1,0 +1,2535 @@
+{
+  "protocol": "stage21-graph-benchmark-v2",
+  "selected_update": 3500,
+  "adapter_sha256": "816d38b577a6664f30dd6e6b6d50986a77b098ce9c4c0b0ffb63d70078b26f15",
+  "cpu_passed": true,
+  "cpu_cases": 582,
+  "cpu_skipped": 21,
+  "cuda_initialized": false,
+  "manifest_sha256": "c92d588c1ddb464a115afc2b960549690f8e8b27a9abc696ca0c8dd294fedbaf",
+  "total_paired_queries": 768,
+  "total_model_queries": 1536,
+  "total_trajectories": 12288,
+  "total_numeric_work": 245760,
+  "source_target_isolation_passed": true,
+  "isolation_evidence": [
+    "PeMS04 Jan-Feb2018 source and PeMS03 Sep-Nov2018/BAY2017 target periods disjoint",
+    "MeteoNet France2018 and EngRAD England2018-2020 are not Beijing Shunyi2013-2017 observations",
+    "Chinese wind2020-2021 and UK wind2019 are not US Solar2006 or NN5 bank withdrawals",
+    "AQI36 rejected and excluded; no Shunyi aliases retained"
+  ],
+  "source_periods": {
+    "solar": {
+      "start": "2006-01-01 00:00:01",
+      "train_end": "2006-08-07T23:50:01.000000000",
+      "end": "2006-12-31 23:50:01",
+      "sha256": "12dab1eb1d999cb608b7f5460cddaddd12dc190935f2521fdeefaa6be03750f7"
+    },
+    "nn5": {
+      "start": "1996-03-18 00:00:00",
+      "train_end": "1997-07-04T00:00:00.000000000",
+      "end": "1998-05-17 00:00:00",
+      "sha256": "2a1ab935d0db3c7603612d73a56225f45953b72e03620374017b5af417aa899e"
+    },
+    "pems04": {
+      "start": "2018-01-01 00:00:00",
+      "train_end": "2018-02-05T09:30:00.000000000",
+      "end": "2018-02-28 23:55:00",
+      "sha256": "a8a2c8c927f1525fc2b565a4f8b374944e0271c5706c1b1f06e08c4d23f49848"
+    },
+    "aq_shunyi": {
+      "start": "2013-03-01 00:00:00",
+      "train_end": "2015-07-25T13:00:00.000000000",
+      "end": "2017-02-28 23:00:00",
+      "sha256": "895e67a945d5d9b4d44b5037ed82620d530e1f3576dc52f12928a4afed686276"
+    }
+  },
+  "datasets": {
+    "pems03": {
+      "start": "2018-09-01 00:00:00",
+      "end": "2018-11-30 23:55:00",
+      "raw_sha256": {
+        "pems03.zip": "1c26b3339978958e5776b81c83ac47a003934c2cb74664195bda67ee43688756"
+      },
+      "unit": "vehicles per 5-minute bin",
+      "coverage": {
+        "queries": 128,
+        "all_nodes": 358,
+        "selected_target_variables": [
+          217,
+          46,
+          190,
+          237,
+          28,
+          122,
+          297,
+          290,
+          283,
+          109,
+          322,
+          282,
+          111,
+          73,
+          241,
+          181,
+          114,
+          209,
+          224,
+          92,
+          61,
+          273,
+          300,
+          123,
+          14,
+          15,
+          10,
+          63,
+          324,
+          159,
+          188,
+          226,
+          36,
+          52,
+          309,
+          80,
+          83,
+          302,
+          96,
+          267,
+          227,
+          68,
+          337,
+          125,
+          321,
+          27,
+          173,
+          144,
+          76,
+          79,
+          90,
+          147,
+          218,
+          199,
+          269,
+          285,
+          310,
+          333,
+          97,
+          157,
+          2,
+          275,
+          287,
+          91,
+          131,
+          231,
+          18,
+          143,
+          186,
+          345,
+          340,
+          32,
+          212,
+          334,
+          66,
+          165,
+          208,
+          54,
+          327,
+          38,
+          148,
+          150,
+          296,
+          101,
+          330,
+          194,
+          70,
+          7,
+          336,
+          203,
+          71,
+          88,
+          12,
+          175,
+          160,
+          29,
+          129,
+          291,
+          118,
+          270,
+          57,
+          107,
+          197,
+          332,
+          67,
+          16,
+          206,
+          78,
+          98,
+          349,
+          163,
+          127,
+          25,
+          104,
+          4,
+          280,
+          284,
+          50,
+          11,
+          17,
+          248,
+          47,
+          42,
+          161,
+          158,
+          81,
+          65,
+          124
+        ],
+        "variable_ids": [
+          "312425",
+          "317895",
+          "316414",
+          "318656",
+          "315828",
+          "318076",
+          "314899",
+          "312771",
+          "314730",
+          "318036",
+          "315030",
+          "318816",
+          "311903",
+          "317933",
+          "312520",
+          "316364",
+          "313956",
+          "318550",
+          "318593",
+          "315910",
+          "317910",
+          "312648",
+          "312856",
+          "318077",
+          "317843",
+          "317852",
+          "313658",
+          "315866",
+          "317088",
+          "318282",
+          "316400",
+          "318599",
+          "317885",
+          "317902",
+          "312898",
+          "315895",
+          "313852",
+          "312858",
+          "315914",
+          "318773",
+          "318611",
+          "315875",
+          "317146",
+          "316045",
+          "315017",
+          "315827",
+          "318366",
+          "316129",
+          "317934",
+          "315894",
+          "317956",
+          "314121",
+          "318575",
+          "318493",
+          "314681",
+          "312689",
+          "312900",
+          "313037",
+          "315915",
+          "312133",
+          "313438",
+          "314698",
+          "318844",
+          "315908",
+          "316073",
+          "318632",
+          "317861",
+          "316118",
+          "318443",
+          "313111",
+          "317166",
+          "315833",
+          "312420",
+          "317139",
+          "315873",
+          "316280",
+          "314446",
+          "315854",
+          "313003",
+          "315837",
+          "318218",
+          "318236",
+          "314886",
+          "317998",
+          "313010",
+          "316429",
+          "315880",
+          "313551",
+          "317143",
+          "318528",
+          "315882",
+          "315903",
+          "317815",
+          "312233",
+          "312139",
+          "315825",
+          "316064",
+          "312782",
+          "316018",
+          "314689",
+          "315858",
+          "315982",
+          "312343",
+          "313035",
+          "315874",
+          "317853",
+          "312388",
+          "315892",
+          "317974",
+          "313159",
+          "314230",
+          "314013",
+          "315824",
+          "318022",
+          "313487",
+          "314712",
+          "318832",
+          "315852",
+          "317814",
+          "315804",
+          "312530",
+          "315849",
+          "315839",
+          "314217",
+          "312134",
+          "313846",
+          "315872",
+          "316032"
+        ],
+        "variables": 128,
+        "min_origins_per_variable": 1,
+        "max_origins_per_variable": 1,
+        "eligible_variables": 358,
+        "ineligible_variable_ids": [],
+        "history": 12,
+        "horizon": 12,
+        "auxiliary_nodes": "all original nodes eligible",
+        "test_begin_index": 20966,
+        "label_windows_disjoint_within_variable": true
+      },
+      "actual_graph": {
+        "nodes": 9,
+        "variable_ids": [
+          "312425",
+          "312388",
+          "312421",
+          "312422",
+          "312513",
+          "312514",
+          "312520",
+          "312525",
+          "315849"
+        ],
+        "identity": "098a930b2ce1ce8aaa1a6625cbbcc289425ace0cb7640755b15b7da31346a480",
+        "original_nodes": 358,
+        "external_edges": 546,
+        "missing_fraction": 0.0
+      },
+      "data_sha256": "34dd4e2ccb70b51aecda18cdd519e7f18d5be7058029c2fbcf1fb3f3038510f9",
+      "metadata_sha256": "ad9ab9ee7c80da481d9836f293a32b4808ebb084f36897a8afe7a5bf72b12bca",
+      "data_kind": null,
+      "timestamp_policy": null
+    },
+    "pems_bay": {
+      "start": "2017-01-01 00:00:00",
+      "end": "2017-06-30 23:55:00",
+      "raw_sha256": {
+        "pems_bay.zip": "f59f810b3ed12e40514dbe30aeb916996415c442818992e0071baf7b51f84845"
+      },
+      "unit": "mph",
+      "coverage": {
+        "queries": 128,
+        "all_nodes": 325,
+        "selected_target_variables": [
+          63,
+          246,
+          307,
+          196,
+          164,
+          297,
+          235,
+          305,
+          202,
+          174,
+          180,
+          209,
+          43,
+          223,
+          16,
+          34,
+          322,
+          200,
+          210,
+          160,
+          172,
+          296,
+          266,
+          262,
+          238,
+          46,
+          255,
+          92,
+          282,
+          248,
+          283,
+          1,
+          8,
+          312,
+          194,
+          89,
+          182,
+          276,
+          45,
+          129,
+          256,
+          31,
+          286,
+          204,
+          127,
+          184,
+          181,
+          94,
+          207,
+          275,
+          141,
+          151,
+          60,
+          122,
+          250,
+          228,
+          111,
+          150,
+          26,
+          104,
+          277,
+          224,
+          155,
+          106,
+          306,
+          300,
+          84,
+          212,
+          232,
+          189,
+          222,
+          78,
+          97,
+          20,
+          299,
+          148,
+          169,
+          252,
+          15,
+          225,
+          4,
+          273,
+          103,
+          308,
+          9,
+          59,
+          229,
+          0,
+          293,
+          51,
+          56,
+          247,
+          193,
+          44,
+          269,
+          188,
+          47,
+          115,
+          154,
+          243,
+          166,
+          280,
+          245,
+          157,
+          142,
+          133,
+          249,
+          12,
+          218,
+          125,
+          7,
+          178,
+          239,
+          173,
+          203,
+          124,
+          278,
+          136,
+          149,
+          27,
+          261,
+          217,
+          314,
+          3,
+          138,
+          185,
+          258,
+          41
+        ],
+        "variable_ids": [
+          "400440",
+          "404521",
+          "407372",
+          "402067",
+          "401611",
+          "407342",
+          "403414",
+          "407367",
+          "402281",
+          "401890",
+          "401937",
+          "402288",
+          "400258",
+          "402371",
+          "400100",
+          "400221",
+          "413878",
+          "402120",
+          "402289",
+          "401560",
+          "401845",
+          "407341",
+          "407172",
+          "407155",
+          "404434",
+          "400278",
+          "405613",
+          "400677",
+          "407202",
+          "404553",
+          "407204",
+          "400017",
+          "400065",
+          "408907",
+          "402060",
+          "400665",
+          "401943",
+          "407186",
+          "400274",
+          "400952",
+          "405619",
+          "400206",
+          "407321",
+          "402283",
+          "400934",
+          "401957",
+          "401942",
+          "400688",
+          "402286",
+          "407185",
+          "401163",
+          "401440",
+          "400429",
+          "400904",
+          "404585",
+          "403329",
+          "400804",
+          "401403",
+          "400172",
+          "400750",
+          "407187",
+          "402372",
+          "401495",
+          "400772",
+          "407370",
+          "407352",
+          "400643",
+          "402360",
+          "403406",
+          "401998",
+          "402370",
+          "400563",
+          "400709",
+          "400147",
+          "407348",
+          "401391",
+          "401811",
+          "404640",
+          "400097",
+          "402373",
+          "400045",
+          "407181",
+          "400743",
+          "407373",
+          "400069",
+          "400418",
+          "403401",
+          "400001",
+          "407336",
+          "400330",
+          "400394",
+          "404522",
+          "402059",
+          "400268",
+          "407176",
+          "401997",
+          "400280",
+          "400832",
+          "401489",
+          "404453",
+          "401808",
+          "407194",
+          "404462",
+          "401534",
+          "401167",
+          "400970",
+          "404554",
+          "400085",
+          "402366",
+          "400916",
+          "400059",
+          "401926",
+          "404435",
+          "401846",
+          "402282",
+          "400911",
+          "407190",
+          "400995",
+          "401400",
+          "400174",
+          "407153",
+          "402365",
+          "409524",
+          "400040",
+          "401014",
+          "401958",
+          "407150",
+          "400253"
+        ],
+        "variables": 128,
+        "min_origins_per_variable": 1,
+        "max_origins_per_variable": 1,
+        "eligible_variables": 325,
+        "ineligible_variable_ids": [],
+        "history": 12,
+        "horizon": 12,
+        "auxiliary_nodes": "all original nodes eligible",
+        "test_begin_index": 41702,
+        "label_windows_disjoint_within_variable": true
+      },
+      "actual_graph": {
+        "nodes": 9,
+        "variable_ids": [
+          "400440",
+          "400457",
+          "400499",
+          "401154",
+          "401937",
+          "401958",
+          "402067",
+          "402363",
+          "407174"
+        ],
+        "identity": "49af9d8d120a44dca1a10b12cba92fdb82ec814fe33283af4619932f585f547f",
+        "original_nodes": 325,
+        "external_edges": 2369,
+        "missing_fraction": 0.0002609552816734695
+      },
+      "data_sha256": "1c3554a8c9ac0252197b3c63ad2d680a7d3f71ed78d9c09c78f42be76c9871b1",
+      "metadata_sha256": "d62f8d957155087b03406cfee9d69ecb9b6539a1ae2ec61020b0b857da30ac11",
+      "data_kind": null,
+      "timestamp_policy": null
+    },
+    "meteonet_nw2018": {
+      "start": "2018-01-01 01:00:00",
+      "end": "2019-01-01 00:00:00",
+      "raw_sha256": {
+        "meteonet_NW2018.csv.zip": "5fa038073df358af3487a18d04af45644f50a46e744c9f9c091fad2958311d1a"
+      },
+      "unit": "Celsius",
+      "coverage": {
+        "queries": 128,
+        "all_nodes": 216,
+        "selected_target_variables": [
+          158,
+          203,
+          34,
+          51,
+          181,
+          120,
+          205,
+          192,
+          72,
+          63,
+          23,
+          155,
+          75,
+          27,
+          79,
+          164,
+          127,
+          76,
+          82,
+          78,
+          131,
+          61,
+          86,
+          124,
+          166,
+          77,
+          5,
+          33,
+          190,
+          189,
+          24,
+          214,
+          212,
+          152,
+          67,
+          209,
+          173,
+          110,
+          45,
+          161,
+          42,
+          104,
+          29,
+          73,
+          56,
+          114,
+          137,
+          187,
+          133,
+          145,
+          142,
+          88,
+          37,
+          57,
+          165,
+          100,
+          25,
+          101,
+          15,
+          157,
+          201,
+          160,
+          83,
+          196,
+          159,
+          117,
+          122,
+          28,
+          98,
+          163,
+          135,
+          136,
+          211,
+          148,
+          90,
+          149,
+          11,
+          89,
+          180,
+          62,
+          53,
+          171,
+          125,
+          128,
+          3,
+          1,
+          162,
+          50,
+          141,
+          118,
+          109,
+          172,
+          66,
+          65,
+          16,
+          207,
+          126,
+          184,
+          146,
+          19,
+          4,
+          43,
+          97,
+          175,
+          167,
+          85,
+          52,
+          70,
+          116,
+          202,
+          183,
+          132,
+          64,
+          39,
+          169,
+          96,
+          113,
+          130,
+          38,
+          58,
+          68,
+          129,
+          41,
+          140,
+          60,
+          215,
+          138,
+          54
+        ],
+        "variable_ids": [
+          "72175002",
+          "85182004",
+          "28134004",
+          "29120001",
+          "79079013",
+          "53116003",
+          "85215002",
+          "80606002",
+          "35238003",
+          "29276001",
+          "22372001",
+          "62826001",
+          "36063001",
+          "27347001",
+          "37107001",
+          "76116001",
+          "56017003",
+          "36127002",
+          "37213003",
+          "37023002",
+          "56151001",
+          "29263002",
+          "41097001",
+          "56004001",
+          "76171001",
+          "36173002",
+          "14366002",
+          "28078001",
+          "80001001",
+          "79326004",
+          "23089001",
+          "91200002",
+          "86137003",
+          "62076002",
+          "35057003",
+          "86027001",
+          "76746001",
+          "50215002",
+          "28380003",
+          "72264001",
+          "28252002",
+          "49248003",
+          "28002001",
+          "35281001",
+          "29178001",
+          "50509002",
+          "56243001",
+          "79309001",
+          "56165003",
+          "61275001",
+          "61169003",
+          "41173003",
+          "28198001",
+          "29214001",
+          "76130001",
+          "49138001",
+          "27056003",
+          "49173001",
+          "22113006",
+          "72172003",
+          "85169002",
+          "72255001",
+          "37240001",
+          "85104001",
+          "72181001",
+          "53083001",
+          "53159002",
+          "27422001",
+          "49020001",
+          "72361001",
+          "56185001",
+          "56240003",
+          "86097001",
+          "61426001",
+          "44020001",
+          "61485002",
+          "14762004",
+          "41281001",
+          "79049004",
+          "29264001",
+          "29155005",
+          "76481001",
+          "56007001",
+          "56069001",
+          "14296001",
+          "14137001",
+          "72284001",
+          "29113001",
+          "61006005",
+          "53096004",
+          "50209001",
+          "76552001",
+          "35005001",
+          "29293001",
+          "22147006",
+          "86009001",
+          "56009001",
+          "79202003",
+          "61387001",
+          "22247002",
+          "14357002",
+          "28280003",
+          "49008001",
+          "78152001",
+          "76208001",
+          "41053001",
+          "29151004",
+          "35202001",
+          "50615001",
+          "85172001",
+          "79191005",
+          "56159001",
+          "29277001",
+          "28214003",
+          "76228001",
+          "45055001",
+          "50484002",
+          "56137001",
+          "28206001",
+          "29216001",
+          "35110003",
+          "56127001",
+          "28239002",
+          "61001001",
+          "29249002",
+          "95690001",
+          "60322001",
+          "29155008"
+        ],
+        "variables": 128,
+        "min_origins_per_variable": 1,
+        "max_origins_per_variable": 1,
+        "eligible_variables": 213,
+        "ineligible_variable_ids": [
+          "29021001",
+          "29236001",
+          "78465001"
+        ],
+        "history": 48,
+        "horizon": 24,
+        "auxiliary_nodes": "all original nodes eligible",
+        "test_begin_index": 7008,
+        "label_windows_disjoint_within_variable": true
+      },
+      "actual_graph": {
+        "nodes": 9,
+        "variable_ids": [
+          "72175002",
+          "37213003",
+          "49138001",
+          "49173001",
+          "49188001",
+          "72172003",
+          "72181001",
+          "72264001",
+          "72361001"
+        ],
+        "identity": "be70dadbc53d987180e4f9292ad24e867f557865fed9f2845697cdc2f0e1003c",
+        "original_nodes": 216,
+        "external_edges": 1040,
+        "missing_fraction": 0.025151678504989006
+      },
+      "data_sha256": "370735d047f77e857a39f81aa2c1275bd8aaa5a153c0d69b8eeee5088f53f075",
+      "metadata_sha256": "86f761a80b4d451345914183da606ec3b753f5da9799faa15266848cc2ae0863",
+      "data_kind": null,
+      "timestamp_policy": null
+    },
+    "engrad": {
+      "start": "2018-01-01 00:00:00",
+      "end": "2020-12-31 23:00:00",
+      "raw_sha256": {
+        "engrad.h5": "def91d72907ea6a594af00f45c676c07ce5db48dcc1685fc41348c0a675f3d59"
+      },
+      "unit": "Celsius",
+      "coverage": {
+        "queries": 128,
+        "all_nodes": 487,
+        "selected_target_variables": [
+          255,
+          475,
+          401,
+          218,
+          269,
+          471,
+          166,
+          67,
+          159,
+          156,
+          140,
+          346,
+          292,
+          72,
+          308,
+          170,
+          450,
+          311,
+          66,
+          260,
+          267,
+          19,
+          463,
+          439,
+          193,
+          39,
+          61,
+          99,
+          198,
+          459,
+          128,
+          173,
+          100,
+          358,
+          449,
+          88,
+          407,
+          42,
+          423,
+          6,
+          167,
+          470,
+          130,
+          2,
+          469,
+          213,
+          197,
+          372,
+          476,
+          380,
+          238,
+          48,
+          399,
+          355,
+          10,
+          234,
+          281,
+          426,
+          97,
+          394,
+          280,
+          290,
+          263,
+          458,
+          258,
+          485,
+          21,
+          241,
+          300,
+          419,
+          344,
+          107,
+          151,
+          89,
+          211,
+          68,
+          262,
+          477,
+          465,
+          486,
+          11,
+          79,
+          483,
+          437,
+          59,
+          203,
+          315,
+          472,
+          29,
+          482,
+          388,
+          347,
+          299,
+          93,
+          452,
+          468,
+          418,
+          408,
+          310,
+          43,
+          443,
+          221,
+          302,
+          336,
+          126,
+          259,
+          183,
+          22,
+          249,
+          136,
+          180,
+          384,
+          186,
+          96,
+          398,
+          456,
+          403,
+          135,
+          134,
+          115,
+          216,
+          316,
+          270,
+          124,
+          256,
+          375,
+          330,
+          451
+        ],
+        "variable_ids": [
+          "liskeard_cornwall",
+          "witham_essex",
+          "spalding_lincolnshire",
+          "hythe_hampshire",
+          "maghull_merseyside",
+          "winchester_hampshire",
+          "godalming_surrey",
+          "burnham_on_sea_somerset",
+          "flitwick_bedfordshire",
+          "felixstowe_suffolk",
+          "east_retford_nottinghamshire",
+          "radstock_somerset",
+          "mitcham_greater_london",
+          "calne_wiltshire",
+          "newton_aycliffe_county_durham",
+          "grays_essex",
+          "warrington_cheshire",
+          "north_walsham_norfolk",
+          "burgess_hill_west_sussex",
+          "loughborough_leicestershire",
+          "macclesfield_cheshire",
+          "barrow_in_furness_cumbria",
+          "whitchurch_shropshire",
+          "ulverston_cumbria",
+          "hemsworth_west_yorkshire",
+          "birmingham_west_midlands",
+          "bristol_bristol",
+          "cleckheaton_west_yorkshire",
+          "heswall_merseyside",
+          "wetherby_west_yorkshire",
+          "doncaster_south_yorkshire",
+          "great_yarmouth_norfolk",
+          "cleethorpes_lincolnshire",
+          "romsey_hampshire",
+          "warminster_wiltshire",
+          "chesham_buckinghamshire",
+          "stevenage_hertfordshire",
+          "bloxwich_west_midlands",
+          "tadley_hampshire",
+          "ampthill_bedfordshire",
+          "goole_east_riding_of_yorkshire",
+          "wilmslow_cheshire",
+          "dorking_surrey",
+          "alfreton_derbyshire",
+          "wigston_magna_leicestershire",
+          "houghton_le_spring_tyne_and_wear",
+          "hessle_east_riding_of_yorkshire",
+          "sandiacre_derbyshire",
+          "witney_oxfordshire",
+          "sevenoaks_kent",
+          "knottingley_west_yorkshire",
+          "bourne_lincolnshire",
+          "southgate_greater_london",
+          "ripon_north_yorkshire",
+          "ashford_kent",
+          "kingston_upon_thames_greater_london",
+          "melksham_wiltshire",
+          "tavistock_devon",
+          "clacton_on_sea_essex",
+          "skipton_north_yorkshire",
+          "matlock_derbyshire",
+          "minster_kent",
+          "luton_bedfordshire",
+          "weston_super_mare_somerset",
+          "london_greater_london",
+          "yate_gloucestershire",
+          "basingstoke_hampshire",
+          "launceston_cornwall",
+          "new_milton_hampshire",
+          "sutton_coldfield_west_midlands",
+          "prestwich_greater_manchester",
+          "consett_county_durham",
+          "exmouth_devon",
+          "chester_cheshire",
+          "horsham_west_sussex",
+          "burslem_staffordshire",
+          "ludlow_shropshire",
+          "woking_surrey",
+          "whitnash_warwickshire",
+          "york_north_yorkshire",
+          "attleborough_norfolk",
+          "carterton_oxfordshire",
+          "worthing_west_sussex",
+          "truro_cornwall",
+          "bridport_dorset",
+          "hindley_greater_manchester",
+          "northwich_cheshire",
+          "windsor_berkshire",
+          "belper_derbyshire",
+          "worksop_nottinghamshire",
+          "shoeburyness_essex",
+          "rainham_kent",
+          "new_mills_derbyshire",
+          "chippenham_wiltshire",
+          "wellingborough_northamptonshire",
+          "wickford_essex",
+          "sunderland_tyne_and_wear",
+          "stocksbridge_south_yorkshire",
+          "north_shields_tyne_and_wear",
+          "bodmin_cornwall",
+          "walkden_greater_manchester",
+          "ilkeston_derbyshire",
+          "newmarket_suffolk",
+          "pitsea_essex",
+          "devizes_wiltshire",
+          "longbenton_tyne_and_wear",
+          "haslemere_surrey",
+          "bath_somerset",
+          "leominster_herefordshire",
+          "ealing_greater_london",
+          "harrogate_north_yorkshire",
+          "shepton_mallet_somerset",
+          "havant_hampshire",
+          "cirencester_gloucestershire",
+          "southampton_hampshire",
+          "wembley_greater_london",
+          "stafford_staffordshire",
+          "durham_county_durham",
+          "dukinfield_greater_manchester",
+          "cromer_norfolk",
+          "huntingdon_cambridgeshire",
+          "norwich_norfolk",
+          "maidstone_kent",
+          "derby_derbyshire",
+          "littleborough_greater_manchester",
+          "scunthorpe_lincolnshire",
+          "penkridge_staffordshire",
+          "warwick_warwickshire"
+        ],
+        "variables": 128,
+        "min_origins_per_variable": 1,
+        "max_origins_per_variable": 1,
+        "eligible_variables": 487,
+        "ineligible_variable_ids": [],
+        "history": 48,
+        "horizon": 24,
+        "auxiliary_nodes": "all original nodes eligible",
+        "test_begin_index": 21043,
+        "label_windows_disjoint_within_variable": true
+      },
+      "actual_graph": {
+        "nodes": 9,
+        "variable_ids": [
+          "liskeard_cornwall",
+          "bodmin_cornwall",
+          "helston_cornwall",
+          "ivybridge_devon",
+          "launceston_cornwall",
+          "newquay_cornwall",
+          "plymouth_devon",
+          "saltash_cornwall",
+          "tavistock_devon"
+        ],
+        "identity": "faf292529ee9e2e5e6add63bae5cf5c1fe1092101a1d13903df5db878ccf6f18",
+        "original_nodes": 487,
+        "external_edges": 2334,
+        "missing_fraction": 0.0
+      },
+      "data_sha256": "ee83b93986fb87bfdcc51cd77c8d38e5c60781668244417fe702a2522e2e9e74",
+      "metadata_sha256": "f38122df7e78ba34b655474a8a6b39dccbc993857bc79b12fdb21bedfafa6387",
+      "data_kind": "ECMWF IFS model-derived historical field, not independent station measurements",
+      "timestamp_policy": null
+    },
+    "sdwpf": {
+      "start": "2020-01-01 00:10:00",
+      "end": "2022-01-01 00:10:00",
+      "raw_sha256": {
+        "sdwpf_2001_2112_full.parquet": "b1e42fa7d12f30beb842e3257cd8676907a988c158554a1ed10eab248e347a95",
+        "sdwpf_turb_location_elevation.csv": "233a120f4db2b52402bf4dc7c90631ac9301d6af236a56c6a245e46beec1f236"
+      },
+      "unit": "kW",
+      "coverage": {
+        "queries": 128,
+        "all_nodes": 134,
+        "selected_target_variables": [
+          56,
+          53,
+          3,
+          65,
+          11,
+          102,
+          120,
+          108,
+          39,
+          72,
+          85,
+          126,
+          58,
+          38,
+          63,
+          12,
+          1,
+          28,
+          25,
+          121,
+          93,
+          115,
+          37,
+          20,
+          33,
+          29,
+          125,
+          130,
+          30,
+          114,
+          128,
+          45,
+          50,
+          131,
+          68,
+          123,
+          35,
+          127,
+          96,
+          46,
+          87,
+          59,
+          88,
+          9,
+          75,
+          27,
+          107,
+          61,
+          117,
+          99,
+          60,
+          101,
+          103,
+          86,
+          122,
+          82,
+          24,
+          22,
+          76,
+          19,
+          66,
+          43,
+          77,
+          6,
+          119,
+          112,
+          2,
+          98,
+          73,
+          32,
+          78,
+          34,
+          100,
+          94,
+          133,
+          74,
+          7,
+          62,
+          51,
+          69,
+          55,
+          111,
+          17,
+          132,
+          47,
+          113,
+          129,
+          4,
+          80,
+          18,
+          79,
+          15,
+          95,
+          48,
+          40,
+          41,
+          21,
+          13,
+          110,
+          64,
+          23,
+          91,
+          5,
+          16,
+          44,
+          124,
+          81,
+          42,
+          71,
+          52,
+          67,
+          84,
+          83,
+          106,
+          10,
+          54,
+          57,
+          49,
+          118,
+          70,
+          90,
+          89,
+          36,
+          92,
+          14,
+          104,
+          116,
+          105
+        ],
+        "variable_ids": [
+          "57",
+          "54",
+          "4",
+          "66",
+          "12",
+          "103",
+          "121",
+          "109",
+          "40",
+          "73",
+          "86",
+          "127",
+          "59",
+          "39",
+          "64",
+          "13",
+          "2",
+          "29",
+          "26",
+          "122",
+          "94",
+          "116",
+          "38",
+          "21",
+          "34",
+          "30",
+          "126",
+          "131",
+          "31",
+          "115",
+          "129",
+          "46",
+          "51",
+          "132",
+          "69",
+          "124",
+          "36",
+          "128",
+          "97",
+          "47",
+          "88",
+          "60",
+          "89",
+          "10",
+          "76",
+          "28",
+          "108",
+          "62",
+          "118",
+          "100",
+          "61",
+          "102",
+          "104",
+          "87",
+          "123",
+          "83",
+          "25",
+          "23",
+          "77",
+          "20",
+          "67",
+          "44",
+          "78",
+          "7",
+          "120",
+          "113",
+          "3",
+          "99",
+          "74",
+          "33",
+          "79",
+          "35",
+          "101",
+          "95",
+          "134",
+          "75",
+          "8",
+          "63",
+          "52",
+          "70",
+          "56",
+          "112",
+          "18",
+          "133",
+          "48",
+          "114",
+          "130",
+          "5",
+          "81",
+          "19",
+          "80",
+          "16",
+          "96",
+          "49",
+          "41",
+          "42",
+          "22",
+          "14",
+          "111",
+          "65",
+          "24",
+          "92",
+          "6",
+          "17",
+          "45",
+          "125",
+          "82",
+          "43",
+          "72",
+          "53",
+          "68",
+          "85",
+          "84",
+          "107",
+          "11",
+          "55",
+          "58",
+          "50",
+          "119",
+          "71",
+          "91",
+          "90",
+          "37",
+          "93",
+          "15",
+          "105",
+          "117",
+          "106"
+        ],
+        "variables": 128,
+        "min_origins_per_variable": 1,
+        "max_origins_per_variable": 1,
+        "eligible_variables": 134,
+        "ineligible_variable_ids": [],
+        "history": 48,
+        "horizon": 24,
+        "auxiliary_nodes": "all original nodes eligible",
+        "test_begin_index": 67828,
+        "label_windows_disjoint_within_variable": true
+      },
+      "actual_graph": {
+        "nodes": 9,
+        "variable_ids": [
+          "57",
+          "101",
+          "109",
+          "132",
+          "33",
+          "34",
+          "55",
+          "56",
+          "81"
+        ],
+        "identity": "717c488bfba1fc6452fd1ee8b5bbf0054e3c78ea1012f71bed57c11bb3cff7db",
+        "original_nodes": 134,
+        "external_edges": 596,
+        "missing_fraction": 0.043745241475584895
+      },
+      "data_sha256": "2686fc7d37aeb1f7f9e61c5af446f361e9e97dd960345df86f84d44be480a168",
+      "metadata_sha256": "df862393d3f435048fe1e4fb6bb8634f78e23508fe2ebf59b0eb917b7d73f526",
+      "data_kind": null,
+      "timestamp_policy": "all original timestamps preserved; 2020 15min, 2021 10min; no resampling"
+    },
+    "kelmarsh2019": {
+      "start": "2019-01-01 00:00:00",
+      "end": "2019-12-31 23:50:00",
+      "raw_sha256": {
+        "Kelmarsh_SCADA_2019_3085.zip": "c2f11578b9a1678be198fd7883a7dfe1b923c5b0565f806bdda5dd9d0097f4dc",
+        "Kelmarsh_WT_static.csv": "a249919471580244d41a547e407ef371d45f2d5347a59bc23cf3c980f607ee93"
+      },
+      "unit": "kW",
+      "coverage": {
+        "queries": 128,
+        "all_nodes": 6,
+        "selected_target_variables": [
+          1,
+          3,
+          5,
+          2,
+          0,
+          4
+        ],
+        "variable_ids": [
+          "2",
+          "4",
+          "6",
+          "3",
+          "1",
+          "5"
+        ],
+        "variables": 6,
+        "min_origins_per_variable": 21,
+        "max_origins_per_variable": 22,
+        "eligible_variables": 6,
+        "ineligible_variable_ids": [],
+        "history": 48,
+        "horizon": 24,
+        "auxiliary_nodes": "all original nodes eligible",
+        "test_begin_index": 42048,
+        "label_windows_disjoint_within_variable": true
+      },
+      "actual_graph": {
+        "nodes": 6,
+        "variable_ids": [
+          "2",
+          "1",
+          "3",
+          "4",
+          "5",
+          "6"
+        ],
+        "identity": "e1eb7c162100f1c1d9a748c0aa41f90e6616b72648590e2a33be8f91e5989523",
+        "original_nodes": 6,
+        "external_edges": 28,
+        "missing_fraction": 0.0013191273465246178
+      },
+      "data_sha256": "cdeb8256d357318cd873691c9a9f536d035bf142edc2d9cece26138c61a39119",
+      "metadata_sha256": "bda6e2ad37cdd4d01b40171b62ddd868d44272660543901ba94588b272224f72",
+      "data_kind": null,
+      "timestamp_policy": null
+    }
+  },
+  "meteonet_quality": {
+    "original_off_six_minute_rows": 6,
+    "duplicate_rows_collapsed": 513,
+    "conflicting_duplicate_times_masked": 0,
+    "later_coordinate_variants": {
+      "29263002": [
+        [
+          48.226,
+          -4.09
+        ]
+      ],
+      "91200002": [
+        [
+          48.526,
+          1.993
+        ]
+      ],
+      "37107001": [
+        [
+          46.987,
+          0.875
+        ]
+      ],
+      "29178001": [
+        [
+          48.548,
+          -4.664
+        ]
+      ],
+      "41097001": [
+        [
+          47.32,
+          1.688
+        ]
+      ],
+      "53110002": [
+        [
+          47.891,
+          -0.542
+        ]
+      ],
+      "29277001": [
+        [
+          48.391,
+          -4.021
+        ]
+      ],
+      "35005001": [
+        [
+          47.927,
+          -1.297
+        ]
+      ],
+      "35228001": [
+        [
+          48.585,
+          -2.076
+        ]
+      ],
+      "35238003": [
+        [
+          48.126,
+          -1.643
+        ]
+      ],
+      "35281001": [
+        [
+          48.069,
+          -1.734
+        ]
+      ],
+      "36063001": [
+        [
+          46.87,
+          1.741
+        ]
+      ],
+      "36173002": [
+        [
+          46.703,
+          1.25
+        ]
+      ],
+      "37179001": [
+        [
+          47.444,
+          0.727
+        ]
+      ],
+      "37240001": [
+        [
+          47.59,
+          0.931
+        ]
+      ],
+      "37242002": [
+        [
+          47.227,
+          0.149
+        ]
+      ],
+      "41281001": [
+        [
+          47.679,
+          1.212
+        ]
+      ],
+      "44020001": [
+        [
+          47.15,
+          -1.609
+        ]
+      ],
+      "44069002": [
+        [
+          47.292,
+          -2.43
+        ]
+      ],
+      "44103001": [
+        [
+          47.314,
+          -2.155
+        ]
+      ],
+      "44110002": [
+        [
+          47.425,
+          -1.514
+        ]
+      ],
+      "44117002": [
+        [
+          47.142,
+          -1.337
+        ]
+      ],
+      "44181001": [
+        [
+          47.006,
+          -1.782
+        ]
+      ],
+      "45055001": [
+        [
+          47.991,
+          1.778
+        ]
+      ],
+      "49020001": [
+        [
+          47.479,
+          -0.614
+        ]
+      ],
+      "49188001": [
+        [
+          47.562,
+          -0.317
+        ]
+      ],
+      "49248003": [
+        [
+          47.74,
+          -1.188
+        ]
+      ],
+      "50020001": [
+        [
+          49.725,
+          -1.94
+        ]
+      ],
+      "50209001": [
+        [
+          49.653,
+          -1.464
+        ]
+      ],
+      "50277001": [
+        [
+          48.862,
+          -1.573
+        ]
+      ],
+      "50410003": [
+        [
+          48.575,
+          -1.47
+        ]
+      ],
+      "50484002": [
+        [
+          48.564,
+          -1.097
+        ]
+      ],
+      "50509002": [
+        [
+          49.404,
+          -1.168
+        ]
+      ],
+      "50615001": [
+        [
+          49.518,
+          -1.507
+        ]
+      ],
+      "53083001": [
+        [
+          48.319,
+          -0.222
+        ]
+      ],
+      "53096004": [
+        [
+          48.296,
+          -0.963
+        ]
+      ],
+      "53130008": [
+        [
+          48.031,
+          -0.747
+        ]
+      ],
+      "53159002": [
+        [
+          48.21,
+          -0.539
+        ]
+      ],
+      "56004001": [
+        [
+          47.513,
+          -2.383
+        ]
+      ],
+      "56007001": [
+        [
+          47.659,
+          -2.971
+        ]
+      ],
+      "56009001": [
+        [
+          47.294,
+          -3.218
+        ]
+      ],
+      "56017003": [
+        [
+          47.884,
+          -2.729
+        ]
+      ],
+      "56069001": [
+        [
+          47.652,
+          -3.502
+        ]
+      ],
+      "56127001": [
+        [
+          48.066,
+          -2.286
+        ]
+      ],
+      "56137001": [
+        [
+          47.722,
+          -2.727
+        ]
+      ],
+      "56159001": [
+        [
+          47.766,
+          -2.387
+        ]
+      ],
+      "56165003": [
+        [
+          47.951,
+          -2.397
+        ]
+      ],
+      "56166005": [
+        [
+          47.916,
+          -3.345
+        ]
+      ],
+      "56185001": [
+        [
+          47.763,
+          -3.436
+        ]
+      ],
+      "56240003": [
+        [
+          47.512,
+          -2.797
+        ]
+      ],
+      "60322001": [
+        [
+          49.306,
+          1.879
+        ]
+      ],
+      "60566001": [
+        [
+          49.623,
+          1.791
+        ]
+      ],
+      "61001001": [
+        [
+          48.446,
+          0.11
+        ]
+      ],
+      "61006005": [
+        [
+          48.718,
+          0.011
+        ]
+      ],
+      "61179001": [
+        [
+          48.722,
+          -0.264
+        ]
+      ],
+      "61275001": [
+        [
+          48.711,
+          0.299
+        ]
+      ],
+      "61387001": [
+        [
+          48.504,
+          -0.703
+        ]
+      ],
+      "61426001": [
+        [
+          48.374,
+          0.55
+        ]
+      ],
+      "61485002": [
+        [
+          48.913,
+          0.245
+        ]
+      ],
+      "61491002": [
+        [
+          48.585,
+          0.667
+        ]
+      ],
+      "62076002": [
+        [
+          50.751,
+          1.907
+        ]
+      ],
+      "62160001": [
+        [
+          50.733,
+          1.6
+        ]
+      ],
+      "62548002": [
+        [
+          50.96,
+          1.956
+        ]
+      ],
+      "62826001": [
+        [
+          50.514,
+          1.623
+        ]
+      ],
+      "72086001": [
+        [
+          48.315,
+          0.354
+        ]
+      ],
+      "72172003": [
+        [
+          48.076,
+          0.591
+        ]
+      ],
+      "72175002": [
+        [
+          47.713,
+          0.088
+        ]
+      ],
+      "72181001": [
+        [
+          47.941,
+          0.19
+        ]
+      ],
+      "72264001": [
+        [
+          47.842,
+          -0.302
+        ]
+      ],
+      "72284001": [
+        [
+          48.301,
+          0.093
+        ]
+      ],
+      "72361001": [
+        [
+          47.885,
+          0.559
+        ]
+      ],
+      "76116001": [
+        [
+          49.383,
+          1.182
+        ]
+      ],
+      "76171001": [
+        [
+          49.538,
+          1.44
+        ]
+      ],
+      "76208001": [
+        [
+          49.508,
+          1.716
+        ]
+      ],
+      "76217001": [
+        [
+          49.932,
+          1.089
+        ]
+      ],
+      "76473001": [
+        [
+          49.494,
+          0.771
+        ]
+      ],
+      "76481001": [
+        [
+          49.533,
+          0.092
+        ]
+      ],
+      "76552001": [
+        [
+          49.509,
+          0.071
+        ]
+      ],
+      "78152001": [
+        [
+          48.84,
+          1.979
+        ]
+      ],
+      "78465001": [
+        [
+          48.859,
+          1.694
+        ]
+      ],
+      "79134001": [
+        [
+          46.856,
+          -0.254
+        ]
+      ],
+      "79191005": [
+        [
+          46.316,
+          -0.4
+        ]
+      ],
+      "79202003": [
+        [
+          46.637,
+          -0.261
+        ]
+      ],
+      "79215001": [
+        [
+          46.66,
+          -0.402
+        ]
+      ],
+      "79270003": [
+        [
+          46.417,
+          -0.21
+        ]
+      ],
+      "80001001": [
+        [
+          50.136,
+          1.834
+        ]
+      ],
+      "80606002": [
+        [
+          49.957,
+          1.77
+        ]
+      ],
+      "85060002": [
+        [
+          46.477,
+          -1.726
+        ]
+      ],
+      "85104001": [
+        [
+          46.35,
+          -1.335
+        ]
+      ],
+      "85113001": [
+        [
+          46.694,
+          -2.33
+        ]
+      ],
+      "85152001": [
+        [
+          46.621,
+          -1.633
+        ]
+      ],
+      "85153002": [
+        [
+          46.768,
+          -1.053
+        ]
+      ],
+      "85169002": [
+        [
+          46.808,
+          -1.598
+        ]
+      ],
+      "85182004": [
+        [
+          46.766,
+          -0.831
+        ]
+      ],
+      "85191003": [
+        [
+          46.706,
+          -1.382
+        ]
+      ],
+      "85215002": [
+        [
+          46.848,
+          -1.184
+        ]
+      ],
+      "86021002": [
+        [
+          46.568,
+          0.055
+        ]
+      ],
+      "86027001": [
+        [
+          46.594,
+          0.314
+        ]
+      ],
+      "86039001": [
+        [
+          46.276,
+          0.19
+        ]
+      ],
+      "86097001": [
+        [
+          46.321,
+          0.41
+        ]
+      ],
+      "14066001": [
+        [
+          49.334,
+          -0.431
+        ]
+      ],
+      "14137001": [
+        [
+          49.18,
+          -0.456
+        ]
+      ],
+      "14296001": [
+        [
+          48.795,
+          -1.037
+        ]
+      ],
+      "14357002": [
+        [
+          48.926,
+          -0.693
+        ]
+      ],
+      "14366002": [
+        [
+          49.165,
+          0.227
+        ]
+      ],
+      "14501002": [
+        [
+          48.89,
+          -0.386
+        ]
+      ],
+      "14578001": [
+        [
+          49.364,
+          0.167
+        ]
+      ],
+      "14624001": [
+        [
+          48.989,
+          -0.009
+        ]
+      ],
+      "14659001": [
+        [
+          49.06,
+          -0.234
+        ]
+      ],
+      "14762004": [
+        [
+          48.851,
+          -0.899
+        ]
+      ],
+      "22092001": [
+        [
+          48.404,
+          -3.148
+        ]
+      ],
+      "22113006": [
+        [
+          48.755,
+          -3.469
+        ]
+      ],
+      "22147006": [
+        [
+          48.183,
+          -2.411
+        ]
+      ],
+      "22168001": [
+        [
+          48.826,
+          -3.473
+        ]
+      ],
+      "22282001": [
+        [
+          48.645,
+          -2.247
+        ]
+      ],
+      "22372001": [
+        [
+          48.535,
+          -2.852
+        ]
+      ],
+      "23089001": [
+        [
+          46.352,
+          1.985
+        ]
+      ],
+      "27056003": [
+        [
+          49.101,
+          0.557
+        ]
+      ],
+      "27100001": [
+        [
+          49.361,
+          0.393
+        ]
+      ],
+      "27347001": [
+        [
+          49.025,
+          1.222
+        ]
+      ],
+      "28002001": [
+        [
+          48.191,
+          1.847
+        ]
+      ],
+      "28041001": [
+        [
+          48.303,
+          1.271
+        ]
+      ],
+      "28064002": [
+        [
+          48.801,
+          1.493
+        ]
+      ],
+      "28070001": [
+        [
+          48.461,
+          1.501
+        ]
+      ],
+      "28078001": [
+        [
+          48.112,
+          0.906
+        ]
+      ],
+      "28190001": [
+        [
+          48.091,
+          1.666
+        ]
+      ],
+      "28198001": [
+        [
+          48.061,
+          1.376
+        ]
+      ],
+      "28214003": [
+        [
+          48.481,
+          1.013
+        ]
+      ],
+      "28215001": [
+        [
+          48.329,
+          1.817
+        ]
+      ],
+      "28239002": [
+        [
+          48.651,
+          1.37
+        ]
+      ],
+      "28252002": [
+        [
+          48.253,
+          0.989
+        ]
+      ],
+      "28305001": [
+        [
+          48.181,
+          1.468
+        ]
+      ],
+      "28380003": [
+        [
+          48.406,
+          1.555
+        ]
+      ],
+      "28406001": [
+        [
+          48.196,
+          1.68
+        ]
+      ],
+      "29021001": [
+        [
+          48.676,
+          -4.331
+        ]
+      ],
+      "29075001": [
+        [
+          48.45,
+          -4.383
+        ]
+      ],
+      "29120001": [
+        [
+          48.279,
+          -4.439
+        ]
+      ],
+      "29151004": [
+        [
+          48.601,
+          -3.814
+        ]
+      ],
+      "29155005": [
+        [
+          48.473,
+          -5.057
+        ]
+      ],
+      "29155008": [
+        [
+          48.458,
+          -5.058
+        ]
+      ],
+      "29163003": [
+        [
+          48.5,
+          -3.853
+        ]
+      ],
+      "29216001": [
+        [
+          47.973,
+          -4.161
+        ]
+      ],
+      "29236001": [
+        [
+          47.879,
+          -3.709
+        ]
+      ],
+      "29249002": [
+        [
+          48.145,
+          -3.731
+        ]
+      ],
+      "29264001": [
+        [
+          48.526,
+          -4.147
+        ]
+      ],
+      "78140001": [
+        [
+          48.964,
+          1.925
+        ]
+      ],
+      "29214001": [
+        [
+          47.916,
+          -4.378
+        ]
+      ],
+      "22108001": [
+        [
+          48.691,
+          -3.041
+        ]
+      ]
+    }
+  },
+  "optimizer_updates": 0,
+  "target_predictions_before_gpu_acceptance": 0,
+  "limitations": [
+    "Traffic sensors may represent recurring entities at other times",
+    "ChatTime pretraining exposure cannot be independently verified",
+    "Original releases may already contain preprocessing; exposed in each provenance",
+    "Exploratory suite selected after previous target results; no graph ablation"
+  ]
+}

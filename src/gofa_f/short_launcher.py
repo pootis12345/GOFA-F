@@ -47,7 +47,7 @@ def supervise(output, config, snapshot, worker_mode="train"):
         locks.append(stream)
     if worker_mode not in ("train", "projection_probe", "source_diagnostic", "native_case_probe",
                            "sampling_diagnostic", "stability_diagnostic", "sampled_continuation", "sampled_targets",
-                           "target_calibration"):
+                           "target_calibration", "graph_benchmark"):
         raise ValueError("Unknown supervised worker mode")
     binding = {"snapshot": str(snapshot), "config": str(config), "admission_policy": "idle",
         "resource_check_seconds": 10, "admission_samples": 3, "idle_max_used_mib": 256,
@@ -64,6 +64,10 @@ def supervise(output, config, snapshot, worker_mode="train"):
             strict_zero_shot=False,optimizer_updates=0,maximum_updates=None,
             adapter_sha256=cfg['adapter_sha256'],expected_validation_queries=1152,
             cpu_finalization_after_gpu_exit=True)
+    if worker_mode == "graph_benchmark":
+        binding.update(target_evaluation_enabled=True, target_label_calibration_enabled=False,
+            optimizer_updates=0, maximum_updates=None, adapter_sha256=cfg['adapter_sha256'],
+            expected_target_queries=768, expected_model_queries=1536)
     if read(output/"launcher_manifest.json", binding) != binding:
         raise ValueError("Launcher recovery policy differs")
     atomic_json(output/"launcher_manifest.json", binding)
@@ -153,13 +157,16 @@ def supervise(output, config, snapshot, worker_mode="train"):
                   "stability_diagnostic": "gofa_f.short_stability_diagnostic",
                   "sampled_continuation": "gofa_f.short_sampled_continuation",
                   "sampled_targets": "gofa_f.short_sampled_targets",
-                  "target_calibration": "gofa_f.target_calibration"}[worker_mode]
+                  "target_calibration": "gofa_f.target_calibration",
+                  "graph_benchmark": "gofa_f.graph_benchmark"}[worker_mode]
         command = [sys.executable, "-u", "-m", module,
                    "--config", str(config), "--output", str(output)]
         if worker_mode == "train":
             command.append("--train")
             if (output/"last.pt").exists():
                 command.append("--resume")
+        elif worker_mode == "graph_benchmark":
+            command.extend(("--predict", "--resume"))
         elif worker_mode == "stability_diagnostic" and any((output/"teachers").glob("*.json")):
             command.append("--resume")
         elif worker_mode in ("sampled_continuation", "sampled_targets", "target_calibration"):
@@ -208,7 +215,7 @@ def supervise(output, config, snapshot, worker_mode="train"):
         ledger.stop()
         previous = ledger.state
         final = read(output/"status.json", {}).get("state")
-        if worker_mode in ("sampled_continuation", "sampled_targets", "target_calibration") and final == "resource_paused" and reason is None:
+        if worker_mode in ("sampled_continuation", "sampled_targets", "target_calibration", "graph_benchmark") and final == "resource_paused" and reason is None:
             ledger.state["resource_pause_count"] += 1
             ledger.save()
         if reason == "stopped_by_user":
@@ -241,7 +248,7 @@ def main():
     parser.add_argument("--worker-mode", choices=("train", "projection_probe", "source_diagnostic",
                                                 "native_case_probe", "sampling_diagnostic",
                                                 "stability_diagnostic", "sampled_continuation", "sampled_targets",
-                                                "target_calibration"), default="train")
+                                                "target_calibration", "graph_benchmark"), default="train")
     args = parser.parse_args()
     supervise(args.output, args.config, args.snapshot, args.worker_mode)
 

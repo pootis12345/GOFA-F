@@ -48,7 +48,7 @@ def test_duplicate_timestamps_not_silently_fixed():
 
 
 def test_fixed_scope_and_no_fallback_replacement():
-    cfg = yaml.safe_load((Path(__file__).parents[1]/'configs/stage21_graph_benchmark.yaml').read_text())
+    cfg = yaml.safe_load((Path(__file__).parents[1]/'configs/stage21_graph_benchmark_aqi_rejected.yaml').read_text())
     validate_config(cfg)
     changed = copy.deepcopy(cfg)
     changed['datasets'].pop('aqi36')
@@ -71,7 +71,7 @@ def test_no_preparation_while_stage20_active(tmp_path):
 def test_audit_never_passes_without_exclusion_proof(tmp_path, monkeypatch, identical):
     pytest.importorskip('tables')
     monkeypatch.setenv('CUDA_VISIBLE_DEVICES', '')
-    cfg = yaml.safe_load((Path(__file__).parents[1]/'configs/stage21_graph_benchmark.yaml').read_text())
+    cfg = yaml.safe_load((Path(__file__).parents[1]/'configs/stage21_graph_benchmark_aqi_rejected.yaml').read_text())
     previous, parent, sources, raw, output = [tmp_path/p for p in ('previous', 'parent', 'data/sources', 'new/raw', 'out')]
     for p in (previous, parent, sources, raw):
         p.mkdir(parents=True)

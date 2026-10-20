@@ -1,7 +1,7 @@
-"""Stage21 preparation gate. Overlap blocks the entire six-dataset experiment.
+"""Stage21 six-target graph benchmark; retain the rejected AQI36 v1 audit.
 
-This entry deliberately has no GPU/optimizer imports. With the approved AQI-36
-selection rejected, prediction implementation/deployment must not proceed.
+The user-authorized v2 replaces AQI36 with MeteoNet. Model imports are lazy;
+audit/preparation explicitly disable CUDA and no mode contains training.
 """
 import argparse
 import hashlib
@@ -195,8 +195,27 @@ def main():
     modes.add_argument('--audit', action='store_true')
     modes.add_argument('--prepare', action='store_true')
     modes.add_argument('--report-only', action='store_true')
+    modes.add_argument('--predict', action='store_true')
+    parser.add_argument('--resume', action='store_true')
     args = parser.parse_args()
     cfg = yaml.safe_load(Path(args.config).read_text(encoding='utf-8'))
+    if cfg['protocol'] == 'stage21-graph-benchmark-v2':
+        output = Path(args.output)
+        output.mkdir(parents=True, exist_ok=True)
+        if args.report_only:
+            from gofa_f.graph_benchmark_run import report
+            value = report(output)
+        elif args.predict:
+            from gofa_f.graph_benchmark_run import run
+            run(cfg, output)
+            return 0
+        else:
+            from gofa_f.graph_benchmark_state import prepare
+            value = prepare(cfg, output)
+        print(json.dumps({k: value.get(k) for k in ('complete', 'total_paired_queries', 'optimizer_updates')}))
+        return 0
+    if args.predict:
+        raise ValueError('Rejected AQI36 v1 has no prediction path')
     value = read(Path(args.output)/'audit.json') if args.report_only else audit(cfg, args.output)
     print(json.dumps({k: value[k] for k in ('state', 'reason', 'gpu_started', 'target_predictions')}, indent=2))
     # A blocked preparation must never look like a successful launch preflight.

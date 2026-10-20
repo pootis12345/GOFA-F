@@ -1,0 +1,28 @@
+protocol: stage21-graph-benchmark-v1
+seed: 42
+stage20_output: /home/dcg/dcg_data/GOFA-F/outputs/stage20-target-calibration-v1
+stage19_output: /home/dcg/dcg_data/GOFA-F/outputs/stage19-nine-targets-sample8-balanced-v4
+stage19_manifest_sha256: 1d80bd7c1c2aeba53a69e240cb584d5a650a940070c5f4d7ed1f35bed4fe45ab
+adapter_sha256: 816d38b577a6664f30dd6e6b6d50986a77b098ce9c4c0b0ffb63d70078b26f15
+data_directory: /home/dcg/dcg_data/GOFA-F/data/stage21-v1
+queries_per_dataset: 128
+conditions: [native, gofa]
+training_enabled: false
+calibration_enabled: false
+datasets:
+  pems03: {domain: traffic, nodes: 358, history: 12, horizon: 12}
+  pems_bay: {domain: traffic, nodes: 325, history: 12, horizon: 12}
+  aqi36: {domain: environment, nodes: 36, history: 48, horizon: 24}
+  engrad: {domain: environment, nodes: 487, history: 48, horizon: 24}
+  sdwpf: {domain: wind, nodes: 134, history: 48, horizon: 24}
+  kelmarsh2019: {domain: wind, nodes: 6, history: 48, horizon: 24}
+resources:
+  admission_policy: idle
+  admission_samples: 3
+  resource_check_seconds: 10
+  memory_cap_gib: 40
+  torch_cap_gib: 38
+  activity_limit_seconds: null
+  wall_deadline: null
+  yield_on_foreign: false
+  leave_free_gib: 0
