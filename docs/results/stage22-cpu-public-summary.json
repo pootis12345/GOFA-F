@@ -1,0 +1,15 @@
+{
+  "stage": "Stage22",
+  "code_revision": "6b27b5fef2ae6fd6a9f9bf12cc94faf4f0f54c4a",
+  "cpu_passed": 576,
+  "cpu_skipped": 21,
+  "stage22_cases_passed": 15,
+  "cpu_cuda_initialized": false,
+  "source_fitting_queries": 128,
+  "source_confirmation_queries": 128,
+  "source_holdout_audited_lineage_files": 17,
+  "new_neural_parameters": 0,
+  "neural_optimizer_updates": 0,
+  "target_label_fitting": false,
+  "runtime_metadata_included": false
+}
