@@ -1,0 +1,483 @@
+{
+  "protocol": "stage21-graph-benchmark-v1",
+  "state": "blocked_data_audit",
+  "reason": "overlap_evidence_detected",
+  "source_selected_update": 3500,
+  "adapter_sha256": "816d38b577a6664f30dd6e6b6d50986a77b098ce9c4c0b0ffb63d70078b26f15",
+  "raw_sha256": {
+    "air_quality.zip": "95d3c5cab14fc007f43c57b745a93e5f88201cbb92a755644ca9777848343317",
+    "small36.h5": "aedcb5080287fba05e99cd4b692300968b9c33113117db9fa37f2aa955a1091d",
+    "full437.h5": "9c46e01cdb8d5609685c148c35952239101c10f77aef04bf37a0d9928cbe92c0"
+  },
+  "source_raw_sha256": "895e67a945d5d9b4d44b5037ed82620d530e1f3576dc52f12928a4afed686276",
+  "original_aqi": {
+    "rows": 8759,
+    "nodes": 36,
+    "start": "2014-05-01 01:00:00",
+    "end": "2015-04-30 23:00:00",
+    "missing_values": 41771,
+    "imputation_applied": false,
+    "original_timestamps_modified": false
+  },
+  "source_training_partition": {
+    "rows": 21038,
+    "start": "2013-03-01 00:00:00",
+    "end": "2015-07-25 13:00:00"
+  },
+  "overlap_evidence": [
+    {
+      "station": "1023",
+      "diagnostic_source_offset_hours": -1,
+      "compared": 8103,
+      "exact_matches": 5012,
+      "exact_fraction": 0.6185363445637418,
+      "distinct_target_values": 348,
+      "correlation": 0.9979478018876595,
+      "possible_same_observations": true,
+      "planned_test_compared": 1518,
+      "planned_test_exact_matches": 1413,
+      "witnesses": [
+        {
+          "target_timestamp": "2014-05-01 02:00:00",
+          "source_timestamp": "2014-05-01 01:00:00",
+          "pm25": 116.0
+        },
+        {
+          "target_timestamp": "2014-05-01 03:00:00",
+          "source_timestamp": "2014-05-01 02:00:00",
+          "pm25": 118.0
+        },
+        {
+          "target_timestamp": "2014-05-01 05:00:00",
+          "source_timestamp": "2014-05-01 04:00:00",
+          "pm25": 126.0
+        },
+        {
+          "target_timestamp": "2014-05-01 06:00:00",
+          "source_timestamp": "2014-05-01 05:00:00",
+          "pm25": 136.0
+        },
+        {
+          "target_timestamp": "2014-05-01 08:00:00",
+          "source_timestamp": "2014-05-01 07:00:00",
+          "pm25": 152.0
+        }
+      ]
+    }
+  ],
+  "strongest_comparisons": [
+    {
+      "station": "1023",
+      "diagnostic_source_offset_hours": -1,
+      "compared": 8103,
+      "exact_matches": 5012,
+      "exact_fraction": 0.6185363445637418,
+      "distinct_target_values": 348,
+      "correlation": 0.9979478018876595,
+      "possible_same_observations": true,
+      "planned_test_compared": 1518,
+      "planned_test_exact_matches": 1413,
+      "witnesses": [
+        {
+          "target_timestamp": "2014-05-01 02:00:00",
+          "source_timestamp": "2014-05-01 01:00:00",
+          "pm25": 116.0
+        },
+        {
+          "target_timestamp": "2014-05-01 03:00:00",
+          "source_timestamp": "2014-05-01 02:00:00",
+          "pm25": 118.0
+        },
+        {
+          "target_timestamp": "2014-05-01 05:00:00",
+          "source_timestamp": "2014-05-01 04:00:00",
+          "pm25": 126.0
+        },
+        {
+          "target_timestamp": "2014-05-01 06:00:00",
+          "source_timestamp": "2014-05-01 05:00:00",
+          "pm25": 136.0
+        },
+        {
+          "target_timestamp": "2014-05-01 08:00:00",
+          "source_timestamp": "2014-05-01 07:00:00",
+          "pm25": 152.0
+        }
+      ]
+    },
+    {
+      "station": "1023",
+      "diagnostic_source_offset_hours": -2,
+      "compared": 8060,
+      "exact_matches": 725,
+      "exact_fraction": 0.08995037220843673,
+      "distinct_target_values": 348,
+      "correlation": 0.9676180038213884,
+      "possible_same_observations": false,
+      "planned_test_compared": 1504,
+      "planned_test_exact_matches": 91,
+      "witnesses": [
+        {
+          "target_timestamp": "2014-05-01 01:00:00",
+          "source_timestamp": "2014-04-30 23:00:00",
+          "pm25": 95.0
+        },
+        {
+          "target_timestamp": "2014-05-01 07:00:00",
+          "source_timestamp": "2014-05-01 05:00:00",
+          "pm25": 136.0
+        },
+        {
+          "target_timestamp": "2014-05-01 15:00:00",
+          "source_timestamp": "2014-05-01 13:00:00",
+          "pm25": 152.0
+        },
+        {
+          "target_timestamp": "2014-05-02 06:00:00",
+          "source_timestamp": "2014-05-02 04:00:00",
+          "pm25": 21.0
+        },
+        {
+          "target_timestamp": "2014-05-02 13:00:00",
+          "source_timestamp": "2014-05-02 11:00:00",
+          "pm25": 23.0
+        }
+      ]
+    },
+    {
+      "station": "1023",
+      "diagnostic_source_offset_hours": 0,
+      "compared": 8059,
+      "exact_matches": 486,
+      "exact_fraction": 0.060305248790172475,
+      "distinct_target_values": 348,
+      "correlation": 0.9671238205946865,
+      "possible_same_observations": false,
+      "planned_test_compared": 1508,
+      "planned_test_exact_matches": 107,
+      "witnesses": [
+        {
+          "target_timestamp": "2014-05-02 00:00:00",
+          "source_timestamp": "2014-05-02 00:00:00",
+          "pm25": 40.0
+        },
+        {
+          "target_timestamp": "2014-05-02 08:00:00",
+          "source_timestamp": "2014-05-02 08:00:00",
+          "pm25": 13.0
+        },
+        {
+          "target_timestamp": "2014-05-03 07:00:00",
+          "source_timestamp": "2014-05-03 07:00:00",
+          "pm25": 22.0
+        },
+        {
+          "target_timestamp": "2014-05-04 01:00:00",
+          "source_timestamp": "2014-05-04 01:00:00",
+          "pm25": 22.0
+        },
+        {
+          "target_timestamp": "2014-05-04 07:00:00",
+          "source_timestamp": "2014-05-04 07:00:00",
+          "pm25": 37.0
+        }
+      ]
+    },
+    {
+      "station": "1023",
+      "diagnostic_source_offset_hours": -3,
+      "compared": 8041,
+      "exact_matches": 323,
+      "exact_fraction": 0.040169133192389,
+      "distinct_target_values": 348,
+      "correlation": 0.9185732529395824,
+      "possible_same_observations": false,
+      "planned_test_compared": 1503,
+      "planned_test_exact_matches": 57,
+      "witnesses": [
+        {
+          "target_timestamp": "2014-05-01 01:00:00",
+          "source_timestamp": "2014-04-30 22:00:00",
+          "pm25": 95.0
+        },
+        {
+          "target_timestamp": "2014-05-02 12:00:00",
+          "source_timestamp": "2014-05-02 09:00:00",
+          "pm25": 24.0
+        },
+        {
+          "target_timestamp": "2014-05-04 19:00:00",
+          "source_timestamp": "2014-05-04 16:00:00",
+          "pm25": 10.0
+        },
+        {
+          "target_timestamp": "2014-05-05 10:00:00",
+          "source_timestamp": "2014-05-05 07:00:00",
+          "pm25": 18.0
+        },
+        {
+          "target_timestamp": "2014-05-06 09:00:00",
+          "source_timestamp": "2014-05-06 06:00:00",
+          "pm25": 43.0
+        }
+      ]
+    },
+    {
+      "station": "1023",
+      "diagnostic_source_offset_hours": 1,
+      "compared": 8041,
+      "exact_matches": 305,
+      "exact_fraction": 0.037930605646063924,
+      "distinct_target_values": 348,
+      "correlation": 0.9208354703402746,
+      "possible_same_observations": false,
+      "planned_test_compared": 1505,
+      "planned_test_exact_matches": 55,
+      "witnesses": [
+        {
+          "target_timestamp": "2014-05-04 16:00:00",
+          "source_timestamp": "2014-05-04 17:00:00",
+          "pm25": 9.0
+        },
+        {
+          "target_timestamp": "2014-05-04 17:00:00",
+          "source_timestamp": "2014-05-04 18:00:00",
+          "pm25": 10.0
+        },
+        {
+          "target_timestamp": "2014-05-07 02:00:00",
+          "source_timestamp": "2014-05-07 03:00:00",
+          "pm25": 120.0
+        },
+        {
+          "target_timestamp": "2014-05-07 03:00:00",
+          "source_timestamp": "2014-05-07 04:00:00",
+          "pm25": 121.0
+        },
+        {
+          "target_timestamp": "2014-05-09 00:00:00",
+          "source_timestamp": "2014-05-09 01:00:00",
+          "pm25": 53.0
+        }
+      ]
+    },
+    {
+      "station": "1027",
+      "diagnostic_source_offset_hours": -2,
+      "compared": 7793,
+      "exact_matches": 280,
+      "exact_fraction": 0.03592968048248428,
+      "distinct_target_values": 332,
+      "correlation": 0.9122669029915857,
+      "possible_same_observations": false,
+      "planned_test_compared": 1481,
+      "planned_test_exact_matches": 48,
+      "witnesses": [
+        {
+          "target_timestamp": "2014-05-02 08:00:00",
+          "source_timestamp": "2014-05-02 06:00:00",
+          "pm25": 18.0
+        },
+        {
+          "target_timestamp": "2014-05-02 09:00:00",
+          "source_timestamp": "2014-05-02 07:00:00",
+          "pm25": 13.0
+        },
+        {
+          "target_timestamp": "2014-05-04 06:00:00",
+          "source_timestamp": "2014-05-04 04:00:00",
+          "pm25": 28.0
+        },
+        {
+          "target_timestamp": "2014-05-04 14:00:00",
+          "source_timestamp": "2014-05-04 12:00:00",
+          "pm25": 20.0
+        },
+        {
+          "target_timestamp": "2014-05-05 11:00:00",
+          "source_timestamp": "2014-05-05 09:00:00",
+          "pm25": 17.0
+        }
+      ]
+    },
+    {
+      "station": "1027",
+      "diagnostic_source_offset_hours": -3,
+      "compared": 7795,
+      "exact_matches": 275,
+      "exact_fraction": 0.03527902501603592,
+      "distinct_target_values": 332,
+      "correlation": 0.8882227616074406,
+      "possible_same_observations": false,
+      "planned_test_compared": 1483,
+      "planned_test_exact_matches": 51,
+      "witnesses": [
+        {
+          "target_timestamp": "2014-05-04 13:00:00",
+          "source_timestamp": "2014-05-04 10:00:00",
+          "pm25": 23.0
+        },
+        {
+          "target_timestamp": "2014-05-08 01:00:00",
+          "source_timestamp": "2014-05-07 22:00:00",
+          "pm25": 20.0
+        },
+        {
+          "target_timestamp": "2014-05-08 23:00:00",
+          "source_timestamp": "2014-05-08 20:00:00",
+          "pm25": 64.0
+        },
+        {
+          "target_timestamp": "2014-05-09 00:00:00",
+          "source_timestamp": "2014-05-08 21:00:00",
+          "pm25": 60.0
+        },
+        {
+          "target_timestamp": "2014-05-10 03:00:00",
+          "source_timestamp": "2014-05-10 00:00:00",
+          "pm25": 40.0
+        }
+      ]
+    },
+    {
+      "station": "1027",
+      "diagnostic_source_offset_hours": -1,
+      "compared": 7801,
+      "exact_matches": 273,
+      "exact_fraction": 0.0349955133957185,
+      "distinct_target_values": 332,
+      "correlation": 0.9195837019836302,
+      "possible_same_observations": false,
+      "planned_test_compared": 1484,
+      "planned_test_exact_matches": 51,
+      "witnesses": [
+        {
+          "target_timestamp": "2014-05-01 12:00:00",
+          "source_timestamp": "2014-05-01 11:00:00",
+          "pm25": 183.0
+        },
+        {
+          "target_timestamp": "2014-05-01 20:00:00",
+          "source_timestamp": "2014-05-01 19:00:00",
+          "pm25": 72.0
+        },
+        {
+          "target_timestamp": "2014-05-02 03:00:00",
+          "source_timestamp": "2014-05-02 02:00:00",
+          "pm25": 29.0
+        },
+        {
+          "target_timestamp": "2014-05-02 09:00:00",
+          "source_timestamp": "2014-05-02 08:00:00",
+          "pm25": 13.0
+        },
+        {
+          "target_timestamp": "2014-05-02 22:00:00",
+          "source_timestamp": "2014-05-02 21:00:00",
+          "pm25": 14.0
+        }
+      ]
+    },
+    {
+      "station": "1013",
+      "diagnostic_source_offset_hours": -2,
+      "compared": 8043,
+      "exact_matches": 271,
+      "exact_fraction": 0.03369389531269427,
+      "distinct_target_values": 384,
+      "correlation": 0.8763173553048699,
+      "possible_same_observations": false,
+      "planned_test_compared": 1506,
+      "planned_test_exact_matches": 42,
+      "witnesses": [
+        {
+          "target_timestamp": "2014-05-05 02:00:00",
+          "source_timestamp": "2014-05-05 00:00:00",
+          "pm25": 26.0
+        },
+        {
+          "target_timestamp": "2014-05-05 08:00:00",
+          "source_timestamp": "2014-05-05 06:00:00",
+          "pm25": 10.0
+        },
+        {
+          "target_timestamp": "2014-05-11 15:00:00",
+          "source_timestamp": "2014-05-11 13:00:00",
+          "pm25": 3.0
+        },
+        {
+          "target_timestamp": "2014-05-11 16:00:00",
+          "source_timestamp": "2014-05-11 14:00:00",
+          "pm25": 3.0
+        },
+        {
+          "target_timestamp": "2014-05-11 17:00:00",
+          "source_timestamp": "2014-05-11 15:00:00",
+          "pm25": 3.0
+        }
+      ]
+    },
+    {
+      "station": "1013",
+      "diagnostic_source_offset_hours": -1,
+      "compared": 8047,
+      "exact_matches": 271,
+      "exact_fraction": 0.033677146762768735,
+      "distinct_target_values": 385,
+      "correlation": 0.8926011665573212,
+      "possible_same_observations": false,
+      "planned_test_compared": 1508,
+      "planned_test_exact_matches": 50,
+      "witnesses": [
+        {
+          "target_timestamp": "2014-05-01 16:00:00",
+          "source_timestamp": "2014-05-01 15:00:00",
+          "pm25": 137.0
+        },
+        {
+          "target_timestamp": "2014-05-02 17:00:00",
+          "source_timestamp": "2014-05-02 16:00:00",
+          "pm25": 15.0
+        },
+        {
+          "target_timestamp": "2014-05-02 22:00:00",
+          "source_timestamp": "2014-05-02 21:00:00",
+          "pm25": 14.0
+        },
+        {
+          "target_timestamp": "2014-05-03 00:00:00",
+          "source_timestamp": "2014-05-02 23:00:00",
+          "pm25": 16.0
+        },
+        {
+          "target_timestamp": "2014-05-04 04:00:00",
+          "source_timestamp": "2014-05-04 03:00:00",
+          "pm25": 24.0
+        }
+      ]
+    }
+  ],
+  "matched_station_coordinates": {
+    "1023": {
+      "latitude": 40.12699890136719,
+      "longitude": 116.65499877929688
+    }
+  },
+  "interpretation": "Clock offsets are audit hypotheses only; no shift is adopted for forecasting. These are raw-data identity diagnostics, not target predictions or exact adapter exposure counts.",
+  "target_predictions": 0,
+  "gpu_started": false,
+  "optimizer_updates": 0,
+  "dataset_replaced": false,
+  "stations_removed": false,
+  "remaining_work": "Six data converters, query sealing and GPU deployment are suspended at the required overlap gate.",
+  "cpu_verification": {
+    "passed": true,
+    "cases": 573,
+    "skipped": 21,
+    "cuda_initialized": false,
+    "cpu_regression_passed": true,
+    "experiment_preparation_passed": false,
+    "expected_audit_exit_code": 2,
+    "actual_overlap_gate": "overlap_evidence_detected"
+  }
+}
