@@ -1,0 +1,40 @@
+{
+  "stage": 23,
+  "deployment": "stage23-source-retraining-v2",
+  "runtime_revision": "deba7b3ee45c951217fca489b2364cbc9a257160",
+  "previous_deployment": {
+    "state": "bootstrap_failed",
+    "reason": "Optional runtime records used an incompatible JSON reader API",
+    "real_fp32_cpu_acceptance_passed": true,
+    "gpu_started": false,
+    "formal_new_updates": 0,
+    "failed_snapshot_and_evidence_preserved": true
+  },
+  "repair": {
+    "optional_record_reader_imports_corrected": true,
+    "scientific_configuration_unchanged": true,
+    "all_numerical_files_unchanged": true,
+    "model_data_query_and_weight_bindings_unchanged": true,
+    "original_real_fp32_proof_reused_with_strict_import_fix_whitelist": true,
+    "original_real_proof_sha256": "51a837a497373845d6275f7d4bc1d68d5b42893ed2ccd29b5af8da2cfbfcc078",
+    "new_cpu_proof_sha256": "4bb8da70996ee4548d60af121e3e2740d7acd9a1299d00f520625422ea1a0943"
+  },
+  "new_full_cpu_regression": {
+    "cuda_disabled": true,
+    "omp_threads": 2,
+    "mkl_threads": 2,
+    "passed": 595,
+    "optional_skipped": 21,
+    "failed": 0
+  },
+  "observed_state": "waiting_for_idle",
+  "supervisor_identity_verified": true,
+  "gpu_worker_started": false,
+  "cuda_acceptance_passed": false,
+  "formal_new_updates": 0,
+  "target_predictions": 0,
+  "hourly_followup_enabled": false,
+  "parent_adapter_sha256": "816d38b577a6664f30dd6e6b6d50986a77b098ce9c4c0b0ffb63d70078b26f15",
+  "resource_policy": "three fully idle observations ten seconds apart; project 40GiB, Torch 38GiB; no time limit",
+  "limitations": "CPU acceptance does not replace the pending real CUDA acceptance or demonstrate source/target gains"
+}
