@@ -6,7 +6,7 @@
   "cpu_cases": 582,
   "cpu_skipped": 21,
   "cuda_initialized": false,
-  "manifest_sha256": "c92d588c1ddb464a115afc2b960549690f8e8b27a9abc696ca0c8dd294fedbaf",
+  "manifest_sha256": "c94a4d5bed128be16d99712349fd5681a64620bbf95cb9f287a71e534cdcbbb9",
   "total_paired_queries": 768,
   "total_model_queries": 1536,
   "total_trajectories": 12288,
@@ -2531,5 +2531,7 @@
     "ChatTime pretraining exposure cannot be independently verified",
     "Original releases may already contain preprocessing; exposed in each provenance",
     "Exploratory suite selected after previous target results; no graph ablation"
-  ]
+  ],
+  "conversion_source_note": "Prepared observations retain original converter byte SHA; committed code differs only in CRLF/LF checkout formatting, normalized source verified identical",
+  "fixed_code_commit": "631c77e0b84dfeb89b315f9b574834c2b1b12033"
 }

@@ -1,5 +1,21 @@
 # 运行交接记录
 
+## Stage21 v2：AQI-36已替换MeteoNet并部署（2026-10-20）
+
+用户明确批准替换AQI-36后重新执行。新六集为PeMS03、PEMS-BAY、MeteoNet NW2018、EngRAD、SDWPF完整版和Kelmarsh2019。
+交通12→12，其他48→24；每集128固定查询，总768配对查询/12288轨迹，同一3500更新适配器不变，不训练或校准。
+MeteoNet共216温度节点，213个具备合法测试标签，固定抽128；Kelmarsh覆盖全部6风机。
+CPU完整回归561通过/21旧可选依赖跳过，真实10000数值token、适配器加载、六集数据/查询/子图和源目标隔离已通过。
+固定运行代码631c77e0b84dfeb89b315f9b574834c2b1b12033，独立快照/输出stage21-graph-benchmark-v2。
+监督器已部署且身份核实，当前waiting_for_idle、worker=null，GPU活动/目标预测/优化器更新均0。
+新一轮四项GPU源重放与六集完整/缓存验收仍待真正GPU准入后执行；不能将CPU证明或Stage19历史验收当成已通过本轮GPU验收。
+完全空闲连续3次、每10秒，项目40GiB/Torch38GiB及10秒审计不变，ETA待有效轨迹计时后生成，不含未知等待。
+Stage20保持stopped_by_user、worker=null，无系数封存或测试重放；旧AQI拒绝证据保留，训练/每小时跟进保持关闭。
+自动审批拒绝直接推送GitHub main，随后也拒绝独立分支外发，均因缺少具体远程写入/完整载荷授权。
+已停止所有推送尝试。代码已在B提交并同步C；GitHub同步待用户明确授权，不影响已部署的空闲监督器。
+[六集协议及公开来源](STAGE21_GRAPH_BENCHMARK_PROTOCOL.md)、[最终CPU与数据证明](results/stage21-meteonet-v2-cpu.json)。
+
+
 ## Stage20已按用户要求停止；Stage21在AQI隔离审计阻断（2026-10-20）
 
 Stage20监督器及GPU worker均已合作退出，activity.worker=null；部分验证轨迹保留，没有封存融合系数或重放测试，不自动恢复。
