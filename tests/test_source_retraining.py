@@ -198,3 +198,133 @@ def test_dense_reference_matches_current_slot_loss_shift_mask_and_query_weights(
     torch.testing.assert_close(actual, expected, rtol=0, atol=0)
     torch.testing.assert_close(logits.grad, gradient, rtol=0, atol=0)
     assert torch.count_nonzero(logits.grad[:, -1]) == 0
+
+
+def script(name):
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(name, Path('scripts')/(name+'.py'))
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+@pytest.mark.parametrize('barrier', ['none', 'supervisor', 'worker', 'complete', 'bad_proof'])
+def test_bootstrap_optional_records_bound_proof_and_duplicate_barriers(tmp_path, monkeypatch, barrier):
+    import sys
+    from gofa_f import idle_launcher, source_retraining, source_retraining_state
+    from gofa_f.generative_data import sha
+    from gofa_f.graph_benchmark import atomic, read
+    boot = script('bootstrap_source_retraining')
+    output = tmp_path/'run'
+    output.mkdir()
+    atomic(output/'manifest.json', {'bound': True})
+    atomic(output/'cpu_preflight.json', dict(passed=barrier != 'bad_proof',
+        manifest_sha256=sha(output/'manifest.json'), real_weights=dict(passed=True), cuda_disabled=True))
+    if barrier == 'supervisor':
+        atomic(output.with_suffix('.launch.json'), dict(pid=123, start_ticks='1234'))
+    elif barrier == 'worker':
+        atomic(output/'activity.json', dict(worker=dict(pid=123, start_ticks='1234')))
+    elif barrier == 'complete':
+        atomic(output/'status.json', dict(state='complete'))
+    monkeypatch.setattr(idle_launcher, 'process_identity', lambda pid: str(pid)+'4')
+    monkeypatch.setattr(source_retraining, 'configuration', lambda path: {'tested': True})
+    monkeypatch.setattr(source_retraining_state, 'verify', lambda cfg, path: None)
+    launched = []
+    def launch(command, **kwargs):
+        launched.append((command, kwargs))
+        return SimpleNamespace(pid=567)
+    monkeypatch.setattr(boot.subprocess, 'Popen', launch)
+    monkeypatch.setattr(boot.subprocess, 'run', lambda *a, **k: pytest.fail('Bound proof must not rerun weights'))
+    monkeypatch.setattr(sys, 'argv', ['bootstrap', '--config', 'bound.yaml', '--output', str(output)])
+    if barrier != 'none':
+        with pytest.raises((ValueError, RuntimeError)):
+            boot.main()
+        assert not launched
+        return
+    assert boot.main() == 0
+    assert len(launched) == 1
+    command, fields = launched[0]
+    assert command[-2:] == ['--worker-mode', 'source_retraining']
+    assert fields['env']['CUDA_VISIBLE_DEVICES'] == '' and fields['start_new_session']
+    assert fields['env']['OMP_NUM_THREADS'] == fields['env']['MKL_NUM_THREADS'] == '2'
+    assert read(output.with_suffix('.launch.json'))['start_ticks'] == '5674'
+    assert read(output/'bootstrap.json')['state'] == 'cpu_passed_idle_supervisor_deployed'
+
+
+def test_cpu_report_optional_records_before_gpu_start(tmp_path, monkeypatch, capsys):
+    import sys
+    from gofa_f import source_retraining
+    cfg = yaml.safe_load(Path('configs/stage23_source_retraining.yaml').read_text())
+    monkeypatch.setenv('CUDA_VISIBLE_DEVICES', '')
+    monkeypatch.setattr(source_retraining, 'configuration', lambda path: cfg)
+    monkeypatch.setattr(source_retraining, 'report', lambda path: {'new_updates': 0})
+    monkeypatch.setattr(sys, 'argv', ['source_retraining', '--config', 'bound.yaml',
+                                    '--output', str(tmp_path), '--report-only'])
+    source_retraining.main()
+    assert '"new_updates": 0' in capsys.readouterr().out
+
+
+def test_partial_run_report_preserves_absent_selection_and_results(tmp_path):
+    from gofa_f.graph_benchmark import atomic
+    from gofa_f.source_retraining import report
+    atomic(tmp_path/'manifest.json', dict(protocol='stage23-source-retraining-v1',
+        configuration=dict(adapter_sha256='parent')))
+    value = report(tmp_path)
+    assert value['selection'] is None and value['source_results'] == {}
+    assert value['activity'] is None and value['target_predictions'] == 0
+
+
+def test_reuse_numerical_proof_rejects_changed_science_and_tensor_code(tmp_path):
+    from gofa_f.generative_data import sha
+    from gofa_f.graph_benchmark import atomic
+    checker = script('check_source_retraining_cpu')
+    previous = tmp_path/'old'
+    previous.mkdir()
+    manifest = dict(configuration=dict(adapter_sha256='parent'), pools=dict(train=[1]),
+                    code={'source_retraining.py': 'old', 'allnode_model.py': 'same'})
+    atomic(previous/'manifest.json', manifest)
+    (previous/'cpu_tests.xml').write_text('<testsuites><testsuite><testcase/></testsuite></testsuites>')
+    atomic(previous/'cpu_preflight.json', dict(passed=True, cuda_disabled=True,
+        real_weight_dtype='float32', real_weights=dict(passed=True), cases=1,
+        manifest_sha256=sha(previous/'manifest.json')))
+    changed = deepcopy(manifest)
+    changed['pools']['train'] = [2]
+    with pytest.raises(ValueError, match='Scientific'):
+        checker.reuse_real_weights(previous, tmp_path, changed, tmp_path)
+    changed = deepcopy(manifest)
+    changed['code'].update({'source_retraining.py': 'new', 'allnode_model.py': 'different'})
+    with pytest.raises(ValueError, match='Numerical'):
+        checker.reuse_real_weights(previous, tmp_path, changed, tmp_path)
+
+
+def test_reuse_numerical_proof_allows_only_exact_cli_import_fix(tmp_path):
+    from gofa_f.generative_data import sha
+    from gofa_f.graph_benchmark import atomic
+    checker = script('check_source_retraining_cpu')
+    old, snapshot = tmp_path/'old', tmp_path/'snapshot'
+    old.mkdir()
+    source = snapshot/'src/gofa_f'
+    source.mkdir(parents=True)
+    current = Path('src/gofa_f/source_retraining.py').read_text()
+    original = current.replace(
+        '    from gofa_f.allnode_stage import read\n    from gofa_f.graph_benchmark import atomic, sha',
+        '    from gofa_f.graph_benchmark import atomic, read, sha').replace(
+        '        from gofa_f.allnode_stage import read', '        from gofa_f.graph_benchmark import read')
+    (source/'source_retraining.py').write_text(original)
+    (source/'tensor.py').write_text('numerical unchanged')
+    (old/'parent.pt').write_bytes(b'fixed parent')
+    manifest = dict(configuration=dict(adapter_sha256=sha(old/'parent.pt')), pools=dict(train=[1]),
+        code={p.name: sha(p) for p in source.glob('*.py')})
+    atomic(old/'manifest.json', manifest)
+    (old/'cpu_tests.xml').write_text('<testsuites><testsuite><testcase/></testsuite></testsuites>')
+    atomic(old/'cpu_preflight.json', dict(passed=True, cuda_disabled=True,
+        real_weight_dtype='float32', real_weights=dict(passed=True, exact_tokens=True), cases=1,
+        alphabet={'tokens': 10000}, manifest_sha256=sha(old/'manifest.json')))
+    new = deepcopy(manifest)
+    new['code']['source_retraining.py'] = sha(Path('src/gofa_f/source_retraining.py'))
+    proof = checker.reuse_real_weights(old, snapshot, new, tmp_path)
+    assert proof['real_weights']['exact_tokens']
+    assert proof['reuse_provenance']['all_numerical_files_identical']
+    atomic(old/'activity.json', dict(worker=None))
+    with pytest.raises(ValueError, match='never-launched'):
+        checker.reuse_real_weights(old, snapshot, new, tmp_path)

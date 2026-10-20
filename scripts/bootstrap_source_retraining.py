@@ -13,7 +13,8 @@ def main():
     parser.add_argument('--config', required=True)
     parser.add_argument('--output', required=True)
     args = parser.parse_args()
-    from gofa_f.graph_benchmark import atomic, read
+    from gofa_f.allnode_stage import read
+    from gofa_f.graph_benchmark import atomic
     from gofa_f.idle_launcher import process_identity
     from gofa_f.generative_data import sha
     from gofa_f.source_retraining import configuration

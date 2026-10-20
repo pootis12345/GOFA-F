@@ -7,11 +7,70 @@ import sys
 import xml.etree.ElementTree as ET
 
 
+def reuse_real_weights(old_output, old_snapshot, manifest, output):
+    """Reuse numerical proof only for the exact optional-JSON-read repair.
+
+    New CPU regression still runs. Every scientific binding and all numerical
+    Python files must match; only the CLI optional-record read import may differ.
+    """
+    from gofa_f.generative_data import sha
+    from gofa_f.graph_benchmark import read
+    old_output, old_snapshot = Path(old_output), Path(old_snapshot)
+    previous = read(old_output/'cpu_preflight.json')
+    original = read(old_output/'manifest.json')
+    if not previous or not previous.get('passed') or not previous.get('cuda_disabled') \
+            or previous.get('real_weight_dtype') != 'float32' \
+            or not previous.get('real_weights', {}).get('passed') \
+            or previous['manifest_sha256'] != sha(old_output/'manifest.json'):
+        raise ValueError('Complete original bound real FP32 proof required')
+    cases = ET.parse(old_output/'cpu_tests.xml').getroot().findall('.//testcase')
+    if len(cases) != previous['cases'] or any(
+            c.find('failure') is not None or c.find('error') is not None for c in cases):
+        raise ValueError('Original CPU regression evidence is incomplete')
+    if {k: v for k, v in original.items() if k != 'code'} != \
+            {k: v for k, v in manifest.items() if k != 'code'}:
+        raise ValueError('Scientific configuration/data/query/weights bindings changed')
+    differences = {n for n in set(original['code']) | set(manifest['code'])
+                   if original['code'].get(n) != manifest['code'].get(n)}
+    if differences != {'source_retraining.py'}:
+        raise ValueError('Numerical proof reuse permits only the exact CLI read repair')
+    old_entry = old_snapshot/'src/gofa_f/source_retraining.py'
+    new_entry = Path(__file__).resolve().parents[1]/'src/gofa_f/source_retraining.py'
+    if sha(old_entry) != original['code']['source_retraining.py']:
+        raise ValueError('Original CLI source does not match the accepted manifest')
+    expected = old_entry.read_text().replace(
+        '    from gofa_f.graph_benchmark import atomic, read, sha',
+        '    from gofa_f.allnode_stage import read\n    from gofa_f.graph_benchmark import atomic, sha').replace(
+        '        from gofa_f.graph_benchmark import read', '        from gofa_f.allnode_stage import read')
+    if new_entry.read_text() != expected:
+        raise ValueError('CLI change exceeds the audited optional-JSON-read fix')
+    for name, digest in original['code'].items():
+        if sha(old_snapshot/'src/gofa_f'/name) != digest:
+            raise ValueError('Original accepted snapshot changed: '+name)
+    if sha(old_output/'parent.pt') != manifest['configuration']['adapter_sha256']:
+        raise ValueError('Original parent adapter changed')
+    if (old_output/'last.pt').exists() or (old_output/'activity.json').exists() \
+            or old_output.with_suffix('.launch.json').exists():
+        raise ValueError('This repair proof reuse is limited to the never-launched bootstrap failure')
+    return dict(alphabet=previous['alphabet'], real_weights=previous['real_weights'],
+        reuse_provenance=dict(original_proof_sha256=sha(old_output/'cpu_preflight.json'),
+            original_manifest_sha256=previous['manifest_sha256'],
+            original_tests_sha256=sha(old_output/'cpu_tests.xml'),
+            changed_non_numerical_files=sorted(differences),
+            all_scientific_bindings_identical=True, all_numerical_files_identical=True,
+            new_full_cpu_regression=True, prior_gpu_started=False,
+            reuse_verifier_sha256=sha(Path(__file__))))
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--config', required=True)
     parser.add_argument('--output', required=True)
+    parser.add_argument('--reuse-real-proof-from')
+    parser.add_argument('--original-snapshot')
     args = parser.parse_args()
+    if bool(args.reuse_real_proof_from) != bool(args.original_snapshot):
+        parser.error('Proof reuse requires both the original output and snapshot')
     if os.environ.get('CUDA_VISIBLE_DEVICES') != '' or any(
             os.environ.get(k) != '2' for k in ('OMP_NUM_THREADS', 'MKL_NUM_THREADS')):
         raise RuntimeError('CPU proof requires disabled CUDA and two OMP/MKL threads')
@@ -29,7 +88,7 @@ def main():
     repository = Path(__file__).resolve().parents[1]
     files = list(map(str, (repository/'src/gofa_f').glob('source_retraining*.py')))+[
         'src/gofa_f/short_launcher.py', 'tests/test_source_retraining.py', str(Path(__file__)),
-        'scripts/fetch_stage23_sources.py']
+        'scripts/fetch_stage23_sources.py', 'scripts/bootstrap_source_retraining.py']
     ruff = os.environ.get('GOFA_RUFF', str(Path(os.environ['GOFA_WORKSPACE'])/'.venv/bin/ruff'))
     subprocess.run([ruff, 'check', *files], cwd=repository, check=True)
     xml = output/'cpu_tests.xml'
@@ -42,13 +101,17 @@ def main():
         target_predictions=0, real_weight_dtype='float32')
     atomic(output/'cpu_preflight.json', proof)
     try:
-        model, codec = load_model(manifest['source_configuration'], torch.device('cpu'), torch.float32)
-        model.load_trainable(torch.load(output/'parent.pt', map_location='cpu', weights_only=False))
-        model.parameter_version = 3500
-        proof['alphabet'] = codec.audit_alphabet()
-        sources = {n: Series(Path(cfg['data']['directory'])/'sources'/(n+'.npz')) for n in VIEWS}
-        proof['real_weights'] = mechanisms(model, codec, sources, manifest['pools']['validation'],
-                                           1e-6, output)
+        if args.reuse_real_proof_from:
+            proof.update(reuse_real_weights(args.reuse_real_proof_from, args.original_snapshot,
+                                            manifest, output))
+        else:
+            model, codec = load_model(manifest['source_configuration'], torch.device('cpu'), torch.float32)
+            model.load_trainable(torch.load(output/'parent.pt', map_location='cpu', weights_only=False))
+            model.parameter_version = 3500
+            proof['alphabet'] = codec.audit_alphabet()
+            sources = {n: Series(Path(cfg['data']['directory'])/'sources'/(n+'.npz')) for n in VIEWS}
+            proof['real_weights'] = mechanisms(model, codec, sources, manifest['pools']['validation'],
+                                               1e-6, output)
         verify(cfg, output)
         if torch.cuda.is_initialized():
             raise ValueError('CPU proof created a CUDA context')

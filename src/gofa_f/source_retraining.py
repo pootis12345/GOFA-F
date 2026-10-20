@@ -19,7 +19,8 @@ def configuration(path):
 
 
 def report(output):
-    from gofa_f.graph_benchmark import atomic, read, sha
+    from gofa_f.allnode_stage import read
+    from gofa_f.graph_benchmark import atomic, sha
     output = Path(output)
     manifest = read(output/'manifest.json')
     if manifest is None:
@@ -78,7 +79,7 @@ def main():
                               validation_queries=len(value['pools']['validation']))), flush=True)
     elif args.report_only:
         from gofa_f.idle_launcher import process_identity
-        from gofa_f.graph_benchmark import read
+        from gofa_f.allnode_stage import read
         worker = (read(output/'activity.json', {}) or {}).get('worker') or {}
         supervisor = (read(output.with_suffix('.launch.json'), {}) or {})
         live_supervisor = bool(supervisor.get('pid') and
