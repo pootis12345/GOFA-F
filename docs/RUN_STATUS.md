@@ -1,5 +1,21 @@
 # 运行交接记录
 
+## Stage19 九目标均衡版全部完成（2026-10-20 完成后CPU核验，Asia/Shanghai）
+
+2026-10-20 06:34:38完成九集全部18个模型/数据集组合，监督器与GPU worker正常退出（returncode0），activity.worker=null，无failures。
+每模型2121查询，共2121配对样本/4242次模型查询预测、33936轨迹，699904/699904数值槽；全部查询与8条轨迹分片已核验存在。
+固定源码9d5b5ef9d3b818a51f85620a10a48dc3cb8f15a9；快照/输出仍stage19-nine-targets-sample8-balanced-v4。
+唯一3500源最佳SHA816d38b577a6664f30dd6e6b6d50986a77b098ce9c4c0b0ffb63d70078b26f15及源封存SHA未变。
+只运行固定快照--report-only及verify的CPU汇总，数据/元数据/骨干/代码/各结果绑定通过；没有重启GPU或更新参数。
+变量等权原始MAE：3集改善、6集退化。NASDAQ -32.28%、PEMS08 -11.47%、Weather -3.49%；
+ETTh1 +3.61%、ETTh2 +6.73%、Electric +4.62%、Exchange +2.16%、Traffic +0.60%、NOAA +3.07%。
+两模型格式完成与反变换有效均100%，回退0；格式完成受受约束解码保证，不代表准确度。
+累计GPU活动21483.621036秒（约5.968小时，含一次性继承诊断成本）、等待80.006425秒、资源暂停0，项目组峰14362MiB（14.025GiB）。
+分阶段Torch文件为累计水位，不能解读为独立重置的阶段峰值。固定3500未因目标成绩替换。
+Traffic/Electric/PEMS08每变量1起点，Weather48→24自定义，单种子/预训练暴露不可核/无图适配控制缺失的限制继续保留。
+训练与每小时跟进保持停止，不自动改模或重评；此次九目标成绩已查看，后续改进须披露目标开发暴露。
+[完整结果与诊断](STAGE19_NINE_TARGETS_RESULTS.md)、[完整逐变量/逐步指标及验收证据](results/stage19-nine-targets-balanced-final.json)。
+
 ## Stage19 九目标均衡版已开始（2026-10-20 00:38，Asia/Shanghai）
 
 固定运行源码9d5b5ef9d3b818a51f85620a10a48dc3cb8f15a9，快照/输出`stage19-nine-targets-sample8-balanced-v4`。
