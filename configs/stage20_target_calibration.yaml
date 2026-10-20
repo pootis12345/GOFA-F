@@ -1,0 +1,34 @@
+protocol: stage20-target-calibration-v1
+seed: 42
+stage19_output: /home/dcg/dcg_data/GOFA-F/outputs/stage19-nine-targets-sample8-balanced-v4
+stage19_manifest_sha256: 1d80bd7c1c2aeba53a69e240cb584d5a650a940070c5f4d7ed1f35bed4fe45ab
+stage19_report_sha256: 27a27c5106afe856f696a6515e652e38c27deabe771d86aea6d5b8e29706a9d8
+adapter_sha256: 816d38b577a6664f30dd6e6b6d50986a77b098ce9c4c0b0ffb63d70078b26f15
+validation_queries_per_dataset: 128
+fit_queries: 96
+confirmation_queries: 32
+sampling:
+  samples: 8
+  top_k: 100
+  temperature: 1.0
+  top_p: 1.0
+  seed: 42
+  aggregate: pointwise_median
+  execution: serial_single_query_independent_kv
+training:
+  max_updates: 4000 # Source-only compatibility field; Stage20 has no optimizer/training entry.
+data:
+  target_training_enabled: false # No neural-network parameter updates.
+  target_evaluation_enabled: true
+  target_label_calibration_enabled: true
+  strict_zero_shot: false
+resources:
+  admission_policy: idle
+  resource_check_seconds: 10
+  admission_samples: 3
+  memory_cap_gib: 40
+  torch_cap_gib: 38
+  yield_on_foreign: false
+  leave_free_gib: 0
+  activity_limit_seconds: null
+  wall_deadline: null

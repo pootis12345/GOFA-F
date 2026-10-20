@@ -46,7 +46,8 @@ def supervise(output, config, snapshot, worker_mode="train"):
         fcntl.flock(stream, fcntl.LOCK_EX | fcntl.LOCK_NB)
         locks.append(stream)
     if worker_mode not in ("train", "projection_probe", "source_diagnostic", "native_case_probe",
-                           "sampling_diagnostic", "stability_diagnostic", "sampled_continuation", "sampled_targets"):
+                           "sampling_diagnostic", "stability_diagnostic", "sampled_continuation", "sampled_targets",
+                           "target_calibration"):
         raise ValueError("Unknown supervised worker mode")
     binding = {"snapshot": str(snapshot), "config": str(config), "admission_policy": "idle",
         "resource_check_seconds": 10, "admission_samples": 3, "idle_max_used_mib": 256,
@@ -58,6 +59,11 @@ def supervise(output, config, snapshot, worker_mode="train"):
     if worker_mode == "sampled_targets":
         binding.update(target_evaluation_enabled=True,optimizer_updates=0,maximum_updates=None,
             adapter_sha256=cfg['adapter_sha256'],expected_target_queries=2121)
+    if worker_mode == "target_calibration":
+        binding.update(target_evaluation_enabled=True,target_label_calibration_enabled=True,
+            strict_zero_shot=False,optimizer_updates=0,maximum_updates=None,
+            adapter_sha256=cfg['adapter_sha256'],expected_validation_queries=1152,
+            cpu_finalization_after_gpu_exit=True)
     if read(output/"launcher_manifest.json", binding) != binding:
         raise ValueError("Launcher recovery policy differs")
     atomic_json(output/"launcher_manifest.json", binding)
@@ -95,8 +101,23 @@ def supervise(output, config, snapshot, worker_mode="train"):
     pinned_uuid = read(identity_path, {}).get("uuid")
     gate = IdleGate()
     gate.uuid = pinned_uuid
+    def finish_calibration_cpu():
+        # No live GPU child, no activity charge, no CUDA context for coefficient
+        # fitting or frozen-test replay. Recovery here needs no GPU admission.
+        environment = dict(os.environ,PYTHONPATH=str(snapshot/"src"),CUDA_VISIBLE_DEVICES="",
+            OMP_NUM_THREADS="2",MKL_NUM_THREADS="2",PYTHONDONTWRITEBYTECODE="1",
+            HF_HUB_OFFLINE="1",TRANSFORMERS_OFFLINE="1",TOKENIZERS_PARALLELISM="false")
+        status("cpu_finalization")
+        result = subprocess.run([sys.executable,"-u","-m","gofa_f.target_calibration",
+            "--config",str(config),"--output",str(output),"--finish-cpu"],cwd=snapshot,env=environment)
+        final = read(output/"status.json",{})
+        status("complete" if result.returncode == 0 and final.get("state") == "complete" else "failed",
+            cpu_returncode=result.returncode,goal_achieved=final.get("goal_achieved"))
     while not stopped[0]:
         final = read(output/"status.json", {}).get("state")
+        if worker_mode == "target_calibration" and final in ("validation_complete","calibrated"):
+            finish_calibration_cpu()
+            return
         if final in ("complete", "failed", "incomplete"):
             status(final)
             return
@@ -131,7 +152,8 @@ def supervise(output, config, snapshot, worker_mode="train"):
                   "sampling_diagnostic": "gofa_f.short_sampling_diagnostic",
                   "stability_diagnostic": "gofa_f.short_stability_diagnostic",
                   "sampled_continuation": "gofa_f.short_sampled_continuation",
-                  "sampled_targets": "gofa_f.short_sampled_targets"}[worker_mode]
+                  "sampled_targets": "gofa_f.short_sampled_targets",
+                  "target_calibration": "gofa_f.target_calibration"}[worker_mode]
         command = [sys.executable, "-u", "-m", module,
                    "--config", str(config), "--output", str(output)]
         if worker_mode == "train":
@@ -140,7 +162,7 @@ def supervise(output, config, snapshot, worker_mode="train"):
                 command.append("--resume")
         elif worker_mode == "stability_diagnostic" and any((output/"teachers").glob("*.json")):
             command.append("--resume")
-        elif worker_mode in ("sampled_continuation", "sampled_targets"):
+        elif worker_mode in ("sampled_continuation", "sampled_targets", "target_calibration"):
             command.append("--resume")
         child = subprocess.Popen(command, cwd=snapshot, env=environment, start_new_session=True)
         tick = process_identity(child.pid)
@@ -186,11 +208,14 @@ def supervise(output, config, snapshot, worker_mode="train"):
         ledger.stop()
         previous = ledger.state
         final = read(output/"status.json", {}).get("state")
-        if worker_mode in ("sampled_continuation", "sampled_targets") and final == "resource_paused" and reason is None:
+        if worker_mode in ("sampled_continuation", "sampled_targets", "target_calibration") and final == "resource_paused" and reason is None:
             ledger.state["resource_pause_count"] += 1
             ledger.save()
         if reason == "stopped_by_user":
             break
+        if worker_mode == "target_calibration" and final == "validation_complete" and child.returncode == 0:
+            finish_calibration_cpu()
+            return
         if final in ("complete", "failed", "incomplete") or (child.returncode not in (0, 75) and reason is None):
             status(final if final in ("complete", "failed", "incomplete") else "failed",
                    worker_returncode=child.returncode)
@@ -215,7 +240,8 @@ def main():
     parser.add_argument("--snapshot", required=True)
     parser.add_argument("--worker-mode", choices=("train", "projection_probe", "source_diagnostic",
                                                 "native_case_probe", "sampling_diagnostic",
-                                                "stability_diagnostic", "sampled_continuation", "sampled_targets"), default="train")
+                                                "stability_diagnostic", "sampled_continuation", "sampled_targets",
+                                                "target_calibration"), default="train")
     args = parser.parse_args()
     supervise(args.output, args.config, args.snapshot, args.worker_mode)
 
