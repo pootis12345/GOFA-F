@@ -1,0 +1,32 @@
+protocol: stage22-source-reliability-gate-v1
+seed: 42
+stage21_output: /home/dcg/dcg_data/GOFA-F/outputs/stage21-graph-benchmark-v2
+stage21_manifest_sha256: c94a4d5bed128be16d99712349fd5681a64620bbf95cb9f287a71e534cdcbbb9
+source_output: /home/dcg/dcg_data/GOFA-F/outputs/stage19-sampled-continuation-v2
+source_manifest_sha256: 33d142d031e29cd7790e6d7808e437a660c9e834b05f50b508a10681492a7e5f
+epsilon_sha256: c392f42593ff71ff21eb2b02c3cb7189fa7f15731c67d497c99459a8d515916f
+adapter_sha256: 816d38b577a6664f30dd6e6b6d50986a77b098ce9c4c0b0ffb63d70078b26f15
+amplitudes: [0.0, 0.25, 0.5, 1.0]
+source_variables: 8
+source_templates: [[10, 1], [12, 12], [14, 7], [48, 24]]
+minimum_predicted_gain: 0.01
+maximum_source_score: 0.99
+maximum_single_source_ratio: 1.02
+targets: [pems03, pems_bay, meteonet_nw2018, engrad, sdwpf, kelmarsh2019]
+neural_training_enabled: false
+target_calibration_enabled: false
+resources:
+  admission_policy: idle
+  admission_samples: 3
+  resource_check_seconds: 10
+  memory_cap_gib: 40
+  torch_cap_gib: 38
+  activity_limit_seconds: null
+  wall_deadline: null
+  yield_on_foreign: false
+  leave_free_gib: 0
+training:
+  max_updates: 4000 # Legacy supervisor schema only; Stage22 has no neural optimizer or training loop.
+data:
+  target_training_enabled: false
+  target_evaluation_enabled: true # Gated by both source checks and a sealed shared policy.
