@@ -50,7 +50,8 @@ def cdf_distance(scores, target, codec, record):
     labels = torch.tensor([record['labels'][i] for i in record['answer_positions']], device=scores.device)
     truth = codec.lookup(max(codec.finite_ids)+1, scores.device)[labels[valid]]
     cdf = scores[valid].float().softmax(-1).cumsum(-1)[:, :-1]
-    return float((cdf-(torch.arange(9999, device=scores.device)[None] >= truth[:, None])).square().mean())
+    indicator = torch.arange(scores.shape[-1]-1, device=scores.device)[None] >= truth[:, None]
+    return float((cdf-indicator.to(cdf.dtype)).square().mean())
 
 
 def run(model, codec, series, manifest, output, check, progress):

@@ -8,6 +8,7 @@ import numpy as np
 from gofa_f.allnode_stage import read
 from gofa_f.generative_data import Series, sha
 from gofa_f.graph_benchmark import ADAPTER_SHA, atomic
+from gofa_f.idle_launcher import process_identity
 from gofa_f.short_data import origins, stratified
 from gofa_f.short_sampled_state import exited
 from gofa_f.source_gate_state import TARGETS
@@ -63,6 +64,26 @@ def preparation_handoff(root):
         raise ValueError('Resource handoff requires exact unstarted v2 preparation')
     exited(root, source=True)
     return prior
+
+
+def diagnostic_handoff(root):
+    """Retain accepted v3 inference after the isolated bool-CDF statistic failure."""
+    root = Path(root)
+    error = "Subtraction, the `-` operator, with a bool tensor is not supported. If you are trying to invert a mask, use the `~` or `logical_not()` operator instead."
+    state, activity = read(root/'status.json'), read(root/'activity.json')
+    if root.name != 'stage24-robust-source-adaptation-v3' or state['state'] != 'failed' \
+            or state['phase'] != 'source_diagnostic' or state['new_updates'] != 0 \
+            or state['pending_queries'] != 0 or state['target_evaluations'] != 0 \
+            or read(root/'failures.json') != dict(type='RuntimeError', error=error, phase='source_diagnostic') \
+            or activity['worker'] is not None or read(root/'launcher.json')['state'] != 'failed' \
+            or (root/'evaluations').exists() or any((root/'diagnostics').glob('*.json')) \
+            or not read(root/'mechanisms.json')['passed']:
+        raise ValueError('Diagnostic handoff requires exact zero-update bool-CDF failure')
+    for suffix in ('.launch.json', '.bootstrap.launch.json'):
+        identity = read(root.with_suffix(suffix), {})
+        if identity.get('pid') and process_identity(identity['pid']) == str(identity['start_ticks']):
+            raise ValueError('Prior diagnostic controller still exists')
+    return read(root/'manifest.json')
 
 
 def select(history):
@@ -197,7 +218,8 @@ def prepare(cfg, output):
     repair = cfg.get('repair_from')
     if repair:
         repair = Path(repair)
-        previous = preparation_handoff(repair)
+        previous = diagnostic_handoff(repair) if repair.name == 'stage24-robust-source-adaptation-v3' \
+            else preparation_handoff(repair)
         for key in ('train', 'validation', 'diagnostic', 'quick', 'epsilons', 'traffic_variables'):
             if pools[key] != previous['pools'][key]:
                 raise ValueError('Repair changed source pools: '+key)

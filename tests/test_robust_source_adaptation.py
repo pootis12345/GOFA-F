@@ -39,6 +39,59 @@ def test_cdf_ordinal_order_and_identical_parent_kl():
     assert losses == pytest.approx([0, .5, 1])
 
 
+def test_diagnostic_cdf_matches_training_cdf_with_missing_slot(codec):  # noqa: F811
+    from gofa_f.robust_diagnostic import cdf_distance
+    record = codec.record(np.arange(48, dtype=float), np.array([12., np.nan, 19.]))
+    scores = torch.randn(3, len(codec.finite_ids), dtype=torch.float32)
+    labels = torch.tensor([record['labels'][i] for i in record['answer_positions']])
+    valid = labels != -100
+    targets = codec.lookup(max(codec.finite_ids)+1, torch.device('cpu'))[labels[valid]]
+    _, terms = distribution_loss((scores[valid], targets, torch.zeros(int(valid.sum()), dtype=torch.long),
+                                 torch.tensor([int(valid.sum())])), scores[valid].detach())
+    assert cdf_distance(scores, None, codec, record) == pytest.approx(float(terms['cdf']), abs=1e-6)
+
+
+def test_all_diagnostic_conditions_common_prefix_and_gradient_smoke(tmp_path, codec):  # noqa: F811
+    from dataclasses import asdict
+    from types import SimpleNamespace
+    from gofa_f.robust_diagnostic import run
+    from gofa_f.short_migration import assert_equal
+    model, prior, output = tiny(), tmp_path/'prior', tmp_path/'new'
+    prior.mkdir()
+    output.mkdir()
+    with torch.no_grad():
+        for layer in model.adapter.exchanges:
+            layer.up.weight.normal_(std=.001)
+    parent = model.trainable_state()
+    torch.save(parent, output/'parent.pt')
+    for update in (250, 500):
+        torch.save(parent, prior/f'candidate-{update:06d}.pt')
+    series = {n: source(9) for n in VIEWS}
+    queries = [asdict(Query(n, 0, 500, length, horizon)) for n, (_, length, horizon) in VIEWS.items()]
+    manifest = dict(configuration=dict(stage23_output=str(prior)),
+                    pools=dict(validation=queries, diagnostic=queries,
+                               train={q['source']: [q]*4 for q in queries}))
+    (output/'manifest.json').write_text(json.dumps(manifest))
+    for q in queries:
+        data = series[q['source']]
+        record = codec.record(data.values[500-q['length']:500, 0], data.values[500:500+q['horizon'], 0])
+        for label in ('validation-native', 'validation-parent', 'validation-update-000250', 'validation-update-000500'):
+            folder = prior/'evaluations'/(label+'-'+q['source'])
+            folder.mkdir(parents=True)
+            (folder/'000000.json').write_text(json.dumps(dict(query=q)))
+            if label == 'validation-parent':
+                (folder/'trajectories').mkdir()
+                (folder/'trajectories/000000-00.json').write_text(json.dumps(
+                    dict(generated_ids=record['ids'][record['prompt_end']+1:])))
+    rng = torch.get_rng_state().clone()
+    result = run(model, codec, series, manifest, output, lambda: None, SimpleNamespace(tick=lambda *a, **k: None))
+    assert result['complete'] and result['records'] == 16 and result['optimizer_updates'] == 0
+    assert result['new_free_trajectories'] == 0 and len(result['gradient_norms']) == 4
+    assert_equal(parent, model.trainable_state())
+    assert torch.equal(rng, torch.get_rng_state())
+    assert run(model, codec, series, manifest, output, lambda: None, SimpleNamespace()) == result
+
+
 def test_loss_per_query_normalization_not_long_horizon_weighting():
     torch.manual_seed(42)
     logits = torch.randn(5, 7, requires_grad=True)

@@ -1,7 +1,7 @@
 protocol: stage24-robust-source-adaptation-v1
 seed: 42
 stage23_output: ${GOFA_WORKSPACE}/outputs/stage23-source-retraining-v2
-repair_from: ${GOFA_WORKSPACE}/outputs/stage24-robust-source-adaptation-v2
+repair_from: ${GOFA_WORKSPACE}/outputs/stage24-robust-source-adaptation-v3
 stage21_output: ${GOFA_WORKSPACE}/outputs/stage21-graph-benchmark-v2
 adapter_sha256: 816d38b577a6664f30dd6e6b6d50986a77b098ce9c4c0b0ffb63d70078b26f15
 targets: [pems03, pems_bay, meteonet_nw2018, engrad, sdwpf, kelmarsh2019]
