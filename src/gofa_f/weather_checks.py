@@ -6,7 +6,6 @@ import numpy as np
 import torch
 
 from gofa_f.allnode_stage import cpu_copy, restore_rng, rng_state
-from gofa_f.generative_data import Query
 from gofa_f.robust_loss import parent_adapter
 from gofa_f.short_migration import assert_equal
 from gofa_f.short_training import compact_forward

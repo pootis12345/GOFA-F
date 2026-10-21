@@ -1,6 +1,7 @@
 from copy import deepcopy
 from dataclasses import asdict
 from pathlib import Path
+import json
 
 import numpy as np
 import pytest
@@ -163,3 +164,69 @@ def test_policy_progress_resource_admission_and_target_guard(tmp_path):
     assert value['overall_eta_seconds'] > value['training_eta_seconds']
     with pytest.raises(ValueError, match='confirmation'):
         run(None, None, {}, tmp_path, None, None, gate_name='source_gate.json')
+
+
+def test_prefix_shards_resume_and_sealed_corruption_rejected(tmp_path, codec, monkeypatch):  # noqa: F811
+    from types import SimpleNamespace
+    import gofa_f.weather_prefixes as module
+    query = asdict(Query('pems04_flow', 0, 500, 12, 12))
+    model, series = tiny(), dict(pems04_flow=source(9))
+    manifest = dict(configuration=dict(adapter_sha256='parent'), pools=dict(train=dict(pems04_flow=[query])))
+    (tmp_path/'manifest.json').write_text(json.dumps(manifest))
+    generated = []
+    def predict(model, codec, histories, horizon, contexts, check):
+        generated.append(True)
+        row = codec.record(histories[0], np.zeros(horizon))
+        return dict(format_complete=[True], inverse_valid=np.ones((1, horizon), bool),
+                    generated_ids=[row['ids'][row['prompt_end']+1:]],
+                    numeric_ids=[[row['ids'][i] for i in row['answer_positions']]])
+    monkeypatch.setattr(module, 'forecast_batch', predict)
+    p = SimpleNamespace(tick=lambda *a, **k: None)
+    module.prepare(model, codec, series, manifest, tmp_path, lambda: None, p)
+    module.prepare(model, codec, series, manifest, tmp_path, lambda: None, p)
+    assert len(generated) == 1
+    path = tmp_path/'parent_prefixes'/(prefix_key(query)+'.json')
+    saved = json.loads(path.read_text())
+    saved['generated_ids'][0] = codec.finite_ids[2]
+    path.write_text(json.dumps(saved))
+    with pytest.raises(ValueError, match='content changed'):
+        module.prepare(model, codec, series, manifest, tmp_path, lambda: None, p)
+
+
+def test_target_interval_uses_point_within_variable_macro():
+    from gofa_f.robust_targets import bootstrap_interval
+    a = dict(errors=[0., 100.], metrics=dict(variables={'v': dict(mae=10.)}))
+    b = dict(errors=[100., 0.], metrics=dict(variables={'v': dict(mae=12.)}))
+    result = bootstrap_interval(a, b, [dict(variable=0), dict(variable=0)])
+    assert result['paired_macro_mae_difference_95pct'] == [2., 2.]
+
+
+def test_production_update_restores_partial_gradients_optimizer_and_cursor(tmp_path):
+    from gofa_f.allnode_stage import restore_checkpoint, rng_state, cpu_copy
+    from gofa_f.short_migration import assert_equal
+    from gofa_f.short_sampled_state import save
+    from gofa_f.weather_run import apply_update
+    model = tiny()
+    optimizer = torch.optim.AdamW(model.adapter.parameters(), lr=1e-5, weight_decay=1e-4)
+    progress = Progress(tmp_path)
+    state = dict(updates=0, pending=32, pending_tokens=500, pending_loss=10.,
+                 pending_terms=dict(weather_ce=5., weather_cdf=1., traffic_kl=2., wind_kl=2.))
+    for parameter in model.adapter.parameters():
+        parameter.grad = torch.full_like(parameter, .01)
+    before_rng = rng_state()
+    save(tmp_path/'partial.pt', model, optimizer, state, progress, {'history': []}, 'binding')
+    state['pending'] = 64
+    for parameter in model.adapter.parameters():
+        parameter.grad.add_(.02)
+    apply_update(model, optimizer, state, progress)
+    expected, moments = model.trainable_state(), cpu_copy(optimizer.state_dict())
+    restored, p = restore_checkpoint(tmp_path/'partial.pt', model, optimizer, 'binding')
+    assert restored['pending'] == 32 and restored['pending_tokens'] == 500
+    assert_equal(before_rng, rng_state())
+    for parameter in model.adapter.parameters():
+        parameter.grad.add_(.02)
+    restored['pending'] = 64
+    apply_update(model, optimizer, restored, Progress(tmp_path, p))
+    assert_equal(expected, model.trainable_state())
+    assert_equal(moments, cpu_copy(optimizer.state_dict()))
+    assert restored['updates'] == 1 and restored['pending'] == 0

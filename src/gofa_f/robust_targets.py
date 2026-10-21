@@ -14,12 +14,12 @@ from gofa_f.source_gate_state import TARGETS
 
 
 def bootstrap_interval(native, current, queries):
-    groups = {}
-    for q, a, b in zip(queries, native['errors'], current['errors']):
-        groups.setdefault(q['variable'], [[], []])
-        groups[q['variable']][0].append(a)
-        groups[q['variable']][1].append(b)
-    values = np.asarray([[np.mean(a), np.mean(b)] for a, b in groups.values()], np.float64)
+    left, right = native['metrics']['variables'], current['metrics']['variables']
+    if set(left) != set(right) or not left or len(queries) != len(native['errors']) \
+            or len(queries) != len(current['errors']):
+        raise ValueError('Complete paired variable metrics required for bootstrap')
+    # Match the actual point-within-variable macro MAE, including missingness.
+    values = np.asarray([[left[v]['mae'], right[v]['mae']] for v in sorted(left)], np.float64)
     rng = np.random.default_rng(4224)
     samples = []
     for _ in range(2000):
