@@ -1,0 +1,14 @@
+{
+  "stage": 34,
+  "source_commit": "bc73668936849c8bbb23b8c56f504b3c053efa03",
+  "manifest_sha256": "28b53d0d78f25523eedec45da2fc6b3e7c9510429d1b13b272b3d10a0e70982d",
+  "passed_cpu_tests": 710,
+  "optional_skipped": 21,
+  "real_source_views": 4,
+  "parameters": 372353,
+  "cuda_initialized": false,
+  "stage_gpu_seconds": 0,
+  "inherited_gpu_seconds": 4543.11330986768,
+  "target_predictions_at_observation": 0,
+  "desired_ordering_enforced": false
+}

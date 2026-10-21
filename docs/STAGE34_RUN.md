@@ -9,3 +9,14 @@
 B静态和C独立副本7项相关验收通过，完整CPU和真实源最大形状检查将在固定快照执行。尚未开始训练或产生新目标结果。进度可读取独立输出status/progress，终止ETA不适用。实际训练曲线、源指标、停止原因和成本全部保留。
 
 LLaMA比较准确版本和合法权重仍待用户澄清；已有访问认证不等于任意模型版本均获授权。不绕过访问、不代称其他骨干、不人为压低基线结果。原固定截止为2026-10-22 11:15:12北京。
+
+
+完整固定快照验收：710通过、21旧可选依赖跳过（731XML）。真实四源的最大9节点、L48/H24前向及梯度检查通过，全部372353参数按独立DCRNN共享结构注册，CUDA始终未初始化。manifest SHA`28b53d0d78f25523eedec45da2fc6b3e7c9510429d1b13b272b3d10a0e70982d`。源码固定`bc73668936849c8bbb23b8c56f504b3c053efa03`。详细进程身份和源查询保留B/C。
+
+准备期进度为33152条源查询特征缓存，之后自动开始唯一训练。总GPU活动继承4543.113310秒不清零，Stage34新增GPU0。查看：
+
+```bash
+PYTHONPATH="$PWD/src" .venv-chat/bin/python -m gofa_f.source_dcrnn --config configs/stage34_source_dcrnn.yaml --output outputs/stage34-source-dcrnn-v1 --progress
+```
+
+正式阶段显示各源epoch/游标、更新、损失、源最佳分数和条件ETA；若训练在上限/截止停止，不能声称充分收敛。终止ETA不适用。
