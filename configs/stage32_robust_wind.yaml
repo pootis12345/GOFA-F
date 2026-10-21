@@ -1,0 +1,65 @@
+protocol: stage32-robust-wind-v1
+seed: 42
+stage28_output: ${GOFA_WORKSPACE}/outputs/stage28-state-residual-calibration-v1
+stage28_manifest_sha256: 6d213b7b2f076c023793a05ac6692fc8cb91bcaa5a5568bebca0331ef3886313
+stage28_cpu_gate_sha256: cf18ad900d98c6cc1d66697f47c67a08bec9b694837f225ad42f390b92b10f28
+stage28_development_sha256: 67c8ee3bc6f981a7826ef5786b98cd63b614811d1f5c6fa9ff11308cea29f367
+stage27_output: ${GOFA_WORKSPACE}/outputs/stage27-history-target-calibration-v1
+stage27_manifest_sha256: 7708f1222bc4a2514b2635422bc2ef43b97bd389eef22181084b590180fe3fbe
+stage27_coefficients_sha256: a02bd4b825c0c4d8383cc7293438c0c2bcc481fbc62ae84054d70285d936e979
+stage26_output: ${GOFA_WORKSPACE}/outputs/stage26-six-target-calibration-v1
+stage26_manifest_sha256: e74277b043dae2890ee1fc193dbaeee06fb7cacb18ed5afc94735de913f23193
+stage26_report_sha256: 8b4e85021beb915bf6c85cd78167a0209d9628f931f651b899ae2017c9ffa958
+stage26_pilot_gate_sha256: 7e903911c7bb180d04a81638536626e53a970551dc3413afcb8f422ec49d795e
+stage21_output: ${GOFA_WORKSPACE}/outputs/stage21-graph-benchmark-v2
+stage21_manifest_sha256: c94a4d5bed128be16d99712349fd5681a64620bbf95cb9f287a71e534cdcbbb9
+stage21_report_sha256: f182770f931b8df45668385f3a84505d9656171a455e8c05c2b8c93013d36fd5
+adapter_sha256: 816d38b577a6664f30dd6e6b6d50986a77b098ce9c4c0b0ffb63d70078b26f15
+targets: [pems03, pems_bay, meteonet_nw2018, engrad, sdwpf, kelmarsh2019]
+development_minimum_improvement: 0.005
+sampling: {samples: 8, top_k: 100, temperature: 1.0, top_p: 1.0, seed: 42, aggregate: pointwise_median, execution: serial_single_query_independent_kv}
+training: {max_updates: 0, cpu_target_training: true, models: 6, queries_per_dataset: 4096}
+sklearn_version: '1.5.2'
+skip_zero_graph_weight: true
+cpu_model:
+  loss: absolute_error
+  max_iter: 150
+  learning_rate: 0.05
+  max_leaf_nodes: 15
+  max_depth: 4
+  min_samples_leaf: 40
+  l2_regularization: 1.0
+  max_bins: 63
+  random_state: 42
+  early_stopping: false
+  categorical_features: null
+data:
+  target_training_enabled: true
+  neural_target_training_enabled: false
+  target_evaluation_enabled: true
+  target_label_calibration_enabled: true
+  strict_zero_shot: false
+resources:
+  admission_policy: memory_cap_only
+  admission_samples: 1
+  resource_check_seconds: 10
+  memory_cap_gib: 40
+  torch_cap_gib: 38
+  activity_limit_seconds: null
+  wall_deadline: null
+  yield_on_foreign: false
+  leave_free_gib: 0
+
+stage29_output: ${GOFA_WORKSPACE}/outputs/stage29-supervised-target-ensemble-v1
+stage29_manifest_sha256: 986a2b63b83ed245201820756f6e1e07e48c3bf51feaf8b0571a3433dc8cba88
+deadline_unix: 1792638912.0
+recipes: [raw150, norm150, season150, normseason150, norm300, normseason300, normextra64, normseasonextra64]
+taus: [0.01, 0.1, 1.0]
+
+stage30_output: ${GOFA_WORKSPACE}/outputs/stage30-autonomous-iteration-v2
+stage30_manifest_sha256: a66917b260c7cca91cf608521c66b2d8331aba456d963b8c758b9f333476ebc3
+
+stage31_output: ${GOFA_WORKSPACE}/outputs/stage31-bounded-simplification-v1
+stage31_manifest_sha256: da1a7da4e58a82450da6e38cca310d9314f52eb8a0b76d1467cc09dea9eeddab
+stage31_coefficients_sha256: e6e0c01103f2b3456c3bf6a69478cd1e54cc68bcca46a21f762e6bd3ed686428
+output_directory: ${GOFA_WORKSPACE}/outputs/stage32-robust-wind-v1
