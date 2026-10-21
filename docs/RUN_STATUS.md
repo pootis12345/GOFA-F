@@ -1,3 +1,9 @@
+## Stage30运行中：临时11小时自主实验
+
+用户已明确授权临时恢复自动跟进，截止北京时间2026-10-22 11:15:12不延期。Stage29保持封存。Stage30固定有限CPU候选，以训练/开发选模，确认/测试不反馈；完整CPU回归685通过、21可选跳过，当前v2开始候选训练。固定代码a8741e1、独立输出stage30-autonomous-iteration-v2；v1退出审计实现错误与零GPU证据保留。不是零样本GOFA-F，不保证六集或预设基线排序。
+
+[运行与截止](STAGE30_RUN.md)、[固定有限协议](STAGE30_AUTONOMOUS_PROTOCOL.md)。
+
 ## Stage29已封存：CPU开发门槛未全部通过，新增GPU活动0
 
 六个固定CPU模型全部训练完成；679项CPU测试通过、21项旧可选跳过。开发合并MAE相对原生：PeMS03 −23.69%、PEMS-BAY −10.15%、MeteoNet −17.89%、EngRAD ＋1.86%、SDWPF −10.74%、Kelmarsh −8.61%。其中PEMS-BAY、EngRAD、Kelmarsh各有一折退化，严格六集门槛失败；已正常止损，没有全数据重拟合、最终系数、GPU确认或测试重放。
