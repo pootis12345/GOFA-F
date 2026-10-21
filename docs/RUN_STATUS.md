@@ -1,5 +1,17 @@
 # 运行交接记录
 
+## Stage23结果：新增500早停，没有更好的新适配器
+
+2026-10-21 05:01:44北京时间正常结束，源早停/退出码0；监督器和GPU worker已核实退出。
+父3500＋新增500，250/500两轮384查询完整验证均因风电相对父退化超过2%而不合格；最终选中仍为父3500，SHA未变。
+新增500相对父：交通−2.72%、气象−3.52%、风电+30.50%。父模型独立源确认S=0.9506，但风电1.0650超过1.02，确认失败。
+风电中位数预测上端点比例从父0.03%升至新增500的14.71%，12/14风机退化；格式/反变换100%、回退0。关联不等于已证实根因。
+父真实图对自环小样本四视图均改善4.16%—6.93%；选中与父同SHA，不能当作独立新模型证据。
+GPU活动6小时37分13秒、等待48分10秒、项目峰14.96GiB、资源暂停0；无六目标新预测，每小时跟进关闭。
+按协议封存结束，不继续训练、改选候选或自动评六目标。历史等待/准备记录保留在下方。
+[最终诊断](STAGE23_RESULTS.md)、[完整脱敏证据](results/stage23-source-results-public-summary.json)。
+
+
 ## Stage23领域匹配源适应：启动修复与CPU验收通过
 
 Stage22独立外部门控路线已停止并保留源确认失败证据；没有新增六目标预测。
@@ -974,7 +986,7 @@ Stage8 `launcher/status=complete`，等待器[本地保留]与worker[本地保�
 
 固定源码 `62f56fabe7c5e68ff8b0bbc3a6ad976b4ab3aecb`，C 快照 `${LOCAL_PATH}`，输出在 C 开发仓库 `outputs/stage8-metr-temporal-v1/`、日志同级 `.log`、启动身份记录同级 `.launch.json`。B/GitHub/C 已同步代码，固定快照工作区干净。C 禁用 CUDA 的快照回归181通过、11跳过；清单核对10个输入哈希。相关图 SHA `d25fb015fb887d5fae60411af29cd20315fec31f8d635b4a965f07708312e8d0`，新增1,678条有向非自环动态候选边。
 
-CPU 空闲等待器于 2026-10-15 23:48:28 首次启动，实际 PID `2837909`、start_ticks `600036782`；使用前须重新核对身份与存活，不得重复启动。`window.json` 规定训练截止 2026-10-16 11:33:28、硬截止11:48:28（北京时间），等待不顺延。23:50只读确认 `launcher.json=waiting_for_idle`、活动0，GPU 正被其他任务占用；尚无 Stage8 GPU 机制或精度结果。每个子任务须三次间隔30秒完全空闲才进入；运行中他人加入不退出、低显存余量暂停更新，本项目最多40 GiB、留16 GiB，不设置独占模式。只在终止或异常时通知；旧阶段不重启。详细协议见 `docs/STAGE8_METR_TEMPORAL_PROTOCOL.md`。以下部署前记录及 Stage7 结果为历史记录。
+CPU 空闲等待器于 2026-10-15 23:48:28 首次启动，实际 PID `[本地保留]`、start_ticks `[本地保留]`；使用前须重新核对身份与存活，不得重复启动。`window.json` 规定训练截止 2026-10-16 11:33:28、硬截止11:48:28（北京时间），等待不顺延。23:50只读确认 `launcher.json=waiting_for_idle`、活动0，GPU 正被其他任务占用；尚无 Stage8 GPU 机制或精度结果。每个子任务须三次间隔30秒完全空闲才进入；运行中他人加入不退出、低显存余量暂停更新，本项目最多40 GiB、留16 GiB，不设置独占模式。只在终止或异常时通知；旧阶段不重启。详细协议见 `docs/STAGE8_METR_TEMPORAL_PROTOCOL.md`。以下部署前记录及 Stage7 结果为历史记录。
 
 ## Stage8 代码和 CPU 审计完成，等待固定快照部署（2026-10-15）
 
@@ -988,7 +1000,7 @@ METR-LA 12→12、seed42 的 T1 四段历史图摘要与 T2 训练前缀 top-8 �
 
 固定快照 `stage7-locked-transfer-v1`、代码 `2c9ba946882cf22787bce22602289bc9c77361fa` 已与 GitHub、B、C 同步。C 禁用 CUDA、OMP/MKL 各两线程的六数据集真实 Bolt 权重前向检查通过；源 Stage5 METR-LA 检查点 SHA `7c3e3957d9a9fded1cff5302db775ef1bbc156c8e9dbcf97f26b07eb671beee9` 与锁定记录一致，快照清单的 22 个输入哈希核验通过。协议见 `docs/STAGE7_TRANSFER_PROTOCOL.md`。
 
-CPU 空闲等待器于 21:02:11 首次启动，初始 PID `2715356`、start_ticks `599039152`；使用前须重新核对身份及存活，禁止重复启动。首次核对 `launcher.json` 为 `waiting_for_idle`、活动秒数0，GPU 正被其他进程占用，尚无 Stage7 GPU 评价结果。输出在 C 开发仓库 `outputs/stage7-locked-transfer-v1/`，日志同级 `.log`；固定八小时墙钟窗口于 2026-10-16 05:02:11 截止，不因等待顺延。每个 GPU 子任务须三次间隔30秒确认完全空闲才启动；运行中其他用户加入不退出，显存余量不足暂停更新，项目上限40 GiB、至少留16 GiB。每小时跟进 `gofa-f` 仅在终止或异常时通知。
+CPU 空闲等待器于 21:02:11 首次启动，初始 PID `[本地保留]`、start_ticks `[本地保留]`；使用前须重新核对身份及存活，禁止重复启动。首次核对 `launcher.json` 为 `waiting_for_idle`、活动秒数0，GPU 正被其他进程占用，尚无 Stage7 GPU 评价结果。输出在 C 开发仓库 `outputs/stage7-locked-transfer-v1/`，日志同级 `.log`；固定八小时墙钟窗口于 2026-10-16 05:02:11 截止，不因等待顺延。每个 GPU 子任务须三次间隔30秒确认完全空闲才启动；运行中其他用户加入不退出，显存余量不足暂停更新，项目上限40 GiB、至少留16 GiB。每小时跟进 `gofa-f` 仅在终止或异常时通知。
 
 本轮固定一份 Stage5 METR-LA 图模型检查点，对六集不更新权重直接评价；各目标仍使用自身训练前缀标准化与原图，因此应称校准后的权重迁移，不能称严格零样本。Stage5/Stage6 及旧快照不重启。下文 Stage6 已完成是历史记录。
 
@@ -1068,7 +1080,7 @@ C禁CUDA、双线程核验158个独立CPU用例全覆盖，六集真实权重初
 固定代码 `79a9c86cbb10a4a7118b56235fbaa2aad18303a1`，快照
 `${LOCAL_PATH}`；输出开发仓库
 `outputs/stage4-pure-graph-v2/`，日志同级 `.log`，启动记录 `.launch.json`。
-CPU监督器初始PID `2004343`、start_ticks `592254839`，首次waiting_for_idle，活动累计39.642秒。
+CPU监督器初始PID `[本地保留]`、start_ticks `[本地保留]`，首次waiting_for_idle，活动累计39.642秒。
 v1已停止；v2的 `migration.json` 保留METR-LA/G2-V 95更新、游标6080、完整训练状态与缓存，
 没有完整验证或测试分数。首次机制失败不删除，后续必须重新核验进程身份/状态，不能重复启动。
 v2源码在C禁CUDA双环境覆盖138个独立CPU用例；GPU机制仍须连续空闲入场后重新核验。
@@ -1086,7 +1098,7 @@ GPU活动总量和单组分钟无限制；11:01进入锁定评价，11:16硬截�
 固定运行代码 `95e0a0dca295a3f5f09fb329cc90f8378a4c0cb8`，快照
 `${LOCAL_PATH}`；
 输出开发仓库 `outputs/stage4-pure-graph-v1/`，日志同级 `.log`，启动记录 `.launch.json`。
-02:03 CPU等待器PID `1997975`、start_ticks `592204080`，首次状态为waiting_for_idle、
+02:03 CPU等待器PID `[本地保留]`、start_ticks `[本地保留]`，首次状态为waiting_for_idle、
 连续空闲1次、活动秒数0，尚无GPU worker；此为历史观察，使用前必须重新核对。
 快照与137项CPU核验源码的规范化哈希一致，六集输入及24份历史评价引用绑定成功。
 不设GPU累计或单组分钟上限，11:01锁定评价、11:16硬截止；其他任务出现即保存让出。
@@ -1121,7 +1133,7 @@ G2 六集胜原生 Bolt、五集胜历史限时 HSD，Electricity 仍落后 HSD 
 
 21:23 已部署并启动 CPU 等待器，21:25（Asia/Shanghai）只读确认：
 `launcher.json.state=waiting_for_idle`，连续空闲计数 0，活动秒数 0；
-等待器 PID `1787228` 存活、无 worker 子进程、不在 GPU 进程表中。
+等待器 PID `[本地保留]` 存活、无 worker 子进程、不在 GPU 进程表中。
 GPU 正由其他任务使用。此观察不是实时状态，后续必须重新核对。
 
 - 固定代码：`0916e8fecf2c6729aa7f23ebfcd7bcab7bd1345e`。
@@ -1209,7 +1221,7 @@ METR-LA 四份结果完整；PeMS-BAY / GOFA-F(Bolt) 仍在训练，已完成 27
 - 开发仓库：`${LOCAL_PATH}`。
 - 运行快照：`${LOCAL_PATH}`（detached worktree）。
 - 固定代码：`8e955b66c26f4d64b555e526813c7a03242f190a`。
-- 训练进程：PID `703442`（仅供本次会话定位，重启后可能失效）。
+- 训练进程：PID `[本地保留]`（仅供本次会话定位，重启后可能失效）。
 - 输出：开发仓库下 `outputs/stage1-v2/`。
 - 日志：`outputs/stage1-v2.log`。
 - 状态：`outputs/stage1-v2.status`。
@@ -1238,7 +1250,7 @@ METR-LA 四份结果完整；PeMS-BAY / GOFA-F(Bolt) 仍在训练，已完成 27
 
 - B 的空目录 `${PROJECT_ROOT}` 已从 GitHub 建立本地检出，起点 `35ab2d7`；C 开发仓库同一提交且干净。
 - B 使用自身 SSH 配置和现有认证连接 C，没有复制 A 的私钥或连接配置。
-- PID `703442` 仍有效，父进程 `703436`；状态文件为 `running`。
+- PID `[本地保留]` 仍有效，父进程 `[本地保留]`；状态文件为 `running`。
 - 运行 cwd 为 `stage1-v2` 快照，提交仍为 `8e955b6`，tracked/untracked 状态干净。
 - 仅 METR-LA/Persistence 有完整结果，METR-LA/T5 已完成 23 个 epoch（日志 epoch 从 0 开始）。
 - GPU H100 PCIe，20:17 核对时约 1.25 GiB 显存、90% 利用率；不能据低显存推断可重复启动。
@@ -1261,8 +1273,8 @@ B 与 C 的命令行 HTTPS 推送未能完成认证：B 凭据管理器等待，
 不要启动测速、DST-SGNN 或其他数据集的后续训练，等待用户进一步指示。
 GPU 为共享资源，不改独占模式，不操作其他用户的任务。
 
-- 当前首轮 runner 仍为 PID `703442`，父进程 `703436`。
-- C 上已启用外部守护 PID `1379816`；11:41 核对状态为 `armed`，当前训练继续。
+- 当前首轮 runner 仍为 PID `[本地保留]`，父进程 `[本地保留]`。
+- C 上已启用外部守护 PID `[本地保留]`；11:41 核对状态为 `armed`，当前训练继续。
 - 守护使用固定副本 `.remote/pause-stage1-v2.py`，不修改运行快照或 `.venv`。
 - 条件：`outputs/stage1-v2/metr_la/gofa_chronos/h12/seed42/result.json` 完整可读、
   `status=complete`，且数据集、模型、种子、预测长度和记录的 runner PID 全部匹配。
