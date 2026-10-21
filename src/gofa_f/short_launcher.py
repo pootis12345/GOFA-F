@@ -34,7 +34,7 @@ def admission_gate(resources, worker_mode):
     policy = resources['admission_policy']
     if resources['resource_check_seconds'] != 10:
         raise ValueError('Resource audits must remain ten seconds apart')
-    if worker_mode in ('robust_source_adaptation', 'weather_prefix_adaptation', 'six_target_calibration', 'history_target_calibration') and policy == 'memory_cap_only':
+    if worker_mode in ('robust_source_adaptation', 'weather_prefix_adaptation', 'six_target_calibration', 'history_target_calibration', 'state_residual_calibration') and policy == 'memory_cap_only':
         if resources['admission_samples'] != 1 or resources['memory_cap_gib'] != 40 \
                 or resources['torch_cap_gib'] != 38 or resources['yield_on_foreign'] \
                 or resources['leave_free_gib'] != 0:
@@ -49,7 +49,7 @@ def supervise(output, config, snapshot, worker_mode="train"):
     import yaml
     output, config, snapshot = Path(output).resolve(), Path(config).resolve(), Path(snapshot).resolve()
     cfg = yaml.safe_load(config.read_text())
-    update_cap = 0 if worker_mode in ("six_target_calibration", "history_target_calibration") else 100 if worker_mode == "weather_prefix_adaptation" else 250 if worker_mode == "robust_source_adaptation" else 1000 if worker_mode == "source_retraining" else 4000
+    update_cap = 0 if worker_mode in ("six_target_calibration", "history_target_calibration", "state_residual_calibration") else 100 if worker_mode == "weather_prefix_adaptation" else 250 if worker_mode == "robust_source_adaptation" else 1000 if worker_mode == "source_retraining" else 4000
     if cfg["training"]["max_updates"] != update_cap or cfg["resources"]["activity_limit_seconds"] is not None \
             or cfg["resources"]["wall_deadline"] is not None or cfg["data"]["target_training_enabled"]:
         raise ValueError("Stage19 requires bounded updates, unlimited activity and disabled target training")
@@ -63,7 +63,7 @@ def supervise(output, config, snapshot, worker_mode="train"):
         locks.append(stream)
     if worker_mode not in ("train", "projection_probe", "source_diagnostic", "native_case_probe",
                            "sampling_diagnostic", "stability_diagnostic", "sampled_continuation", "sampled_targets",
-                           "target_calibration", "graph_benchmark", "source_reliability_gate", "source_retraining", "robust_source_adaptation", "weather_prefix_adaptation", "six_target_calibration", "history_target_calibration"):
+                           "target_calibration", "graph_benchmark", "source_reliability_gate", "source_retraining", "robust_source_adaptation", "weather_prefix_adaptation", "six_target_calibration", "history_target_calibration", "state_residual_calibration"):
         raise ValueError("Unknown supervised worker mode")
     binding = {"snapshot": str(snapshot), "config": str(config), "admission_policy": cfg['resources']['admission_policy'],
         "resource_check_seconds": 10, "admission_samples": cfg['resources']['admission_samples'],
@@ -94,6 +94,12 @@ def supervise(output, config, snapshot, worker_mode="train"):
             target_label_calibration_enabled=True, strict_zero_shot=False, optimizer_updates=0,
             maximum_updates=None, adapter_sha256=cfg['adapter_sha256'], confirmation_queries=384,
             development_gpu_predictions=0, cpu_finalization_after_gpu_exit=True)
+    if worker_mode == 'state_residual_calibration':
+        binding.update(target_evaluation_enabled='cpu_replay_only_after_independent_confirmation',
+            target_label_calibration_enabled=True, strict_zero_shot=False, optimizer_updates=0,
+            maximum_updates=None, adapter_sha256=cfg['adapter_sha256'], confirmation_queries=384,
+            additional_development_queries=64, frozen_calibrators=5, residual_parameters=8,
+            cpu_finalization_after_gpu_exit=True)
     if worker_mode == "graph_benchmark":
         binding.update(target_evaluation_enabled=True, target_label_calibration_enabled=False,
             optimizer_updates=0, maximum_updates=None, adapter_sha256=cfg['adapter_sha256'],
@@ -168,11 +174,11 @@ def supervise(output, config, snapshot, worker_mode="train"):
             cpu_returncode=result.returncode,goal_achieved=final.get("goal_achieved"))
     while not stopped[0]:
         final = read(output/"status.json", {}).get("state")
-        if worker_mode in ('six_target_calibration', 'history_target_calibration') and final in ('pilot_complete', 'confirm_complete', 'confirmed'):
+        if worker_mode in ('six_target_calibration', 'history_target_calibration', 'state_residual_calibration') and final in ('pilot_complete', 'development_complete', 'confirm_complete', 'confirmed'):
             environment = dict(os.environ, PYTHONPATH=str(snapshot/'src'), CUDA_VISIBLE_DEVICES='',
                 OMP_NUM_THREADS='2', MKL_NUM_THREADS='2', PYTHONDONTWRITEBYTECODE='1')
             status('cpu_calibration_gate')
-            cpu_module = 'gofa_f.history_target_calibration' if worker_mode == 'history_target_calibration' else 'gofa_f.six_target_calibration'
+            cpu_module = 'gofa_f.state_residual_calibration' if worker_mode == 'state_residual_calibration' else 'gofa_f.history_target_calibration' if worker_mode == 'history_target_calibration' else 'gofa_f.six_target_calibration'
             result = subprocess.run([sys.executable, '-u', '-m', cpu_module,
                 '--config', str(config), '--output', str(output), '--advance-cpu'], cwd=snapshot, env=environment)
             if result.returncode:
@@ -224,7 +230,8 @@ def supervise(output, config, snapshot, worker_mode="train"):
                   "robust_source_adaptation": "gofa_f.robust_source_adaptation",
                   "weather_prefix_adaptation": "gofa_f.weather_prefix_adaptation",
                   "six_target_calibration": "gofa_f.six_target_calibration",
-                  "history_target_calibration": "gofa_f.history_target_calibration"}[worker_mode]
+                  "history_target_calibration": "gofa_f.history_target_calibration",
+                  "state_residual_calibration": "gofa_f.state_residual_calibration"}[worker_mode]
         command = [sys.executable, "-u", "-m", module,
                    "--config", str(config), "--output", str(output)]
         if worker_mode == "train":
@@ -235,7 +242,7 @@ def supervise(output, config, snapshot, worker_mode="train"):
             command.extend(("--predict", "--resume"))
         elif worker_mode == "stability_diagnostic" and any((output/"teachers").glob("*.json")):
             command.append("--resume")
-        elif worker_mode in ("sampled_continuation", "sampled_targets", "target_calibration", "source_retraining", "robust_source_adaptation", "weather_prefix_adaptation", "six_target_calibration", "history_target_calibration"):
+        elif worker_mode in ("sampled_continuation", "sampled_targets", "target_calibration", "source_retraining", "robust_source_adaptation", "weather_prefix_adaptation", "six_target_calibration", "history_target_calibration", "state_residual_calibration"):
             command.append("--resume")
         child = subprocess.Popen(command, cwd=snapshot, env=environment, start_new_session=True)
         tick = process_identity(child.pid)
@@ -282,7 +289,7 @@ def supervise(output, config, snapshot, worker_mode="train"):
         previous = ledger.state
         final = read(output/"status.json", {}).get("state")
         if worker_mode in ("sampled_continuation", "sampled_targets", "target_calibration", "graph_benchmark",
-                            "source_reliability_gate", "source_retraining", "robust_source_adaptation", "weather_prefix_adaptation", "six_target_calibration", "history_target_calibration") and final == "resource_paused" and reason is None:
+                            "source_reliability_gate", "source_retraining", "robust_source_adaptation", "weather_prefix_adaptation", "six_target_calibration", "history_target_calibration", "state_residual_calibration") and final == "resource_paused" and reason is None:
             ledger.state["resource_pause_count"] += 1
             ledger.save()
         if reason == "stopped_by_user":
@@ -290,7 +297,7 @@ def supervise(output, config, snapshot, worker_mode="train"):
         if worker_mode == "target_calibration" and final == "validation_complete" and child.returncode == 0:
             finish_calibration_cpu()
             return
-        if worker_mode in ('six_target_calibration', 'history_target_calibration') and final in ('pilot_complete', 'confirm_complete') and child.returncode == 0:
+        if worker_mode in ('six_target_calibration', 'history_target_calibration', 'state_residual_calibration') and final in ('pilot_complete', 'development_complete', 'confirm_complete') and child.returncode == 0:
             continue  # CPU gate runs only after ledger.stop cleared the worker identity.
         if final in ("complete", "failed", "incomplete") or (child.returncode not in (0, 75) and reason is None):
             status(final if final in ("complete", "failed", "incomplete") else "failed",
@@ -318,7 +325,7 @@ def main():
                                                 "native_case_probe", "sampling_diagnostic",
                                                 "stability_diagnostic", "sampled_continuation", "sampled_targets",
                                                 "target_calibration", "graph_benchmark",
-                                                "source_reliability_gate", "source_retraining", "robust_source_adaptation", "weather_prefix_adaptation", "six_target_calibration", "history_target_calibration"), default="train")
+                                                "source_reliability_gate", "source_retraining", "robust_source_adaptation", "weather_prefix_adaptation", "six_target_calibration", "history_target_calibration", "state_residual_calibration"), default="train")
     args = parser.parse_args()
     supervise(args.output, args.config, args.snapshot, args.worker_mode)
 

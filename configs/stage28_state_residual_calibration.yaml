@@ -1,0 +1,36 @@
+protocol: stage28-state-residual-calibration-v1
+seed: 42
+stage27_output: ${GOFA_WORKSPACE}/outputs/stage27-history-target-calibration-v1
+stage27_manifest_sha256: 7708f1222bc4a2514b2635422bc2ef43b97bd389eef22181084b590180fe3fbe
+stage27_coefficients_sha256: a02bd4b825c0c4d8383cc7293438c0c2bcc481fbc62ae84054d70285d936e979
+stage26_output: ${GOFA_WORKSPACE}/outputs/stage26-six-target-calibration-v1
+stage26_manifest_sha256: e74277b043dae2890ee1fc193dbaeee06fb7cacb18ed5afc94735de913f23193
+stage26_report_sha256: 8b4e85021beb915bf6c85cd78167a0209d9628f931f651b899ae2017c9ffa958
+stage26_pilot_gate_sha256: 7e903911c7bb180d04a81638536626e53a970551dc3413afcb8f422ec49d795e
+stage21_output: ${GOFA_WORKSPACE}/outputs/stage21-graph-benchmark-v2
+stage21_manifest_sha256: c94a4d5bed128be16d99712349fd5681a64620bbf95cb9f287a71e534cdcbbb9
+stage21_report_sha256: f182770f931b8df45668385f3a84505d9656171a455e8c05c2b8c93013d36fd5
+adapter_sha256: 816d38b577a6664f30dd6e6b6d50986a77b098ce9c4c0b0ffb63d70078b26f15
+targets: [pems03, pems_bay, meteonet_nw2018, engrad, sdwpf, kelmarsh2019]
+taus: [0.01, 0.1, 1.0]
+l1_limit: 0.25
+folds: [[64, 96], [96, 128]]
+additional_queries: 64
+development_minimum_improvement: 0.005
+sampling: {samples: 8, top_k: 100, temperature: 1.0, top_p: 1.0, seed: 42, aggregate: pointwise_median, execution: serial_single_query_independent_kv}
+training: {max_updates: 0}
+data:
+  target_training_enabled: false
+  target_evaluation_enabled: true
+  target_label_calibration_enabled: true
+  strict_zero_shot: false
+resources:
+  admission_policy: memory_cap_only
+  admission_samples: 1
+  resource_check_seconds: 10
+  memory_cap_gib: 40
+  torch_cap_gib: 38
+  activity_limit_seconds: null
+  wall_deadline: null
+  yield_on_foreign: false
+  leave_free_gib: 0
