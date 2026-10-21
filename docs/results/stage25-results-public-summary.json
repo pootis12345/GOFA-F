@@ -1,0 +1,196 @@
+{
+  "protocol": "stage25-weather-prefix-adaptation-v1",
+  "runtime_source_sha": "b01fc87ee7688c20a2518bb78fb855162146d993",
+  "manifest_sha256": "d78b88e2388df7fe4186c5e8d4fb393061a0a5f139ad8112555cc9e97128ccbb",
+  "observed_beijing": "2026-10-21T18:14:35.670683+08:00",
+  "stopped_beijing": "2026-10-21T17:52:52.445925+08:00",
+  "state": "complete",
+  "stop_reason": "failed_update25_quick_gate",
+  "worker_returncode": 0,
+  "project_processes_exited": true,
+  "parent_updates": 3500,
+  "new_updates": 25,
+  "pending_queries": 0,
+  "query_count": 96,
+  "full_source_validation_complete": false,
+  "source_confirmation_run": false,
+  "target_new_predictions": 0,
+  "selected_candidate": null,
+  "candidate25_for_diagnosis_only_sha256": "07b2dba24d17ad54a9c883958c5c7cd16fdc9e9586ef753a7a1f720eda6c4cd4",
+  "parent_adapter_sha256": "816d38b577a6664f30dd6e6b6d50986a77b098ce9c4c0b0ffb63d70078b26f15",
+  "metric": "observed-point MAE within each variable, then equal weight over variables; original units within each view",
+  "prediction_protocol": "8 samples, stepwise median; fixed Stage25 quick queries; same bindings and seeds",
+  "reuse_verified": {
+    "identical_queries": true,
+    "median_and_all_trajectory_sha256": true,
+    "truth_mask_scale_sampling_seed_bindings": true,
+    "saved_median_recomputed": true
+  },
+  "views": {
+    "pems04_flow": {
+      "name": "交通流量",
+      "queries": 16,
+      "variables": 16,
+      "native_mae": 33.64211851358414,
+      "parent_mae": 31.395437642931938,
+      "candidate_mae": 31.181383008758228,
+      "new_vs_parent_ratio": 0.9931819827897224,
+      "new_vs_native_ratio": 0.9268555128645568,
+      "quick_stop_threshold": 32.023346395790576,
+      "triggered_stop": false,
+      "paired_queries": {
+        "improved": 8,
+        "equal": 0,
+        "worse": 8
+      },
+      "paired_variables": {
+        "improved": 8,
+        "equal": 0,
+        "worse": 8
+      },
+      "median_endpoint_fraction_parent": 0,
+      "median_endpoint_fraction_new": 0.046875,
+      "format_complete_fraction": 1,
+      "inverse_valid_fraction": 1,
+      "true_outside_representable_fraction": 0.09895833333333333
+    },
+    "pems04_speed": {
+      "name": "交通速度",
+      "queries": 16,
+      "variables": 16,
+      "native_mae": 1.9092509051163993,
+      "parent_mae": 2.015471746524175,
+      "candidate_mae": 2.060799529155095,
+      "new_vs_parent_ratio": 1.0224899122049669,
+      "new_vs_native_ratio": 1.0793759602955153,
+      "quick_stop_threshold": 2.0557811814546585,
+      "triggered_stop": true,
+      "paired_queries": {
+        "improved": 9,
+        "equal": 0,
+        "worse": 7
+      },
+      "paired_variables": {
+        "improved": 9,
+        "equal": 0,
+        "worse": 7
+      },
+      "median_endpoint_fraction_parent": 0,
+      "median_endpoint_fraction_new": 0,
+      "format_complete_fraction": 1,
+      "inverse_valid_fraction": 1,
+      "true_outside_representable_fraction": 0.16666666666666666
+    },
+    "boston2017": {
+      "name": "Boston气温",
+      "queries": 32,
+      "variables": 16,
+      "native_mae": 3.7471105428952454,
+      "parent_mae": 3.650691956781067,
+      "candidate_mae": 3.7780015926430193,
+      "new_vs_parent_ratio": 1.0348727412143,
+      "new_vs_native_ratio": 1.008243965421929,
+      "quick_stop_threshold": 3.7237057959166884,
+      "triggered_stop": true,
+      "paired_queries": {
+        "improved": 14,
+        "equal": 0,
+        "worse": 18
+      },
+      "paired_variables": {
+        "improved": 6,
+        "equal": 0,
+        "worse": 10
+      },
+      "median_endpoint_fraction_parent": 0,
+      "median_endpoint_fraction_new": 0,
+      "format_complete_fraction": 1,
+      "inverse_valid_fraction": 1,
+      "true_outside_representable_fraction": 0.04319371727748691
+    },
+    "penmanshiel2017": {
+      "name": "风电功率",
+      "queries": 32,
+      "variables": 14,
+      "native_mae": 250.06205739374832,
+      "parent_mae": 246.7653138058919,
+      "candidate_mae": 243.620489050539,
+      "new_vs_parent_ratio": 0.9872558071195263,
+      "new_vs_native_ratio": 0.974240120990981,
+      "quick_stop_threshold": 251.70062008200975,
+      "triggered_stop": false,
+      "paired_queries": {
+        "improved": 22,
+        "equal": 0,
+        "worse": 10
+      },
+      "paired_variables": {
+        "improved": 9,
+        "equal": 0,
+        "worse": 5
+      },
+      "median_endpoint_fraction_parent": 0,
+      "median_endpoint_fraction_new": 0,
+      "format_complete_fraction": 1,
+      "inverse_valid_fraction": 1,
+      "true_outside_representable_fraction": 0.0859375
+    }
+  },
+  "training": {
+    "first5": {
+      "loss": 1.9429797422853965,
+      "loss_terms": {
+        "weather_ce": 1.9124113800625004,
+        "weather_cdf": 0.030499419864887994,
+        "traffic_kl": 0.00004669249334483538,
+        "wind_kl": 0.000022184841288700833
+      },
+      "gradient_norm": 1.1799534201622008
+    },
+    "last5": {
+      "loss": 1.9239992379269097,
+      "loss_terms": {
+        "weather_ce": 1.8898611517002188,
+        "weather_cdf": 0.03226177223841659,
+        "traffic_kl": 0.0010144451943536598,
+        "wind_kl": 0.0008618239498900948
+      },
+      "gradient_norm": 1.2161674499511719
+    },
+    "all_losses_and_gradient_norms_finite": true,
+    "train_seconds": 581.8378142565489,
+    "prefix_seconds": 1073.2189203007147,
+    "quick_eval_seconds": 619.4107132824138,
+    "final_learning_rate": 0.00001
+  },
+  "resources": {
+    "gpu_activity_seconds": 2398.342718599364,
+    "waiting_seconds": 0,
+    "resource_pause_count": 0,
+    "peak_project_group_mib": 15320,
+    "peak_project_group_gib": 14.9609375,
+    "torch_peak_allocated_bytes": 15137142272,
+    "torch_peak_reserved_bytes": 15367929856
+  },
+  "diagnosis": {
+    "observed": [
+      "Both speed and weather independently exceeded the fixed 1.02 times parent quick gate.",
+      "Flow and wind improved on this small source panel.",
+      "All saved training losses and gradient norms were finite; no runtime failure was recorded.",
+      "Fixed-parent-prefix KL did not prevent free sampled speed MAE degradation.",
+      "Weather median endpoint fraction remained zero; endpoint collapse was not observed in the final weather medians."
+    ],
+    "hypotheses_not_proven": [
+      "Fixed greedy parent prefixes differ from the eight-sample evaluation prefix distribution.",
+      "A small KL measured on selected prefixes need not preserve autoregressive sampled predictions."
+    ],
+    "stage24_paired_forward_is_not_stage25_forward": true,
+    "limitations": [
+      "one seed",
+      "96 fixed quick source queries, not full validation or target evaluation",
+      "variable contributions may be uneven",
+      "no statistical or causal proof",
+      "no further training or new recipe was started"
+    ]
+  }
+}
