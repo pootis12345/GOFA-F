@@ -1,0 +1,71 @@
+{
+  "stage": 31,
+  "state": "running_confirmation",
+  "source_commit": "a1fbc4860a3023d377a0cfbacda6ed8a4a514bd5",
+  "deadline_bjt": "2026-10-22T11:15:12+08:00",
+  "cpu_tests_passed": 688,
+  "cpu_tests_skipped_optional": 21,
+  "all_six_development_passed": true,
+  "confirmation_complete": false,
+  "test_executed": false,
+  "goal_achieved": null,
+  "strict_zero_shot": false,
+  "target_supervised": true,
+  "coefficients_sha256": "e6e0c01103f2b3456c3bf6a69478cd1e54cc68bcca46a21f762e6bd3ed686428",
+  "datasets": {
+    "pems03": {
+      "family": "history_augmented",
+      "recipe": "normseasonextra64",
+      "tau": 0.01,
+      "development_mae": 22.942656250866605,
+      "development_native_mae": 30.902973214785256,
+      "worst_fold_ratio": 0.7898322449426683,
+      "graph_weight": 0.286502173244932
+    },
+    "pems_bay": {
+      "family": "history_only",
+      "recipe": null,
+      "tau": 0.01,
+      "development_mae": 2.192372706868225,
+      "development_native_mae": 2.358938490351041,
+      "worst_fold_ratio": 0.9517127969227385,
+      "graph_weight": 0.6695626697925131
+    },
+    "meteonet_nw2018": {
+      "family": "simple",
+      "recipe": "normextra64",
+      "tau": 0.0,
+      "development_mae": 2.6374523024402667,
+      "development_native_mae": 3.5493983175873645,
+      "worst_fold_ratio": 0.8769162685586847,
+      "graph_weight": 0.0
+    },
+    "engrad": {
+      "family": "history_augmented",
+      "recipe": "normseasonextra64",
+      "tau": 0.01,
+      "development_mae": 2.137274061886697,
+      "development_native_mae": 2.261779584553248,
+      "worst_fold_ratio": 0.9454990673580932,
+      "graph_weight": 0.1446103731170651
+    },
+    "sdwpf": {
+      "family": "simple",
+      "recipe": "norm150",
+      "tau": 0.0,
+      "development_mae": 175.80871893471192,
+      "development_native_mae": 195.6078326050576,
+      "worst_fold_ratio": 0.9116401907725031,
+      "graph_weight": 0.0
+    },
+    "kelmarsh2019": {
+      "family": "simple",
+      "recipe": "normextra64",
+      "tau": 0.0,
+      "development_mae": 228.3469104843255,
+      "development_native_mae": 242.84501651713484,
+      "worst_fold_ratio": 0.9970937300037548,
+      "graph_weight": 0.47245721914475497
+    }
+  }
+}
