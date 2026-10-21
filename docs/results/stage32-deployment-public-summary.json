@@ -1,0 +1,63 @@
+{
+  "stage31": {
+    "stop_reason": "failed_confirmation_sdwpf",
+    "goal_achieved": false,
+    "confirmations": {
+      "sdwpf": {
+        "passed": false,
+        "native_mae": 197.15777312001796,
+        "new_mae": 199.83840184904955
+      },
+      "pems03": {
+        "passed": true,
+        "native_mae": 28.58001401089132,
+        "new_mae": 20.55109548194572
+      },
+      "engrad": {
+        "passed": true,
+        "native_mae": 2.7548506310655894,
+        "new_mae": 2.2827858481283556
+      },
+      "meteonet_nw2018": {
+        "passed": true,
+        "native_mae": 3.333884813743171,
+        "new_mae": 2.2793828773531666
+      },
+      "pems_bay": {
+        "passed": true,
+        "native_mae": 2.186307832598686,
+        "new_mae": 2.140646002567461
+      }
+    },
+    "gpu_activity_seconds": 2887.063938140869,
+    "peak_group_mib": 14362,
+    "kelmarsh_confirmation": "not_executed",
+    "frozen_test": "not_executed"
+  },
+  "stage32": {
+    "source_commit": "1d0a8ea768a0c804af5ec9c3fe4268d32269c85d",
+    "state": "cpu_training",
+    "target_supervised": true,
+    "strict_zero_shot": false,
+    "deadline_bjt": "2026-10-22T11:15:12+08:00",
+    "cpu_tests_passed": 691,
+    "cpu_tests_skipped_optional": 21,
+    "manifest_sha256": "fede152c7f1bb992f5307a78e6b289cb9b14c76d36af28d98a084d1e6c2ff9f9",
+    "fresh_confirmation_sha256": "321d19cb4c00ebadbc4d806ba9e21fd732c883542601c7325a3fcf7f1b144389",
+    "fresh_confirmation_queries": 64,
+    "training_queries": 16384,
+    "training_variables": 134,
+    "recipes": [
+      "raw_hgb_local",
+      "raw_hgb_neighbor",
+      "raw_extra_local",
+      "raw_extra_neighbor",
+      "norm_hgb_local",
+      "norm_hgb_neighbor",
+      "norm_extra_local",
+      "norm_extra_neighbor"
+    ],
+    "other_five_frozen": true,
+    "failed_old_confirmation_used_for_fitting": false
+  }
+}
