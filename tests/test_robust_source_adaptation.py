@@ -9,9 +9,10 @@ import yaml
 
 from gofa_f.generative_data import Query
 from gofa_f.robust_loss import batch, distribution_loss, parent_adapter
+from gofa_f.robust_diagnostic import observe_gates
 from gofa_f.robust_progress import Progress
 from gofa_f.robust_state import (confirmation_pool, gate100, passed, quick_pool, recorded_windows,
-                                select, validate, validation_boundary)
+                                select, validate, validation_boundary, parent_replay_bindings)
 from gofa_f.robust_targets import run as target_run
 from gofa_f.source_retraining_data import VIEWS
 from gofa_f.source_retraining_policy import pools
@@ -78,6 +79,16 @@ def test_validation_boundary_after_resume_or_next_microbatch():
     assert not validation_boundary(51, 0)
 
 
+def test_parent_replay_requires_original_source_hashes_not_view_hashes():
+    prior = dict(source_configuration={'data': 'bound'}, source_raw_hashes={'nn5': 'hash'},
+                 probes=[dict(query=dict(source='nn5'), references=dict(native={}, gofa={}))])
+    assert parent_replay_bindings(prior) == dict(source_raw_hashes={'nn5': 'hash'})
+    with pytest.raises(ValueError, match='raw hashes'):
+        parent_replay_bindings(dict(prior, source_raw_hashes={}))
+    with pytest.raises(ValueError, match='incomplete'):
+        parent_replay_bindings(dict(prior, source_raw_hashes={'pems04_flow': 'wrong namespace'}))
+
+
 def test_fixed_config_and_target_guard(tmp_path):
     cfg = yaml.safe_load(Path('configs/stage24_robust_source_adaptation.yaml').read_text())
     validate(cfg)
@@ -133,6 +144,22 @@ def test_teacher_reference_swap_restores_rng_parameters_and_existing_gradients()
     assert model.adapter is student and model.cache_generation > generation
     assert torch.equal(torch.get_rng_state(), rng) and torch.equal(old, parameter)
     assert torch.equal(parameter.grad, torch.ones_like(parameter))
+
+
+def test_all_node_gate_observer_does_not_change_delta_or_rng():
+    from gofa_f.allnode_graph import build_graph
+    model = tiny()
+    with torch.no_grad():
+        model.adapter.exchanges[0].up.weight.normal_(std=.001)
+    graph = build_graph(source(9), Query('pems04', 0, 500, 12, 12)).graph
+    hidden = torch.randn(len(graph.history[0]), 12, model.native.config.hidden_size)
+    rng = torch.get_rng_state().clone()
+    expected = model.adapter.exchanges[0](hidden, graph)
+    records = []
+    with observe_gates(model, records):
+        actual = model.adapter.exchanges[0](hidden, graph)
+    assert torch.equal(expected, actual) and torch.equal(rng, torch.get_rng_state())
+    assert len(records) == 1 and len(records[0]['by_node']) == hidden.shape[0]
 
 
 def test_real_codec_combined_loss_shared_prefix_microbatch_and_parent_freeze(codec):  # noqa: F811

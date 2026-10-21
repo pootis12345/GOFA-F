@@ -39,6 +39,17 @@ def validation_boundary(update, pending):
     return update in (50, 100, 250) and pending == 0
 
 
+def parent_replay_bindings(prior):
+    """The parent source probes use the original four sources, not Stage23 views."""
+    if not prior.get('probes') or not prior.get('source_raw_hashes') or not prior.get('source_configuration'):
+        raise ValueError('Original source replay configuration/probes/raw hashes required')
+    for probe in prior['probes']:
+        if probe['query']['source'] not in prior['source_raw_hashes'] \
+                or set(probe['references']) != {'native', 'gofa'}:
+            raise ValueError('Original source replay hash/reference incomplete')
+    return dict(source_raw_hashes=prior['source_raw_hashes'])
+
+
 def select(history):
     eligible = [r for r in history if all(x <= 1.02 for x in r['parent_score']['domains'].values())]
     return min(eligible, key=lambda r: (r['native_score']['W'], r['native_score']['S'], r['update'])) \
@@ -149,6 +160,12 @@ def prepare(cfg, output):
         return verify(cfg, output)
     exited(prior)
     old = read(prior/'manifest.json')
+    replay = parent_replay_bindings(old)
+    original_sources = Path(old['source_configuration']['data']['directory'])/'sources'
+    for probe in old['probes']:
+        name = probe['query']['source']
+        if sha(original_sources/(name+'.npz')) != replay['source_raw_hashes'][name]:
+            raise ValueError('Original parent replay observations changed')
     if read(prior/'status.json')['state'] != 'complete' or sha(prior/'parent.pt') != ADAPTER_SHA:
         raise ValueError('Sealed Stage23/parent3500 required')
     for name in old['unchanged_tensor_files']:
@@ -162,13 +179,31 @@ def prepare(cfg, output):
     pools['quick'] = quick_pool(pools['validation'])
     exclusions, receipts = recorded_windows(prior.parent, series)
     pools['confirmation'] = confirmation_pool(series, pools, exclusions)
+    repair = cfg.get('repair_from')
+    if repair:
+        repair = Path(repair)
+        failed = read(repair/'status.json')
+        fault = read(repair/'failures.json')
+        if (read(repair/'activity.json')['worker'] is not None or failed['state'] != 'failed'
+                or failed['phase'] != 'cuda_mechanisms' or failed['new_updates'] != 0
+                or failed['pending_queries'] != 0 or failed['target_evaluations'] != 0
+                or fault != dict(type='KeyError', error="'source_raw_hashes'", phase='cuda_mechanisms')
+                or (repair/'evaluations').exists() or (repair/'mechanisms.json').exists()):
+            raise ValueError('Only the exact no-training/no-prediction parent-replay binding failure is repairable')
+        previous = read(repair/'manifest.json')
+        for key in ('train', 'validation', 'diagnostic', 'quick', 'epsilons', 'traffic_variables'):
+            if pools[key] != previous['pools'][key]:
+                raise ValueError('Repair changed source pools: '+key)
+        # These windows were sealed but never evaluated in v1. Preserve their IDs,
+        # rather than treating preparation as new label exposure or reselecting.
+        pools['confirmation'] = previous['pools']['confirmation']
     target = Path(cfg['stage21_output'])
     exited(target)
     tm = read(target/'manifest.json')
     if tm['configuration']['adapter_sha256'] != ADAPTER_SHA or tm['source_selection']['updates'] != 3500:
         raise ValueError('Target suite was not bound to the parent3500')
     output.mkdir(parents=True, exist_ok=True)
-    manifest = dict(protocol=cfg['protocol'], configuration=cfg, pools=pools,
+    manifest = dict(protocol=cfg['protocol'], configuration=cfg, pools=pools, **replay,
         source_configuration=old['source_configuration'], weights_sha256=old['weights_sha256'],
         weight_stats=old['weight_stats'], alphabet=old['alphabet'], probes=old['probes'],
         source_hashes=old['source_hashes'], metadata_hashes=old['metadata_hashes'],

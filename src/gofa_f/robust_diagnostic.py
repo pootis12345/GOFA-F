@@ -1,5 +1,6 @@
 """Source-only teacher/common-prefix diagnosis. No generation or optimizer steps."""
 from pathlib import Path
+from contextlib import contextmanager
 
 import numpy as np
 import torch
@@ -11,8 +12,32 @@ from gofa_f.graph_benchmark import atomic
 from gofa_f.robust_loss import records
 from gofa_f.short_sampled_state import temporary_adapter
 from gofa_f.short_stability_diagnostic import amplitude
-from gofa_f.short_stability_metrics import teacher_distribution
+from gofa_f.short_stability_metrics import teacher_distribution, quantiles
 from gofa_f.source_retraining_data import VIEWS
+
+
+@contextmanager
+def observe_gates(model, telemetry):
+    """Observe every node's internal gate without replacing any module output."""
+    handles = []
+    def hook(index):
+        def observe(module, args, delta):
+            hidden, graph = args
+            with torch.no_grad(), torch.autocast(hidden.device.type, enabled=False):
+                z = module.down(module.norm(hidden.float())).transpose(0, 1)
+                gates = module.gate(z).sigmoid().squeeze(-1)
+                valid = graph.observed
+                telemetry.append(dict(layer=index+1, all_nodes=quantiles(gates[valid]),
+                    target=quantiles(gates[:, 0][valid[:, 0]]),
+                    by_node=[quantiles(gates[:, j][valid[:, j]]) for j in range(hidden.shape[0])]))
+            return None
+        return observe
+    try:
+        handles = [m.register_forward_hook(hook(i)) for i, m in enumerate(model.adapter.exchanges)]
+        yield
+    finally:
+        for handle in handles:
+            handle.remove()
 
 
 def selected_scores(model, codec, tokens, contexts, positions):
@@ -71,8 +96,10 @@ def run(model, codec, series, manifest, output, check, progress):
                 sampled = read(sample_path)
                 prefix_ids = sampled['generated_ids']
                 telemetry = []
+                gates = []
                 from contextlib import nullcontext
-                with torch.no_grad(), (amplitude(model, 1., telemetry) if condition != 'native' else nullcontext()):
+                with torch.no_grad(), (amplitude(model, 1., telemetry) if condition != 'native' else nullcontext()), \
+                        (observe_gates(model, gates) if condition != 'native' else nullcontext()):
                     graphs = [build_graph(data, q)]
                     contexts = model.encode_origins(graphs, codec, check=check) if condition != 'native' else None
                     record = codec.record(history, target)
@@ -91,7 +118,7 @@ def run(model, codec, series, manifest, output, check, progress):
                     common_result = teacher_distribution(scores, codec, record, target)
                     common_result['cdf'] = cdf_distance(scores, target, codec, record)
                 value = dict(**identity, teacher=teacher, common_parent_prefix=common_result,
-                    exchanges=telemetry, common_prefix_sha256=sha(sample_path),
+                    exchanges=telemetry, all_node_gates=gates, common_prefix_sha256=sha(sample_path),
                     free_prediction_reused=True, teacher_is_not_forecast=True)
                 old_label = 'validation-native' if condition == 'native' else 'validation-parent' if condition == 'parent' \
                     else 'validation-update-000250' if condition == 'update250' else 'validation-update-000500'
