@@ -31,14 +31,16 @@ def bootstrap_interval(native, current, queries):
 
 
 @torch.no_grad()
-def run(model, codec, manifest, output, progress, check):
+def run(model, codec, manifest, output, progress, check, gate_name='update100_gate.json'):
     output = Path(output)
     locked, confirmation = read(output/'final_selection.json'), read(output/'source_confirmation.json')
     if not locked or not confirmation or not confirmation['complete'] or not confirmation['passed'] \
             or locked['checkpoint_sha256'] != confirmation['checkpoint_sha256']:
         raise ValueError('Target labels/predictions inaccessible before locked source confirmation passes')
     binding = sha(output/'manifest.json')
-    gate = read(output/'update100_gate.json')
+    if gate_name not in ('update100_gate.json', 'source_gate.json'):
+        raise ValueError('Unknown source barrier')
+    gate = read(output/gate_name)
     if locked.get('binding') != binding or confirmation.get('binding') != binding \
             or not locked.get('source_gate_passed') or not gate or not gate['passed'] or gate['binding'] != binding:
         raise ValueError('Source gate/selection/confirmation binding mismatch')
