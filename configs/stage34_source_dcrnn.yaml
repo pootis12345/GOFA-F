@@ -1,0 +1,38 @@
+protocol: stage34-source-dcrnn-v1
+seed: 42
+deadline_unix: 1792638912.0
+source_output: ${GOFA_WORKSPACE}/outputs/stage23-source-retraining-v2
+source_manifest_sha256: 9d2b5cb1d9c2856adda7d53699379d9eaf4b86a380e8051da9616f0c8ec4f224
+target_output: ${GOFA_WORKSPACE}/outputs/stage21-graph-benchmark-v2
+target_manifest_sha256: c94a4d5bed128be16d99712349fd5681a64620bbf95cb9f287a71e534cdcbbb9
+supervised_result_output: ${GOFA_WORKSPACE}/outputs/stage33-causal-scada-v2
+data:
+  target_training_enabled: false
+  target_calibration_enabled: false
+model:
+  hidden: 64
+  encoder_layers: 2
+  decoder_layers: 2
+  diffusion_order: 2
+  node_id_embeddings: false
+  maximum_nodes: 9
+training:
+  max_updates: 10000
+  effective_batch: 64
+  learning_rate: 0.001
+  adam_epsilon: 0.001
+  gradient_clip: 5
+  validate_every: 250
+  early_min_updates: 2000
+  early_patience: 8
+  significant_improvement: 0.001
+  teacher_decay: 2000
+resources:
+  device: cpu
+  omp_threads: 2
+  mkl_threads: 2
+  admission_policy_if_gpu_ever_needed: memory_cap_only
+  memory_cap_gib: 40
+  torch_cap_gib: 38
+  audit_seconds: 10
+  gpu_enabled: false
