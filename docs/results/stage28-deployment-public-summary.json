@@ -1,0 +1,35 @@
+{
+  "stage": 28,
+  "code_sha": "49f1a3164132444027d1997c882f7002378eb264",
+  "checked_at": "2026-10-21T21:55:34.836636+08:00",
+  "state": "running",
+  "phase": "development-sdwpf-native",
+  "cpu_passed": 666,
+  "cpu_skipped": 21,
+  "cuda_source_replay": {
+    "passed": true,
+    "cases": 4,
+    "tokens_equal": true
+  },
+  "new_data_paths": {
+    "development-sdwpf-native": {
+      "passed": true,
+      "comparison": {
+        "max_abs": 0.0,
+        "violations": 0,
+        "argmax_equal": true
+      }
+    }
+  },
+  "saved_native_development_queries": 8,
+  "additional_development_queries": 64,
+  "optimizer_updates": 0,
+  "strict_zero_shot": false,
+  "resource_policy": "memory_cap_only",
+  "project_cap_gib": 40,
+  "torch_cap_gib": 38,
+  "resource_audit_seconds": 10,
+  "hourly_followup": false,
+  "goal_achieved": null,
+  "final_results_available": false
+}
