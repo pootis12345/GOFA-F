@@ -18,6 +18,8 @@ Two forward folds: fit first32, validate next16; fit first48, validate last16. S
 
 Only if all six deployed-model out-of-time MAEs strictly beat Native by `max(1e-12,1e-9*NativeMAE)` are the six estimators and six controls refitted on all64 queries and sealed. Failure stops before GPU admission and records zero new GPU work. The same threshold gates the inherited64/query per dataset independent confirmation. Any failure ends the experiment without adding features, strengths or samples, refitting, or changing to another estimator.
 
+After all64 refitting, an additional deterministic feasibility check rejects an exact Native identity (Native weight1, all other weights and both biases0). Such a model cannot satisfy strict improvement for any subsequent labels. This check changes no fit, coefficient, threshold or candidate; it runs before GPU admission and is bound to the parameter seal. Nonidentity alone never guarantees improvement.
+
 After confirmation passes for all six, CPU replay alone may read Stage21 test predictions. No test trajectories are regenerated, and tests cannot change the calibration. Record four systems, per-variable/per-step and macro/micro MAE/RMSE/MAPE/WAPE, paired query improvements, base fallback and derived range/coverage. MAPE `abs(y)>1e-5`; zero WAPE denominator null; missing targets excluded. Test uncertainty uses2000 paired variable-cluster draws seed4226, not a promotion gate; Kelmarsh has only six clusters.
 
 ## Execution, acceptance and recovery

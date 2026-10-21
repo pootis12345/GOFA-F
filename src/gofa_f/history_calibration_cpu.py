@@ -156,19 +156,49 @@ def seal(cfg, output):
     immutable(output/'coefficients.json', value)
     immutable(output/'coefficient_lock.json', dict(binding=value['binding'],
         coefficients_sha256=sha(output/'coefficients.json'), cpu_gate_sha256=value['cpu_gate_sha256']))
+    if not postfit_check(output, value)['all_datasets_nonidentity']:
+        status(output, 'complete', 'postfit_feasibility',
+            stop_reason='final_refit_native_identity_precludes_strict_improvement', goal_achieved=False)
+        if not (output/'activity.json').exists():
+            atomic_json(output/'activity.json', dict(spent_seconds=0., worker=None, waiting_seconds=0.,
+                resource_pause_count=0, peak_group_mib=0))
+        terminal_progress(output, 'final_refit_native_identity_precludes_strict_improvement')
+        report(output)
+        return value
     status(output, 'coefficients_sealed', 'cpu_fit', coefficient_sha256=sha(output/'coefficients.json'))
     return value
+
+
+def exact_native_identity(parameters):
+    return parameters['weights']['native'] == 1. and all(
+        w == 0. for name, w in parameters['weights'].items() if name != 'native') \
+        and parameters['bias'] == [0., 0.]
+
+
+def postfit_check(output, value):
+    blocked = [name for name, p in value['coefficients'].items() if exact_native_identity(p['full'])]
+    return immutable(output/'postfit_gate.json', dict(binding=value['binding'],
+        coefficients_sha256=sha(output/'coefficients.json'), identity_datasets=blocked,
+        all_datasets_nonidentity=not blocked,
+        nonidentity_does_not_guarantee_improvement=True,
+        rule='Exact Native identity cannot satisfy strictly lower MAE; no coefficients are changed'))
 
 
 def load_coefficients(cfg, output):
     manifest, development, gate = load_development(cfg, output)
     value, lock = read(output/'coefficients.json'), read(output/'coefficient_lock.json')
+    postfit = read(output/'postfit_gate.json')
     if not gate['all_six_strictly_improved'] or value is None or lock is None \
             or value['binding'] != sha(output/'manifest.json') or lock['binding'] != value['binding'] \
             or lock['coefficients_sha256'] != sha(output/'coefficients.json') \
             or lock['cpu_gate_sha256'] != sha(output/'cpu_gate.json') \
             or value['independent_confirmation_or_test_read'] or set(value['coefficients']) != set(TARGETS):
         raise ValueError('Sealed parameters and all six CPU improvements required')
+    if not postfit or not postfit['all_datasets_nonidentity'] \
+            or postfit['binding'] != value['binding'] \
+            or postfit['coefficients_sha256'] != lock['coefficients_sha256'] \
+            or any(exact_native_identity(p['full']) for p in value['coefficients'].values()):
+        raise ValueError('Postfit feasibility failed: Native identity cannot strictly improve')
     return manifest, value, lock
 
 
@@ -260,6 +290,7 @@ def advance(cfg, output):
 def report(output):
     value = dict(status=read(output/'status.json'), development=read(output/'development.json'),
         coefficients=read(output/'coefficients.json'), independent_confirmation=read(output/'confirm_gate.json'),
+        postfit_feasibility=read(output/'postfit_gate.json'),
         test=read(output/'test_replay.json'), activity=read(output/'activity.json'),
         cpu_activity=read(output/'cpu_activity.json'), memory=read(output/'cuda_memory.json'),
         strict_zero_shot=False, optimizer_updates=0,

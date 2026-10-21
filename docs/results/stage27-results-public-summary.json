@@ -1,0 +1,154 @@
+{
+  "protocol": "stage27-history-target-calibration-v1",
+  "runtime_revision": "6c26499fcf25065a16c7d3a5f0dd6a33f4dab5c2",
+  "observed_beijing": "2026-10-21T21:05:39.796576+08:00",
+  "state": "complete",
+  "stop_reason": "final_refit_native_identity_precludes_strict_improvement",
+  "goal_achieved": false,
+  "strict_zero_shot": false,
+  "cpu_forward_development_passed": true,
+  "development_queries_per_dataset": 64,
+  "out_of_time_queries_per_dataset": 32,
+  "dataset_results": {
+    "pems03": {
+      "native_oos_mae": 30.902973214785256,
+      "new_oos_mae": 25.656981208418536,
+      "native_history_oos_mae": 27.05518748609653,
+      "change_pct": -16.975686999129323,
+      "selected_tau": 0.01,
+      "final_weights": {
+        "native": 0.16022275652897544,
+        "gofa": 0.588616494411366,
+        "persistence": 0.0,
+        "mean": 0.0,
+        "trend": 0.2511607490596586
+      },
+      "final_bias": [
+        -0.06435912848993444,
+        -0.0
+      ]
+    },
+    "pems_bay": {
+      "native_oos_mae": 2.358938490351041,
+      "new_oos_mae": 2.192372706868225,
+      "native_history_oos_mae": 2.192372706868227,
+      "change_pct": -7.061048186043573,
+      "selected_tau": 0.01,
+      "final_weights": {
+        "native": 0.1453326436033805,
+        "gofa": 0.6695626697925131,
+        "persistence": 0.05164676079223185,
+        "mean": 0.0,
+        "trend": 0.13345792581187454
+      },
+      "final_bias": [
+        0.012095852972428848,
+        0.07467609504841016
+      ]
+    },
+    "meteonet_nw2018": {
+      "native_oos_mae": 3.5493983175873645,
+      "new_oos_mae": 2.9788995770627285,
+      "native_history_oos_mae": 2.9788995770626947,
+      "change_pct": -16.07311125656986,
+      "selected_tau": 0.1,
+      "final_weights": {
+        "native": 0.37340130716510544,
+        "gofa": 0.0,
+        "persistence": 0.0,
+        "mean": 0.061556916622196506,
+        "trend": 0.0,
+        "daily": 0.5650417762126981
+      },
+      "final_bias": [
+        0.00536357861303493,
+        -0.0
+      ]
+    },
+    "engrad": {
+      "native_oos_mae": 2.261779584553248,
+      "new_oos_mae": 2.1918530062716393,
+      "native_history_oos_mae": 2.2054485978980516,
+      "change_pct": -3.0916619267045253,
+      "selected_tau": 0.01,
+      "final_weights": {
+        "native": 0.3937693023443061,
+        "gofa": 0.1895296702771781,
+        "persistence": 0.0,
+        "mean": 0.0,
+        "trend": 0.030496123696841286,
+        "daily": 0.38620490368167454
+      },
+      "final_bias": [
+        -0.0,
+        -0.03894865500488265
+      ]
+    },
+    "sdwpf": {
+      "native_oos_mae": 185.8952925493589,
+      "new_oos_mae": 185.86048546976775,
+      "native_history_oos_mae": 185.86048546976775,
+      "change_pct": -0.018724024214822332,
+      "selected_tau": 1.0,
+      "final_weights": {
+        "native": 1.0,
+        "gofa": 0.0,
+        "persistence": 0.0,
+        "mean": 0.0,
+        "trend": 0.0
+      },
+      "final_bias": [
+        -0.0,
+        -0.0
+      ]
+    },
+    "kelmarsh2019": {
+      "native_oos_mae": 242.84501651713484,
+      "new_oos_mae": 235.32523519819333,
+      "native_history_oos_mae": 233.341902063872,
+      "change_pct": -3.096535159250813,
+      "selected_tau": 0.01,
+      "final_weights": {
+        "native": 0.07137493325186384,
+        "gofa": 0.35125113744887065,
+        "persistence": 0.0,
+        "mean": 0.38130172016111574,
+        "trend": 0.1960722091381497
+      },
+      "final_bias": [
+        0.007404946288313191,
+        -0.04298826392073815
+      ]
+    }
+  },
+  "coefficient_sha256": "a02bd4b825c0c4d8383cc7293438c0c2bcc481fbc62ae84054d70285d936e979",
+  "stored_deployment_parameters": 44,
+  "adapter_sha256": "816d38b577a6664f30dd6e6b6d50986a77b098ce9c4c0b0ffb63d70078b26f15",
+  "postfit_identity_datasets": [
+    "sdwpf"
+  ],
+  "postfit_native_identity_proves_strict_improvement_impossible": true,
+  "independent_confirmation_complete": false,
+  "test_replay_complete": false,
+  "test_new_gpu_predictions": 0,
+  "partial_confirmation_medians": 23,
+  "partial_confirmation_trajectories": 189,
+  "new_gpu_activity_seconds": 106.03120253328234,
+  "waiting_seconds": 0.0,
+  "resource_pauses": 0,
+  "peak_group_mib": 14362,
+  "worker_exited": true,
+  "hourly_followup_enabled": false,
+  "coefficients_changed_after_identity_discovery": false,
+  "guard_implementation_note": "Post-refit identity guard added before future GPU launches; this run was cooperatively stopped after106.0312s GPU work",
+  "acceptance": {
+    "original_cpu_tests_passed": 650,
+    "original_optional_skipped": 21,
+    "source_cuda_replay_passed": true,
+    "new_target_path_checks": {
+      "confirm-pems03-native": true
+    },
+    "postfit_guard_cpu_tests_passed": 651,
+    "postfit_guard_optional_skipped": 21
+  }
+}

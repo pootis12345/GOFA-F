@@ -60,6 +60,10 @@ def main():
         report(output)
         return 0
     seal(cfg, output)
+    if read(output/'status.json', {}).get('state') == 'complete':
+        status('complete_postfit_identity_no_gpu')
+        report(output)
+        return 0
     identity = read(output.with_suffix('.launch.json'), {})
     if identity.get('pid') and process_identity(identity['pid']) == str(identity.get('start_ticks')):
         raise RuntimeError('Another launcher appeared during CPU calibration')

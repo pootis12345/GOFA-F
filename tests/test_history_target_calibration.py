@@ -249,3 +249,27 @@ def test_cap_only_scope_and_finalizer_has_no_gpu_admission(tmp_path, monkeypatch
     monkeypatch.setattr(launcher.subprocess, 'run', run)
     launcher.supervise(tmp_path, config, Path('.'), 'history_target_calibration')
     assert read(tmp_path/'launcher.json')['state'] == 'complete'
+
+
+def test_all64_refit_identity_stops_before_confirmation_even_after_oos_pass(tmp_path, monkeypatch):
+    cfg, output, manifest, data, events = setup_cpu(tmp_path, monkeypatch)
+    assert cpu.develop(cfg, output)['all_six_strictly_improved']
+    original = cpu.fit
+    def refit(n, g, fs, tau):
+        result = original(n, g, fs, tau)
+        if n[0]['query']['source'] == 'sdwpf' and 'gofa' in fs[0]['names']:
+            result['weights'] = {k: float(k == 'native') for k in fs[0]['names']}
+            result['bias'] = [-0., 0.]
+        return result
+    monkeypatch.setattr(cpu, 'fit', refit)
+    before = len(events)
+    value = cpu.seal(cfg, output)
+    assert len(events) == before+12
+    assert cpu.exact_native_identity(value['coefficients']['sdwpf']['full'])
+    gate = read(output/'postfit_gate.json')
+    assert gate['identity_datasets'] == ['sdwpf'] and not gate['all_datasets_nonidentity']
+    assert read(output/'status.json')['state'] == 'complete'
+    assert read(output/'activity.json')['spent_seconds'] == 0.
+    with pytest.raises(ValueError, match='Postfit feasibility'):
+        cpu.load_coefficients(cfg, output)
+    assert not (output/'confirm_complete.json').exists()
