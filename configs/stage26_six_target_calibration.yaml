@@ -1,0 +1,25 @@
+protocol: stage26-six-target-calibration-v1
+seed: 42
+stage21_output: ${GOFA_WORKSPACE}/outputs/stage21-graph-benchmark-v2
+stage21_manifest_sha256: c94a4d5bed128be16d99712349fd5681a64620bbf95cb9f287a71e534cdcbbb9
+stage21_report_sha256: f182770f931b8df45668385f3a84505d9656171a455e8c05c2b8c93013d36fd5
+adapter_sha256: 816d38b577a6664f30dd6e6b6d50986a77b098ce9c4c0b0ffb63d70078b26f15
+targets: [pems03, pems_bay, meteonet_nw2018, engrad, sdwpf, kelmarsh2019]
+query_counts: {fit: 48, pilot: 16, confirm: 64}
+sampling: {samples: 8, top_k: 100, temperature: 1.0, top_p: 1.0, seed: 42, aggregate: pointwise_median, execution: serial_single_query_independent_kv}
+training: {max_updates: 0}
+data:
+  target_training_enabled: false
+  target_evaluation_enabled: true
+  target_label_calibration_enabled: true
+  strict_zero_shot: false
+resources:
+  admission_policy: memory_cap_only
+  admission_samples: 1
+  resource_check_seconds: 10
+  memory_cap_gib: 40
+  torch_cap_gib: 38
+  activity_limit_seconds: null
+  wall_deadline: null
+  yield_on_foreign: false
+  leave_free_gib: 0
