@@ -35,6 +35,10 @@ def prepare(cfg, output):
     for root in (old_root, prior, Path(cfg['stage21_output'])):
         exited(root)
     old, source = read(old_root/'manifest.json'), read(prior/'manifest.json')
+    for name in ('short_stability_metrics.py', 'robust_diagnostic.py', 'short_codec.py',
+                 'short_sampling_diagnostic.py', 'short_training.py'):
+        if sha(Path(__file__).parent/name) != old['code'][name]:
+            raise ValueError('Reused diagnostic/decoder numerical code changed: '+name)
     if read(old_root/'status.json')['stop_reason'] != 'failed_update100_source_gate' \
             or read(old_root/'status.json')['new_updates'] != 100 \
             or not read(old_root/'diagnostics/complete.json')['complete'] \
