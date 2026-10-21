@@ -1,0 +1,32 @@
+protocol: stage24-robust-source-adaptation-v1
+seed: 42
+stage23_output: ${GOFA_WORKSPACE}/outputs/stage23-source-retraining-v2
+stage21_output: ${GOFA_WORKSPACE}/outputs/stage21-graph-benchmark-v2
+adapter_sha256: 816d38b577a6664f30dd6e6b6d50986a77b098ce9c4c0b0ffb63d70078b26f15
+targets: [pems03, pems_bay, meteonet_nw2018, engrad, sdwpf, kelmarsh2019]
+resources:
+  admission_policy: idle
+  admission_samples: 3
+  resource_check_seconds: 10
+  memory_cap_gib: 40
+  torch_cap_gib: 38
+  activity_limit_seconds: null
+  wall_deadline: null
+  yield_on_foreign: false
+  leave_free_gib: 0
+training:
+  max_updates: 250
+  effective_batch: 64
+  microbatch: 2
+  learning_rate: 0.00002
+  warmup_updates: 20
+  weight_decay: 0.0001
+  gradient_clip: 1
+  quick_validation_update: 50
+  full_validation_updates: [100, 250]
+loss: {ce: 1.0, cdf: 1.0, parent_kl: 0.1, temperature: 1.0}
+sampling: {samples: 8, top_k: 100, temperature: 1.0, top_p: 1.0}
+data:
+  directory: ${GOFA_WORKSPACE}/data/stage23-v1
+  target_training_enabled: false
+  target_evaluation_enabled: gated_only
