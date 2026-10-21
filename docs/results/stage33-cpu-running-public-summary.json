@@ -1,0 +1,18 @@
+{
+  "stage": 33,
+  "source_commit": "3695c7634d2a2e94324d6afab3875cb37210dec1",
+  "cpu_passed": 698,
+  "cpu_optional_skipped": 21,
+  "cuda_initialized": false,
+  "manifest_sha256": "37d33deba228d0a8cef6e098bbf6709835ac9aacfc60bd9f2774272fb3a80398",
+  "fresh_confirmation_queries": 64,
+  "fresh_confirmation_sha256": "f487e895ee52d02691deba73fb22509b1bb34373c6dc481214f30ebfc7251320",
+  "candidates_done_at_observation": 1,
+  "candidates_total": 4,
+  "stage33_gpu_started": false,
+  "inherited_gpu_seconds": 3367.8334118863568,
+  "frozen_test_replayed": false,
+  "all_six_goal_achieved": false,
+  "target_supervised": true,
+  "strict_zero_shot": false
+}

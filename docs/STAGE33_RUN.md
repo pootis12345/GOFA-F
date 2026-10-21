@@ -12,6 +12,17 @@ Stage32新增GPU活动480.769474秒，约8.01分钟；继承Stage31后累计3367
 
 四个固定HGB候选，共用Stage32的16384条前60%训练查询。Stage31/32失败确认明确转为已暴露开发数据，与原128条合并为256条，用三个前向时间折选择；不将其继续称独立确认。训练前封存同64变量的全新、不重叠确认起点。六确认全部通过才一次CPU冻结测试重放。
 
-B静态和C禁CUDA两线程专项10项通过。完整CPU验收与数据对齐尚待固定快照准备阶段完成；未开始Stage33训练或预测，不能宣称六集改善。固定截止仍为北京时间2026-10-22 11:15:12，memory_cap_only、40GiB/38GiB、10秒审计不变。
+B静态和C禁CUDA两线程专项10项通过。固定快照完整CPU698通过、21旧可选依赖跳过（719条XML），CUDA未初始化。原始SCADA的时间、节点和功率已与冻结Stage21数据精确对齐，未改变目标掩码；派生数据哈希和新64条确认在拟合前封存。正在四个CPU候选拟合，首个residual_local已完成并通过预设开发门槛，第二个进行中；尚未选出最终候选、未运行新确认或冻结测试，不能宣称六集改善。固定截止仍为北京时间2026-10-22 11:15:12，memory_cap_only、40GiB/38GiB、10秒审计不变。
 
 这是目标监督、额外历史SCADA输入的混合系统，非零样本GOFA-F，不能作为等输入的图LLM贡献证明。所有失败与成本保留，不削弱比较基线以保证排序。
+
+
+固定源码为`3695c7634d2a2e94324d6afab3875cb37210dec1`。manifest SHA为`37d33deba228d0a8cef6e098bbf6709835ac9aacfc60bd9f2774272fb3a80398`；新确认清单SHA为`f487e895ee52d02691deba73fb22509b1bb34373c6dc481214f30ebfc7251320`。详细进程身份保留本地，不发布。
+
+查看进度（在项目目录）：
+
+```bash
+PYTHONPATH="$PWD/src" .venv-chat/bin/python -m gofa_f.scada_wind_iteration --config configs/stage33_causal_scada.yaml --output outputs/stage33-causal-scada-v1 --phase progress
+```
+
+CPU准备和候选拟合成本独立记录；GPU账本继承3367.833412秒，Stage33新增GPU应减去`inherited_prior_seconds`。未生成的确认和测试留空。
