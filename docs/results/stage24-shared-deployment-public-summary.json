@@ -1,0 +1,78 @@
+{
+  "protocol": "stage24-robust-source-adaptation-v1",
+  "snapshot_name": "stage24-robust-source-adaptation-v4",
+  "runtime_revision": "16887f1b3171d95f4a8ef12a37bdd2f9611f1c18",
+  "manifest_sha256": "63b4b06ee58c831f315cb49064ee20d18303587e066bd659902a0ba69299e0b5",
+  "observed_at_beijing": "2026-10-21T13:41:52.906319+08:00",
+  "resources": {
+    "admission_policy": "memory_cap_only",
+    "admission_samples": 1,
+    "resource_check_seconds": 10,
+    "project_cap_gib": 40,
+    "torch_cap_gib": 38,
+    "leave_free_gib": 0,
+    "yield_on_foreign": false,
+    "activity_limit_seconds": null,
+    "wall_deadline": null,
+    "hourly_followup": false
+  },
+  "cpu": {
+    "passed": true,
+    "tests_passed": 622,
+    "skipped": 11,
+    "cuda_disabled": true,
+    "real_combined_loss_fp32_proof_retained": true,
+    "new_diagnostic_cdf_matches_training": true,
+    "complete_diagnostic_path_cpu_smoke_passed": true
+  },
+  "cuda": {
+    "passed": true,
+    "rtol": 0.002,
+    "atol": 0.002,
+    "original_v3_mechanisms_sha256": "5f35e4c11ff807fb366e9f70f53c42016ae326af1d9ae254e74cc7058ddfc7a8",
+    "four_original_source_sample_tokens_equal": true,
+    "new_source_full_cache_incremental_nonzero_gradients_passed": true,
+    "combined_loss_parent_teacher_recovery_passed": true,
+    "reused_only_after_exact_model_loss_input_hash_verification": true
+  },
+  "observation": {
+    "state": "running",
+    "phase": "train",
+    "new_updates": 2,
+    "target_evaluations": 0,
+    "diagnostic_records": 256,
+    "cumulative_gpu_seconds": 181.2261045621708,
+    "cumulative_waiting_seconds": 476.0333540290594,
+    "resource_pauses": 0,
+    "observed_group_peak_mib": 15318,
+    "failures": null,
+    "pending_queries": 2,
+    "diagnostic_complete": true,
+    "current_group_mib": 15210
+  },
+  "history": [
+    {
+      "version": "v1",
+      "state": "failed_before_training",
+      "reason": "missing_original_source_replay_hash_contract",
+      "new_updates": 0
+    },
+    {
+      "version": "v2",
+      "state": "stopped_by_user_before_gpu_admission",
+      "reason": "authorized_shared_resource_policy",
+      "new_updates": 0
+    },
+    {
+      "version": "v3",
+      "state": "cuda_passed_then_diagnostic_failed",
+      "reason": "floating_cdf_minus_boolean_indicator",
+      "new_updates": 0
+    }
+  ],
+  "limitations": [
+    "Observation is not a completed experiment or selected model.",
+    "Shared GPU execution can affect other tasks latency.",
+    "Source gates and unique loss remain unchanged; target predictions require locked source confirmation."
+  ]
+}
