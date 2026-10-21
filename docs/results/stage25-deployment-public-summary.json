@@ -1,0 +1,145 @@
+{
+  "protocol": "stage25-weather-prefix-adaptation-v1",
+  "runtime_source_sha": "b01fc87ee7688c20a2518bb78fb855162146d993",
+  "manifest_sha256": "d78b88e2388df7fe4186c5e8d4fb393061a0a5f139ad8112555cc9e97128ccbb",
+  "cpu_proof_sha256": "73acd75cc50e7259d5631a4c73c9a715f4ecee16f1c3f210161c012279f15474",
+  "mechanisms_sha256": "19e5345b68edd972c5ec5b34904558555f503e585a574197cb429bc72ca5ff4c",
+  "observed_beijing": "2026-10-21T17:15:23.016145+08:00",
+  "parent_adapter_sha256": "816d38b577a6664f30dd6e6b6d50986a77b098ce9c4c0b0ffb63d70078b26f15",
+  "cpu": {
+    "passed": true,
+    "regression_passed": 632,
+    "optional_skipped": 11,
+    "cuda_disabled": true,
+    "actual_new_loss_7b_fp32": {
+      "passed": true,
+      "tolerance": 0.000001,
+      "nonzero_diagnostic_updates": 3,
+      "mixed_prefix_and_true_labels": true,
+      "dense_cached_gradients": true,
+      "microbatch2_vs1_gradients": true,
+      "exact_materialized_state_replay": true,
+      "fixed_parent_and_backbone_unchanged": true,
+      "trainable_parameters": 1060998,
+      "bitwise_new_cuda_arithmetic_not_claimed": true
+    },
+    "control_only_final_proof_binding": {
+      "original_actual_fp32_proof_sha256": "ac5c2867c5a1a146a8044f9b6d0c409c8e78239d5a52f0b34d3b6d5de9c92099",
+      "original_manifest_sha256": "ff94342bcd59930e8305a47781195cb528e7977f4e2e0f27f2448cfecf88455b",
+      "new_complete_control_regression": true,
+      "changed_control_files": [
+        "robust_targets.py",
+        "weather_prefixes.py",
+        "weather_state.py"
+      ],
+      "new_loss_model_and_checks_code_identical": true,
+      "actual_validation_and_training_query_pools_identical": true,
+      "confirmation_plan_changed_only_before_any_gpu_or_prediction": true,
+      "binding_verifier_sha256": "2ae0ff72f5e56a864ab0c1b379b45795eafd1e2aba6f413391eda4cda12b5663"
+    }
+  },
+  "cuda": {
+    "passed": true,
+    "parent_source_replay_cases": 4,
+    "parent_source_raw_tokens_equal": true,
+    "tolerance": 0.002,
+    "actual_new_loss_and_mixed_prefix": true,
+    "nonzero_diagnostic_updates": 3,
+    "dense_cached_gradients": true,
+    "microbatch2_vs1_gradients": true,
+    "exact_materialized_state_replay": true,
+    "frozen_parent_backbone_unchanged": true,
+    "new_source_sampling_records": [
+      {
+        "source": "pems04_flow",
+        "nodes": 9,
+        "sampling_horizon": 12,
+        "logits_max_difference": 0,
+        "gradient_passed": true,
+        "future_causality_passed": true,
+        "sampling_tokens_equal": true
+      },
+      {
+        "source": "pems04_speed",
+        "nodes": 9,
+        "sampling_horizon": 12,
+        "logits_max_difference": 0,
+        "gradient_passed": true,
+        "future_causality_passed": true,
+        "sampling_tokens_equal": true
+      },
+      {
+        "source": "boston2017",
+        "nodes": 9,
+        "sampling_horizon": 24,
+        "logits_max_difference": 0,
+        "gradient_passed": true,
+        "future_causality_passed": true,
+        "sampling_tokens_equal": true
+      },
+      {
+        "source": "penmanshiel2017",
+        "nodes": 9,
+        "sampling_horizon": 24,
+        "logits_max_difference": 0,
+        "gradient_passed": true,
+        "future_causality_passed": true,
+        "sampling_tokens_equal": true
+      }
+    ]
+  },
+  "diagnostic": {
+    "complete": true,
+    "records": 192,
+    "reused_records": 64,
+    "new_forwards": 128,
+    "new_free_generations": 0
+  },
+  "observed_phase": "parent_prefixes",
+  "observed_new_updates": 0,
+  "observed_prefixes_saved": 40,
+  "observed_target_predictions": 0,
+  "observed_activity_seconds": 147.42634332552552,
+  "observed_waiting_seconds": 0,
+  "observed_peak_group_mib": 15318,
+  "resource_pause_count": 0,
+  "old_stage24_processes_exited": true,
+  "training": {
+    "maximum_new_updates": 100,
+    "learning_rate": 0.00001,
+    "warmup_updates": 10,
+    "effective_batch": 64,
+    "microbatch": 2,
+    "weather_true_prefix_per_batch": 16,
+    "weather_parent_prefix_per_batch": 16,
+    "flow_keep_per_batch": 8,
+    "speed_keep_per_batch": 8,
+    "wind_keep_per_batch": 16,
+    "new_optimizer_rng_cursor": true,
+    "source_only": true
+  },
+  "gates": [
+    "update25_quick_stop_if_any_view_mae_above_parent1.02",
+    "update50_first_passing_source_lock_else_only_precommitted_continue100",
+    "update100_full_source_or_stop",
+    "locked192_confirmation_required_before_target",
+    "only_then768_six_target_queries"
+  ],
+  "resources": {
+    "admission": "memory_cap_only",
+    "group_cap_gib": 40,
+    "torch_cap_gib": 38,
+    "audit_seconds": 10,
+    "activity_hard_limit": null,
+    "wall_deadline": null,
+    "hourly_followup_enabled": false
+  },
+  "limitations": [
+    "KL replay is a soft constraint, not guaranteed MAE preservation",
+    "fixed parent greedy prefixes do not cover every sampled inference prefix",
+    "single training seed, fixed small source and target samples",
+    "target development exposure already seen; not independent blind testing",
+    "finite vocabulary range and uncertain pretraining exposure remain"
+  ],
+  "note": "Running observation, not a completed training, locked candidate, or target-result claim."
+}
