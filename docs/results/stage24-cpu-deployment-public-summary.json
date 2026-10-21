@@ -1,0 +1,82 @@
+{
+  "protocol": "stage24-robust-source-adaptation-v1",
+  "runtime_source_sha": "17b5c82cd34229684e4d13d0125f0de7697239dc",
+  "manifest_sha256": "e45849754d7c346bd115577e02af164dff841130795ee4353479bbe80a117446",
+  "cpu_proof_sha256": "6935561ba1d65d6c035131255bfd3a924fb914b63283023a22eada85d7855149",
+  "deployed_beijing": "2026-10-21T13:11:47.267057+08:00",
+  "cpu": {
+    "passed": true,
+    "regression_passed": 614,
+    "optional_skipped": 11,
+    "cuda_disabled": true,
+    "actual_new_loss_7b_fp32": {
+      "passed": true,
+      "tolerance": 1e-06,
+      "nonzero_diagnostic_updates": 3,
+      "dense_shared_gradients": true,
+      "microbatch2_vs1_gradients": true,
+      "exact_saved_state_replay": true,
+      "bitwise_new_cuda_arithmetic_not_claimed": true,
+      "fixed_teacher_unchanged": true,
+      "trainable_parameters": 1060998,
+      "observed_tokens": 36
+    },
+    "control_only_final_proof_binding": {
+      "original_actual_fp32_proof_sha256": "e5a9937c4c49dcf5572869068c9a0447989898b03831a9b5c7bfa72268d824ab",
+      "original_manifest_sha256": "6cb57d7fe88751eed49aefab24d5611770e047d283c439d246bd9585a32b53d5",
+      "new_complete_control_regression": true,
+      "changed_control_files": [
+        "robust_run.py",
+        "robust_state.py",
+        "robust_targets.py",
+        "short_launcher.py"
+      ],
+      "new_loss_model_and_checks_code_identical": true,
+      "actual_validation_and_training_query_pools_identical": true,
+      "confirmation_plan_changed_only_before_any_gpu_or_prediction": true,
+      "binding_verifier_sha256": "4e2bfa7cf327086b3438107c297b1c79f0fb31576ffa8d8918e8ef25b8f07359"
+    },
+    "unchanged_inference_proof": {
+      "source_proof_sha256": "4bb8da70996ee4548d60af121e3e2740d7acd9a1299d00f520625422ea1a0943",
+      "tensor_files_identical": true,
+      "reused_only_unchanged_inference": true,
+      "changed_loss_requires_new_real_weight_acceptance": true
+    }
+  },
+  "observed_launcher_state": "waiting_for_idle",
+  "observed_status": {
+    "state": "prepared",
+    "new_updates": 0,
+    "target_evaluations": 0
+  },
+  "observed_new_gpu_activity_seconds": 0.0,
+  "observed_waiting_seconds": 160.01009151805192,
+  "gpu_acceptance": "not_started_at_observation",
+  "formal_new_updates": 0,
+  "target_predictions": 0,
+  "loss": {
+    "ce": 1.0,
+    "cdf": 1.0,
+    "parent_kl": 0.1,
+    "temperature": 1.0
+  },
+  "parent_update": 3500,
+  "trainable_parameters": 1060998,
+  "maximum_new_updates": 250,
+  "resources": {
+    "admission": "fully_idle_3_observations_10_seconds_apart",
+    "group_cap_gib": 40,
+    "torch_cap_gib": 38,
+    "activity_hard_limit": null,
+    "wall_deadline": null,
+    "hourly_followup_enabled": false
+  },
+  "gates": [
+    "update50_monitor_only",
+    "update100_no_domain_more_than2pct_parent_regression_and_W_improves0.5pct",
+    "unique_100_or250_source_selection",
+    "fresh192_source_confirmation",
+    "only_then768_target_forecasts"
+  ],
+  "note": "No new GPU acceptance/training/target result is claimed by CPU preparation."
+}
