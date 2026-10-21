@@ -1,4 +1,4 @@
-"""Stage24 CPU proof then one fully-idle supervisor; no GPU allocation in this controller."""
+"""Stage24 CPU proof then one resource supervisor; no GPU allocation in this controller."""
 import argparse
 import fcntl
 import os
@@ -65,7 +65,7 @@ def main():
         raise RuntimeError('Supervisor exited before deployment identity was recorded')
     atomic(output.with_suffix('.launch.json'), dict(pid=process.pid, start_ticks=tick,
         command=command, deployed_at=time.time(), snapshot=str(snapshot), worker_mode='robust_source_adaptation'))
-    status('cpu_passed_idle_supervisor_deployed', launcher_pid=process.pid, launcher_start_ticks=tick)
+    status('cpu_passed_resource_supervisor_deployed', launcher_pid=process.pid, launcher_start_ticks=tick)
     return 0
 
 

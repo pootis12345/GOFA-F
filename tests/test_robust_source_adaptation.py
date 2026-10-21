@@ -96,6 +96,8 @@ def test_fixed_config_and_target_guard(tmp_path):
                         ('training', dict(cfg['training'], max_updates=500))]:
         with pytest.raises(ValueError):
             validate(dict(cfg, **{key: change}))
+    with pytest.raises(ValueError):
+        validate(dict(cfg, resources=dict(cfg['resources'], admission_policy='idle', admission_samples=3)))
     with pytest.raises(ValueError, match='confirmation'):
         target_run(None, None, {}, tmp_path, None, lambda: None)
     (tmp_path/'manifest.json').write_text('{}')
@@ -105,6 +107,85 @@ def test_fixed_config_and_target_guard(tmp_path):
         checkpoint_sha256='same', binding='wrong')))
     with pytest.raises(ValueError, match='binding'):
         target_run(None, None, {}, tmp_path, None, lambda: None)
+
+
+def test_resource_handoff_accepts_only_stopped_unstarted_preparation(tmp_path):
+    from gofa_f.robust_state import preparation_handoff
+    root = tmp_path/'stage24-robust-source-adaptation-v2'
+    root.mkdir()
+    def write(name, value):
+        (root/name).write_text(json.dumps(value))
+    write('status.json', dict(state='prepared', new_updates=0, target_evaluations=0))
+    write('manifest.json', dict(configuration=dict(resources=dict(admission_policy='idle'))))
+    write('activity.json', dict(worker=None))
+    write('launcher.json', dict(state='waiting_for_idle'))
+    with pytest.raises(ValueError, match='safely exited'):
+        preparation_handoff(root)
+    write('launcher.json', dict(state='stopped_by_user'))
+    assert preparation_handoff(root)['configuration']['resources']['admission_policy'] == 'idle'
+    write('status.json', dict(state='prepared', new_updates=1, target_evaluations=0))
+    with pytest.raises(ValueError, match='unstarted'):
+        preparation_handoff(root)
+
+
+@pytest.mark.parametrize('own_memory', [20000, 40*1024+1, None])
+def test_stage24_shared_supervisor_immediate_admission_audit_and_recovery(tmp_path, monkeypatch, own_memory):
+    import gofa_f.short_launcher as launcher
+    cfg = yaml.safe_load(Path('configs/stage24_robust_source_adaptation.yaml').read_text())
+    config = tmp_path/'config.yaml'
+    config.write_text(yaml.safe_dump(cfg))
+    clock, children, signals, queries = [0.], [], [], []
+    monkeypatch.setattr(launcher.time, 'monotonic', lambda: clock[0])
+    monkeypatch.setattr(launcher.time, 'sleep', lambda n: clock.__setitem__(0, clock[0]+n))
+    monkeypatch.setattr(launcher, 'process_identity', lambda _: 'ticks')
+    monkeypatch.setattr(launcher, 'own_gpu_pids', lambda _: {800})
+    monkeypatch.setattr(launcher, 'IdleGate', lambda: pytest.fail('Shared Stage24 must not use idle gate'))
+    def query():
+        queries.append(clock[0])
+        if len(queries) == 1:
+            raise RuntimeError('Temporary GPU query failure')
+        return dict(uuid='GPU-test', compute_mode='Default', pids=[999, 800], utilization=100,
+                    used_mib=80000, free_mib=1500, process_used_mib={999: 60000, 800: own_memory})
+    monkeypatch.setattr(launcher, 'query_gpu', query)
+    class Child:
+        pid, returncode = 800, None
+        def __init__(self, command, cwd, env, start_new_session):
+            assert start_new_session and env['CUDA_VISIBLE_DEVICES'] == 'GPU-test'
+            assert env['GOFA_STAGE19_ADMITTED'] == '1'
+            if not children:
+                assert clock[0] == 10  # only the failed identification caused a retry
+            else:
+                self.returncode = 0
+                launcher.atomic_json(tmp_path/'status.json', dict(state='complete'))
+            self.polls = 0
+            children.append(self)
+        def poll(self):
+            self.polls += 1
+            if self.polls > 25 and self.returncode is None:
+                self.returncode = 0
+                launcher.atomic_json(tmp_path/'status.json', dict(state='complete'))
+            return self.returncode
+    monkeypatch.setattr(launcher.subprocess, 'Popen', Child)
+    def stop(pid, sig):
+        signals.append((pid, sig))
+        children[-1].returncode = 75
+        launcher.atomic_json(tmp_path/'status.json', dict(state='resource_paused'))
+    monkeypatch.setattr(launcher.os, 'killpg', stop)
+    launcher.supervise(tmp_path, config, Path('.'), 'robust_source_adaptation')
+    binding = launcher.read(tmp_path/'launcher_manifest.json')
+    assert binding['admission_policy'] == 'memory_cap_only' and binding['admission_samples'] == 1
+    assert binding['memory_cap_gib'] == 40 and binding['torch_cap_gib'] == 38
+    assert 'idle_max_used_mib' not in binding and binding['leave_free_gib'] == 0
+    ledger = launcher.read(tmp_path/'activity.json')
+    assert ledger['worker'] is None and ledger['waiting_seconds'] >= 10
+    if own_memory == 20000:
+        assert len(children) == 1 and not signals and ledger['resource_pause_count'] == 0
+        assert queries[2:4] == [10., 20.]  # audits continue every10s with foreign process present
+    else:
+        assert len(children) == 2 and signals == [(800, launcher.signal.SIGTERM)]
+        assert ledger['resource_pause_count'] == 1
+    with pytest.raises(ValueError, match='Legacy'):
+        launcher.admission_gate(cfg['resources'], 'source_retraining')
 
 
 def test_fresh_confirmation_coverage_and_old_window_exclusion(tmp_path):

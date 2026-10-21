@@ -81,7 +81,7 @@ def graph_control(enabled):
 
 def run(cfg, output, resume=False):
     if os.environ.get('GOFA_STAGE19_ADMITTED') != '1':
-        raise RuntimeError('Stage24 requires fully-idle supervised admission')
+        raise RuntimeError('Stage24 requires resource-supervised admission')
     output = Path(output)
     manifest = verify(cfg, output)
     binding = sha(output/'manifest.json')

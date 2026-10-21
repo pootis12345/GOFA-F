@@ -23,7 +23,7 @@ def validate(cfg):
                 quick_validation_update=50, full_validation_updates=[100, 250]) \
             or cfg['sampling'] != dict(samples=8, top_k=100, temperature=1., top_p=1.) \
             or cfg['data']['target_training_enabled'] or cfg['data']['target_evaluation_enabled'] != 'gated_only' \
-            or cfg['resources'] != dict(admission_policy='idle', admission_samples=3, resource_check_seconds=10,
+            or cfg['resources'] != dict(admission_policy='memory_cap_only', admission_samples=1, resource_check_seconds=10,
                 memory_cap_gib=40, torch_cap_gib=38, activity_limit_seconds=None, wall_deadline=None,
                 yield_on_foreign=False, leave_free_gib=0):
         raise ValueError('Fixed Stage24 policy changed')
@@ -48,6 +48,21 @@ def parent_replay_bindings(prior):
                 or set(probe['references']) != {'native', 'gofa'}:
             raise ValueError('Original source replay hash/reference incomplete')
     return dict(source_raw_hashes=prior['source_raw_hashes'])
+
+
+def preparation_handoff(root):
+    """Only the stopped, never-admitted v2 may hand off to the shared policy."""
+    root = Path(root)
+    state = read(root/'status.json')
+    prior = read(root/'manifest.json')
+    if root.name != 'stage24-robust-source-adaptation-v2' or state != dict(
+            state='prepared', new_updates=0, target_evaluations=0) \
+            or (root/'failures.json').exists() or (root/'evaluations').exists() \
+            or (root/'mechanisms.json').exists() or (root/'diagnostics').exists() \
+            or prior['configuration']['resources']['admission_policy'] != 'idle':
+        raise ValueError('Resource handoff requires exact unstarted v2 preparation')
+    exited(root, source=True)
+    return prior
 
 
 def select(history):
@@ -182,19 +197,11 @@ def prepare(cfg, output):
     repair = cfg.get('repair_from')
     if repair:
         repair = Path(repair)
-        failed = read(repair/'status.json')
-        fault = read(repair/'failures.json')
-        if (read(repair/'activity.json')['worker'] is not None or failed['state'] != 'failed'
-                or failed['phase'] != 'cuda_mechanisms' or failed['new_updates'] != 0
-                or failed['pending_queries'] != 0 or failed['target_evaluations'] != 0
-                or fault != dict(type='KeyError', error="'source_raw_hashes'", phase='cuda_mechanisms')
-                or (repair/'evaluations').exists() or (repair/'mechanisms.json').exists()):
-            raise ValueError('Only the exact no-training/no-prediction parent-replay binding failure is repairable')
-        previous = read(repair/'manifest.json')
+        previous = preparation_handoff(repair)
         for key in ('train', 'validation', 'diagnostic', 'quick', 'epsilons', 'traffic_variables'):
             if pools[key] != previous['pools'][key]:
                 raise ValueError('Repair changed source pools: '+key)
-        # These windows were sealed but never evaluated in v1. Preserve their IDs,
+        # These windows were sealed but never evaluated. Preserve their IDs,
         # rather than treating preparation as new label exposure or reselecting.
         pools['confirmation'] = previous['pools']['confirmation']
     target = Path(cfg['stage21_output'])

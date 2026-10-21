@@ -1,4 +1,4 @@
-"""Stage19 CPU-only idle-admission supervisor with unlimited recorded GPU activity.
+"""CPU-only resource supervisor with unlimited recorded GPU activity.
 
 Legacy launchers and their time budgets are deliberately unchanged.
 """
@@ -12,7 +12,7 @@ import subprocess
 import sys
 import time
 
-from gofa_f.idle_launcher import (ActivityLedger, IdleGate, atomic_json, own_gpu_pids,
+from gofa_f.idle_launcher import (ActivityLedger, CapOnlyGate, IdleGate, atomic_json, own_gpu_pids,
                                   process_identity, query_gpu)
 
 
@@ -29,6 +29,22 @@ def own_usage(gpu, worker, uuid=None):
     return None if any(v is None for v in values) else sum(values)
 
 
+def admission_gate(resources, worker_mode):
+    """The Stage24 override never changes legacy workers' idle-only policy."""
+    policy = resources['admission_policy']
+    if resources['resource_check_seconds'] != 10:
+        raise ValueError('Resource audits must remain ten seconds apart')
+    if worker_mode == 'robust_source_adaptation' and policy == 'memory_cap_only':
+        if resources['admission_samples'] != 1 or resources['memory_cap_gib'] != 40 \
+                or resources['torch_cap_gib'] != 38 or resources['yield_on_foreign'] \
+                or resources['leave_free_gib'] != 0:
+            raise ValueError('Shared Stage24 admission requires unchanged project/Torch caps')
+        return CapOnlyGate()
+    if policy != 'idle' or resources['admission_samples'] != 3:
+        raise ValueError('Legacy workers require three fully-idle observations')
+    return IdleGate()
+
+
 def supervise(output, config, snapshot, worker_mode="train"):
     import yaml
     output, config, snapshot = Path(output).resolve(), Path(config).resolve(), Path(snapshot).resolve()
@@ -37,9 +53,8 @@ def supervise(output, config, snapshot, worker_mode="train"):
     if cfg["training"]["max_updates"] != update_cap or cfg["resources"]["activity_limit_seconds"] is not None \
             or cfg["resources"]["wall_deadline"] is not None or cfg["data"]["target_training_enabled"]:
         raise ValueError("Stage19 requires bounded updates, unlimited activity and disabled target training")
-    if cfg["resources"]["admission_policy"] != "idle" or cfg["resources"]["admission_samples"] != 3 \
-            or cfg["resources"]["resource_check_seconds"] != 10:
-        raise ValueError("Stage19 requires three fully-idle observations ten seconds apart")
+    gate = admission_gate(cfg['resources'], worker_mode)
+    cap_only = cfg['resources']['admission_policy'] == 'memory_cap_only'
     output.mkdir(parents=True, exist_ok=True)
     locks = []
     for path in (output/"launcher.lock", output.parent/"stage19-gpu.lock"):
@@ -50,11 +65,15 @@ def supervise(output, config, snapshot, worker_mode="train"):
                            "sampling_diagnostic", "stability_diagnostic", "sampled_continuation", "sampled_targets",
                            "target_calibration", "graph_benchmark", "source_reliability_gate", "source_retraining", "robust_source_adaptation"):
         raise ValueError("Unknown supervised worker mode")
-    binding = {"snapshot": str(snapshot), "config": str(config), "admission_policy": "idle",
-        "resource_check_seconds": 10, "admission_samples": 3, "idle_max_used_mib": 256,
+    binding = {"snapshot": str(snapshot), "config": str(config), "admission_policy": cfg['resources']['admission_policy'],
+        "resource_check_seconds": 10, "admission_samples": cfg['resources']['admission_samples'],
         "memory_cap_gib": 40, "torch_cap_gib": 38, "yield_on_foreign": False,
         "activity_limit_seconds": None, "wall_deadline": None, "maximum_updates": update_cap,
         "worker_mode": worker_mode}
+    if cap_only:
+        binding['leave_free_gib'] = 0
+    else:
+        binding['idle_max_used_mib'] = 256
     if worker_mode == "sampled_continuation":
         binding.update(authorized_review_update=cfg.get('review_at_update',1500),target_evaluation_enabled=False)
     if worker_mode == "sampled_targets":
@@ -118,7 +137,6 @@ def supervise(output, config, snapshot, worker_mode="train"):
 
     identity_path = output/"gpu_identity.json"
     pinned_uuid = read(identity_path, {}).get("uuid")
-    gate = IdleGate()
     gate.uuid = pinned_uuid
     def finish_calibration_cpu():
         # No live GPU child, no activity charge, no CUDA context for coefficient
@@ -149,7 +167,7 @@ def supervise(output, config, snapshot, worker_mode="train"):
             gate.uuid = pinned_uuid
             atomic_json(identity_path, {"uuid": pinned_uuid, "first_observed_at": time.time()})
         admitted = gate.observe(gpu)
-        status("device_checked" if admitted else "waiting_for_idle", query_error=error,
+        status("device_checked" if admitted else "waiting_for_gpu_query" if cap_only else "waiting_for_idle", query_error=error,
                consecutive=gate.consecutive)
         if not admitted:
             wait_started = time.monotonic()
@@ -246,7 +264,7 @@ def supervise(output, config, snapshot, worker_mode="train"):
             status(final if final in ("complete", "failed", "incomplete") else "failed",
                    worker_returncode=child.returncode)
             return
-        # Every resource recovery must pass three new fully idle observations.
+        # Recovery rechecks the same authorized policy; shared mode has no idle gate.
         wait_started = time.monotonic()
         for _ in range(10):
             if stopped[0]:
@@ -254,7 +272,7 @@ def supervise(output, config, snapshot, worker_mode="train"):
             time.sleep(1)
         ledger.state["waiting_seconds"] += time.monotonic()-wait_started
         ledger.save()
-        gate = IdleGate()
+        gate = admission_gate(cfg['resources'], worker_mode)
         gate.uuid = pinned_uuid
     status("stopped_by_user")
 
