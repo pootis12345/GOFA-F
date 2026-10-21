@@ -351,6 +351,26 @@ def compare(cfg,output,name,n,g):
     return result
 
 
+def confirmation_fingerprint(output, m, parameters, lock, name, hashes):
+    relative = {str(Path(path).relative_to(output)): value for path, value in hashes.items()}
+    return digest(dict(binding=sha(output/'manifest.json'), coefficients_sha256=lock['coefficients_sha256'],
+        dataset=name, files=relative, parameters=parameters['coefficients'][name],
+        data=m['raw_hashes'][name], metadata=m['metadata_hashes'][name],
+        numerical_core=m['unchanged_tensor_files']))
+
+
+def sealed_confirmation(existing, binding, coefficient_sha, fingerprint):
+    if existing['binding'] != binding or existing['coefficients_sha256'] != coefficient_sha \
+            or existing.get('inputs_sha256') != fingerprint or existing.get('refitted') is not False:
+        raise ValueError('Sealed confirmation input binding changed')
+    result = existing['comparison']
+    expected = improves(result['metrics']['calibrated']['macro']['mae'],
+                        result['metrics']['native']['macro']['mae'])
+    if result['strictly_improved'] != expected:
+        raise ValueError('Stored confirmation gate disagrees with original strict rule')
+    return existing
+
+
 def confirm_dataset(cfg,output,name,inference=False):
     if not inference:
         cpu_only()
@@ -360,14 +380,20 @@ def confirm_dataset(cfg,output,name,inference=False):
         if not read(output/'confirmation'/(old+'.json'),{}).get('comparison',{}).get('strictly_improved'):
             raise ValueError('Earlier confirmation incomplete/failed')
     pair={}
+    input_hashes={}
     for mode in ['native']+(['gofa'] if p['coefficients'][name]['full']['weights'].get('gofa',0)!=0 else []):
         folder=output/'evaluations'/f'confirm-{name}-{mode}'
         if not read(folder/'complete.json',{}).get('complete'):
             raise ValueError('Confirmation forecasts incomplete')
-        pair[mode]=[read_shard(folder,i,q,inference_binding(m,sha(output/'manifest.json'),name,mode),{})
+        input_hashes[str(folder/'complete.json')]=sha(folder/'complete.json')
+        pair[mode]=[read_shard(folder,i,q,inference_binding(m,sha(output/'manifest.json'),name,mode),input_hashes)
             for i,q in enumerate(m['queries'][name][64:])]
+    fingerprint=confirmation_fingerprint(output,m,p,lock,name,input_hashes)
+    existing=read(output/'confirmation'/(name+'.json'))
+    if existing is not None:
+        return sealed_confirmation(existing,p['binding'],lock['coefficients_sha256'],fingerprint)
     result=compare(cfg,output,name,pair['native'],pair.get('gofa'))
-    value=dict(binding=p['binding'],coefficients_sha256=lock['coefficients_sha256'],comparison=result,refitted=False)
+    value=dict(binding=p['binding'],coefficients_sha256=lock['coefficients_sha256'],comparison=result,refitted=False,inputs_sha256=fingerprint)
     (output/'confirmation').mkdir(exist_ok=True)
     immutable(output/'confirmation'/(name+'.json'),value)
     if not result['strictly_improved']:
