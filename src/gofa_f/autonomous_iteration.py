@@ -49,12 +49,28 @@ def config_validate(cfg):
         raise ValueError('Stage30 preregistered candidate/resource/deadline policy changed')
 
 
+def exited_parent(root):
+    """Stage29 legitimately stopped before creating any GPU supervisor."""
+    if (root/'launcher.json').exists():
+        exited(root)
+        return
+    from gofa_f.idle_launcher import process_identity
+    for path in [root.with_suffix('.launch.json'),root.with_suffix('.bootstrap.launch.json')]:
+        identity=read(path,{})
+        if identity.get('pid') and process_identity(identity['pid'])==str(identity.get('start_ticks')):
+            raise ValueError('Parent CPU controller still alive')
+    if read(root/'activity.json',{}).get('worker') is not None \
+            or read(root/'cpu_activity.json',{}).get('active') is not None \
+            or read(root/'status.json',{}).get('state')!='complete':
+        raise ValueError('Parent activity must be terminal and empty')
+
+
 def prepare(cfg, output):
     cpu_only()
     config_validate(cfg)
     check_time()
     root = Path(cfg['stage29_output'])
-    exited(root)
+    exited_parent(root)
     if read(root/'status.json')['stop_reason'] != 'failed_cpu_development_gate' \
             or sha(root/'manifest.json') != cfg['stage29_manifest_sha256']:
         raise ValueError('Sealed failed Stage29 and immutable inputs required')

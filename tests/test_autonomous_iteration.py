@@ -81,3 +81,18 @@ def test_deadline_is_fixed(monkeypatch):
     with pytest.raises(TimeoutError):
         check_time()
     assert DEADLINE==1792638912.
+
+
+def test_cpu_only_parent_does_not_require_gpu_launcher(tmp_path,monkeypatch):
+    from gofa_f.autonomous_iteration import exited_parent
+    from gofa_f.prefix_cache import atomic_json
+    import gofa_f.idle_launcher as launcher
+    atomic_json(tmp_path/'status.json',dict(state='complete'))
+    atomic_json(tmp_path/'activity.json',dict(worker=None))
+    atomic_json(tmp_path/'cpu_activity.json',dict(active=None))
+    atomic_json(tmp_path.with_suffix('.bootstrap.launch.json'),dict(pid=999,start_ticks='42'))
+    monkeypatch.setattr(launcher,'process_identity',lambda _:None)
+    exited_parent(tmp_path)
+    monkeypatch.setattr(launcher,'process_identity',lambda _:'42')
+    with pytest.raises(ValueError,match='still alive'):
+        exited_parent(tmp_path)
