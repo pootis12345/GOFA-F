@@ -1,0 +1,14 @@
+{
+  "stage32_stop_reason": "failed_confirmation_sdwpf",
+  "native_confirmation_mae": 221.66269331543893,
+  "calibrated_confirmation_mae": 232.29043770076507,
+  "new_gpu_activity_seconds": 480.76947374548763,
+  "cumulative_gpu_seconds": 3367.8334118863568,
+  "cpu_seconds": 997.0672311075032,
+  "peak_group_mib": 14362,
+  "stage33_preregistered": true,
+  "stage33_gpu_started": false,
+  "frozen_test_replayed": false,
+  "target_supervised": true,
+  "strict_zero_shot": false
+}
