@@ -1,5 +1,16 @@
 # 运行交接记录
 
+## Stage26已部署：六集目标验证校准小试运行中
+
+2026-10-21 19:09北京时间观测：固定源码30c9aaa，独立v1快照/输出；原Stage23—25保持停止，父3500 SHA不变。CPU完整回归638通过、21可选依赖跳过；冻结数值核与原验收文件SHA逐一一致，复用绑定的CPU证明。实际CUDA四项源病例token精确重放已通过；PeMS03原生新查询的完整/增量路径及采样token验收通过，其余每集每模型在正式预测前按原容差检查。
+
+当前pilot-pems03-native，15/64查询及第16条第7/8轨迹已保存；累计GPU活动115.97秒，等待0、资源暂停0、项目组观测峰14362MiB。该观测仅说明小试正在运行，尚未拟合/封存12个部署参数，未完成任一道确认，也未重放测试。
+
+使用memory_cap_only共享准入，不等GPU空闲，项目40GiB/Torch38GiB、10秒审计；没有墙钟/活动硬截止，每小时跟进关闭。CPU拟合只读48条拟合记录，封存后才读取16条小试确认；六集全部严格优于原生才继续64条独立确认。再次六集全部通过后，只用CPU重放Stage21冻结测试预测。任一道门槛失败即封存结束，不调参、不追加样本或神经训练。结果应称目标验证校准系统，非严格零样本。
+
+[协议与进度接口](STAGE26_PROTOCOL.md)、[脱敏部署观测](results/stage26-deployment-public-summary.json)。
+
+
 ## Stage25已结束：25更新快速源门槛失败，未进入确认或目标评价
 
 2026-10-21 17:52:52北京时间，父3500＋新增25更新按预设止损正常结束，返回码0；监督器/worker均退出，activity.worker为空。96条同查询8采样中位数快速验证：流量31.181383（较父−0.68%）、速度2.060800（＋2.25%）、Boston气温3.778002°C（＋3.49%）、风电243.620489（−1.27%）。速度和气象均超过父模型2%止损线。
@@ -58,33 +69,52 @@ GPU活动6小时37分13秒、等待48分10秒、项目峰14.96GiB、资源暂停
 [最终诊断](STAGE23_RESULTS.md)、[完整脱敏证据](results/stage23-source-results-public-summary.json)。
 
 
-## Stage23领域匹配源适应：启动修复与CPU验收通过
+## Stage23 v2：启动修复后已部署，等待完全空闲（2026-10-20）
 
-Stage22独立外部门控路线已停止并保留源确认失败证据；没有新增六目标预测。
-Stage23从唯一3500父适配器参数热启动，新建优化器；最多新增1000更新，不称Stage19精确恢复。
-PEMS04流量/速度307节点、Boston2017气温16站、Penmanshiel2017功率14台的数据审计通过。
-固定训练32768查询、每轮源验证384、独立确认384；Stage22已看保留段标签窗已排除。
-v1真实7B FP32完整验收已经通过，但后续CPU部署脚本误用了读取接口，未启动GPU或正式训练，失败快照和结果保留。
-v2修复首次启动及汇总入口的可选状态读取，完整CPU回归595通过/21旧可选跳过；新增启动链路、重复启动拒绝及证明绑定测试。
-数值模型、训练函数、数据和查询不变；原真实CPU证明经严格白名单和全清单核对复用，记录来源和哈希，实际CUDA仍须独立验收。
-v2已封存部署并核实监督器健康，当前等待完全空闲，GPU worker未启动、正式新增更新0；不预报GPU验收或训练通过。
-仅源训练、源验证选模和独立源确认；无六目标新评价，无架构或数值头搜索。
-完全空闲10秒连续3次准入，项目40GiB/Torch38GiB审计，无活动/墙钟硬截止，每小时跟进关闭。
-详细服务器路径、进程身份和运行证据只在B/C保留。
-[固定协议](STAGE23_PROTOCOL.md)。
-[启动修复与CPU摘要](results/stage23-bootstrap-fix-v2-public-summary.json)。
+v1真实7B FP32完整CPU验收通过（全部新源非零更新/预测/梯度/冻结/物化状态恢复）；随后启动脚本误用graph_benchmark.read，TypeError发生在准入监督器启动之前。其快照与输出保留，未启动GPU、未正式更新、父3500 SHA不变。原CPU控制器131965/start_ticks642325160及120762/start_ticks642247886已核实退出。
+修复仅将启动器与CLI汇总的可选JSON读取改为既有支持缺省值的接口，新增首次启动、重复启动拒绝、不完整汇总和证明复用拒绝测试。C禁CUDA两线程完整回归595通过/21旧可选跳过；原数值文件、数据、查询、权重和配置全清单一致，原真实FP32证明按严格读取导入白名单复用，记录来源哈希。原GPU验收不复用。
+运行源码deba7b3ee45c951217fca489b2364cbc9a257160；新固定快照/home/dcg/dcg_data/GOFA-F-runs/stage23-source-retraining-v2，输出/home/dcg/dcg_data/GOFA-F/outputs/stage23-source-retraining-v2。manifest SHA9d2b5cb1d9c2856adda7d53699379d9eaf4b86a380e8051da9616f0c8ec4f224，CPU proof SHA4bb8da70996ee4548d60af121e3e2740d7acd9a1299d00f520625422ea1a0943。
+新监督器147211/start_ticks642439678已按同级.launch.json重核存活，launcher=waiting_for_idle/consecutive0，activity.worker=null，GPU活动0，正式新增更新0；GPU正在被其他任务使用。使用前重核身份，不重复启动；未获GPU准入，不声称CUDA机制通过。
+后续连续三次10秒完全空闲准入→真实CUDA机制→Native/父3500源基线→最多新增1000更新→源选模与确认；原40GiB/38GiB审计、无限时钟、目标评价关闭及每小时跟进关闭保持不变。历史v1失败记录不自动恢复。
+在B运行`.remote/Watch-Stage23.ps1`，或在C进度命令中改用stage23-source-retraining-v2输出目录；等待和缺少训练测速时ETA为unknown。
 
-## Stage22源共享幅度门控：实现与CPU验收
+## Stage23：CPU验收与一次性交接控制器已部署（2026-10-20）
 
-固定3500更新源最佳检查点，不更新LLM/图模块，不使用数值预测头，不拟合目标标签。
-门控使用历史和图质量11特征，唯一浅树从0/.25/.5/1选择单路径图幅度。
-四源128拟合查询、128独立时间确认；先门控留一源，再源确认，均要求S≤.99且最差源≤1.02。
-只有两道通过并封存共享门控后，才在原Stage21六集固定768查询上评测，不按目标结果返调。
-最终固定代码CPU完整回归576通过、21旧可选依赖跳过；Stage22专项15项通过，未创建CUDA上下文。
-源保留段隔离审计覆盖17份既有项目清单。CPU证明不代替真实BF16 GPU机制验收。
-完全空闲10秒连续3次准入、40GiB项目组/38GiB Torch审计、无活动或墙钟硬截止、每小时跟进关闭。
-具体服务器路径、进程身份和运行证据只在本地及训练服务器保留，不随本次文档发布。
-[固定协议](STAGE22_PROTOCOL.md)、[去除运行元数据的CPU摘要](results/stage22-cpu-public-summary.json)。
+Stage22独立外部门控路线终止；其独立源确认AQ比值1.05735974超过1.02，未启动六目标新预测。旧监督器/worker已核实退出，activity.worker=null，失败与活动证据保留。
+Stage23复用3500父适配器SHA816d38b577a6664f30dd6e6b6d50986a77b098ce9c4c0b0ffb63d70078b26f15，只热启动参数，不继承Stage19优化器。
+四视图原始数据审计通过：PEMS04流量/速度各16992×307、Boston2017气温8760×16、Penmanshiel2017功率52560×14。
+Boston前60%覆盖率门槛和地理筛选通过；风电两个2017归档、坐标和信号映射发布MD5通过，保留WT03缺席与负功率。
+每视图8192训练查询、每轮384验证、384独立确认与64诊断清单已封存；排除Stage22查看过的PEMS04确认标签窗，六目标观测隔离通过。
+新增代码静态检查和C禁CUDA完整回归586通过/21旧可选跳过；真实7B FP32非零路径重验正在执行，尚不能称CPU/GPU机制全部通过或已开始训练。
+初次验收参考误用了旧三维CE执行核；具体病例完整/前缀/优化logits差均0，改用当前生产有效槽CE后所有命名梯度差0。旧失败与定位证据保留，不改生产训练损失或1e−6/2e−3容差。
+公开代码229a5bb4f3672667cba82ea9452227e49c45548d已同步GitHub独立分支和C。真实CPU检查PID120762/start_ticks642247886，独立交接CPU控制器PID131965/start_ticks642325160；使用前重核身份。
+CPU交接当前waiting_for_complete_cpu_proof，仅在完整证明通过、开发与固定快照清单SHA相同后新建stage23-source-retraining-v1快照/输出，并部署完全空闲等待器；任一失败闭锁，不建CUDA上下文或自动跳过验收。
+同级.bootstrap.launch.json指向CPU交接控制器；部署后读取同级.launch.json与activity核实实际监督器/worker，禁止重复启动。具体小型证明见本地.remote下Stage23证据。
+后续只在完整CPU及真实BF16 GPU机制通过后执行两组源基线、最多新增1000更新、唯一源选模与确认；本轮六目标新预测0。
+完全空闲10秒连续3次准入，项目40GiB/Torch38GiB审计，无时间硬截止；每小时跟进关闭。
+[固定协议](STAGE23_PROTOCOL.md)。具体运行身份及固定快照部署证据仅保留B/C。
+在B查看当前源/轮次/总体进度与ETA：`.remote/Watch-Stage23.ps1`；CPU准备或未知空闲等待ETA显示unknown。
+
+## Stage22源训练共享图幅度门控：已部署完全空闲等待器（2026-10-20）
+
+用户授权执行Stage22。冻结3500更新适配器SHA `816d38b577a6664f30dd6e6b6d50986a77b098ce9c4c0b0ffb63d70078b26f15`，不更新LLM或图参数、不使用数值头。
+单查询以历史/图质量11特征共享浅树选择alpha=0/.25/.5/1，两次全节点图交换同幅度；alpha0直接走原生。
+四源128拟合查询、128末20%确认查询；先门控留一源，再独立时间确认，两道均S≤.99且最差源≤1.02。
+只有通过两道源门禁并封存唯一门控SHA后才评价固定Stage21六集各128查询；目标标签不拟合，不新增架构搜索。
+C最终固定快照禁CUDA两线程完整回归576通过/21旧可选跳过，15项Stage22专项全部通过。
+真实256源查询清单和特征已核验，17份原项目源清单/诊断清单的保留段隔离审计通过。
+固定源码6b27b5fef2ae6fd6a9f9bf12cc94faf4f0f54c4a已同步GitHub独立分支和B/C，快照/输出stage22-source-reliability-gate-v1。
+最终清单SHA dafec72dfa01f07b0ddbcc8b6d8d179a759b55516cd58aca405bff11014e4218；CPU证明绑定通过。
+CPU监督器4185201/start_ticks641107138身份已核实健康，waiting_for_idle/consecutive0，worker=null、GPU活动0、无failures。
+真实BF16原生/alpha1四项重放与alpha.25/.5非零完整/增量机制仍待实际准入，不把CPU通过当GPU通过。
+完全空闲10秒连续3次、项目40GiB/Torch38GiB及10秒审计不变；无墙钟/活动硬截止，每小时跟进保持关闭。
+源门禁失败即正常结束试验，不据目标测试改规则；Stage19/20/21旧输出不覆盖。
+[固定协议](STAGE22_PROTOCOL.md)、[实际部署与CPU证据](results/stage22-source-gate-v1-deployed.json)。
+在C查看进度及ETA：
+```bash
+PYTHONPATH=/home/dcg/dcg_data/GOFA-F-runs/stage22-source-reliability-gate-v1/src /home/dcg/dcg_data/GOFA-F/.venv-chat/bin/python -m gofa_f.source_gate_progress /home/dcg/dcg_data/GOFA-F/outputs/stage22-source-reliability-gate-v1 --watch
+```
+等待ETA未知且不计GPU活动；准入后先真实机制，再源拟合/留一源、源确认，均通过后才六集。
 
 ## Stage21六集图专项已全部完成（2026-10-20 16:20:49，北京时间）
 
@@ -126,6 +156,30 @@ C禁CUDA、OMP/MKL各2线程完整回归552通过/21旧可选依赖跳过；审�
 旧结果/检查点保留，每小时跟进继续关闭。需要先明确修订AQI数据选择，才能推进其余实施。
 [审计结论及证据](STAGE21_AQI_AUDIT_RESULTS.md)、[门禁协议](STAGE21_GRAPH_BENCHMARK_PROTOCOL.md)。
 
+## Stage20 目标验证校准已开始（2026-10-20 12:40核验，Asia/Shanghai）
+
+固定运行源码307b496a68e34dd994307c1ff25384b0e43012ea，独立快照/输出`stage20-target-calibration-v1`，不覆盖Stage19。
+监督器3961439/start_ticks639212682、GPU worker3961891/start_ticks639214728身份均核实健康。
+同一3500源最佳SHA816d38b577a6664f30dd6e6b6d50986a77b098ce9c4c0b0ffb63d70078b26f15不变，无优化器更新，图alpha=1。
+C禁CUDA两线程CPU完整回归544通过/21旧可选依赖跳过，真实1152验证查询、官方10000数值词表及适配器严格加载通过。
+真实GPU先完成NN5变量92/PEMS04变量102、原生/图模型四项源重放：历史token精确一致，完整/缓存logits最大差0，
+有无概率观测轨迹一致，原BF16 2e-3容差不变，梯度全空；随后才开始验证预测。
+12:40处于validation-etth1-native，已保存24/128查询，当前第7/8采样；整体数值槽4776/335872，约1.42%。
+当前速率总体ETA约2.71小时，仅早期粗估，不含未知等待；九集各128条、双模型18432轨迹预算固定。
+当时累计活动159.682秒、等待20.002秒、资源暂停0；项目组当前/峰14306MiB，低于40GiB，无failures。
+每集前96验证查询拟合唯一lambda，后32独立确认；未支持严格改善则lambda=0，不用全部128重拟合。
+GPU预测结束且worker退出后，自动CPU核验验证记录、封存九系数，再复用Stage19冻结2121配对测试预测汇总三组结果；不重新生成测试轨迹。
+目前没有完整验证、系数封存或测试重放结果，不能声称九集均改善；任何持平/退化均如实判定目标未达成，不据测试返调。
+本轮属于目标验证校准系统，非严格零样本；Stage19原零样本结果保留，已看目标测试成绩的开发暴露须披露。
+完全空闲10秒连续3次准入、项目40GiB/Torch38GiB和10秒审计不变。训练及每小时跟进继续关闭。
+[固定协议与限制](STAGE20_PROTOCOL.md)、[CPU证明](results/stage20-target-calibration-v1-cpu.json)、[实际部署与四项GPU验收](results/stage20-target-calibration-v1-deployed.json)。
+实施代码307b496已同步GitHub/B/C；新增部署交接文档目前仅在B。自动审批拒绝其GitHub推送及C上传，理由是包含服务器路径、进程标识和运行证据且需具体外发授权；未绕过拦截，GPU任务不受影响。
+
+在C查看当前验证采样进度和总体ETA：
+```bash
+PYTHONPATH=/home/dcg/dcg_data/GOFA-F-runs/stage20-target-calibration-v1/src /home/dcg/dcg_data/GOFA-F/.venv-chat/bin/python -m gofa_f.short_target_progress /home/dcg/dcg_data/GOFA-F/outputs/stage20-target-calibration-v1 --watch --interval 10
+```
+
 ## Stage19 九目标均衡版全部完成（2026-10-20 完成后CPU核验，Asia/Shanghai）
 
 2026-10-20 06:34:38完成九集全部18个模型/数据集组合，监督器与GPU worker正常退出（returncode0），activity.worker=null，无failures。
@@ -145,7 +199,7 @@ Traffic/Electric/PEMS08每变量1起点，Weather48→24自定义，单种子/�
 ## Stage19 九目标均衡版已开始（2026-10-20 00:38，Asia/Shanghai）
 
 固定运行源码9d5b5ef9d3b818a51f85620a10a48dc3cb8f15a9，快照/输出`stage19-nine-targets-sample8-balanced-v4`。
-监督器[本地保留]/start_ticks[本地保留]、GPU worker[本地保留]/start_ticks[本地保留]身份均已核验健康。
+监督器3469946/start_ticks634887041、GPU worker3470222/start_ticks634889093身份均已核验健康。
 3500源最佳SHA816d38b577a6664f30dd6e6b6d50986a77b098ce9c4c0b0ffb63d70078b26f15不变，源选模封存SHA也未变；优化器更新0。
 完整CPU回归530通过/21旧可选依赖跳过，全部2121查询覆盖和官方数值词表通过。
 真实CUDA先完成NN5变量92/PEMS04变量102的原生及图模型四项源重放：
@@ -162,7 +216,7 @@ v1–v3只有源病例诊断，无目标预测，均已退出；额外切换全�
 
 在C查看当前阶段/采样进度和总体ETA：
 ```bash
-PYTHONPATH=${LOCAL_PATH} ${LOCAL_PATH} -m gofa_f.short_target_progress ${LOCAL_PATH} --watch --interval 10
+PYTHONPATH=/home/dcg/dcg_data/GOFA-F-runs/stage19-nine-targets-sample8-balanced-v4/src /home/dcg/dcg_data/GOFA-F/.venv-chat/bin/python -m gofa_f.short_target_progress /home/dcg/dcg_data/GOFA-F/outputs/stage19-nine-targets-sample8-balanced-v4 --watch --interval 10
 ```
 
 ## Stage19 九目标均衡版准备通过（2026-10-20，Asia/Shanghai）
@@ -180,7 +234,7 @@ C禁CUDA、OMP/MKL各2线程，Ruff与完整CPU回归529通过/21旧可选依赖
 ## Stage19 源训练与8采样验证已完成，唯一最佳3500更新（2026-10-19 23:49核验）
 
 22:30:35完成4000更新及最终2264/2264源验证，停止max_updates，未触发早停；22:30:37监督器正常退出。
-监督器[本地保留]/start_ticks[本地保留]和worker[本地保留]/start_ticks[本地保留]均已退出，activity.worker=null，无GPU应用，无failures。
+监督器2704484/start_ticks628044510和worker2704667/start_ticks628046558均已退出，activity.worker=null，无GPU应用，无failures。
 源最佳3500更新S=0.7808726295；唯一适配器SHA816d38b577a6664f30dd6e6b6d50986a77b098ce9c4c0b0ffb63d70078b26f15。
 4000更新S=0.9103318707，未替换最佳。主要AQ退化，RAIN近零比值132.052解释约72%对数回退，其余AQ变量也有实际退化。
 最终source_final_selection已锁定，CPU report-only核验适配器及选模SHA未变；无目标预测，不自动重训或进入九目标。
@@ -196,8 +250,8 @@ C禁CUDA、OMP/MKL各2线程，Ruff与完整CPU回归529通过/21旧可选依赖
 无时间硬截止，40GiB项目组/38GiB Torch和10秒资源审计不变。不运行九目标，不恢复每小时跟进。
 C禁CUDA且OMP/MKL各2线程，Ruff与完整CPU回归522通过/21旧可选依赖跳过；张量/训练/采样路径哈希与v1一致。
 运行源码e5333db48bc09a4c6e62c87cd4e4b4a04427eee4，固定快照与输出stage19-sampled-continuation-v2。
-CPU交接器PID[本地保留]/start_ticks[本地保留]已实际部署且身份健康，handoff=waiting_for_sampled_1500_validation，无CUDA上下文。
-旧v1监督器[本地保留]/start_ticks[本地保留]、worker[本地保留]/start_ticks[本地保留]继续健康，未重启。
+CPU交接器PID2519647/start_ticks626154672已实际部署且身份健康，handoff=waiting_for_sampled_1500_validation，无CUDA上下文。
+旧v1监督器2489771/start_ticks625874964、worker2489960/start_ticks625877022继续健康，未重启。
 00:22原生源基线1123/2264查询已保存，正式仍1177更新/pending30；真实1500迁移在旧任务完成后执行并核验。
 当前不宣称1500已完成或后续训练已启动；完成后自动交接并重新等待完全空闲，无需人工批准。
 [新授权执行协议](STAGE19_SAMPLED_CONTINUATION_V2.md)，[CPU证明](results/stage19-sampled-continuation-v2-cpu.json)，
@@ -214,7 +268,7 @@ C禁CUDA、OMP/MKL各2线程：Ruff通过，最终完整回归515通过/21旧可
 真实1177模型/AdamW/部分梯度/RNG/状态序列化精确迁移；新增端到端CPU测试确认先评价、再更新、1500必停。
 张量模型/训练/采样路径均未改，依据文件哈希复用既有真实FP32/BF16非零预测/梯度、训练优化与8采样KV证明。
 运行提交01f89fa696803bf78e2a1e5099651f6d0e9cfb5b，固定快照/输出stage19-sampled-continuation-v1。
-监督器[本地保留]/start_ticks[本地保留]，worker[本地保留]/start_ticks[本地保留]，身份已核实。
+监督器2489771/start_ticks625874964，worker2489960/start_ticks625877022，身份已核实。
 三次10秒完全空闲准入后已开始sampled-native，23:37已保存61/2264查询、492/18112轨迹；
 当前阶段ETA约5527秒，仅指原生基线，排除后续1000/1500验证、训练和未知等待，不作硬截止。
 restore_audit.passed=true：实际GPU模型、AdamW、部分梯度、RNG精确恢复；仍1177更新/pending30，不提前训练。
@@ -239,7 +293,7 @@ alpha1→alpha0.25查询等权MAE：Solar1.188772→0.902364，NN56.412708→7.6
 PEMS0428.116404→35.151563，AQ11.383619→10.920616；影响混杂，不设为默认幅度。
 Solar教师中位数改善但自由误差仍较原生差，AQ的CE改善未带来教师中位数改善；不能单因归于增量过大。
 诊断活动122.073649秒，等待20.001656秒，项目组峰14488MiB；Torch reserved峰14564720640字节，资源暂停0。
-监督器[本地保留]/start_ticks[本地保留]与worker[本地保留]/start_ticks[本地保留]均核实退出，activity.worker为空。
+监督器2457459/start_ticks625576693与worker2457641/start_ticks625578741均核实退出，activity.worker为空。
 原训练仍1177更新/pending30查询390标签暂停；last/best哈希锁定，每小时跟进仍PAUSED，目标评价0。
 [协议](STAGE19_STABILITY_DIAGNOSTIC_PROTOCOL.md)，[阶段报告](STAGE19_STABILITY_DIAGNOSTIC_RESULTS.md)，
 [CPU证明](results/stage19-stability-diagnostic-v1-cpu.json)，[完整证据](results/stage19-stability-diagnostic-v1-result.json)，
@@ -255,7 +309,7 @@ Solar教师中位数改善但自由误差仍较原生差，AQ的CE改善未带�
 仅32条subset_S贪心1.05570665→采样0.88712793；不能替代完整2264验证S或改变最佳/早停。
 单列NN5变量92图模型MAE75.7884→8.0860，原生8.2255→9.6802；不重复不等于必然更准。
 生产仍1177更新/pending30查询390标签用户暂停，last SHA a37c4f4e793d073d20c8bc2af9ba437977a068f953518e134fd4794ac278cd3b未变。
-监督器[本地保留]和worker[本地保留]均退出；独立活动254.304663秒、等待510.033447秒、组峰14468MiB、资源暂停0。
+监督器2375170和worker2381719均退出；独立活动254.304663秒、等待510.033447秒、组峰14468MiB、资源暂停0。
 运行源码a86a4d93d770f9abb06b2845b4a756c6e26c67f3/独立stage19-sampling-diagnostic-v1，不是官方FP16/16+8协议。
 CPU496通过/21跳过；没有反传/更新/目标评价，不自动训练、改解码选模或开启每小时跟进。
 [结果报告](STAGE19_SAMPLING_DIAGNOSTIC_RESULTS.md)，[完整证据](results/stage19-sampling-diagnostic-v1-result.json)，
@@ -280,7 +334,7 @@ CPU487通过/21旧可选跳过，真实GPU已完成，故障0/更新0/目标0；
 ## Stage19暂停后的检查已完成，训练仍暂停（2026-10-18 20:04，Asia/Shanghai）
 
 独立stage19-source-diagnostic-v1共34查询/170记录已完成，0优化器更新、0目标预测。
-诊断监督器[本地保留]及worker[本地保留]均已核实退出，activity.worker为空；没有自动恢复训练。
+诊断监督器2330620及worker2332522均已核实退出，activity.worker为空；没有自动恢复训练。
 生产仍1177更新/pending30查询390标签，last SHA a37c4f4e793d073d20c8bc2af9ba437977a068f953518e134fd4794ac278cd3b不变。
 CPU480通过/21旧可选跳过；102组既有生成原始token全部复现；4组已训练检查点缓存/无缓存logits差0、token一致。
 发现1000更新NN5两层图delta/hidden平均0.903/0.975，门均值0.848/0.914；
@@ -293,7 +347,7 @@ CPU480通过/21旧可选跳过；102组既有生成原始token全部复现；4�
 
 ## Stage19用户暂停训练并开始固定源诊断（2026-10-18，Asia/Shanghai）
 
-用户要求先暂停训练进行检查。19:42已安全停止监督器[本地保留]与worker[本地保留]，
+用户要求先暂停训练进行检查。19:42已安全停止监督器2108414与worker2114376，
 保留1177更新/pending30查询、全部部分梯度/AdamW/RNG/游标/两轮验证和源最佳。
 last SHA a37c4f4e793d073d20c8bc2af9ba437977a068f953518e134fd4794ac278cd3b，
 best SHA18128f46578da279f842e9b2efe3cfa3d5c6a27f7404b67e135ab5c07f765db9。
@@ -369,8 +423,8 @@ NN5边界预测从首轮53.03%升至56.78%，原生20.15%；此前端点聚集�
 
 ## Stage19 v5 修复：仅选有效位置，恢复原语言头投影宽度（2026-10-18，Asia/Shanghai）
 
-最新15:31只读核验：v5已通过全部真实CUDA验收并恢复训练，监督器[本地保留]/start_ticks[本地保留]、
-worker[本地保留]/start_ticks[本地保留]身份正常。fresh及实际98更新continued优化检查均passed，
+最新15:31只读核验：v5已通过全部真实CUDA验收并恢复训练，监督器2108414/start_ticks622906415、
+worker2114376/start_ticks622953202身份正常。fresh及实际98更新continued优化检查均passed，
 数值logits对照差0，全部命名梯度通过原BF16 2e-3，真实24数值/47token完整与增量生成原始token一致。
 当前约114/4000更新，实际微2、有效64；第1/8 epoch约7280/32768（22.2%），无failures、资源暂停0。
 项目组观测约17152MiB（16.75GiB）、历史峰17246MiB，低于40GiB限制。
@@ -381,10 +435,10 @@ worker[本地保留]/start_ticks[本地保留]身份正常。fresh及实际98更
 在C查看当前固定快照进度（Ctrl+C仅退出查看）：
 
 ```bash
-STAGE19_RUN=${LOCAL_PATH}
-STAGE19_CODE=${LOCAL_PATH}
+STAGE19_RUN=/home/dcg/dcg_data/GOFA-F/outputs/stage19-short-generative-chattime-v5
+STAGE19_CODE=/home/dcg/dcg_data/GOFA-F-runs/stage19-short-generative-chattime-v5
 CUDA_VISIBLE_DEVICES='' OMP_NUM_THREADS=2 MKL_NUM_THREADS=2 PYTHONPATH="$STAGE19_CODE/src" \
-  ${LOCAL_PATH} -m gofa_f.short_progress "$STAGE19_RUN" --watch --interval 10
+  /home/dcg/dcg_data/GOFA-F/.venv-chat/bin/python -m gofa_f.short_progress "$STAGE19_RUN" --watch --interval 10
 ```
 
 输出native 2264/2264表示旧原生基线完成，不代表训练后的源验证已完成。以下为修复与部署历史。
@@ -408,11 +462,11 @@ v5采用原42001列×128行冻结头执行，仅投影有效数值标签前一�
 证据：[stage19-head-projection-diagnostic-v1.json](results/stage19-head-projection-diagnostic-v1.json)。
 
 v5固定源码384205872c3d53c7bab91e592da7a8e07d629194，快照/输出stage19-short-generative-chattime-v5。
-15:01:07 CPU控制器[本地保留]/start_ticks[本地保留]启动，固定快照466通过/21旧可选跳过。
+15:01:07 CPU控制器2093252/start_ticks622792802启动，固定快照466通过/21旧可选跳过。
 15:20:03完整真实7B FP32 fresh及98更新/pending48 continued均passed，未复用旧真实CPU证明；
 四组mixed/maximum × compact1/batch2数值logits差均0，全部命名梯度、生成token和恢复机制通过1e-6。
 新last.pt SHA b9211fdfb25a06f6edd841c230f696990699f1c5c113dff66ba6e208d25bc922，状态精确接续。
-监督器[本地保留]/start_ticks[本地保留]已自动部署且身份正常；15:23观测waiting_for_idle/consecutive0、worker=null。
+监督器2108414/start_ticks622906415已自动部署且身份正常；15:23观测waiting_for_idle/consecutive0、worker=null。
 GPU当时有其他任务约47GiB，故新CUDA机制尚未开始，不能声称已恢复训练或已经测得提速。
 监督器继续按3×10秒完全空闲准入，之后必须CUDA fresh和continued全部通过才恢复训练。
 每小时跟进仍PAUSED。实际CPU证明、迁移和等待器证据：
@@ -435,7 +489,7 @@ mixed:compact1:numeric_logits失败：46539/250000元素超差，最大绝对差
 真实差异发生于10000有限词表紧凑投影。之前修复dtype误判有效，但不足以消除真实CUDA差异。
 GEMM列数、布局及归约差异待查，不能当已证实根因，不原样重启或关闭检查。
 
-监督器[本地保留]/start_ticks[本地保留]及GPUworker已退出，activity.worker=null。
+监督器2055070/start_ticks622508163及GPUworker已退出，activity.worker=null。
 正式仍98更新/pending48查询/482标签，2264原生基线完整；无首次源验证、最佳或目标预测。
 失败后last SHA4316568f0394f2b05e729ce0bde28ba21bba0075c123f30d196d7056cec35e8c；
 CPU逐张量核验adapter/AdamW/部分梯度/RNG/参数版本及全部语义游标仍与v2根状态精确一致。
@@ -446,7 +500,7 @@ CPU逐张量核验adapter/AdamW/部分梯度/RNG/参数版本及全部语义游�
 ## Stage19 v4 修复 CUDA 验收 dtype 误判并重新部署（2026-10-18，Asia/Shanghai）
 
 用户明确要求“直接修复并重新部署”。v3真实CPU验收全部通过，但GPU fresh三次诊断更新后，
-在mixed:compact1:numeric_logits验收失败，正式训练未恢复。监督器[本地保留]、worker及CPU控制器均退出。
+在mixed:compact1:numeric_logits验收失败，正式训练未恢复。监督器2033807、worker及CPU控制器均退出。
 失败后last.pt SHA d9532487337bc15544d8bc48756a4b3345deb8b4a85233f4891942f463ae340c；
 CPU逐张量核验adapter/AdamW/部分梯度/RNG/参数版本及98更新/pending48/482标签，与v2祖先精确一致。
 累计活动1979.980863652192秒、等待190.0142307113856秒、峰17246MiB、资源暂停0，不丢弃失败成本。
@@ -463,9 +517,9 @@ v4只接续已退出且失败阶段为gpu_mechanisms、无新评价/选模的v3�
 才移交v3已通过的真实FP32证明；记录原证明SHA和当前等价checkpointSHA，不复用任何CUDA验收。
 每新GPUworker仍三次完全空闲/10秒准入，40GiB组/38GiB Torch上限，v3旧快照和失败证据保留。
 固定运行源码72c7b874fc2f75fece2461cb0c67b7a8a75dd584；独立快照及输出均为stage19-short-generative-chattime-v4。
-2026-10-18 14:13:00 CPU控制器[本地保留]/start_ticks[本地保留]启动，固定快照回归456通过/21旧可选跳过，
+2026-10-18 14:13:00 CPU控制器2054482/start_ticks622504161启动，固定快照回归456通过/21旧可选跳过，
 完整CPU证明passed=true，符合上述严格哈希条件的真实FP32证明移交已记录；新CUDA证明未复用。
-14:13:40自动部署监督器[本地保留]/start_ticks[本地保留]，身份已核实，当前waiting_for_idle、consecutive=0、worker=null。
+14:13:40自动部署监督器2055070/start_ticks622508163，身份已核实，当前waiting_for_idle、consecutive=0、worker=null。
 迁移state_restore=exact：98更新/pending48/482标签，2264原生基线保留，累计活动及显存峰值不变。
 新last.pt SHA abd3e6bc4228e43f1a4034162b6b5bd53b9553a064b4cfb7f48f846ec690f501。
 跟进已更新为v4并恢复启用；空闲后自动执行fresh和continued真实CUDA验收，通过才恢复训练。
@@ -474,7 +528,7 @@ v4只接续已退出且失败阶段为gpu_mechanisms、无新评价/选模的v3�
 
 ## Stage19 v3 实现紧凑训练输出与微批量2（2026-10-18，Asia/Shanghai）
 
-用户明确要求实现加速第1、2项。已合作停止v2监督器[本地保留]/worker[本地保留]并核实全部退出。
+用户明确要求实现加速第1、2项。已合作停止v2监督器1979918/worker1980823并核实全部退出。
 冻结源last.pt SHA为8a1bd0cb4f3105b0d596bf238a948acbcffa9759864efa5cab28f9117328a961：
 98更新、pending48查询/482有效数值、pending_loss230.88223726442084，16组部分梯度与AdamW状态。
 完整原生源基线2264条保留，SHA为5f45222a4fe05f5d130c96fab7e3b1ad605d575e1a8f3b5da2fbf3db79302314。
@@ -492,7 +546,7 @@ v3仅改变训练投影与微批处理：有效数值位置×10000有限词表�
 真实7B FP32和新鲜/实际98更新BF16证明以实际后续文件为准。
 未通过真实CUDA前不能称已恢复训练或已测得提速，不原地编辑v2固定快照。
 固定源码88311f4bbb60a57b0f00500c8ac04b5332546064；快照与输出后缀均为
-stage19-short-generative-chattime-v3。CPU控制器13:28:16启动，PID[本地保留]/start_ticks[本地保留]，
+stage19-short-generative-chattime-v3。CPU控制器13:28:16启动，PID2016888/start_ticks622235747，
 固定快照完整回归450通过/21跳过，migration.state_restore=exact，真实7B证明正在进行。
 详见[优化部署证据](results/stage19-v3-optimization-deployment.json)。自动跟进已转向v3，禁止重复启动。
 
@@ -501,13 +555,13 @@ stage19-short-generative-chattime-v3。CPU控制器13:28:16启动，PID[本地�
 用户批准修复Stage19审查问题后执行，选定生成式文本头、原生权重重新训练、每500更新验证、
 单块最多24步；最新明确取消增强样本预算。Stage18 v4继续保持停止，不导入其399更新状态。
 v1固定代码a9a04c2已通过435项CPU回归/21旧可选跳过，但真实7B CPU验收尚未结束时，
-复核发现训练循环在pending<64时误跳过下一查询。已合作停止CPU控制器[本地保留]及子进程[本地保留]，
+复核发现训练循环在pending<64时误跳过下一查询。已合作停止CPU控制器1960564及子进程1960565，
 两者身份与退出均核实；尚无GPU监督器/worker/基线/正式更新或目标预测。旧v1快照/准备结果保留。
 bootstrap的stopped_by_user是合作信号的通用状态，本次实际为代理修复停机，并非用户取消Stage19。
 v2修正调度并补充真实训练入口0/23/64累积查询恢复测试，C禁CUDA Ruff及29专项通过，
 全套439通过/21旧可选跳过。真实7B FP32/BF16验收仍以v2后续文件为准，不称GPU训练已启动。
 v2固定源码af41765e4f19911c7c0084942f130463e990713d，快照与输出后缀均为
-stage19-short-generative-chattime-v2。CPU控制器于12:33:11启动，PID[本地保留]/start_ticks[本地保留]；
+stage19-short-generative-chattime-v2。CPU控制器于12:33:11启动，PID1973198/start_ticks621905211；
 12:34已核实固定快照439回归通过/21跳过，真实7B FP32证明仍在进行，无GPU监督器或worker。
 小型部署证据见[Stage19 v2](results/stage19-v2-deployment.json)。后续CPU通过后自动等待三次完全空闲准入。
 
@@ -522,8 +576,8 @@ stage19-short-generative-chattime-v2。CPU控制器于12:33:11启动，PID[本�
 
 ## Stage18 v4 已按用户要求停止（2026-10-18 11:04，Asia/Shanghai）
 
-用户要求“先停止本轮运行”。已核验身份并向监督器发送合作停止信号；监督器[本地保留]、
-训练worker[本地保留]及已结束的CPU控制器[本地保留]均不存在，activity.worker为空。
+用户要求“先停止本轮运行”。已核验身份并向监督器发送合作停止信号；监督器1297535、
+训练worker1315456及已结束的CPU控制器1294987均不存在，activity.worker为空。
 launcher最终状态为stopped_by_user；worker沿用合作退出状态resource_paused，原因是
 cooperative_resource_or_user_stop。本次属于用户停止，资源暂停次数仍为0，无失败。
 停止后的nvidia-smi计算进程查询为空，本项目GPU占用已释放。
@@ -543,7 +597,7 @@ gofa-f-stage18自动跟进已删除，不自动恢复。此前关于取消验证
 ## Stage18 v4 首次完整源验证已保存，继续训练（2026-10-18 09:57，Asia/Shanghai）
 
 固定代码e92d5937c38210ca2c1c58ed83be091827ec6a14及v4快照不变。
-监督器[本地保留]/start_ticks[本地保留]与worker[本地保留]/start_ticks[本地保留]身份正常。
+监督器1297535/start_ticks616521051与worker1315456/start_ticks616655267身份正常。
 CPU与完整CUDA验收通过后，原生源基线3396/3396已完成；首次250更新源验证也完整3396/3396。
 验证指标S=1.079568231221103（相对原生、越低越好）；四源比值为Solar 0.9590008300、
 NN5 1.1800971063、PEMS04 1.1768417750、AQShunyi 1.0198717894。
@@ -567,10 +621,10 @@ NN5 1.1800971063、PEMS04 1.1768417750、AQShunyi 1.0198717894。
 固定代码`e92d5937c38210ca2c1c58ed83be091827ec6a14`及v4快照不变。
 完整CPU回归410通过/21旧可选依赖跳过；同模型v3真实7B FP32全节点、非零滚动预测/梯度/
 冻结及精确状态检查已完整通过1e-6，v4经清单/源码SHA/训练函数AST核验复用该完整证明。
-v3 CPU控制器[本地保留]及CPU子进程[本地保留]均已退出，未发生旧共享GPU交接；
-v4 CPU控制器[本地保留]也已完成退出。
+v3 CPU控制器1281506及CPU子进程1281507均已退出，未发生旧共享GPU交接；
+v4 CPU控制器1294987也已完成退出。
 
-新GPU等待器PID[本地保留]/start_ticks[本地保留]，21:35:49部署，当前`waiting_for_idle`，
+新GPU等待器PID1297535/start_ticks616521051，21:35:49部署，当前`waiting_for_idle`，
 worker为空；GPU仍有其他任务。每10秒连续三次完全空闲才启动GPU；无GPU模型/CUDA上下文。
 完整CUDA机制尚未执行，**不能称GPU已全部通过或正式训练已恢复**。
 后续依次自动执行CUDA完整机制及最大形状验收、全新源原生基线、源训练。
@@ -587,11 +641,11 @@ worker为空；GPU仍有其他任务。每10秒连续三次完全空闲才启动
 用户最新明确“本轮等待GPU完全空闲”，覆盖下方memory_cap_only记录。
 固定源码`e92d5937c38210ca2c1c58ed83be091827ec6a14`，快照/输出
 `stage18-allnode-chattime-v4`，完整路径见[部署记录](results/stage18-v4-idle-admission-deployment.json)。
-CPU控制器21:32:53启动，PID[本地保留]/start_ticks[本地保留]，当前`waiting_for_prior_cpu`。
+CPU控制器21:32:53启动，PID1294987/start_ticks616503439，当前`waiting_for_prior_cpu`。
 三次空闲/查询失败重置/运行中他人加入/资源暂停重新准入/证明复用相关CPU专项41项通过。
 
-旧v3共享CPU控制器[本地保留]/start_ticks[本地保留]的GPU交接已暂停（进程T），
-真实7B FP32子进程[本地保留]继续完成同模型验收，已推进到288步，尚无完整通过结论。
+旧v3共享CPU控制器1281506/start_ticks616413811的GPU交接已暂停（进程T），
+真实7B FP32子进程1281507继续完成同模型验收，已推进到288步，尚无完整通过结论。
 **不得单独CONT旧共享控制器。**v4会等待其完整CPU证明，再核验UID/命令/start_ticks，
 TERM+CONT使旧控制器合作退出且不部署GPU；新版本重新运行完整CPU回归。
 只有模型/数据/数值内核SHA及训练函数AST一致，才复用完整真实FP32证明，避免重复CPU计算。
@@ -611,9 +665,9 @@ v2失败与三次诊断约46.355秒活动将在迁移时累计保留，不能把
 
 用户明确要求修复并重新验收，通过后恢复训练。固定代码
 `47a8cf4909eb4b131956d202ac895988606840de`，快照
-`${LOCAL_PATH}`，输出
-`${LOCAL_PATH}`。
-CPU控制器21:17:57启动，PID[本地保留]/start_ticks[本地保留]；不得重复启动。
+`/home/dcg/dcg_data/GOFA-F-runs/stage18-allnode-chattime-v3`，输出
+`/home/dcg/dcg_data/GOFA-F/outputs/stage18-allnode-chattime-v3`。
+CPU控制器21:17:57启动，PID1281506/start_ticks616413811；不得重复启动。
 CPU完整回归402通过/21旧可选依赖跳过，真实7B FP32验收仍在执行，尚不能称全部通过。
 通过后自动迁移未训练检查点与旧活动账本，部署cap-only监督器；全部CUDA验收通过才生成源基线及训练。
 
@@ -639,7 +693,7 @@ v2 完整CPU回归394通过、21旧可选依赖跳过；真实7B FP32六历史/9
 同一滚动视图的冻结前缀缓存与完整前向logits/梯度差为0；根因尚未确认，不能将CPU通过视为CUDA已修复。
 
 正式优化器更新0，源原生基线及完整源验证均未开始，目标预测0，无最佳检查点或精度结论。
-CPU控制器[本地保留]与资源监督器[本地保留]均已退出，activity.worker为空；本项目GPU进程已释放。
+CPU控制器1246835与资源监督器1262402均已退出，activity.worker为空；本项目GPU进程已释放。
 本次累计GPU活动12.273592秒，等待0秒，监督器观测项目组峰值16848MiB（约16.45GiB）。
 这是验收阶段峰值，不代表最长形状已通过：后续真实双块生成及最大形状验收尚未执行。
 
@@ -652,9 +706,9 @@ CPU控制器[本地保留]与资源监督器[本地保留]均已退出，activit
 ## Stage18 v2 已部署：共享启动、真实CPU验收中（2026-10-17 20:38，Asia/Shanghai）
 
 固定运行代码`08da870bb9eeaac45d5710bf50574959fde1a5a7`，快照
-`${LOCAL_PATH}`，输出
-`${LOCAL_PATH}`。
-CPU控制器20:38:32启动，PID[本地保留]/start_ticks[本地保留]；身份与启动绑定见
+`/home/dcg/dcg_data/GOFA-F-runs/stage18-allnode-chattime-v2`，输出
+`/home/dcg/dcg_data/GOFA-F/outputs/stage18-allnode-chattime-v2`。
+CPU控制器20:38:32启动，PID1246835/start_ticks616177294；身份与启动绑定见
 [部署记录](results/stage18-v2-launch.json)。不得重复启动。
 固定快照CPU回归394通过/21旧可选依赖跳过，新增25项均通过；此前开发仓库404通过/11跳过，
 多10项旧可选依赖因快照不含external目录跳过。真实7B FP32六历史全节点验收正在执行，
@@ -667,7 +721,7 @@ CPU控制器20:38:32启动，PID[本地保留]/start_ticks[本地保留]；身�
 项目40GiB/Torch38GiB上限及每10秒自身资源审计保留，运行中他人加入不退出。
 无16GiB预留、无活动/墙钟限制；超限/自身占用未知保存退出，10秒后可恢复重试，账本保留。
 共享可能影响其他任务延迟。模型、六模板、源训练/源选模及目标关闭不变。
-旧v1 CPU控制器[本地保留]/start_ticks[本地保留]及其子进程已合作退出，无GPU启动或检查点；
+旧v1 CPU控制器1240770/start_ticks616147435及其子进程已合作退出，无GPU启动或检查点；
 未完成的真实模型证明不复用，旧快照不编辑。最新部署使用独立`stage18-allnode-chattime-v2`。
 
 ## Stage18 全节点版本实现及CPU回归通过，准备真实权重验收（2026-10-17 20:30，Asia/Shanghai）
@@ -684,8 +738,8 @@ Ruff通过；尚不代表真实7B CPU/CUDA、最大形状或精度结果已通�
 
 ## Stage17 已按用户要求停止（2026-10-17 19:00，Asia/Shanghai）
 
-用户明确要求“结束当前运行”。核对监督器[本地保留]/start_ticks[本地保留]、
-worker[本地保留]/start_ticks[本地保留]的UID、实际路径、命令及进程组后，
+用户明确要求“结束当前运行”。核对监督器1113833/start_ticks615265530、
+worker1114039/start_ticks615267586的UID、实际路径、命令及进程组后，
 仅向本项目监督器发送SIGTERM；任务合作保存退出，未强制杀死或操作其他用户进程。
 已核实监督器和worker均退出，同一输出目录无剩余阶段进程，本项目CUDA占用已释放。
 自动跟进`gofa-f-stage17`已删除。**停止覆盖此前自动恢复授权，不得自动重启。**
@@ -712,15 +766,15 @@ launcher=`stopped_by_user`；worker的`resource_paused/cooperative_resource_or_u
 （NASDAQ仅指数目标），目标预测为0。本轮不运行目标评价、不新增架构搜索。
 
 当前固定源码`57706b6f331504e8563259d81c975073d8d7c709`，快照
-`${LOCAL_PATH}`，
-输出`${LOCAL_PATH}`，
+`/home/dcg/dcg_data/GOFA-F-runs/stage17-generative-chattime-v3`，
+输出`/home/dcg/dcg_data/GOFA-F/outputs/stage17-generative-chattime-v3`，
 独立数据`data/stage17-v3`（旧准备版本和原始数据保留）。
-CPU控制器18:05:17启动，PID[本地保留]/start_ticks[本地保留]，完成部署后退出。
+CPU控制器18:05:17启动，PID1112561/start_ticks615257809，完成部署后退出。
 完整当前CPU回归369通过/21旧可选依赖跳过（390 XML条目），Stage17专项33项通过。
 真实7B FP32六历史证明经绑定校验复用，1e-6通过；随后真实BF16 CUDA六历史及非零图
 前缀/增量预测和梯度、冻结/准确恢复全部通过，最大命名差5.90198e-5，原容差2e-3不变。
 
-监督器18:06:34启动，PID[本地保留]/start_ticks[本地保留]；三次完全空闲准入后worker[本地保留]开始。
+监督器18:06:34启动，PID1113833/start_ticks615265530；三次完全空闲准入后worker1114039开始。
 当前phase=`native_source_baseline`，先完成3396条原生源基线，再训练新增模块；更新仍为0，
 不是训练卡住或已完成epoch。一次观测1244/3396基线查询、活动132秒、项目峰值15728MiB，
 均会继续变化；后续以实时JSON为准。读取同级`.launch.json`及`activity.json`复核身份，禁止重复启动。
@@ -749,9 +803,9 @@ AdamW中途OOM完整回滚，不能保存半个更新。冻结骨干6,820,343,80
 不把等待GPU时间计入训练速度，ETA到4000更新上限而非早停承诺。C上查看：
 
 ```bash
-PYTHONPATH=${LOCAL_PATH} ${LOCAL_PATH} -m gofa_f.generative_progress ${LOCAL_PATH} --watch --interval 10
-tail -f ${LOCAL_PATH}
-tail -f ${LOCAL_PATH}
+PYTHONPATH=/home/dcg/dcg_data/GOFA-F-runs/stage17-generative-chattime-v3/src /home/dcg/dcg_data/GOFA-F/.venv-chat/bin/python -m gofa_f.generative_progress /home/dcg/dcg_data/GOFA-F/outputs/stage17-generative-chattime-v3 --watch --interval 10
+tail -f /home/dcg/dcg_data/GOFA-F/outputs/stage17-generative-chattime-v3.bootstrap.log
+tail -f /home/dcg/dcg_data/GOFA-F/outputs/stage17-generative-chattime-v3.log
 ```
 
 完整实现/数据修正/评价边界见[Stage17协议](STAGE17_PROTOCOL.md)。不能声称严格复现表4：
@@ -763,9 +817,9 @@ Weather全行重复与Exchange交易观测日历均单独记录。原生预训�
 ## Stage16 已按用户要求停止（2026-10-17 14:52，Asia/Shanghai）
 
 用户明确要求“停止本轮运行”。已删除自动跟进 `gofa-f-stage16`，并核对
-PID[本地保留]/start_ticks[本地保留]及快照/cmd/进程组后，仅向本项目监督器发送SIGTERM。
+PID810198/start_ticks613194901及快照/cmd/进程组后，仅向本项目监督器发送SIGTERM。
 任务合作保存退出，无强制杀死、无新GPU评价、未操作其他用户进程。
-14:52核实bootstrap[本地保留]、监督器[本地保留]、worker[本地保留]、GPU子进程[本地保留]全部退出，
+14:52核实bootstrap808190、监督器810198、worker810503、GPU子进程810997全部退出，
 扫描本快照无剩余任务，账本worker/active_scope均为空，GPU应用列表为空、已用显存0MiB。
 launcher=`stopped_by_user`，worker及CPU汇总=`interrupted`，不是实现失败或预算耗尽。
 **用户停止覆盖此前夜间自动修复/重部署授权；不得自动重启本轮。**
@@ -805,11 +859,11 @@ Traffic、Weather，共32种L→H设置。后续新增参数只在独立源数�
 
 项目进程组显存上限40GiB，Torch分配上限38GiB，为CUDA等非Torch开销预留2GiB；监督器每10秒只审计本项目进程组占用，超限合作保存/退出，仅操作已核实的本项目组。实际可分配显存不足时仍按既定OOM处理/报告，不更换架构或放宽机制容差。此策略只约束显存，不保证其他用户计算延迟不受共享影响。
 
-12:13核实身份后合作停止v12等待器[本地保留]/start_ticks[本地保留]，控制器[本地保留]及等待器均退出，账本worker/active_scope为空，167更新/offset10737/pending49窗口117586标签、last.pt SHA7512a8a0d409ab9d3c4f7b69067eb954c0a5addf5ca21eae47e880b3baa7c8a3和9956.406928363256秒账本保持。v12没有GPU活动；旧快照和输出不修改。采用独立 `stage16-chattime-metr-v13` 固定快照和输出，精确迁移全部状态，不复制旧final_selection；原起算和今天21:30/23:30截止不变，不再追加延期。
+12:13核实身份后合作停止v12等待器795540/start_ticks613096205，控制器793503及等待器均退出，账本worker/active_scope为空，167更新/offset10737/pending49窗口117586标签、last.pt SHA7512a8a0d409ab9d3c4f7b69067eb954c0a5addf5ca21eae47e880b3baa7c8a3和9956.406928363256秒账本保持。v12没有GPU活动；旧快照和输出不修改。采用独立 `stage16-chattime-metr-v13` 固定快照和输出，精确迁移全部状态，不复制旧final_selection；原起算和今天21:30/23:30截止不变，不再追加延期。
 
 B静态/C Ruff通过；C禁CUDA、OMP/MKL各2线程108项启动/显存策略/恢复/截止专项通过，覆盖busy/低free即时准入、取消原等待条件、策略在恢复中绑定、原严格/共享模式不变、仅本组显存计数与不操作其他任务。提交后新快照CPU完整及真实权重复核通过即共享启动CUDA机制，fresh/continued两项BF16 rtol/atol2e-3仍必须通过。实际源码/身份/CPU/CUDA结果另行补记，不能以CPU通过声称GPU修复成功。跟进切换v13与新策略，正常准备/训练静默，终止/异常通知；已授权安全自主修复仍受原截止限制。以下均为历史。
 
-12:24共享部署实测：固定源码 `6ca1b2bebccf7e43354b8e91c82a0c0c85854573`，快照 `${LOCAL_PATH}`，输出 `outputs/stage16-chattime-metr-v13/`。准备控制器PID[本地保留]/start_ticks[本地保留]（12:19:04启动），资源监督器PID[本地保留]/start_ticks[本地保留]，CPU调度workerPID[本地保留]/start_ticks[本地保留]，身份均须使用前复核。全套CPU346通过/11旧可选跳过（357 XML条目）、Stage16专项102项，真实7B CPU差0。窗口/清单/launcher均memory_cap_only、leave_free_gib=0、项目cap40/Torch38、无idle_max_used或admission_min_free门槛；Default有效查询即启动，未等待其他任务退出。
+12:24共享部署实测：固定源码 `6ca1b2bebccf7e43354b8e91c82a0c0c85854573`，快照 `/home/dcg/dcg_data/GOFA-F-runs/stage16-chattime-metr-v13`，输出 `outputs/stage16-chattime-metr-v13/`。准备控制器PID808190/start_ticks613180484（12:19:04启动），资源监督器PID810198/start_ticks613194901，CPU调度workerPID810503/start_ticks613196924，身份均须使用前复核。全套CPU346通过/11旧可选跳过（357 XML条目）、Stage16专项102项，真实7B CPU差0。窗口/清单/launcher均memory_cap_only、leave_free_gib=0、项目cap40/Torch38、无idle_max_used或admission_min_free门槛；Default有效查询即启动，未等待其他任务退出。
 
 **真实207节点CUDA fresh及actual continued两项均通过**：边界状态、预测、全部命名梯度最大差0，原BF16 rtol/atol2e-3不变，机制passed=true。现已running/train，观测169次更新、offset10844/22969（后续以实际progress为准），新增分支继续学习。观测本项目进程组26028MiB（约25.4GiB）、另有3个其他GPU进程，未操作其他任务；不声称其他用户延迟无影响或CUDA旧误差根因已被证明。没有独立吞吐评测、完整验证或新精度结论。
 
@@ -824,18 +878,18 @@ B静态、C Ruff通过；C禁CUDA/OMP/MKL各2线程，65项恢复/阶段/启动�
 
 GPU仍须完全空闲连续三次、每10秒检查，无计算或图形应用、util0、已用≤256MiB、Default；未知重置等待。运行中他人加入不退出，低余量暂停，项目40GiB/Torch38GiB/至少留16GiB，不独占、不操作他人进程。沿用每小时跟进、正常等待/训练静默；此前已授权失败时在既定截止内自主安全修复，不放宽容差或增加候选。下方v11已终止记录是历史，当前部署以v12实际文件为准。
 
-12:07实际部署核验：固定运行源码 `e0d8745d1f283846ca1a7acc9540678c80d7f307`，快照 `${LOCAL_PATH}`，输出 `outputs/stage16-chattime-metr-v12/`。CPU控制器12:02:29启动，PID[本地保留]/start_ticks[本地保留]；监督器PID[本地保留]/start_ticks[本地保留]，使用前重新核对。全套CPU332通过/11旧可选跳过（343 XML条目）、Stage16专项95项，真实7B三节点BF16 CPU边界/预测/梯度差0、CUDA未初始化。独立CPU核验实际v11/v12模型/优化器/梯度/RNG/全部状态除binding外完全一致。
+12:07实际部署核验：固定运行源码 `e0d8745d1f283846ca1a7acc9540678c80d7f307`，快照 `/home/dcg/dcg_data/GOFA-F-runs/stage16-chattime-metr-v12`，输出 `outputs/stage16-chattime-metr-v12/`。CPU控制器12:02:29启动，PID793503/start_ticks613081051；监督器PID795540/start_ticks613096205，使用前重新核对。全套CPU332通过/11旧可选跳过（343 XML条目）、Stage16专项95项，真实7B三节点BF16 CPU边界/预测/梯度差0、CUDA未初始化。独立CPU核验实际v11/v12模型/优化器/梯度/RNG/全部状态除binding外完全一致。
 
 window训练截止1792243800（今天21:30）、硬截止1792251000（23:30）、原start1792137782.879529正确；deadline_amendment保留来源window SHA和11:00→23:30的新授权。migration.state_restore=exact、original_start_retained=true、original_deadline_retained=false（本次合法延期），目标last.pt SHA `7512a8a0d409ab9d3c4f7b69067eb954c0a5addf5ca21eae47e880b3baa7c8a3`。167更新/pending49窗口117586标签与9956.406928363256秒账本保持，旧final_selection未复制。等待器正常waiting_for_idle、无新GPU机制/更新，另一任务仍使用GPU；外层及各子任务准入仍10秒/三次/256MiB/Default。每小时跟进gofa-f-stage16已恢复并指向v12及新截止，仅终止/异常/确需处理时通知。证据 `docs/results/stage16-cpu-verification-v12.json`、`docs/results/stage16-redeployment-v12.json`。以下均为历史。
 ## Stage16 v11 已终止：未获GPU完全空闲准入（2026-10-17 11:16，Asia/Shanghai）
 
-本条覆盖以下所有“运行中/等待中”描述。v11在10:59:00按硬截止前60秒规则标记 `wall_deadline`，bootstrap10:59:12完成CPU汇总并退出。PID[本地保留]/start_ticks[本地保留]、318760/start_ticks[本地保留]均已退出，扫描无本快照进程，worker与active_scope均为空。09:00后未补训，11:00后没有GPU作业，不再自动部署修复或新阶段。
+本条覆盖以下所有“运行中/等待中”描述。v11在10:59:00按硬截止前60秒规则标记 `wall_deadline`，bootstrap10:59:12完成CPU汇总并退出。PID316422/start_ticks608709160、318760/start_ticks608724854均已退出，扫描无本快照进程，worker与active_scope均为空。09:00后未补训，11:00后没有GPU作业，不再自动部署修复或新阶段。
 
 v11一直未满足完全空闲三次/10秒准入，没有新GPU机制/训练/评价，新增更新及活动均0；终止检查其他任务仍占15,687MiB，即使util0也不满足准入。CPU321通过/11旧可选跳过，真实7B CPU差0仍不代表CUDA修复成功。v10失败证据保留；v11没有新增失败，不将资源等待误记为可重启的实现故障。
 
 167更新、epoch0 offset10737/22969（46.7456%）、pending49窗口117586标签及模型/优化器/梯度/RNG/游标保留。last.pt SHA `4a262c97c0a813032f15e885ca74d2b98cffd27654d74582c30ba23cff3cc1d1` 与迁移时一致；原始16:03:02起点、09:00/11:00截止和9956.406928363256秒累计账本不变。没有完整验证，gofa=null；原生验证0/3281、两组测试0/6313，所有正式精度及生成/回退比例留空。历史训练/显存值不能当作v11新增活动。
 
-固定源码仍 `9bb224f70f3fc06ef5062a94b9a520d4f6ba5bb7`，快照 `${LOCAL_PATH}` 不修改。结果 `docs/STAGE16_RESULTS.md`，终止证据 `docs/results/stage16-chattime-metr-v11-terminal.json`，B已有小型report副本；代码及文档同步GitHub/B/C，A可拉取继续。本次仅归档，跟进 `gofa-f-stage16` 在交付后停用。未完成ChatTime对照与初始研究目标，不声称TITAN差距缩小。下方均是历史。
+固定源码仍 `9bb224f70f3fc06ef5062a94b9a520d4f6ba5bb7`，快照 `/home/dcg/dcg_data/GOFA-F-runs/stage16-chattime-metr-v11` 不修改。结果 `docs/STAGE16_RESULTS.md`，终止证据 `docs/results/stage16-chattime-metr-v11-terminal.json`，B已有小型report副本；代码及文档同步GitHub/B/C，A可拉取继续。本次仅归档，跟进 `gofa-f-stage16` 在交付后停用。未完成ChatTime对照与初始研究目标，不声称TITAN差距缩小。下方均是历史。
 
 ## Stage16 夜间失败自主修复授权（2026-10-17，Asia/Shanghai）
 
@@ -845,23 +899,23 @@ v11一直未满足完全空闲三次/10秒准入，没有新GPU机制/训练/评
 
 资源策略不变：每个新GPU子任务完全空闲连续三次、每10秒检查，无计算/图形应用、利用率0%、已用≤256MiB、Default；查询未知继续等。运行中他人加入不退出，低余量暂停，项目40GiB/Torch38GiB/留16GiB，不独占、不操作他人进程。**今天10月17日09:00训练截止、11:00硬截止**不顺延；09:00后不补训，11:00后只读/CPU汇总。安全修复不可行或时间不足则如实记录，不以延期绕过。
 
-最新只读检查v11控制器[本地保留]/start_ticks[本地保留]、等待器[本地保留]/start_ticks[本地保留]身份和存活正确，仍waiting_for_idle；GPU被其他任务使用，无新GPU机制/更新。167次更新和pending49窗口117586标签保持，账本9956.406928363256秒不变，B/C/GitHub一致。`gofa-f-stage16` 每小时跟进已更新：正常等待/训练及可控修复静默，最终终止、无法安全自主修复或需用户处理时通知；可修复的中间失败不删除跟进，重部署后须更新为实际新版本。下方早期失败停止规则均按本条解释。
+最新只读检查v11控制器316422/start_ticks608709160、等待器318760/start_ticks608724854身份和存活正确，仍waiting_for_idle；GPU被其他任务使用，无新GPU机制/更新。167次更新和pending49窗口117586标签保持，账本9956.406928363256秒不变，B/C/GitHub一致。`gofa-f-stage16` 每小时跟进已更新：正常等待/训练及可控修复静默，最终终止、无法安全自主修复或需用户处理时通知；可修复的中间失败不删除跟进，重部署后须更新为实际新版本。下方早期失败停止规则均按本条解释。
 
 ## Stage16 用户请求修复，v11完整CPU检查中（2026-10-16，Asia/Shanghai）
 
 用户在v10失败通知后明确请求“能否修复”，已接续修复工作。新方案保持原生方形因果SDPA的完整77位置查询形状和张量布局，固定文本Q置零并丢弃其输出，仅动态30token做投影/MLP；模型、权重、图、头、优化器和BF16容差不变。旧短查询/显式掩码与原路径不同是已核实的实现差异，但是否为GPU误差根因仍待实测。协议 `docs/STAGE16_KV_REPAIR.md`，旧v10失败报告和快照完整保留。
 
-源码 `9bb224f70f3fc06ef5062a94b9a520d4f6ba5bb7`，固定快照 `${LOCAL_PATH}`，输出 `outputs/stage16-chattime-metr-v11/`。CPU控制器[本地保留]-10-16 23:53:50启动，PID[本地保留]/start_ticks[本地保留]，使用前核对。94项专项CPU、B静态/C Ruff通过；C禁CUDA/OMP/MKL各2线程完整回归321通过、11旧可选跳过，真实7B复核正在进行，通过后自动部署。跟进 `gofa-f-stage16` 已重新启用，仅终止/异常通知。
+源码 `9bb224f70f3fc06ef5062a94b9a520d4f6ba5bb7`，固定快照 `/home/dcg/dcg_data/GOFA-F-runs/stage16-chattime-metr-v11`，输出 `outputs/stage16-chattime-metr-v11/`。CPU控制器2026-10-16 23:53:50启动，PID316422/start_ticks608709160，使用前核对。94项专项CPU、B静态/C Ruff通过；C禁CUDA/OMP/MKL各2线程完整回归321通过、11旧可选跳过，真实7B复核正在进行，通过后自动部署。跟进 `gofa-f-stage16` 已重新启用，仅终止/异常通知。
 
 只接续已退出的preflight单阶段失败且源checkpoint与原migration SHA相同、无预测的v10；167更新/offset10737/未完成49窗口117586标签和所有恢复状态/账本不重置，不复制旧final_selection。继承已授权deadline_amendment，原始2026-10-16 16:03:02起算、**10月17日09:00训练截止/11:00硬截止**保持，不再次延长。GPU仍完全空闲三次每10秒，40GiB/Torch38GiB/16GiB余量不变；GPU检查须fresh和actual continued两项通过才训练，失败仍停止不放宽或自动重试。新增 `fixed_prompt_fresh.json`、`fixed_prompt_continued.json` 保存命名梯度及边界差异诊断，CPU通过不代表修复已在GPU成立。以下v10终止及更早记录均为历史。
 
-23:58部署核验：真实7B BF16 CPU预测/梯度最大差0，完整边界隐藏状态max_abs=0/changed_elements=0，实际走fixed_prompt_kv_v2复用；332条XML记录（321通过/11跳过）、Stage16专项84项。监督器PID[本地保留]/start_ticks[本地保留]正常waiting_for_idle。禁CUDA独立比对实际v10/v11检查点，除实现binding外全部值完全一致，账本9956.406928363256秒保留；原始起点/09:00/11:00及10秒/三次/256MiB准入均已核实。尚无新GPU机制结果，GPU有其他任务，不宣称CUDA修复或提速已成功。证据 `docs/results/stage16-cpu-verification-v11.json` 和 `docs/results/stage16-kv-repair-v11.json`。
+23:58部署核验：真实7B BF16 CPU预测/梯度最大差0，完整边界隐藏状态max_abs=0/changed_elements=0，实际走fixed_prompt_kv_v2复用；332条XML记录（321通过/11跳过）、Stage16专项84项。监督器PID318760/start_ticks608724854正常waiting_for_idle。禁CUDA独立比对实际v10/v11检查点，除实现binding外全部值完全一致，账本9956.406928363256秒保留；原始起点/09:00/11:00及10秒/三次/256MiB准入均已核实。尚无新GPU机制结果，GPU有其他任务，不宣称CUDA修复或提速已成功。证据 `docs/results/stage16-cpu-verification-v11.json` 和 `docs/results/stage16-kv-repair-v11.json`。
 
 ## Stage16 终止：固定文本KV未通过GPU梯度一致性（2026-10-16 23:33，Asia/Shanghai）
 
 v10已在21:56:39因preflight/fixed_prompt_fresh失败退出，不能再把下方waiting_for_idle当实时状态。GPU梯度比较失败张量11/262144元素不满足预注册BF16 rtol/atol2e-3，异常最大绝对差0.010773658752441406；未放宽、未重启。CPU314通过/11旧可选跳过、真实7B 3节点CPU预测梯度差0，不构成207节点CUDA通过。实际continued缓存检查未执行，缓存提速未成立。
 
-控制器[本地保留]/监督器[本地保留]/CPU调度worker[本地保留]均已核实退出，/proc审计没有本项目v10进程，账本worker=null、active_scope=null。167更新/offset10737（46.7456%）、未完成49窗口117586标签及模型优化器梯度RNG完整保留，v10新增更新0；last.pt SHA `791ca1e2f06fd3a727687e010324e7d96bb21724d461fe3f53dccfdad2e7161d` 与迁移时一致。没有完成epoch或验证，gofa=null，原生验证/测试0/3281和0/6313，GOFA测试0/6313，全部正式精度留空。
+控制器204084/监督器206214/CPU调度worker211329均已核实退出，/proc审计没有本项目v10进程，账本worker=null、active_scope=null。167更新/offset10737（46.7456%）、未完成49窗口117586标签及模型优化器梯度RNG完整保留，v10新增更新0；last.pt SHA `791ca1e2f06fd3a727687e010324e7d96bb21724d461fe3f53dccfdad2e7161d` 与迁移时一致。没有完成epoch或验证，gofa=null，原生验证/测试0/3281和0/6313，GOFA测试0/6313，全部正式精度留空。
 
 监督活动账本9956.406928363256秒；训练9865.833998076618秒沿用v6，v10仅新增preflight9.271920159459114秒。机制/训练跨接续allocated峰值30.1001/18.1828GiB、reserved35.0117/20.2656GiB。训练原状态stop_reason仍为历史training_deadline_or_signal，实际本阶段停止原因为GPU机制失败，不是明早墙钟截止。明早09:00/11:00授权保留在不可变窗口中，但不会自动重启已失败阶段。
 
@@ -870,33 +924,33 @@ v10已在21:56:39因preflight/fixed_prompt_fresh失败退出，不能再把下�
 
 用户明确要求“将硬截止时间改为明天早上11：00”：硬截止改为**2026-10-17 11:00**，沿用两小时锁定评价，训练截止**09:00**。原始2026-10-16 16:03:02起算和累计活动不重置；本次明确授权覆盖旧11小时上限及10月16日21:30/23:30截止，后续普通恢复不能再次延长。完全空闲、三次连续、10秒检测及40GiB/Torch38GiB/16GiB余量保持。
 
-旧v9于21:35因mechanisms missed training deadline标记incomplete退出；bootstrap[本地保留]/launcher[本地保留]/worker[本地保留]均已核实退出，没有新版GPU机制或预测。167更新、offset10737/22969、未完成49窗口117586标签的模型/优化器/梯度/RNG完整保留。新接续只接受已退出、完整保存、无预测的过期检查点，不复制旧final_selection。
+旧v9于21:35因mechanisms missed training deadline标记incomplete退出；bootstrap187208/launcher189376/worker195814均已核实退出，没有新版GPU机制或预测。167更新、offset10737/22969、未完成49窗口117586标签的模型/优化器/梯度/RNG完整保留。新接续只接受已退出、完整保存、无预测的过期检查点，不复制旧final_selection。
 
-运行源码 `0c2cce771447127dc14b6e11f201e46f711cb1f6`，固定快照 `${LOCAL_PATH}`，输出 `outputs/stage16-chattime-metr-v10/`。CPU控制器北京时间21:46:24启动，PID[本地保留]/start_ticks[本地保留]；使用前核对。B静态/C Ruff通过，C禁CUDA/OMP/MKL各2线程314回归通过、11旧可选跳过，真实权重复核正在进行，通过后自动部署。跟进 `gofa-f-stage16` 已指向v10及10月17日09:00/11:00截止。
+运行源码 `0c2cce771447127dc14b6e11f201e46f711cb1f6`，固定快照 `/home/dcg/dcg_data/GOFA-F-runs/stage16-chattime-metr-v10`，输出 `outputs/stage16-chattime-metr-v10/`。CPU控制器北京时间21:46:24启动，PID204084/start_ticks607944509；使用前核对。B静态/C Ruff通过，C禁CUDA/OMP/MKL各2线程314回归通过、11旧可选跳过，真实权重复核正在进行，通过后自动部署。跟进 `gofa-f-stage16` 已指向v10及10月17日09:00/11:00截止。
 
 延期通过显式fresh continuation授权，来源window SHA、原/新截止写入window.deadline_amendment；恢复拒绝改变已登记截止。migration.original_deadline_retained=false表示本次已授权延期，并非丢失状态；original_start_retained和state_restore=exact必须通过。以下均为历史，旧阶段不重启。
 
-21:50实际部署核验：v10真实7B BF16 CPU固定缓存预测/梯度差均0，CUDA未初始化；325条XML记录（314通过/11跳过），Stage16专项77项。监督器PID[本地保留]/start_ticks[本地保留]已waiting_for_idle，window训练截止1792198800（10月17日09:00）、硬截止1792206000（11:00）、原start1792137782.879529均正确；外层检测10秒/三次/256MiB并保持yield_on_foreign=false。模型/优化器/梯度/RNG/游标exact，账本9925.884896796197秒保留，v9旧final_selection未复制。来源三个进程均退出；当前另有GPU任务，尚无新GPU机制或精度结果。证据 `docs/results/stage16-cpu-verification-v10.json` 和 `docs/results/stage16-morning-deployment-v10.json`。
+21:50实际部署核验：v10真实7B BF16 CPU固定缓存预测/梯度差均0，CUDA未初始化；325条XML记录（314通过/11跳过），Stage16专项77项。监督器PID206214/start_ticks607959440已waiting_for_idle，window训练截止1792198800（10月17日09:00）、硬截止1792206000（11:00）、原start1792137782.879529均正确；外层检测10秒/三次/256MiB并保持yield_on_foreign=false。模型/优化器/梯度/RNG/游标exact，账本9925.884896796197秒保留，v9旧final_selection未复制。来源三个进程均退出；当前另有GPU任务，尚无新GPU机制或精度结果。证据 `docs/results/stage16-cpu-verification-v10.json` 和 `docs/results/stage16-morning-deployment-v10.json`。
 
 ## Stage16 用户恢复完全空闲准入、10秒检测（2026-10-16，Asia/Shanghai）
 
 本条覆盖以下共享显存准入：新GPU子任务必须连续三次、每10秒确认无计算/图形应用、利用率0%、已用显存≤256MiB、Default模式。查询失败或状态未知重置计数继续等待。外层等待器与每个GPU子任务均采用10秒，间隔写入window/manifest和launcher_manifest并在恢复时校验。运行中他人加入不退出、低显存暂停、40GiB/Torch38GiB/16GiB余量及不操作他人进程保持。
 
-旧v8监督器[本地保留]在确认preflight仅CPU等待、active_scope为空后合作停止；bootstrap[本地保留]/worker[本地保留]也已核实退出，没有新GPU机制、更新或预测。167更新、offset10737、pending49窗口117586标签的检查点及活动账本保留。新固定源码 `e9407b3f39ad92dd02c067f2b1419f8203fd9f4a`，快照 `${LOCAL_PATH}`，输出 `outputs/stage16-chattime-metr-v9/`。不修改旧快照或清单。
+旧v8监督器176180在确认preflight仅CPU等待、active_scope为空后合作停止；bootstrap134316/worker177359也已核实退出，没有新GPU机制、更新或预测。167更新、offset10737、pending49窗口117586标签的检查点及活动账本保留。新固定源码 `e9407b3f39ad92dd02c067f2b1419f8203fd9f4a`，快照 `/home/dcg/dcg_data/GOFA-F-runs/stage16-chattime-metr-v9`，输出 `outputs/stage16-chattime-metr-v9/`。不修改旧快照或清单。
 
-CPU准备控制器北京时间21:24:42启动，PID[本地保留]/start_ticks[本地保留]，使用前核对。B静态/C Ruff通过；C禁CUDA/OMP/MKL各2线程308回归通过、11旧可选跳过，正在完成真实权重CPU复核后自动部署；GPU仍需实际机制验证。跟进 `gofa-f-stage16` 已指向v9与完全空闲10秒策略。原始16:03:02起算及**今天21:30训练截止/23:30硬截止**均不延长。以下均为历史。
+CPU准备控制器北京时间21:24:42启动，PID187208/start_ticks607814364，使用前核对。B静态/C Ruff通过；C禁CUDA/OMP/MKL各2线程308回归通过、11旧可选跳过，正在完成真实权重CPU复核后自动部署；GPU仍需实际机制验证。跟进 `gofa-f-stage16` 已指向v9与完全空闲10秒策略。原始16:03:02起算及**今天21:30训练截止/23:30硬截止**均不延长。以下均为历史。
 
-21:28部署核验：真实7B BF16 CPU固定缓存预测/梯度差均0，CUDA未初始化；CPU共319条XML记录（308通过/11跳过）、Stage16专项71项。新监督器PID[本地保留]/start_ticks[本地保留]已进入waiting_for_idle，window和launcher_manifest检测间隔均10秒，idle_samples=3、idle_max_used_mib=256、yield_on_foreign=false。v8检查点/账本精确迁移，167更新与pending49窗口保留；当前GPU有他人任务，未启动GPU机制/训练。证据 `docs/results/stage16-cpu-verification-v9.json` 和 `docs/results/stage16-idle10-deployment-v9.json`。
+21:28部署核验：真实7B BF16 CPU固定缓存预测/梯度差均0，CUDA未初始化；CPU共319条XML记录（308通过/11跳过）、Stage16专项71项。新监督器PID189376/start_ticks607830295已进入waiting_for_idle，window和launcher_manifest检测间隔均10秒，idle_samples=3、idle_max_used_mib=256、yield_on_foreign=false。v8检查点/账本精确迁移，167更新与pending49窗口保留；当前GPU有他人任务，未启动GPU机制/训练。证据 `docs/results/stage16-cpu-verification-v9.json` 和 `docs/results/stage16-idle10-deployment-v9.json`。
 
 ## Stage16 固定文本 KV 加速已实现并精确接续，等待共享余量（2026-10-16 21:15，Asia/Shanghai）
 
-用户授权加速第1项：仅缓存冻结前30层中47个固定文本token的KV及边界隐藏状态，继续计算30个动态token并重建完整77位置；图位置、后缀、原生生成、微批量1、有效batch64和科学协议不变。源码 `30943b9acccd5d73c3f0a6a9000b7730e537ecdf`，固定快照 `${LOCAL_PATH}`，输出 `outputs/stage16-chattime-metr-v8/`。协议 `docs/STAGE16_FIXED_PROMPT_KV.md`。
+用户授权加速第1项：仅缓存冻结前30层中47个固定文本token的KV及边界隐藏状态，继续计算30个动态token并重建完整77位置；图位置、后缀、原生生成、微批量1、有效batch64和科学协议不变。源码 `30943b9acccd5d73c3f0a6a9000b7730e537ecdf`，固定快照 `/home/dcg/dcg_data/GOFA-F-runs/stage16-chattime-metr-v8`，输出 `outputs/stage16-chattime-metr-v8/`。协议 `docs/STAGE16_FIXED_PROMPT_KV.md`。
 
 C禁CUDA/OMP/MKL各2线程306通过、11旧可选跳过（XML317条含跳过），Stage16专项70项，真实7B BF16缓存/原路径预测及梯度最大差均0。v7短形状预填充的CPU数值失败保留，改为原始完整形状预填充一次后通过，未放宽容差。GPU必须另行通过fresh及实际continued checkpoint两项缓存预测/梯度检查，才允许训练；尚不能声称加速已在GPU生效。
 
-21:12核实身份后合作停止v6监督器，bootstrap[本地保留]/launcher[本地保留]/worker[本地保留]/GPU4150553均已退出。最后保存167次更新、epoch0 offset10737/22969（约46.7%）、未完成累积49窗口/117586有效标签。模型、优化器、梯度、Python/NumPy/Torch RNG、游标、验证日志及账本精确接续，监督活动9908.55239078775秒保留；旧结果不覆盖。源checkpoint SHA `2315a930296ca3ddb7fe561c3bb7cb2e5e3db53efcbb1ac3b9244c4a310ebddb`；migration明确state_restore=exact，来源/目标绑定及SHA均保存。
+21:12核实身份后合作停止v6监督器，bootstrap4135772/launcher4140814/worker4143990/GPU4150553均已退出。最后保存167次更新、epoch0 offset10737/22969（约46.7%）、未完成累积49窗口/117586有效标签。模型、优化器、梯度、Python/NumPy/Torch RNG、游标、验证日志及账本精确接续，监督活动9908.55239078775秒保留；旧结果不覆盖。源checkpoint SHA `2315a930296ca3ddb7fe561c3bb7cb2e5e3db53efcbb1ac3b9244c4a310ebddb`；migration明确state_restore=exact，来源/目标绑定及SHA均保存。
 
-v8 CPU控制器PID[本地保留]/start_ticks[本地保留]；监督器PID[本地保留]/start_ticks[本地保留]；CPU调度workerPID[本地保留]，使用前重新核对。外层共享准入已完成，内层GPU机制检查仍等待；切换期间另一任务占用约30GiB，本项目尚未创建新CUDA上下文。实际free≥56GiB/Default连续三次30秒的共享门槛、40GiB/Torch38GiB/16GiB余量不变，不操作对方任务。
+v8 CPU控制器PID134316/start_ticks607430843；监督器PID176180/start_ticks607739521；CPU调度workerPID177359，使用前重新核对。外层共享准入已完成，内层GPU机制检查仍等待；切换期间另一任务占用约30GiB，本项目尚未创建新CUDA上下文。实际free≥56GiB/Default连续三次30秒的共享门槛、40GiB/Torch38GiB/16GiB余量不变，不操作对方任务。
 
 原起算16:03:02、**今天21:30训练截止/23:30硬截止**保留，不因接续/等待延长。当前没有完成epoch或完整验证，不能锁定最佳精度或填GOFA正式测试表。每小时跟进 `gofa-f-stage16` 已更新指向v8。证据 `docs/results/stage16-cpu-verification-v8.json`、`stage16-fixed-kv-migration-v8.json`、`stage16-fixed-kv-window-v8.json`。以下v6与更早部署均为历史，禁止重复启动。
 
@@ -908,19 +962,19 @@ v8 CPU控制器PID[本地保留]/start_ticks[本地保留]；监督器PID[本地
 
 新GPU子任务改为连续三次、间隔30秒确认Default模式及**实际free≥56GiB**（项目40GiB+16GiB余量）；允许其他计算/图形进程及非零利用率。查询失败、状态未知或余量不足仍等待，使用实际free而不是total-used。运行中他人加入不退出、低余量暂停更新，Torch38GiB/项目40GiB和16GiB余量保持，不设置独占模式或操作对方进程。下方旧的完全空闲准入已被本条覆盖。
 
-原v5等待器[本地保留]和准备控制器[本地保留]已核实退出，GPU活动0；接续源码 `145789cc218cc5b9f9071ef92ad1ad1a3993909d`，快照 `${LOCAL_PATH}`，C输出 `outputs/stage16-chattime-metr-v6/`，日志同级 `.log`、身份同级 `.launch.json`。CPU准备控制器PID[本地保留]/start_ticks[本地保留]，共享准入等待器PID[本地保留]/start_ticks[本地保留]，使用前核对身份。完整CPU回归290通过、11旧可选跳过，新增54项全覆盖，真实7B权重CPU复核通过后已部署共享准入；证据 `docs/results/stage16-cpu-verification-v6.json`。自动跟进 `gofa-f-stage16` 已指向v6。
+原v5等待器3935816和准备控制器3932279已核实退出，GPU活动0；接续源码 `145789cc218cc5b9f9071ef92ad1ad1a3993909d`，快照 `/home/dcg/dcg_data/GOFA-F-runs/stage16-chattime-metr-v6`，C输出 `outputs/stage16-chattime-metr-v6/`，日志同级 `.log`、身份同级 `.launch.json`。CPU准备控制器PID4135772/start_ticks606715582，共享准入等待器PID4140814/start_ticks606727598，使用前核对身份。完整CPU回归290通过、11旧可选跳过，新增54项全覆盖，真实7B权重CPU复核通过后已部署共享准入；证据 `docs/results/stage16-cpu-verification-v6.json`。自动跟进 `gofa-f-stage16` 已指向v6。
 
 原起算仍16:03:02，**今天2026-10-16训练截止21:30、硬截止23:30**，恢复不得顺延。模型、数据、图、优化器、候选和数值容差未变，GPU机制仍须通过才训练。下方v5及更早记录均为历史，禁止重启旧等待器。
 
-18:27只读复核：共享GPU机制已通过（完整207节点真实形状），缓存/非缓存预测与梯度、初始Persistence、冻结、纯文本绕过、批图隔离、缺失节点、累积梯度和优化器精确恢复均通过，未放宽BF16容差。preflight峰值allocated32,319,703,552字节、reserved37,589,352,448字节（约30.1/35.0GiB）。阶段状态running/train，CPU调度workerPID[本地保留]/start_ticks[本地保留]；活动账本约31.4秒，训练检查点/完整验证以实际progress/history为准。对方openpi-server仍存在。部署及GPU证据 `docs/results/stage16-shared-v6.json`；尚无精度结论。
+18:27只读复核：共享GPU机制已通过（完整207节点真实形状），缓存/非缓存预测与梯度、初始Persistence、冻结、纯文本绕过、批图隔离、缺失节点、累积梯度和优化器精确恢复均通过，未放宽BF16容差。preflight峰值allocated32,319,703,552字节、reserved37,589,352,448字节（约30.1/35.0GiB）。阶段状态running/train，CPU调度workerPID4143990/start_ticks606735393；活动账本约31.4秒，训练检查点/完整验证以实际progress/history为准。对方openpi-server仍存在。部署及GPU证据 `docs/results/stage16-shared-v6.json`；尚无精度结论。
 
 ## Stage16 用户将硬截止提前到2026-10-16 23:30（Asia/Shanghai）
 
 本条覆盖下方旧的10月17日截止记录。用户要求硬截止改为**今天10月16日23:30**，保留两小时锁定评价，因此训练截止**21:30**；原始起算仍为**16:03:02**，接续或恢复不得重置时钟。模型、数据、图、优化器及候选范围不变。
 
-旧v3 CPU等待器[本地保留]/start_ticks[本地保留]及准备控制器[本地保留]已核实退出；停止时GPU活动0、worker为空、没有检查点或预测文件。新入口只允许接续已退出、零GPU活动且不可变输入一致的CPU等待记录，拒绝真实训练/预测产物，并记录来源窗口/清单SHA。CPU汇总产生的零完成评价记录不视为训练产物。v4在这项判断过严时安全停止，未创建窗口或GPU作业，失败记录保留。
+旧v3 CPU等待器3824577/start_ticks605883460及准备控制器3819503已核实退出；停止时GPU活动0、worker为空、没有检查点或预测文件。新入口只允许接续已退出、零GPU活动且不可变输入一致的CPU等待记录，拒绝真实训练/预测产物，并记录来源窗口/清单SHA。CPU汇总产生的零完成评价记录不视为训练产物。v4在这项判断过严时安全停止，未创建窗口或GPU作业，失败记录保留。
 
-接续运行源码 `0d73f05c34dbff3452acb6ed4f80d2a0b1d1c928`，快照 `${LOCAL_PATH}`，C开发输出 `outputs/stage16-chattime-metr-v5/`、日志同级 `.log`、身份同级 `.launch.json`。CPU准备控制器PID[本地保留]/start_ticks[本地保留]；新等待器PID[本地保留]/start_ticks[本地保留]，使用前核对。C禁CUDA/OMP/MKL各2线程280项回归通过、11旧可选跳过，新增51项全覆盖，真实7B CPU机制复核通过；32项截止/接续专项及真实v3输入/退出身份核验通过。每小时跟进 `gofa-f-stage16` 已更新。
+接续运行源码 `0d73f05c34dbff3452acb6ed4f80d2a0b1d1c928`，快照 `/home/dcg/dcg_data/GOFA-F-runs/stage16-chattime-metr-v5`，C开发输出 `outputs/stage16-chattime-metr-v5/`、日志同级 `.log`、身份同级 `.launch.json`。CPU准备控制器PID3932279/start_ticks606212644；新等待器PID3935816/start_ticks606223992，使用前核对。C禁CUDA/OMP/MKL各2线程280项回归通过、11旧可选跳过，新增51项全覆盖，真实7B CPU机制复核通过；32项截止/接续专项及真实v3输入/退出身份核验通过。每小时跟进 `gofa-f-stage16` 已更新。
 
 已只读核对v5 `window.json`：原起算16:03:02.879529保留，训练截止21:30:00、硬截止23:30:00均为2026-10-16北京时间；接续来源包含原窗口/清单哈希。新等待器状态waiting_for_idle，GPU活动0、worker为空。证据 `docs/results/stage16-deadline-v5.json` 和 `docs/results/stage16-cpu-verification-v5.json`；此时尚无GPU机制或精度结果。
 
@@ -928,11 +982,11 @@ v8 CPU控制器PID[本地保留]/start_ticks[本地保留]；监督器PID[本地
 
 ## Stage16 ChatTime 两组已部署，等待 GPU 空闲（2026-10-16 16:05，Asia/Shanghai）
 
-本轮有新的用户授权，仅运行 METR-LA 12→12、seed42 的原生 ChatTime 和 GOFA-F(ChatTime)，不启动 LLaMA-2、其他数据集或新 GNN。运行源码 `483a876c10b94430409c1d1fc0f882980b77e331`，固定快照 `${LOCAL_PATH}`，C 开发输出 `outputs/stage16-chattime-metr-v3/`，日志同级 `.log`，等待器身份同级 `.launch.json`，CPU 准备控制器记录同级 `.bootstrap.launch.json`。协议见 `docs/STAGE16_CHATTIME_PROTOCOL.md`。
+本轮有新的用户授权，仅运行 METR-LA 12→12、seed42 的原生 ChatTime 和 GOFA-F(ChatTime)，不启动 LLaMA-2、其他数据集或新 GNN。运行源码 `483a876c10b94430409c1d1fc0f882980b77e331`，固定快照 `/home/dcg/dcg_data/GOFA-F-runs/stage16-chattime-metr-v3`，C 开发输出 `outputs/stage16-chattime-metr-v3/`，日志同级 `.log`，等待器身份同级 `.launch.json`，CPU 准备控制器记录同级 `.bootstrap.launch.json`。协议见 `docs/STAGE16_CHATTIME_PROTOCOL.md`。
 
 官方代码及三个权重分片均按固定版本下载并通过官方 SHA256 核验。C 新建 `.venv-chat`，复用原环境依赖只读，新增 sklearn1.5.2/protobuf5.28.3；旧环境、数据和快照未修改。禁 CUDA、OMP/MKL各2线程：270项CPU回归通过、11项旧可选依赖跳过，新增41项全部通过；真实7B权重3节点机制通过，包括原生隐藏状态、Persistence初始预测、缓存/非缓存预测及梯度、图梯度、冻结、纯文本绕过、累积梯度和优化器精确恢复。CPU证据 `docs/results/stage16-cpu-verification.json`，不是GPU机制或精度结论。
 
-CPU准备控制器PID[本地保留]/start_ticks[本地保留]，CPU等待器PID[本地保留]/start_ticks[本地保留]，使用前重新核对身份。首次窗口北京时间 **2026-10-16 16:03:02**，训练截止 **2026-10-17 01:03:02**，硬截止 **03:03:02**；包含等待、恢复不顺延，截止前60秒保存退出。部署观测 `waiting_for_idle`、活动0，GPU已用20837MiB，未获准入、尚无GPU机制/训练/评价结果。新GPU子任务仍连续三次间隔30秒空闲准入；运行中他人加入不退出，低余量暂停更新；40GiB/Torch38GiB/16GiB余量，不设置独占模式、不操作他人进程。
+CPU准备控制器PID3819503/start_ticks605872007，CPU等待器PID3824577/start_ticks605883460，使用前重新核对身份。首次窗口北京时间 **2026-10-16 16:03:02**，训练截止 **2026-10-17 01:03:02**，硬截止 **03:03:02**；包含等待、恢复不顺延，截止前60秒保存退出。部署观测 `waiting_for_idle`、活动0，GPU已用20837MiB，未获准入、尚无GPU机制/训练/评价结果。新GPU子任务仍连续三次间隔30秒空闲准入；运行中他人加入不退出，低余量暂停更新；40GiB/Torch38GiB/16GiB余量，不设置独占模式、不操作他人进程。
 
 本轮新增可训练1,120,914（图/路由1,071,750，连续头49,164），总注册6,821,464,722；历史UFG-A不再参数匹配。完整前缀缓存估算2,999,480,985,963字节，禁用全盘缓存，使用按需前缀和最多64GiB内存LRU。先完整验证选最佳、锁定SHA后才测试；原生贪心生成与失败点Persistence回退分别报告，未完成全集不填正式测试表。Stage15未完成测试继续留空。
 
@@ -940,99 +994,99 @@ v1缺protobuf、v2发现官方提示模板少一个空行，均在CPU阶段安�
 
 ## 自主窗口结束：Stage15验证合格、测试未获准入（2026-10-16 11:02，Asia/Shanghai）
 
-绝对自主窗口10:58已结束，不再启动GPU或Stage16。Stage15训练满100epoch/35,900更新，验证全步3.0626643915、第12步3.6691021727，通过预定门槛；最佳31,592更新的SHA `160eeaf6074a287d8d7380cee66b78dadd4531ffc6d1c2f19e9dc30dd06baf61` 已在09:46锁定。最终评价持续等GPU空闲，未获准入，10:57:02监督器wall_deadline退出，等待器[本地保留]/worker[本地保留]均已核实退出，failures为空。测试指标留空，禁止为补测延长窗口或自动重启。
+绝对自主窗口10:58已结束，不再启动GPU或Stage16。Stage15训练满100epoch/35,900更新，验证全步3.0626643915、第12步3.6691021727，通过预定门槛；最佳31,592更新的SHA `160eeaf6074a287d8d7380cee66b78dadd4531ffc6d1c2f19e9dc30dd06baf61` 已在09:46锁定。最终评价持续等GPU空闲，未获准入，10:57:02监督器wall_deadline退出，等待器3215096/worker3215767均已核实退出，failures为空。测试指标留空，禁止为补测延长窗口或自动重启。
 
 最近已有测试仍Stage8T2；Stage15验证合格不代表测试差距缩小，0.509%全步验证收益也仅略过门槛。结果 `docs/STAGE15_RESULTS.md`、完整账本/CPU导出已有逐步验证JSON已保存；全夜汇总 `docs/OVERNIGHT_20261016_RESULTS.md`。Stage8–15共10候选/280,020更新，监督器活动合计4.445小时（含Stage8在自主窗口前启动部分）。截止后只读/CPU汇总，随后停止本条跟进；保留C锁定检查点，后续须有新运行授权窗口才能评价。下方部署记录均为历史。
 
 ## Stage15 REG路线rank6固定快照和等待器已部署（2026-10-16 09:08，Asia/Shanghai）
 
-运行源码 `42b64818a9874ac12832a9e57a6ed0c4b59093f8`，快照 `${LOCAL_PATH}`，C开发输出 `outputs/stage15-metr-reg6-v1/`、日志同级 `.log`、身份同级 `.launch.json`。B/C/GitHub同步，C禁CUDA/OMP/MKL各2线程229通过/11可选依赖跳过，固定快照12输入核验通过，旧Stage14进程已退出。
+运行源码 `42b64818a9874ac12832a9e57a6ed0c4b59093f8`，快照 `/home/dcg/dcg_data/GOFA-F-runs/stage15-metr-reg6-v1`，C开发输出 `outputs/stage15-metr-reg6-v1/`、日志同级 `.log`、身份同级 `.launch.json`。B/C/GitHub同步，C禁CUDA/OMP/MKL各2线程229通过/11可选依赖跳过，固定快照12输入核验通过，旧Stage14进程已退出。
 
-CPU等待器首次北京时间2026-10-16 09:08:48启动，PID[本地保留]/start_ticks[本地保留]，使用前核对身份，禁止重复启动。绝对训练截止10:43、硬截止10:58不顺延。唯一r1_reg_rank6组合REG-only消息与rank6私有头，可训练119,302自由度，协议 `docs/STAGE15_REG_CAPACITY_PROTOCOL.md`；部署时尚无GPU精度。每个新GPU子任务严格空闲准入、40GiB/Torch38GiB/16GiB余量、运行中他人加入不退出仍有效。10:58前仅据验证机制持续顺序迭代。下方准备和旧阶段为历史。
+CPU等待器首次北京时间2026-10-16 09:08:48启动，PID3215096/start_ticks603398801，使用前核对身份，禁止重复启动。绝对训练截止10:43、硬截止10:58不顺延。唯一r1_reg_rank6组合REG-only消息与rank6私有头，可训练119,302自由度，协议 `docs/STAGE15_REG_CAPACITY_PROTOCOL.md`；部署时尚无GPU精度。每个新GPU子任务严格空闲准入、40GiB/Torch38GiB/16GiB余量、运行中他人加入不退出仍有效。10:58前仅据验证机制持续顺序迭代。下方准备和旧阶段为历史。
 
 ## Stage14未合格，Stage15 REG路线与rank6组合准备部署（2026-10-16，Asia/Shanghai）
 
-Stage14已no_eligible_variant，等待器[本地保留]/worker[本地保留]退出，无失败。M1验证全步/第12步3.0803319922/3.6877857832，M2为3.0667078433/3.6651309559；M2改善约0.378%未过0.5%门槛，均未测试，合格对照仍T2。结果 `docs/STAGE14_RESULTS.md` 和机器可读副本保存，旧阶段不重启。
+Stage14已no_eligible_variant，等待器3145789/worker3146463退出，无失败。M1验证全步/第12步3.0803319922/3.6877857832，M2为3.0667078433/3.6651309559；M2改善约0.378%未过0.5%门槛，均未测试，合格对照仍T2。结果 `docs/STAGE14_RESULTS.md` 和机器可读副本保存，旧阶段不重启。
 
 Stage15固定唯一r1_reg_rank6，检验Stage14 M2路线与预算固定rank6的互补性，从预训练重新初始化，不加其他候选。预注册 `docs/STAGE15_REG_CAPACITY_PROTOCOL.md`，相同验证门槛及10:58绝对截止；准备C禁CUDA回归和独立部署。下方Stage14记录为历史。
 
 ## Stage14 token角色固定快照与等待器已部署（2026-10-16 07:08，Asia/Shanghai）
 
-运行源码 `38c1643eb698a6dba42be30e132a7f51c6d0e265`，快照 `${LOCAL_PATH}`，C开发输出 `outputs/stage14-metr-tokens-v1/`，日志同级 `.log`、身份同级 `.launch.json`。B/C/GitHub同步，C禁CUDA/OMP/MKL各2线程223通过/11可选依赖跳过，固定快照12项输入清单核验通过；Stage13旧等待器和worker退出后才部署。
+运行源码 `38c1643eb698a6dba42be30e132a7f51c6d0e265`，快照 `/home/dcg/dcg_data/GOFA-F-runs/stage14-metr-tokens-v1`，C开发输出 `outputs/stage14-metr-tokens-v1/`，日志同级 `.log`、身份同级 `.launch.json`。B/C/GitHub同步，C禁CUDA/OMP/MKL各2线程223通过/11可选依赖跳过，固定快照12项输入清单核验通过；Stage13旧等待器和worker退出后才部署。
 
-CPU等待器首次北京时间2026-10-16 07:08:37启动，PID[本地保留]/start_ticks[本地保留]；使用前重新核对身份、禁止重复启动。绝对训练截止10:43、硬截止10:58，等待与恢复不顺延。两组m1_data_only/m2_reg_only只改变图信息进入的token角色，参数与原T2一致，协议 `docs/STAGE14_TOKEN_PROTOCOL.md`。首次观测waiting_for_idle、活动0，尚无GPU机制或精度。新GPU子任务严格三次间隔30秒空闲准入；运行中他人加入不退出，40GiB/Torch38GiB/16GiB余量保留。10:58前继续仅据验证机制顺序迭代。下方准备及旧阶段记录为历史。
+CPU等待器首次北京时间2026-10-16 07:08:37启动，PID3145789/start_ticks602677691；使用前重新核对身份、禁止重复启动。绝对训练截止10:43、硬截止10:58，等待与恢复不顺延。两组m1_data_only/m2_reg_only只改变图信息进入的token角色，参数与原T2一致，协议 `docs/STAGE14_TOKEN_PROTOCOL.md`。首次观测waiting_for_idle、活动0，尚无GPU机制或精度。新GPU子任务严格三次间隔30秒空闲准入；运行中他人加入不退出，40GiB/Torch38GiB/16GiB余量保留。10:58前继续仅据验证机制顺序迭代。下方准备及旧阶段记录为历史。
 
 ## Stage13未合格，Stage14 token角色路线准备部署（2026-10-16，Asia/Shanghai）
 
-Stage13已 `no_eligible_variant`，等待器[本地保留]/worker[本地保留]退出，无失败。验证全步3.0771045153、第12步3.6767182618，仅改善约0.04%，未过全步0.5%门槛，未测试；合格对照仍Stage8T2。结果 `docs/STAGE13_RESULTS.md` 及机器可读副本已保存，旧阶段不重启。
+Stage13已 `no_eligible_variant`，等待器3103432/worker3104082退出，无失败。验证全步3.0771045153、第12步3.6767182618，仅改善约0.04%，未过全步0.5%门槛，未测试；合格对照仍Stage8T2。结果 `docs/STAGE13_RESULTS.md` 及机器可读副本已保存，旧阶段不重启。
 
 Stage14回到T2/rank4，不增参数，固定两组分别只给数据patch或REG汇总token注入图增量，原生注意力掩码不变。C禁CUDA/OMP/MKL各2线程全仓库223通过/11可选依赖跳过；真实权重、图掩码、缓存和恢复核验通过。预注册 `docs/STAGE14_TOKEN_PROTOCOL.md`，准备同步和固定快照。验证门槛、严格GPU空闲准入、40GiB/16GiB余量及10:58绝对截止保留。下方Stage13部署为历史。
 
 ## Stage13 rank6私有头固定快照与等待器已部署（2026-10-16 05:59，Asia/Shanghai）
 
-运行源码 `078c9f5a1abdae79127f388c1d1db56dd7ce4a4f`，快照 `${LOCAL_PATH}`，输出C开发仓库 `outputs/stage13-metr-head-v1/`、日志同级 `.log`、身份同级 `.launch.json`。C禁CUDA、OMP/MKL各2线程213项CPU通过/11可选依赖跳过；快照12项输入核验通过，Stage12旧等待器和worker退出后才部署。
+运行源码 `078c9f5a1abdae79127f388c1d1db56dd7ce4a4f`，快照 `/home/dcg/dcg_data/GOFA-F-runs/stage13-metr-head-v1`，输出C开发仓库 `outputs/stage13-metr-head-v1/`、日志同级 `.log`、身份同级 `.launch.json`。C禁CUDA、OMP/MKL各2线程213项CPU通过/11可选依赖跳过；快照12项输入核验通过，Stage12旧等待器和worker退出后才部署。
 
-CPU等待器首次北京时间2026-10-16 05:59:48启动，PID[本地保留]/start_ticks[本地保留]，使用前核对身份、禁止重复启动。绝对训练截止10:43、硬截止10:58，等待恢复不顺延。唯一h1_rank6保持T2图，仅扩私有头到rank6，真实可训练119,302参数、点预测涉及115,918自由度，处于历史METR-LA UFG-A的±10%内；初始预测/共同图权重配对通过。协议 `docs/STAGE13_HEAD_PROTOCOL.md`，验证门槛仍相对Stage8T2，部署时尚无GPU精度结果。新GPU子任务严格空闲准入，40GiB/Torch38GiB/16GiB余量、运行中他人加入不退出继续有效；10:58前按验证机制持续顺序迭代。下方准备与旧记录为历史。
+CPU等待器首次北京时间2026-10-16 05:59:48启动，PID3103432/start_ticks602264777，使用前核对身份、禁止重复启动。绝对训练截止10:43、硬截止10:58，等待恢复不顺延。唯一h1_rank6保持T2图，仅扩私有头到rank6，真实可训练119,302参数、点预测涉及115,918自由度，处于历史METR-LA UFG-A的±10%内；初始预测/共同图权重配对通过。协议 `docs/STAGE13_HEAD_PROTOCOL.md`，验证门槛仍相对Stage8T2，部署时尚无GPU精度结果。新GPU子任务严格空闲准入，40GiB/Torch38GiB/16GiB余量、运行中他人加入不退出继续有效；10:58前按验证机制持续顺序迭代。下方准备与旧记录为历史。
 
 ## Stage12 未合格，Stage13 私有头容量准备部署（2026-10-16，Asia/Shanghai）
 
-Stage12跑满100epoch（35,900更新）后 `no_eligible_variant`，等待器[本地保留]/worker[本地保留]退出，无失败。验证全步3.0955940661、第12步3.7417769070，未测试；目前合格模型仍Stage8T2。结果 `docs/STAGE12_RESULTS.md` 与机器可读副本，旧阶段不重启。
+Stage12跑满100epoch（35,900更新）后 `no_eligible_variant`，等待器3067411/worker3068792退出，无失败。验证全步3.0955940661、第12步3.7417769070，未测试；目前合格模型仍Stage8T2。结果 `docs/STAGE12_RESULTS.md` 与机器可读副本，旧阶段不重启。
 
 Stage13仅将T2私有输出适配rank4改为rank6，图和其他协议保持；119,302可训练参数是仍处于历史METR-LA UFG-A108,927自由度±10%内的最大整数秩预算，不做秩精度搜索。专项5项CPU检查通过，含真实参数、共同权重配对、私有头隔离和精确恢复，准备全仓库回归/独立部署。协议 `docs/STAGE13_HEAD_PROTOCOL.md`，验证门槛、严格共享GPU准入及10:58绝对截止保留。以下Stage12部署为历史。
 
 ## Stage12 独立快照和空闲等待器已部署（2026-10-16 05:01，Asia/Shanghai）
 
-运行源码 `9ef6b091652566c30760aa26ff57f569e55a6aec`，快照 `${LOCAL_PATH}`，输出C开发仓库 `outputs/stage12-metr-contrast-v1/`、日志同级 `.log`、身份同级 `.launch.json`。C禁CUDA、OMP/MKL各2线程208项通过/11可选依赖跳过，快照12项输入核验通过；Stage11旧等待器和worker已退出后才部署。
+运行源码 `9ef6b091652566c30760aa26ff57f569e55a6aec`，快照 `/home/dcg/dcg_data/GOFA-F-runs/stage12-metr-contrast-v1`，输出C开发仓库 `outputs/stage12-metr-contrast-v1/`、日志同级 `.log`、身份同级 `.launch.json`。C禁CUDA、OMP/MKL各2线程208项通过/11可选依赖跳过，快照12项输入核验通过；Stage11旧等待器和worker已退出后才部署。
 
-CPU等待器首次北京时间2026-10-16 05:01:17启动，PID[本地保留]/start_ticks[本地保留]；使用前核对身份，禁止重复启动。绝对训练截止10:43、硬截止10:58，等待恢复不顺延。唯一d1_contrast在T2原图上使用邻居混合消息减自身latent，不增参数，保留物理先验≥0.5，判定仍看预注册验证门槛。新GPU子任务严格三次间隔30秒空闲准入，运行中他人加入不退出，40GiB/Torch38GiB/16GiB余量不变。部署时尚无GPU机制或精度结果；10:58前继续依据验证机制顺序迭代。下方准备及旧阶段记录为历史。
+CPU等待器首次北京时间2026-10-16 05:01:17启动，PID3067411/start_ticks601913623；使用前核对身份，禁止重复启动。绝对训练截止10:43、硬截止10:58，等待恢复不顺延。唯一d1_contrast在T2原图上使用邻居混合消息减自身latent，不增参数，保留物理先验≥0.5，判定仍看预注册验证门槛。新GPU子任务严格三次间隔30秒空闲准入，运行中他人加入不退出，40GiB/Torch38GiB/16GiB余量不变。部署时尚无GPU机制或精度结果；10:58前继续依据验证机制顺序迭代。下方准备及旧阶段记录为历史。
 
 ## Stage11 未合格，Stage12 对比消息准备部署（2026-10-16，Asia/Shanghai）
 
-Stage11 `no_eligible_variant`，等待器[本地保留]/worker[本地保留]退出，无失败。验证全步3.0788605691、第12步3.6878264836，未测试；当前合格模型仍Stage8T2。结果见 `docs/STAGE11_RESULTS.md` 和机器可读副本，旧阶段勿重启。
+Stage11 `no_eligible_variant`，等待器3028018/worker3032859退出，无失败。验证全步3.0788605691、第12步3.6878264836，未测试；当前合格模型仍Stage8T2。结果见 `docs/STAGE11_RESULTS.md` 和机器可读副本，旧阶段勿重启。
 
 对锁定T2的训练/验证CPU消息诊断显示与自身latent平均余弦约0.91–0.95，仅作机制线索。Stage12回到原T2相关支持，仅将图增量改为邻居混合消息减自身latent，不增参数，保留原生残差和物理先验≥0.5。协议 `docs/STAGE12_CONTRAST_PROTOCOL.md`，CPU专项6项通过，准备全仓库回归及固定快照；硬截止仍北京时间10:58、验证门槛保持。下方Stage11部署为历史。
 
 ## Stage11 固定快照和严格空闲等待器已部署（2026-10-16 04:05，Asia/Shanghai）
 
-运行源码 `171b188f8af93174b2d64916f2e0f369e8bc1848`，快照 `${LOCAL_PATH}`，输出 C 开发仓库 `outputs/stage11-metr-lagged-v1/`、日志同级 `.log`、身份同级 `.launch.json`。C禁CUDA、OMP/MKL各2线程：202项CPU通过/11可选依赖跳过；快照13个输入哈希核验通过，Stage10旧等待器及worker退出后才部署。
+运行源码 `171b188f8af93174b2d64916f2e0f369e8bc1848`，快照 `/home/dcg/dcg_data/GOFA-F-runs/stage11-metr-lagged-v1`，输出 C 开发仓库 `outputs/stage11-metr-lagged-v1/`、日志同级 `.log`、身份同级 `.launch.json`。C禁CUDA、OMP/MKL各2线程：202项CPU通过/11可选依赖跳过；快照13个输入哈希核验通过，Stage10旧等待器及worker退出后才部署。
 
-CPU等待器首次北京时间2026-10-16 04:05:18启动，PID[本地保留]/start_ticks[本地保留]，使用前重新核对身份，禁止重复启动。绝对训练截止10:43、硬截止10:58不变；所有新GPU子任务须三次间隔30秒完全空闲准入，运行中他人加入不退出，40GiB/Torch38GiB/16GiB余量有效。唯一l1_lagged用原T2加lag1/2/3有向关联图（新增97边），门槛相对锁定Stage8T2，详见 `docs/STAGE11_LAGGED_PROTOCOL.md`。部署时尚无Stage11GPU机制或精度结果，10:58前继续按验证信息顺序迭代。下方准备与旧阶段记录为历史。
+CPU等待器首次北京时间2026-10-16 04:05:18启动，PID3028018/start_ticks601577812，使用前重新核对身份，禁止重复启动。绝对训练截止10:43、硬截止10:58不变；所有新GPU子任务须三次间隔30秒完全空闲准入，运行中他人加入不退出，40GiB/Torch38GiB/16GiB余量有效。唯一l1_lagged用原T2加lag1/2/3有向关联图（新增97边），门槛相对锁定Stage8T2，详见 `docs/STAGE11_LAGGED_PROTOCOL.md`。部署时尚无Stage11GPU机制或精度结果，10:58前继续按验证信息顺序迭代。下方准备与旧阶段记录为历史。
 
 ## Stage10 未合格，Stage11 滞后相关支持已预注册（2026-10-16，Asia/Shanghai）
 
-Stage10 `no_eligible_variant`，等待器[本地保留]/worker[本地保留]已退出，无失败。验证全步3.0878077061、第12步3.7064949538，两项均未通过，未测试；现有合格模型仍是Stage8T2。结果见 `docs/STAGE10_RESULTS.md` 与机器可读副本，勿重启旧阶段。
+Stage10 `no_eligible_variant`，等待器2984281/worker2986445已退出，无失败。验证全步3.0878077061、第12步3.7064949538，两项均未通过，未测试；现有合格模型仍是Stage8T2。结果见 `docs/STAGE10_RESULTS.md` 与机器可读副本，勿重启旧阶段。
 
 Stage11回到T2的19维小结构，只加入训练前缀lag1/2/3的有向top8关联支持，不增参数，动态权重取并集逐边最大。新增97条有向边，图SHA `74a351a4ea001e5ab72e74921e9fdc7c2ade8e74807c3abf829cb1173414e5a5`，无跨连续时间段配对。专项7项CPU机制通过，准备全仓库回归及独立部署。协议 `docs/STAGE11_LAGGED_PROTOCOL.md`，验证门槛及绝对10:58截止保留；新GPU子任务必须严格空闲准入。以下Stage10部署为历史。
 
 ## Stage10 固定快照和CPU等待器已部署（2026-10-16 03:04，Asia/Shanghai）
 
-运行源码 `3d3f95be58db7a269951556e289f8e534d3a6fcf`，快照 `${LOCAL_PATH}`，输出 C 开发仓库 `outputs/stage10-metr-encoded-v1/`，日志同级 `.log`、身份记录同级 `.launch.json`。B/C/GitHub代码同步，C禁CUDA全仓库195通过/11可选依赖跳过，快照11项输入核验通过；旧Stage9等待器及worker已退出后才部署。
+运行源码 `3d3f95be58db7a269951556e289f8e534d3a6fcf`，快照 `/home/dcg/dcg_data/GOFA-F-runs/stage10-metr-encoded-v1`，输出 C 开发仓库 `outputs/stage10-metr-encoded-v1/`，日志同级 `.log`、身份记录同级 `.launch.json`。B/C/GitHub代码同步，C禁CUDA全仓库195通过/11可选依赖跳过，快照11项输入核验通过；旧Stage9等待器及worker已退出后才部署。
 
-CPU等待器首次北京时间2026-10-16 03:04:31启动，PID[本地保留]/start_ticks[本地保留]；使用前核对身份，禁止重复启动。绝对训练截止10:43、硬截止10:58，恢复和等待不顺延。严格三次间隔30秒空闲准入后才允许GPU机制/训练，运行中他人加入不退出；40GiB/Torch38GiB/16GiB余量保留。唯一候选e1_encoded以锁定Stage8T2为对照，验证门槛和结构见 `docs/STAGE10_ENCODED_PROTOCOL.md`；部署时尚无Stage10精度结果。10:58前继续按验证信息进行后续顺序迭代，旧结果不覆盖。以下准备和Stage9记录为历史。
+CPU等待器首次北京时间2026-10-16 03:04:31启动，PID2984281/start_ticks601213052；使用前核对身份，禁止重复启动。绝对训练截止10:43、硬截止10:58，恢复和等待不顺延。严格三次间隔30秒空闲准入后才允许GPU机制/训练，运行中他人加入不退出；40GiB/Torch38GiB/16GiB余量保留。唯一候选e1_encoded以锁定Stage8T2为对照，验证门槛和结构见 `docs/STAGE10_ENCODED_PROTOCOL.md`；部署时尚无Stage10精度结果。10:58前继续按验证信息进行后续顺序迭代，旧结果不覆盖。以下准备和Stage9记录为历史。
 
 ## Stage9 未达预定收益，Stage10 非线性历史编码准备部署（2026-10-16，Asia/Shanghai）
 
-Stage9 `no_eligible_variant`，等待器[本地保留]与worker[本地保留]已核实退出，无异常。验证全步3.0727575920、第12步3.6824765599；改善仅约0.18%，未过0.5%门槛，测试留空、当前合格对照仍是Stage8T2。结果见 `docs/STAGE9_RESULTS.md` 及机器可读副本，勿重启本阶段。
+Stage9 `no_eligible_variant`，等待器2940624与worker2943503已核实退出，无异常。验证全步3.0727575920、第12步3.6824765599；改善仅约0.18%，未过0.5%门槛，测试留空、当前合格对照仍是Stage8T2。结果见 `docs/STAGE9_RESULTS.md` 及机器可读副本，勿重启本阶段。
 
 Stage10仅把24维有序历史分支改为24→32→64 GELU编码，19维摘要/时钟保持线性，在图聚合前融合，初始增量为零。协议 `docs/STAGE10_ENCODED_PROTOCOL.md`；门槛继续相对Stage8T2验证，不按测试新增候选。C禁CUDA专项6项通过，准备全仓库回归及独立固定快照。用户授权连续迭代的绝对截止仍是北京时间10:58，新GPU子任务必须严格空闲准入。下方Stage9部署记录为历史。
 
 ## Stage9 独立固定快照等待GPU（2026-10-16 02:09，Asia/Shanghai）
 
-运行源码 `e7acbb556d6b95d361d31c3c9224607266791394`，固定快照 `${LOCAL_PATH}`，输出 C 开发仓库 `outputs/stage9-metr-ordered-v1/`、日志同级 `.log`、身份记录同级 `.launch.json`。C 禁CUDA、OMP/MKL各2线程：全仓库189通过/11可选依赖跳过，固定快照清单10输入核验通过；Stage8等待器及worker已核实退出后才启动本阶段。
+运行源码 `e7acbb556d6b95d361d31c3c9224607266791394`，固定快照 `/home/dcg/dcg_data/GOFA-F-runs/stage9-metr-ordered-v1`，输出 C 开发仓库 `outputs/stage9-metr-ordered-v1/`、日志同级 `.log`、身份记录同级 `.launch.json`。C 禁CUDA、OMP/MKL各2线程：全仓库189通过/11可选依赖跳过，固定快照清单10输入核验通过；Stage8等待器及worker已核实退出后才启动本阶段。
 
-CPU等待器首次于北京时间2026-10-16 02:08:54启动，PID[本地保留]/start_ticks[本地保留]；使用前重新核对身份，禁止重复启动。绝对训练截止10:43、硬截止10:58，等待和恢复不顺延。首观测为waiting_for_idle、活动0；GPU机制与精度尚未发生。唯一候选o1_ordered保留Stage8T2相关图，以T2锁定验证为对照，阈值和细则见 `docs/STAGE9_ORDERED_PROTOCOL.md`。本轮结束后在用户原定10:58窗口内继续顺序迭代，不按测试返选；各版旧结果与快照保留。下方CPU准备及Stage8记录为历史。
+CPU等待器首次于北京时间2026-10-16 02:08:54启动，PID2940624/start_ticks600879381；使用前重新核对身份，禁止重复启动。绝对训练截止10:43、硬截止10:58，等待和恢复不顺延。首观测为waiting_for_idle、活动0；GPU机制与精度尚未发生。唯一候选o1_ordered保留Stage8T2相关图，以T2锁定验证为对照，阈值和细则见 `docs/STAGE9_ORDERED_PROTOCOL.md`。本轮结束后在用户原定10:58窗口内继续顺序迭代，不按测试返选；各版旧结果与快照保留。下方CPU准备及Stage8记录为历史。
 
 ## Stage8 已完成，Stage9 已预注册并完成专项CPU验证（2026-10-16，Asia/Shanghai）
 
-Stage8 `launcher/status=complete`，等待器[本地保留]与worker[本地保留]已退出，无失败。T1验证全步/第12步3.136663/3.787753未过全步门槛，未测试；T2验证3.078344/3.683162通过，锁定后测试全步3.406267、第12步4.136418。相较Stage6改善，但距TITAN外部参照3.08仍有1.056418差距。完整结果见 `docs/STAGE8_RESULTS.md` 与机器可读副本；勿重复启动Stage8。
+Stage8 `launcher/status=complete`，等待器2837909与worker2848602已退出，无失败。T1验证全步/第12步3.136663/3.787753未过全步门槛，未测试；T2验证3.078344/3.683162通过，锁定后测试全步3.406267、第12步4.136418。相较Stage6改善，但距TITAN外部参照3.08仍有1.056418差距。完整结果见 `docs/STAGE8_RESULTS.md` 与机器可读副本；勿重复启动Stage8。
 
 用户授权持续迭代至北京时间2026-10-16 10:58。Stage9仅增有序段内偏差/掩码，保留T2的物理和相关图，以锁定T2为对照，从预训练权重重训。门槛为验证全步≤3.062952183796903且第12步≤3.6831616007344037，仅合格者锁定后测试。独立协议 `docs/STAGE9_ORDERED_PROTOCOL.md`。C禁CUDA、OMP/MKL各2线程的8项新增专项测试（含真实权重与恢复）通过，准备全仓库回归和固定快照部署；尚无Stage9GPU结果。严格空闲准入、40GiB/16GiB余量、运行中别人加入不退出继续有效。下方Stage8部署记录为历史。
 
 ## Stage8 METR-LA 细粒度历史图上下文等待 GPU（2026-10-15 23:50，Asia/Shanghai）
 
-固定源码 `62f56fabe7c5e68ff8b0bbc3a6ad976b4ab3aecb`，C 快照 `${LOCAL_PATH}`，输出在 C 开发仓库 `outputs/stage8-metr-temporal-v1/`、日志同级 `.log`、启动身份记录同级 `.launch.json`。B/GitHub/C 已同步代码，固定快照工作区干净。C 禁用 CUDA 的快照回归181通过、11跳过；清单核对10个输入哈希。相关图 SHA `d25fb015fb887d5fae60411af29cd20315fec31f8d635b4a965f07708312e8d0`，新增1,678条有向非自环动态候选边。
+固定源码 `62f56fabe7c5e68ff8b0bbc3a6ad976b4ab3aecb`，C 快照 `/home/dcg/dcg_data/GOFA-F-runs/stage8-metr-temporal-v1`，输出在 C 开发仓库 `outputs/stage8-metr-temporal-v1/`、日志同级 `.log`、启动身份记录同级 `.launch.json`。B/GitHub/C 已同步代码，固定快照工作区干净。C 禁用 CUDA 的快照回归181通过、11跳过；清单核对10个输入哈希。相关图 SHA `d25fb015fb887d5fae60411af29cd20315fec31f8d635b4a965f07708312e8d0`，新增1,678条有向非自环动态候选边。
 
-CPU 空闲等待器于 2026-10-15 23:48:28 首次启动，实际 PID `[本地保留]`、start_ticks `[本地保留]`；使用前须重新核对身份与存活，不得重复启动。`window.json` 规定训练截止 2026-10-16 11:33:28、硬截止11:48:28（北京时间），等待不顺延。23:50只读确认 `launcher.json=waiting_for_idle`、活动0，GPU 正被其他任务占用；尚无 Stage8 GPU 机制或精度结果。每个子任务须三次间隔30秒完全空闲才进入；运行中他人加入不退出、低显存余量暂停更新，本项目最多40 GiB、留16 GiB，不设置独占模式。只在终止或异常时通知；旧阶段不重启。详细协议见 `docs/STAGE8_METR_TEMPORAL_PROTOCOL.md`。以下部署前记录及 Stage7 结果为历史记录。
+CPU 空闲等待器于 2026-10-15 23:48:28 首次启动，实际 PID `2837909`、start_ticks `600036782`；使用前须重新核对身份与存活，不得重复启动。`window.json` 规定训练截止 2026-10-16 11:33:28、硬截止11:48:28（北京时间），等待不顺延。23:50只读确认 `launcher.json=waiting_for_idle`、活动0，GPU 正被其他任务占用；尚无 Stage8 GPU 机制或精度结果。每个子任务须三次间隔30秒完全空闲才进入；运行中他人加入不退出、低显存余量暂停更新，本项目最多40 GiB、留16 GiB，不设置独占模式。只在终止或异常时通知；旧阶段不重启。详细协议见 `docs/STAGE8_METR_TEMPORAL_PROTOCOL.md`。以下部署前记录及 Stage7 结果为历史记录。
 
 ## Stage8 代码和 CPU 审计完成，等待固定快照部署（2026-10-15）
 
@@ -1040,13 +1094,13 @@ METR-LA 12→12、seed42 的 T1 四段历史图摘要与 T2 训练前缀 top-8 �
 
 ## 最新状态：Stage7 单检查点迁移评价已完成（2026-10-15 21:32，Asia/Shanghai）
 
-固定代码 `2c9ba946882cf22787bce22602289bc9c77361fa` 的快照 `stage7-locked-transfer-v1` 已完成六集验证与测试；`launcher.json` 和 `status.json` 均为 `complete`，`failures` 为空，CPU 等待器 PID [本地保留] 及其 GPU 子进程已退出。METR-LA 源任务准确复现 Stage5 MAE；其余五集锁定检查点的测试 MAE 均高于各集单独训练的同架构模型。PeMS-BAY 差 13%，AQI-437/AQI-36 分别为 2.34/1.86 倍，Electricity/Solar-Energy 约为 6.82/6.77 倍。六集完整指标、逐步误差、显存、账本与局限见 `docs/STAGE7_RESULTS.md` 及 `docs/results/stage7-locked-transfer-v1.json`；B 已下载小型原始输出。监督器活动累计 55.905 秒，所有目标权重更新数均为0。本阶段不得重复启动 GPU 作业；每小时跟进在交付终止结果后暂停。下文等待器部署是历史记录。
+固定代码 `2c9ba946882cf22787bce22602289bc9c77361fa` 的快照 `stage7-locked-transfer-v1` 已完成六集验证与测试；`launcher.json` 和 `status.json` 均为 `complete`，`failures` 为空，CPU 等待器 PID 2715356 及其 GPU 子进程已退出。METR-LA 源任务准确复现 Stage5 MAE；其余五集锁定检查点的测试 MAE 均高于各集单独训练的同架构模型。PeMS-BAY 差 13%，AQI-437/AQI-36 分别为 2.34/1.86 倍，Electricity/Solar-Energy 约为 6.82/6.77 倍。六集完整指标、逐步误差、显存、账本与局限见 `docs/STAGE7_RESULTS.md` 及 `docs/results/stage7-locked-transfer-v1.json`；B 已下载小型原始输出。监督器活动累计 55.905 秒，所有目标权重更新数均为0。本阶段不得重复启动 GPU 作业；每小时跟进在交付终止结果后暂停。下文等待器部署是历史记录。
 
 ## 最新状态：Stage7 单检查点六集迁移评价等待 GPU（2026-10-15 21:02，Asia/Shanghai）
 
 固定快照 `stage7-locked-transfer-v1`、代码 `2c9ba946882cf22787bce22602289bc9c77361fa` 已与 GitHub、B、C 同步。C 禁用 CUDA、OMP/MKL 各两线程的六数据集真实 Bolt 权重前向检查通过；源 Stage5 METR-LA 检查点 SHA `7c3e3957d9a9fded1cff5302db775ef1bbc156c8e9dbcf97f26b07eb671beee9` 与锁定记录一致，快照清单的 22 个输入哈希核验通过。协议见 `docs/STAGE7_TRANSFER_PROTOCOL.md`。
 
-CPU 空闲等待器于 21:02:11 首次启动，初始 PID `[本地保留]`、start_ticks `[本地保留]`；使用前须重新核对身份及存活，禁止重复启动。首次核对 `launcher.json` 为 `waiting_for_idle`、活动秒数0，GPU 正被其他进程占用，尚无 Stage7 GPU 评价结果。输出在 C 开发仓库 `outputs/stage7-locked-transfer-v1/`，日志同级 `.log`；固定八小时墙钟窗口于 2026-10-16 05:02:11 截止，不因等待顺延。每个 GPU 子任务须三次间隔30秒确认完全空闲才启动；运行中其他用户加入不退出，显存余量不足暂停更新，项目上限40 GiB、至少留16 GiB。每小时跟进 `gofa-f` 仅在终止或异常时通知。
+CPU 空闲等待器于 21:02:11 首次启动，初始 PID `2715356`、start_ticks `599039152`；使用前须重新核对身份及存活，禁止重复启动。首次核对 `launcher.json` 为 `waiting_for_idle`、活动秒数0，GPU 正被其他进程占用，尚无 Stage7 GPU 评价结果。输出在 C 开发仓库 `outputs/stage7-locked-transfer-v1/`，日志同级 `.log`；固定八小时墙钟窗口于 2026-10-16 05:02:11 截止，不因等待顺延。每个 GPU 子任务须三次间隔30秒确认完全空闲才启动；运行中其他用户加入不退出，显存余量不足暂停更新，项目上限40 GiB、至少留16 GiB。每小时跟进 `gofa-f` 仅在终止或异常时通知。
 
 本轮固定一份 Stage5 METR-LA 图模型检查点，对六集不更新权重直接评价；各目标仍使用自身训练前缀标准化与原图，因此应称校准后的权重迁移，不能称严格零样本。Stage5/Stage6 及旧快照不重启。下文 Stage6 已完成是历史记录。
 
@@ -1060,12 +1114,12 @@ CPU 空闲等待器于 21:02:11 首次启动，初始 PID `[本地保留]`、sta
 
 C 禁 CUDA、OMP/MKL 双线程：仓库 CPU 测试 171 通过/11 可选依赖跳过；真实 Bolt 权重 C1/C2 初始预测与原生完全一致、缓存预测和梯度一致、骨干冻结，无测试目标加载。源 HDF 的 207 个传感器列与物理图节点顺序及准备数组逐值一致，零值按既有协议掩码；12→12 时间划分约 70/10/20。TITAN 官方模型代码仍为占位，因此 3.08 仅作跨实现外部参照。核验记录见 `docs/results/stage6-protocol-audit.json`、`docs/results/stage6-cpu-verification.json`。
 
-固定快照 `${LOCAL_PATH}` 使用代码 `bcdc74a2213ef0179706a11386d68468fcf50461`，源码保持干净。C 开发输出 `outputs/stage6-metr-long-v1/`，日志同级 `.log`。首次启动 CPU 等待器 PID [本地保留]/start_ticks [本地保留]；使用前重新核对身份与存活，禁止重复启动。六小时窗口从 2026-10-15 18:32:44 起算；2026-10-16 00:17:44 停止训练并锁定评价，00:32:44 硬截止，不因等待顺延。首次只读状态 `waiting_for_idle`、连续空闲1、活动秒数0；尚无 Stage6 GPU 机制或精度结果。每个新GPU子任务须三次间隔30秒确认完全空闲；运行中他人加入不退出，余量不足暂停更新，40 GiB 自身上限、16 GiB 共享余量。旧快照及结果不重启。
+固定快照 `/home/dcg/dcg_data/GOFA-F-runs/stage6-metr-long-v1` 使用代码 `bcdc74a2213ef0179706a11386d68468fcf50461`，源码保持干净。C 开发输出 `outputs/stage6-metr-long-v1/`，日志同级 `.log`。首次启动 CPU 等待器 PID 2611046/start_ticks 598142343；使用前重新核对身份与存活，禁止重复启动。六小时窗口从 2026-10-15 18:32:44 起算；2026-10-16 00:17:44 停止训练并锁定评价，00:32:44 硬截止，不因等待顺延。首次只读状态 `waiting_for_idle`、连续空闲1、活动秒数0；尚无 Stage6 GPU 机制或精度结果。每个新GPU子任务须三次间隔30秒确认完全空闲；运行中他人加入不退出，余量不足暂停更新，40 GiB 自身上限、16 GiB 共享余量。旧快照及结果不重启。
 
 ## 最新状态：Stage5 六集完整训练已完成（2026-10-15 16:43，Asia/Shanghai）
 
 固定快照 `stage5-titan-six-v1`、代码 `5d68ef3caaba0f8f7b6460b8301782ee8f87cb68`。
-只读核对 `launcher.json` 与 `status.json` 均为 `complete`，监督器 [本地保留] 和子进程 [本地保留] 已退出；
+只读核对 `launcher.json` 与 `status.json` 均为 `complete`，监督器 2403369 和子进程 2433421 已退出；
 六集均有锁定 SHA、完整验证和测试结果，`failures` 为空。没有重启 GPU 作业。
 测试原始 MAE（METR-LA/PeMS-BAY/AQI-437/AQI-36/Electricity/Solar-Energy）为
 3.63528/1.14560/16.4618/32.2666/315.194/0.419836，六集均低于旧 G2-V、UFG-S/A 和历史限时 HSD 的对应 MAE。
@@ -1078,8 +1132,8 @@ Electricity 达到 100 epoch，其余均按早停结束。没有墙钟截断或�
 ## Stage5 等待器已部署（2026-10-15 12:46，Asia/Shanghai）
 
 固定代码 `5d68ef3caaba0f8f7b6460b8301782ee8f87cb68`，快照
-`${LOCAL_PATH}`，输出开发仓库 `outputs/stage5-titan-six-v1/`。
-日志同级 `.log`，启动记录同级 `.launch.json`。首次PID[本地保留]/start_ticks[本地保留]；使用前重新核对。
+`/home/dcg/dcg_data/GOFA-F-runs/stage5-titan-six-v1`，输出开发仓库 `outputs/stage5-titan-six-v1/`。
+日志同级 `.log`，启动记录同级 `.launch.json`。首次PID2403369/start_ticks596063576；使用前重新核对。
 12:46:15启动，12:46:56只读确认等待器存活、waiting_for_idle、连续空闲0、活动0；尚无GPUworker/机制或精度。
 首次窗口固定：2026-10-16 00:31:15停止训练进入锁定评价，00:46:15硬截止，不顺延。
 每GPU子任务启动/恢复前确认空闲；运行中他人加入不退出，低显存余量保留进程暂停更新，40GiB上限保留。
@@ -1109,7 +1163,7 @@ C禁CUDA、双线程核验158个独立CPU用例全覆盖，六集真实权重初
 
 ## 最新状态：Stage 4 v2 已完成（2026-10-15 09:14，Asia/Shanghai）
 
-08:51:59正常结束，stage/launcher均complete；09:06确认监督器[本地保留]、worker[本地保留]退出，
+08:51:59正常结束，stage/launcher均complete；09:06确认监督器2004343、worker2004876退出，
 09:13复核GPU无进程、0MiB、Default模式，固定快照和六集输入未改变。
 18组主对照＋3组消融全部完成最终评价，21个锁定检查点SHA均已重新核验，无失败或未完成组。
 运行代码仍为 `79a9c86cbb10a4a7118b56235fbaa2aad18303a1`，不要从开发HEAD重复启动。
@@ -1124,9 +1178,9 @@ C禁CUDA、双线程核验158个独立CPU用例全覆盖，六集真实权重初
 ## Stage 4 v2 部署记录（2026-10-15 02:11，Asia/Shanghai）
 
 固定代码 `79a9c86cbb10a4a7118b56235fbaa2aad18303a1`，快照
-`${LOCAL_PATH}`；输出开发仓库
+`/home/dcg/dcg_data/GOFA-F-runs/stage4-pure-graph-v2`；输出开发仓库
 `outputs/stage4-pure-graph-v2/`，日志同级 `.log`，启动记录 `.launch.json`。
-CPU监督器初始PID `[本地保留]`、start_ticks `[本地保留]`，首次waiting_for_idle，活动累计39.642秒。
+CPU监督器初始PID `2004343`、start_ticks `592254839`，首次waiting_for_idle，活动累计39.642秒。
 v1已停止；v2的 `migration.json` 保留METR-LA/G2-V 95更新、游标6080、完整训练状态与缓存，
 没有完整验证或测试分数。首次机制失败不删除，后续必须重新核验进程身份/状态，不能重复启动。
 v2源码在C禁CUDA双环境覆盖138个独立CPU用例；GPU机制仍须连续空闲入场后重新核验。
@@ -1142,9 +1196,9 @@ GPU活动总量和单组分钟无限制；11:01进入锁定评价，11:16硬截�
 “GPU后续数值轨迹近似”分开核验，不据此声称CUDA逐位复现；旧快照保持不变。
 
 固定运行代码 `95e0a0dca295a3f5f09fb329cc90f8378a4c0cb8`，快照
-`${LOCAL_PATH}`；
+`/home/dcg/dcg_data/GOFA-F-runs/stage4-pure-graph-v1`；
 输出开发仓库 `outputs/stage4-pure-graph-v1/`，日志同级 `.log`，启动记录 `.launch.json`。
-02:03 CPU等待器PID `[本地保留]`、start_ticks `[本地保留]`，首次状态为waiting_for_idle、
+02:03 CPU等待器PID `1997975`、start_ticks `592204080`，首次状态为waiting_for_idle、
 连续空闲1次、活动秒数0，尚无GPU worker；此为历史观察，使用前必须重新核对。
 快照与137项CPU核验源码的规范化哈希一致，六集输入及24份历史评价引用绑定成功。
 不设GPU累计或单组分钟上限，11:01锁定评价、11:16硬截止；其他任务出现即保存让出。
@@ -1179,11 +1233,11 @@ G2 六集胜原生 Bolt、五集胜历史限时 HSD，Electricity 仍落后 HSD 
 
 21:23 已部署并启动 CPU 等待器，21:25（Asia/Shanghai）只读确认：
 `launcher.json.state=waiting_for_idle`，连续空闲计数 0，活动秒数 0；
-等待器 PID `[本地保留]` 存活、无 worker 子进程、不在 GPU 进程表中。
+等待器 PID `1787228` 存活、无 worker 子进程、不在 GPU 进程表中。
 GPU 正由其他任务使用。此观察不是实时状态，后续必须重新核对。
 
 - 固定代码：`0916e8fecf2c6729aa7f23ebfcd7bcab7bd1345e`。
-- 固定快照：`${LOCAL_PATH}`。
+- 固定快照：`/home/dcg/dcg_data/GOFA-F-runs/stage3-late-context-v1`。
 - 输出目录：开发仓库 `outputs/stage3-late-context-v1/`。
 - 启动记录/日志：`outputs/stage3-late-context-v1.launch.json` / `.log`。
 - 初始只生成 `launcher.json` 与启动器清单；worker 入场后才生成 `manifest.json`、
@@ -1226,7 +1280,7 @@ METR-LA 四份结果完整；PeMS-BAY / GOFA-F(Bolt) 仍在训练，已完成 27
 当前实现、恢复与查看进度的命令见 `docs/NEXT_STAGE_PROTOCOL.md`。
 
 - 固定代码：`3c31da62b39876c18a3e62ae3561d83f5be74da0`。
-- 固定快照：`${LOCAL_PATH}`。
+- 固定快照：`/home/dcg/dcg_data/GOFA-F-runs/stage2-native-v1`。
 - 训练 PID：`1534896`；超时包装 PID：`1534895`，后续使用前须重新核对身份与存活。
 - 输出：开发仓库下 `outputs/stage2-native-v1/`；日志：`outputs/stage2-native-v1.log`。
 - 状态：`outputs/stage2-native-v1.status` 与阶段目录内 `status.json`。
@@ -1238,7 +1292,7 @@ METR-LA 四份结果完整；PeMS-BAY / GOFA-F(Bolt) 仍在训练，已完成 27
 - 原生真实权重机制检查累计约 7.97 秒，计入新阶段总预算；外部 timeout 预留 60 秒保存。
 - 新快照启动后核对干净；旧首轮保持停止，未修改旧快照、数据或 `.venv`。
 
-在 C 的终端持续查看日志：`tail -f ${LOCAL_PATH}`。
+在 C 的终端持续查看日志：`tail -f /home/dcg/dcg_data/GOFA-F/outputs/stage2-native-v1.log`。
 结构化进度：在开发仓库执行
 `watch -n 10 'PYTHONPATH=src .venv-native/bin/python -m gofa_f.native_progress outputs/stage2-native-v1'`。
 当前只授权这一新阶段；不要再次并行启动相同阶段或恢复旧首轮。
@@ -1264,10 +1318,10 @@ METR-LA 四份结果完整；PeMS-BAY / GOFA-F(Bolt) 仍在训练，已完成 27
 
 2026-10-13，H100 服务器首轮完整数据实验已启动。
 
-- 开发仓库：`${LOCAL_PATH}`。
-- 运行快照：`${LOCAL_PATH}`（detached worktree）。
+- 开发仓库：`/home/dcg/dcg_data/GOFA-F`。
+- 运行快照：`/home/dcg/dcg_data/GOFA-F-runs/stage1-v2`（detached worktree）。
 - 固定代码：`8e955b66c26f4d64b555e526813c7a03242f190a`。
-- 训练进程：PID `[本地保留]`（仅供本次会话定位，重启后可能失效）。
+- 训练进程：PID `703442`（仅供本次会话定位，重启后可能失效）。
 - 输出：开发仓库下 `outputs/stage1-v2/`。
 - 日志：`outputs/stage1-v2.log`。
 - 状态：`outputs/stage1-v2.status`。
@@ -1294,9 +1348,9 @@ METR-LA 四份结果完整；PeMS-BAY / GOFA-F(Bolt) 仍在训练，已完成 27
 
 ## B 接续核对（2026-10-13 20:33，Asia/Shanghai）
 
-- B 的空目录 `${PROJECT_ROOT}` 已从 GitHub 建立本地检出，起点 `35ab2d7`；C 开发仓库同一提交且干净。
+- B 的空目录 `D:\GOFA-F` 已从 GitHub 建立本地检出，起点 `35ab2d7`；C 开发仓库同一提交且干净。
 - B 使用自身 SSH 配置和现有认证连接 C，没有复制 A 的私钥或连接配置。
-- PID `[本地保留]` 仍有效，父进程 `[本地保留]`；状态文件为 `running`。
+- PID `703442` 仍有效，父进程 `703436`；状态文件为 `running`。
 - 运行 cwd 为 `stage1-v2` 快照，提交仍为 `8e955b6`，tracked/untracked 状态干净。
 - 仅 METR-LA/Persistence 有完整结果，METR-LA/T5 已完成 23 个 epoch（日志 epoch 从 0 开始）。
 - GPU H100 PCIe，20:17 核对时约 1.25 GiB 显存、90% 利用率；不能据低显存推断可重复启动。
@@ -1319,8 +1373,8 @@ B 与 C 的命令行 HTTPS 推送未能完成认证：B 凭据管理器等待，
 不要启动测速、DST-SGNN 或其他数据集的后续训练，等待用户进一步指示。
 GPU 为共享资源，不改独占模式，不操作其他用户的任务。
 
-- 当前首轮 runner 仍为 PID `[本地保留]`，父进程 `[本地保留]`。
-- C 上已启用外部守护 PID `[本地保留]`；11:41 核对状态为 `armed`，当前训练继续。
+- 当前首轮 runner 仍为 PID `703442`，父进程 `703436`。
+- C 上已启用外部守护 PID `1379816`；11:41 核对状态为 `armed`，当前训练继续。
 - 守护使用固定副本 `.remote/pause-stage1-v2.py`，不修改运行快照或 `.venv`。
 - 条件：`outputs/stage1-v2/metr_la/gofa_chronos/h12/seed42/result.json` 完整可读、
   `status=complete`，且数据集、模型、种子、预测长度和记录的 runner PID 全部匹配。
