@@ -124,7 +124,7 @@ def node_roster(adjacency, target, allowed, ids, maximum=9):
     return [target]+sorted(selected[1:], key=lambda i: str(ids[i]))
 
 
-def pack(data, record, allowed, labels=True, split='train'):
+def pack(data, record, allowed, labels=True, split='train', indices=None):
     q = Query(**record['query'])
     if q.source not in VIEWS or q.length != 12 or q.horizon != 12 or q.chunk:
         raise ValueError('Only fixed traffic source queries are admitted')
@@ -136,7 +136,11 @@ def pack(data, record, allowed, labels=True, split='train'):
     if q.origin < max(a, q.length) or q.origin+q.horizon > b \
             or data.segments[q.origin-q.length] != data.segments[q.origin+q.horizon-1]:
         raise ValueError('Source time split or continuity crossed')
-    indices = node_roster(data.external, q.variable, allowed, data.ids)
+    if indices is None:
+        indices = node_roster(data.external, q.variable, allowed, data.ids)
+    elif not 1 <= len(indices) <= 9 or indices[0] != q.variable \
+            or len(set(indices)) != len(indices) or not set(indices) <= set(allowed):
+        raise ValueError('Explicit roster must retain target, unique nodes and source partition')
     values = data.values[q.origin-q.length:q.origin][:, indices].astype(np.float64).T
     mask = data.mask[q.origin-q.length:q.origin][:, indices].T.astype(bool) & np.isfinite(values)
     present = mask.any(1)
