@@ -1489,3 +1489,6 @@ Stage45 source asinh edge encoding completed and stopped at original source gate
 
 
 Stage46 read-only source audit completed: Stage40 gains concentrate on few variables, all paired source intervals cross1; dense physical-roster messages include77.78% non-road pairs and validation has more long-hop neighbors. This is a hypothesis, not a bug or causal proof. GPU/training/target0, confirmation closed. Proposed fixed road-distance prior is not yet run. See STAGE46_RESULTS.md.
+
+
+Stage47 fixed road-distance prior completed: passed=False; flow24.403986, speed1.482628. Original gates retained, exact self replay and33 checks passed; GPU0, no ChatTime/target forecast. All processes exited. See STAGE47_RESULTS.md.

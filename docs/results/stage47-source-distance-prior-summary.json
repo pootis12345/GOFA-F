@@ -1,0 +1,346 @@
+{
+  "stage": 47,
+  "runtime_revision": "f8a8f1bcce1dc70f1b90978e0926a744c5a4d107",
+  "passed": false,
+  "verification": {
+    "passed": true,
+    "manifest_sha256": "d33bc5786b07b4c6c3bbbc27bf762ba8dea993458af125571075ccbdd0125330",
+    "report_sha256": "719c682aa16e051c55462430b9c8a8aae48249fac7d510334476938de53398dc",
+    "matched_initialization_and_cursors": true,
+    "self_control_exactly_matches_stage40": true,
+    "non_edge_parent_cache_arrays_unchanged": true,
+    "distance_prior_sha256": "479856014229cfb20e83d659ecab2d1efbd3277c36af5c41a7d0d83586f5473a",
+    "actual_source_maximum_increment_input_ratio": {
+      "42": 0.9607653021812439
+    },
+    "metric_reaggregation_absolute_differences": {
+      "42-physical-pems04_flow": 0.0,
+      "42-physical-pems04_speed": 0.0,
+      "42-self-pems04_flow": 0.0,
+      "42-self-pems04_speed": 0.0,
+      "42-rewired-pems04_flow": 0.0,
+      "42-rewired-pems04_speed": 0.0
+    },
+    "all_workers_exited": true,
+    "cuda_initialized": false,
+    "wall_seconds": 1.0916108079254627
+  },
+  "initial_validation": {
+    "passed": false,
+    "seeds": [
+      42
+    ],
+    "comparisons": {
+      "pems04_flow": {
+        "self": {
+          "physical_to_control_macro_mae": 0.920209409155497,
+          "per_seed_ratios": [
+            0.920209409155497
+          ],
+          "time_block_ratios": [
+            0.9562250387217496,
+            0.9334351595437135,
+            0.8474397644971371,
+            0.957474918885801
+          ],
+          "zero_error_control": false
+        },
+        "rewired": {
+          "physical_to_control_macro_mae": 1.0054976615278095,
+          "per_seed_ratios": [
+            1.0054976615278095
+          ],
+          "time_block_ratios": [
+            1.0941789467131147,
+            1.0104952452993408,
+            0.9473380919456202,
+            0.9871739268647374
+          ],
+          "zero_error_control": false
+        }
+      },
+      "pems04_speed": {
+        "self": {
+          "physical_to_control_macro_mae": 0.9657304382160578,
+          "per_seed_ratios": [
+            0.9657304382160578
+          ],
+          "time_block_ratios": [
+            1.0408492902493576,
+            0.9668862724103017,
+            0.8459309862285834,
+            0.9681693542262753
+          ],
+          "zero_error_control": false
+        },
+        "rewired": {
+          "physical_to_control_macro_mae": 0.9829711873688711,
+          "per_seed_ratios": [
+            0.9829711873688711
+          ],
+          "time_block_ratios": [
+            0.9643209740331071,
+            0.9869115502782955,
+            0.946895763503625,
+            1.0454118705100157
+          ],
+          "zero_error_control": false
+        }
+      }
+    },
+    "reasons": [
+      "pems04_flow:rewired:less_than_1pct_gain",
+      "pems04_flow:rewired:time_block_regression",
+      "pems04_speed:self:time_block_regression",
+      "pems04_speed:rewired:time_block_regression"
+    ],
+    "independent_unseen_dataset_transfer_proven": false
+  },
+  "repeated_validation": null,
+  "source_confirmation": null,
+  "condition_semantics": {
+    "physical": "physical_roster_dense_support_correct_inverse_road_hops",
+    "self": "same_physical_roster_no_cross_messages",
+    "rewired": "same_physical_roster_target_fixed_permuted_road_distances"
+  },
+  "limitations": [
+    "exposed single-source validation; no whole-dataset zero-shot proof",
+    "small diagnostic continuous-output GNN, not a ChatTime numerical head",
+    "random nodes matched by partition/count, not by sensor marginal distributions"
+  ],
+  "selections": {
+    "42": {
+      "physical": {
+        "selected_update": 1000,
+        "completed_updates": 1000,
+        "checkpoint_sha256": "769e5603bd020f09333eafa297552bc54489b848bfea1a477d085f9b75dc0121",
+        "tensor_sha256": "365db59554bd613a41507cc73ffa096157a1d86c205ca71abdeb3ff19285f176",
+        "validation": {
+          "pems04_flow": {
+            "macro_mae": 24.403985683524905,
+            "macro_rmse": 31.581706826608233,
+            "time_blocks": {
+              "0": 22.988866019480934,
+              "1": 25.500455003662932,
+              "2": 25.155845668856745,
+              "3": 23.97077604209901
+            },
+            "step_macro_mae": [
+              17.03854970922435,
+              16.739064765757778,
+              21.586315948231558,
+              25.55682313809585,
+              22.314274343532613,
+              23.957601115469718,
+              24.887008470457253,
+              22.160763268281396,
+              26.6552629553092,
+              29.95338252062599,
+              27.080929190929357,
+              34.917852776383775
+            ]
+          },
+          "pems04_speed": {
+            "macro_mae": 1.482628278649906,
+            "macro_rmse": 2.0874072938705432,
+            "time_blocks": {
+              "0": 2.1510412310501854,
+              "1": 1.3187046811467422,
+              "2": 1.130985750498056,
+              "3": 1.3297814519046405
+            },
+            "step_macro_mae": [
+              0.9168405192576589,
+              1.0458098164922018,
+              1.2377200239232116,
+              1.2691398114060697,
+              1.4174765558929672,
+              1.479028735054419,
+              1.8932830687646545,
+              1.5719387239261686,
+              1.6568154645021904,
+              1.6921554695436165,
+              1.7104918202395931,
+              1.900839334796123
+            ]
+          }
+        }
+      },
+      "self": {
+        "selected_update": 1000,
+        "completed_updates": 1000,
+        "checkpoint_sha256": "5c69b120413994a8590b3005fc83092f6aeee7b0876201a2ee13b26ba1f72888",
+        "tensor_sha256": "7ceb8bda944ed350d578ded42255119483499cf121b52d9833a6507c9774025f",
+        "validation": {
+          "pems04_flow": {
+            "macro_mae": 26.520034940656775,
+            "macro_rmse": 34.9310206516518,
+            "time_blocks": {
+              "0": 24.041271759848183,
+              "1": 27.3189355928356,
+              "2": 29.68452357647389,
+              "3": 25.035408833469432
+            },
+            "step_macro_mae": [
+              15.563825377689986,
+              15.90482045081444,
+              21.54886191051143,
+              24.614757824320503,
+              23.664575068584075,
+              25.38695728752969,
+              28.26291759322501,
+              24.442885844813038,
+              32.13290239580803,
+              34.663218621500874,
+              31.878742561882568,
+              40.17595435120165
+            ]
+          },
+          "pems04_speed": {
+            "macro_mae": 1.5352402906433043,
+            "macro_rmse": 2.141278996840874,
+            "time_blocks": {
+              "0": 2.06662122095972,
+              "1": 1.3638674152022143,
+              "2": 1.3369716547922343,
+              "3": 1.3735008716190487
+            },
+            "step_macro_mae": [
+              0.8679483306260242,
+              1.003232335828825,
+              1.3090404704440735,
+              1.3966160328878412,
+              1.5065230085426218,
+              1.630008964341479,
+              1.8832991195523843,
+              1.6101002122263581,
+              1.7746600152103644,
+              1.8027726537248294,
+              1.7809886058993318,
+              1.8576937384355192
+            ]
+          }
+        }
+      },
+      "rewired": {
+        "selected_update": 1000,
+        "completed_updates": 1000,
+        "checkpoint_sha256": "9ef903d5a0d5e93a3201dc75659f907c123da52d62d8d365f467e8e5e2ea75ae",
+        "tensor_sha256": "1f7d2c08df957c71270403b707605f064e39a0ad3ef79ff615e47dbeebc9fc12",
+        "validation": {
+          "pems04_flow": {
+            "macro_mae": 24.270554390394224,
+            "macro_rmse": 32.12621537315625,
+            "time_blocks": {
+              "0": 21.010152030925923,
+              "1": 25.23560117901286,
+              "2": 26.554242759511837,
+              "3": 24.282221592126277
+            },
+            "step_macro_mae": [
+              14.30535055603832,
+              16.893946492164915,
+              20.533653826013,
+              23.677734262284098,
+              22.6982397133381,
+              22.939703438896686,
+              25.36275906020051,
+              22.20187746540695,
+              28.818883534391514,
+              30.519932336199822,
+              27.44421468483698,
+              35.85035731495979
+            ]
+          },
+          "pems04_speed": {
+            "macro_mae": 1.508313059122793,
+            "macro_rmse": 2.0897641528504933,
+            "time_blocks": {
+              "0": 2.230627860404015,
+              "1": 1.3361933810328652,
+              "2": 1.194414204910239,
+              "3": 1.272016790144053
+            },
+            "step_macro_mae": [
+              0.8426166235810303,
+              1.0188078235487366,
+              1.2689229314695052,
+              1.3222253887250952,
+              1.494478472389474,
+              1.5038858725814235,
+              1.8537446733154483,
+              1.599356502330998,
+              1.752244089004059,
+              1.7778820772959767,
+              1.7954179616409922,
+              1.8701742935907741
+            ]
+          }
+        }
+      }
+    }
+  },
+  "cpu_preflight": {
+    "passed": true,
+    "tests": 33,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "manifest_sha256": "d33bc5786b07b4c6c3bbbc27bf762ba8dea993458af125571075ccbdd0125330",
+    "cpu_wall_seconds": 4.295508921146393,
+    "cuda_visible_devices": "",
+    "omp_threads": 2,
+    "mkl_threads": 2,
+    "scope": "inherited_full_plus_related",
+    "inherited_full_proof_sha256": "cd763603cb47ef77736f62d7b1e5b3857b4702a8445b7e8cbe713d938b2ed7b2",
+    "related_test_files": [
+      "test_source_graph_probe.py",
+      "test_source_neighborhood_probe.py",
+      "test_source_normalized_probe.py",
+      "test_source_distance_prior_probe.py"
+    ]
+  },
+  "controller_timing": {
+    "started_at_unix": 1792653836.469987,
+    "phases": [
+      {
+        "phase": "prepare",
+        "started_at_unix": 1792653836.469988,
+        "passed": true,
+        "wall_seconds": 1.6505955290049314
+      },
+      {
+        "phase": "related_tests",
+        "started_at_unix": 1792653838.127658,
+        "passed": true,
+        "wall_seconds": 2.6374168740585446
+      },
+      {
+        "phase": "source_worker",
+        "started_at_unix": 1792653840.7657285,
+        "passed": true,
+        "wall_seconds": 97.95528526138514
+      }
+    ],
+    "scope": "controller_wall_excludes_development_and_transfer",
+    "elapsed_wall_seconds": 102.25103024020791
+  },
+  "controller_completion": {
+    "cpu_wall_seconds": 102.2516752704978,
+    "scientific_report_present": true
+  },
+  "activity": {
+    "cpu_active_wall_seconds": 96.53919189795852,
+    "gpu_seconds": 0.0,
+    "worker": null,
+    "cuda_initialized": false,
+    "peak_rss_mib": 694.51171875
+  },
+  "gpu_seconds": 0.0,
+  "target_forecasts": 0,
+  "chattime_updates": 0,
+  "hourly_followup": false,
+  "evidence_archive_sha256": "65a7266d697086cf2b29aff2c9fee229817c1ae3da4d0c5db85b34e091d0f0d5",
+  "turn_wall_seconds_through_summary": 458.724764,
+  "turn_wall_scope": "initial read completion through summary generation; excludes final synchronization"
+}
