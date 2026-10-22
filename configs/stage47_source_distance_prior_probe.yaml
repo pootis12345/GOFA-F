@@ -1,0 +1,24 @@
+protocol: stage47-source-distance-prior-probe-v1
+parent_output: ${GOFA_WORKSPACE}/outputs/stage40-source-normalized-probe-v1
+parent_report_sha256: b9508f08f6e65c9e5b6f71c06fccdfe4ebeb7e3cec533fc12f92adef96a04602
+seeds: [42, 43, 44]
+conditions: [physical, self, rewired]
+model: {width: 32, rank: 8, lags: [0, 1, 2, 3], maximum_nodes: 9, graph_blocks: 2}
+training:
+  queries_per_view: 2048
+  max_updates: 1000
+  effective_batch: 64
+  learning_rate: 0.001
+  warmup_updates: 20
+  weight_decay: 0.0001
+  gradient_clip: 1.0
+  validation_every: 100
+  profile_updates: 20
+gate: {minimum_view_improvement: 0.01, maximum_time_block_degradation: 0.02, paired_bootstrap_draws: 2000}
+policy:
+  source_training_enabled: true
+  target_training_enabled: false
+  target_evaluation_enabled: false
+  neural_chattime_training_enabled: false
+  gpu_enabled: false
+  hourly_followup: false
