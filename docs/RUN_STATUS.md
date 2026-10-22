@@ -1536,3 +1536,6 @@ Active real-graph zero-/few-shot goal continues; target CPU few-shot blend was n
 
 
 Stage56-v1:30related CPU checks passed; bootstrap metadata duplicate keyword caused exit before any GPU worker. Fixed in independent v2, retaining v1 evidence and exactly the same reserved source queries. v2 adds actual sampled-token full/cache checks and nonzero real48→24gradient coverage; formal training and target evaluation remain disabled. No accuracy claim.
+
+
+Stage56-v2 real ChatTime graph-memory mechanism acceptance complete:32related CPU checks passed; four zero/native real source cases exact, nonzero9-node12→12and48→24full/compact gradients passed and actual full/incremental sampled tokens/logits exact. Three QA updates discarded, formal source updates0/targets0. GPU24.463s, peak14964MiB, own processes exited; no heartbeat/deadline. This is mechanism progress, not proven graph forecast gain or completion of the active goal. Next: one predeclared matched source pilot, not another CPU-blend proxy. See STAGE56_RESULTS.md.
