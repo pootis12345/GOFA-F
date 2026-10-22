@@ -1539,3 +1539,6 @@ Stage56-v1:30related CPU checks passed; bootstrap metadata duplicate keyword cau
 
 
 Stage56-v2 real ChatTime graph-memory mechanism acceptance complete:32related CPU checks passed; four zero/native real source cases exact, nonzero9-node12→12and48→24full/compact gradients passed and actual full/incremental sampled tokens/logits exact. Three QA updates discarded, formal source updates0/targets0. GPU24.463s, peak14964MiB, own processes exited; no heartbeat/deadline. This is mechanism progress, not proven graph forecast gain or completion of the active goal. Next: one predeclared matched source pilot, not another CPU-blend proxy. See STAGE56_RESULTS.md.
+
+
+Stage57predeclared actual ChatTime graph-memory source pilot: fresh matched physical/self/static-permuted controls,100updates each, identical256training/64development source queries, original sample8evaluation. No target/held-source confirmation access, no QA-weight reuse. CPU acceptance before deployment, memory_cap_only40/38GiB, no deadline/heartbeat. Runtime source to be pinned at deployment. See STAGE57_GRAPH_MEMORY_PILOT_PROTOCOL.md.

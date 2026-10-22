@@ -1,0 +1,47 @@
+protocol: stage57-chattime-graph-memory-source-pilot-v1
+seed: 42
+conditions: [physical, self, rewired]
+mechanism_output: ${GOFA_WORKSPACE}/outputs/stage56-chattime-graph-memory-v2
+mechanism_manifest_sha256: 8efbfdbc1db91bb1a0d66633870146c6c30973f42365f722d97f106998a29183
+mechanisms_sha256: dcc0d5f9501f104c914a7ddb3cdde807eedf3ee6820299f2e439fcc0983dc317
+training:
+  max_updates: 100
+  effective_batch: 8
+  microbatch: 1
+  queries_per_view: 64
+  learning_rate: 0.0001
+  warmup_updates: 10
+  weight_decay: 0.0001
+  gradient_clip: 1.0
+  validation_at: [100]
+policy:
+  source_training_enabled: true
+  target_training_enabled: false
+  target_evaluation_enabled: false
+  hourly_followup: false
+  mechanism_checkpoint_reuse: false
+  selected_parent_adapter_reuse: false
+gate:
+  traffic_view_improvement: 0.01
+  maximum_time_block_degradation: 0.02
+  maximum_other_view_native_degradation: 0.02
+  uncertainty_draws: 2000
+sampling:
+  samples: 8
+  top_k: 100
+  temperature: 1.0
+  top_p: 1.0
+  seed: 42
+  aggregate: pointwise_median
+  execution: serial_single_query_independent_kv
+data: {target_training_enabled: false, target_evaluation_enabled: false}
+resources:
+  admission_policy: memory_cap_only
+  admission_samples: 1
+  resource_check_seconds: 10
+  memory_cap_gib: 40
+  torch_cap_gib: 38
+  activity_limit_seconds: null
+  wall_deadline: null
+  yield_on_foreign: false
+  leave_free_gib: 0
