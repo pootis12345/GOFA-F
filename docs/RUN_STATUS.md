@@ -1557,3 +1557,6 @@ Stage57fixed source prefix/support diagnostic COMPLETE:160forwards/16exposed sou
 
 
 Single Native-proposal replay implemented;4new CPU checks passed in2.31s, CUDA disabled/OMP2/MKL2.64exposed source queries×8saved Native proposals, no new Native autoregressive generation or optimizer updates. Native-off exact512trajectory identity is required before physical/self/permuted comparisons. Existing accepted model/numerical kernels unchanged; source screening stays failed, targets/holdout closed. See STAGE57_PROPOSAL_REPLAY_PROTOCOL.md.
+
+
+Stage57single coupled-proposal replay COMPLETE; unchanged source gate FAILED(11checks). Native-off512paths exact,2048paths/medians/raw MAE independently replay0, all own processes exited. Real MAE flow32.168803/speed5.470288/weather3.457726/wind198.737444; prefix feedback amplified both gains/losses, not a standalone fix. GPU81.258096s/peak14352MiB/wait-pause0, no updates/new Native sampling/targets/holdout. Stage58ONE fresh cross-innovation+Native-prefix-aligned source recipe preregistered next, not implemented yet; original gates preserved. See STAGE57_PROPOSAL_REPLAY_RESULTS.md and STAGE58_GRAPH_INNOVATION_PROTOCOL.md.
