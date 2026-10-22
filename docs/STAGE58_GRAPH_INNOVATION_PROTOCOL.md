@@ -1,6 +1,6 @@
 # Stage58: cross-node innovation with aligned frozen-Native prefixes
 
-Status: preregistered after Stage57source training, conditional diagnosis and ONE frozen-weight replay failed; not implemented/running yet. The real-graph zero-/few-shot goal is unchanged and unachieved. This is one fixed source-only recipe, not a parameter/architecture sweep. No target labels, target forecasts/scores, target calibration, CPU prediction fusion, continuous numerical head or external amplitude selector. All previous failures/costs remain terminal.
+Status: preregistered after Stage57source training, conditional diagnosis and ONE frozen-weight replay failed; implementation complete with8targeted CPU checks passed; GPU acceptance and formal execution follow the bound fixed snapshot. Actual output status is authoritative. The real-graph zero-/few-shot goal is unchanged and unachieved. This is one fixed source-only recipe, not a parameter/architecture sweep. No target labels, target forecasts/scores, target calibration, CPU prediction fusion, continuous numerical head or external amplitude selector. All previous failures/costs remain terminal.
 
 ## Evidence and fixed intervention
 

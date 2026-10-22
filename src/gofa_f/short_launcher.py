@@ -34,7 +34,7 @@ def admission_gate(resources, worker_mode):
     policy = resources['admission_policy']
     if resources['resource_check_seconds'] != 10:
         raise ValueError('Resource audits must remain ten seconds apart')
-    if worker_mode in ('robust_source_adaptation', 'weather_prefix_adaptation', 'six_target_calibration', 'history_target_calibration', 'state_residual_calibration', 'supervised_target_ensemble', 'graph_memory_mechanisms', 'graph_memory_pilot', 'graph_memory_diagnostic', 'graph_proposal_probe') and policy == 'memory_cap_only':
+    if worker_mode in ('robust_source_adaptation', 'weather_prefix_adaptation', 'six_target_calibration', 'history_target_calibration', 'state_residual_calibration', 'supervised_target_ensemble', 'graph_memory_mechanisms', 'graph_memory_pilot', 'graph_memory_diagnostic', 'graph_proposal_probe', 'source_cross_innovation') and policy == 'memory_cap_only':
         if resources['admission_samples'] != 1 or resources['memory_cap_gib'] != 40 \
                 or resources['torch_cap_gib'] != 38 or resources['yield_on_foreign'] \
                 or resources['leave_free_gib'] != 0:
@@ -49,7 +49,7 @@ def supervise(output, config, snapshot, worker_mode="train"):
     import yaml
     output, config, snapshot = Path(output).resolve(), Path(config).resolve(), Path(snapshot).resolve()
     cfg = yaml.safe_load(config.read_text())
-    update_cap = 0 if worker_mode in ("six_target_calibration", "history_target_calibration", "state_residual_calibration", "supervised_target_ensemble", "graph_memory_mechanisms", "graph_memory_diagnostic", "graph_proposal_probe") else 100 if worker_mode in ("weather_prefix_adaptation", "graph_memory_pilot") else 250 if worker_mode == "robust_source_adaptation" else 1000 if worker_mode == "source_retraining" else 4000
+    update_cap = 0 if worker_mode in ("six_target_calibration", "history_target_calibration", "state_residual_calibration", "supervised_target_ensemble", "graph_memory_mechanisms", "graph_memory_diagnostic", "graph_proposal_probe") else 100 if worker_mode in ("weather_prefix_adaptation", "graph_memory_pilot", "source_cross_innovation") else 250 if worker_mode == "robust_source_adaptation" else 1000 if worker_mode == "source_retraining" else 4000
     if cfg["training"]["max_updates"] != update_cap or cfg["resources"]["activity_limit_seconds"] is not None \
             or cfg["resources"]["wall_deadline"] is not None \
             or cfg["data"]["target_training_enabled"] and worker_mode != "supervised_target_ensemble":
@@ -67,7 +67,7 @@ def supervise(output, config, snapshot, worker_mode="train"):
         locks.append(stream)
     if worker_mode not in ("train", "projection_probe", "source_diagnostic", "native_case_probe",
                            "sampling_diagnostic", "stability_diagnostic", "sampled_continuation", "sampled_targets",
-                           "target_calibration", "graph_benchmark", "source_reliability_gate", "source_retraining", "robust_source_adaptation", "weather_prefix_adaptation", "six_target_calibration", "history_target_calibration", "state_residual_calibration", "supervised_target_ensemble", "graph_memory_mechanisms", "graph_memory_pilot", "graph_memory_diagnostic", "graph_proposal_probe"):
+                           "target_calibration", "graph_benchmark", "source_reliability_gate", "source_retraining", "robust_source_adaptation", "weather_prefix_adaptation", "six_target_calibration", "history_target_calibration", "state_residual_calibration", "supervised_target_ensemble", "graph_memory_mechanisms", "graph_memory_pilot", "graph_memory_diagnostic", "graph_proposal_probe", "source_cross_innovation"):
         raise ValueError("Unknown supervised worker mode")
     binding = {"snapshot": str(snapshot), "config": str(config), "admission_policy": cfg['resources']['admission_policy'],
         "resource_check_seconds": 10, "admission_samples": cfg['resources']['admission_samples'],
@@ -78,6 +78,12 @@ def supervise(output, config, snapshot, worker_mode="train"):
         binding['leave_free_gib'] = 0
     else:
         binding['idle_max_used_mib'] = 256
+    if worker_mode == 'source_cross_innovation':
+        if cfg['protocol']!='stage58-cross-innovation-v1' or cfg['conditions']!=['physical','self','rewired'] or cfg['data']['target_evaluation_enabled']:
+            raise ValueError('Only the single fixed source innovation recipe is allowed')
+        binding.update(target_training_enabled=False,target_evaluation_enabled=False,formal_updates_per_condition=100,
+            conditions=['physical','self','rewired'],discarded_qa_updates=3,native_training_references=256,
+            source_development_queries=64,architecture='cross_innovation_slot_v1',numeric_head=False)
     if worker_mode == 'graph_proposal_probe':
         if cfg['protocol']!='stage57-native-proposal-replay-v1' or cfg['data']['target_evaluation_enabled']:
             raise ValueError('Only the fixed source proposal replay is allowed')
@@ -272,7 +278,8 @@ def supervise(output, config, snapshot, worker_mode="train"):
                   "graph_memory_mechanisms": "gofa_f.graph_memory_stage",
                   "graph_memory_pilot": "gofa_f.graph_memory_pilot",
                   "graph_memory_diagnostic": "gofa_f.graph_memory_diagnostic",
-                  "graph_proposal_probe": "gofa_f.graph_proposal_probe"}[worker_mode]
+                  "graph_proposal_probe": "gofa_f.graph_proposal_probe",
+                  "source_cross_innovation": "gofa_f.source_cross_innovation"}[worker_mode]
         command = [sys.executable, "-u", "-m", module,
                    "--config", str(config), "--output", str(output)]
         if worker_mode == "train":
@@ -330,7 +337,7 @@ def supervise(output, config, snapshot, worker_mode="train"):
         previous = ledger.state
         final = read(output/"status.json", {}).get("state")
         if worker_mode in ("sampled_continuation", "sampled_targets", "target_calibration", "graph_benchmark",
-                            "source_reliability_gate", "source_retraining", "robust_source_adaptation", "weather_prefix_adaptation", "six_target_calibration", "history_target_calibration", "state_residual_calibration", "supervised_target_ensemble", "graph_memory_mechanisms", "graph_memory_pilot", "graph_memory_diagnostic", "graph_proposal_probe") and final == "resource_paused" and reason is None:
+                            "source_reliability_gate", "source_retraining", "robust_source_adaptation", "weather_prefix_adaptation", "six_target_calibration", "history_target_calibration", "state_residual_calibration", "supervised_target_ensemble", "graph_memory_mechanisms", "graph_memory_pilot", "graph_memory_diagnostic", "graph_proposal_probe", "source_cross_innovation") and final == "resource_paused" and reason is None:
             ledger.state["resource_pause_count"] += 1
             ledger.save()
         if reason == "stopped_by_user":
@@ -371,7 +378,7 @@ def main():
                                                 "native_case_probe", "sampling_diagnostic",
                                                 "stability_diagnostic", "sampled_continuation", "sampled_targets",
                                                 "target_calibration", "graph_benchmark",
-                                                "source_reliability_gate", "source_retraining", "robust_source_adaptation", "weather_prefix_adaptation", "six_target_calibration", "history_target_calibration", "state_residual_calibration", "supervised_target_ensemble", "graph_memory_mechanisms", "graph_memory_pilot", "graph_memory_diagnostic", "graph_proposal_probe"), default="train")
+                                                "source_reliability_gate", "source_retraining", "robust_source_adaptation", "weather_prefix_adaptation", "six_target_calibration", "history_target_calibration", "state_residual_calibration", "supervised_target_ensemble", "graph_memory_mechanisms", "graph_memory_pilot", "graph_memory_diagnostic", "graph_proposal_probe", "source_cross_innovation"), default="train")
     args = parser.parse_args()
     supervise(args.output, args.config, args.snapshot, args.worker_mode)
 

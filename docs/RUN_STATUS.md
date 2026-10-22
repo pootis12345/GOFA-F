@@ -1560,3 +1560,6 @@ Single Native-proposal replay implemented;4new CPU checks passed in2.31s, CUDA d
 
 
 Stage57single coupled-proposal replay COMPLETE; unchanged source gate FAILED(11checks). Native-off512paths exact,2048paths/medians/raw MAE independently replay0, all own processes exited. Real MAE flow32.168803/speed5.470288/weather3.457726/wind198.737444; prefix feedback amplified both gains/losses, not a standalone fix. GPU81.258096s/peak14352MiB/wait-pause0, no updates/new Native sampling/targets/holdout. Stage58ONE fresh cross-innovation+Native-prefix-aligned source recipe preregistered next, not implemented yet; original gates preserved. See STAGE57_PROPOSAL_REPLAY_RESULTS.md and STAGE58_GRAPH_INNOVATION_PROTOCOL.md.
+
+
+Stage58single source-cross-innovation pipeline implemented;8new CPU tests passed in3.95s with CUDA disabled/OMP2/MKL2. Exact self-only cancellation, rich temporal control learnability, nonzero auxiliary gradients,12→12/48→24full/compact/reference-prefix gradients, sampled full/cache tokens, partial optimizer/RNG/gradient recovery verified. Same parameter count, no old adapter/QA weight initialization. One cap-supervised pipeline will run new real-model QA before256Native references/three100-update controls/full source replay. Target/holdout closed; scientific gates unchanged.

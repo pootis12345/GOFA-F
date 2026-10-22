@@ -1,0 +1,28 @@
+protocol: stage58-cross-innovation-v1
+parent_source_output: ${GOFA_WORKSPACE}/outputs/stage57-chattime-graph-memory-source-pilot-v1
+parent_manifest_sha256: e7d6e4e59c9a617a5b2cbab35a70189d3c42ec19a1495dbf4c49f743d8288343
+proposal_output: ${GOFA_WORKSPACE}/outputs/stage57-native-proposal-replay-v1
+proposal_manifest_sha256: 6439a5413e4ad454fca09e0a61f6319e767863ebef72d03ada6326f70dcaa298
+proposal_report_sha256: cfc8711aad849ea9098055b959e1067608df0c93a1730257378d8e6274695bb0
+conditions: [physical, self, rewired]
+training:
+  max_updates: 100
+  effective_batch: 8
+  microbatch: 1
+  queries_per_view: 64
+  learning_rate: 0.0001
+  warmup_updates: 10
+  weight_decay: 0.0001
+  gradient_clip: 1.0
+  validation_at: [100]
+data: {target_training_enabled: false, target_evaluation_enabled: false}
+resources:
+  admission_policy: memory_cap_only
+  admission_samples: 1
+  resource_check_seconds: 10
+  memory_cap_gib: 40
+  torch_cap_gib: 38
+  activity_limit_seconds: null
+  wall_deadline: null
+  yield_on_foreign: false
+  leave_free_gib: 0
