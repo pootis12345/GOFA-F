@@ -1,0 +1,19 @@
+protocol: stage56-chattime-graph-memory-v1
+seed: 42
+source_output: ${GOFA_WORKSPACE}/outputs/stage23-source-retraining-v2
+source_manifest_sha256: 9d2b5cb1d9c2856adda7d53699379d9eaf4b86a380e8051da9616f0c8ec4f224
+traffic_partition_output: ${GOFA_WORKSPACE}/outputs/stage38-source-neighborhood-probe-v1
+target_training_enabled: false
+target_evaluation_enabled: false
+training: {max_updates: 0}
+data: {target_training_enabled: false, target_evaluation_enabled: false}
+resources:
+  admission_policy: memory_cap_only
+  admission_samples: 1
+  resource_check_seconds: 10
+  memory_cap_gib: 40
+  torch_cap_gib: 38
+  activity_limit_seconds: null
+  wall_deadline: null
+  yield_on_foreign: false
+  leave_free_gib: 0
