@@ -1,0 +1,80 @@
+{
+  "protocol": "stage59-dual-memory-source-v1",
+  "runtime_source_sha": "5afdeb9c2f23db7b17cc1956637fb09c034cdff5",
+  "observed_at_epoch": 1792691315.404288,
+  "formal_manifest_sha256": "791752bd5f83dda8ad051711fd636f7d75c2e4c7f1d957e92e678fe5289a23d6",
+  "common_source_input_records": 33024,
+  "common_source_index_sha256": "56dc2770f51c536d632930aec71ac4b6200c41b453d7eb01e4887f2b23b632b5",
+  "source_worker_verified_live": true,
+  "ufg_worker_verified_live": true,
+  "source_state": {
+    "state": "running",
+    "goal_achieved": false,
+    "target_predictions": 0,
+    "phase": "training",
+    "fit": "hold-traffic",
+    "depth": 6,
+    "updates": 176,
+    "maximum": 2000,
+    "pending": 8,
+    "active_seconds": 634.446329722181,
+    "loss": 2.436056719573734,
+    "selection": {
+      "last_validated": 100,
+      "best_score": 2.7327969879381038,
+      "best_update": 0,
+      "reference_score": 2.7327969879381038,
+      "stale": 1,
+      "stop": false
+    },
+    "estimated_seconds_per_update": 3.071948592815633,
+    "eta_current_fit_seconds": 6191.594754588028,
+    "eta_excludes_unknown_resource_pauses": true
+  },
+  "ufg_state": {
+    "state": "running",
+    "goal_achieved": false,
+    "target_predictions": 0,
+    "phase": "training",
+    "fit": "all",
+    "depth": null,
+    "updates": 2313,
+    "maximum": 10000,
+    "pending": 0,
+    "loss": 2.6781550291505427,
+    "active_seconds": 705.0495785316452,
+    "selection": {
+      "last_validated": 2250,
+      "best_score": 1.9911632682860776,
+      "best_update": 1750,
+      "reference_score": 1.9911632682860776,
+      "stale": 2,
+      "stop": false
+    },
+    "estimated_seconds_per_update": 0.3026421345058479,
+    "eta_current_fit_seconds": 2339.3017470535124,
+    "eta_excludes_unknown_resource_pauses": true
+  },
+  "cumulative_gpu_seconds": 767.042387155816,
+  "inherited_gpu_seconds": 61.09420684911311,
+  "new_gpu_seconds": 705.9481803067029,
+  "ufg_cpu_seconds": 705.8265190068632,
+  "cumulative_peak_group_mib": 23676,
+  "resource_pauses": 0,
+  "cpu_preparation": {
+    "cpu_preparation_wall_seconds": 29.420622704550624,
+    "inherited_gpu_seconds": 61.09420684911311,
+    "new_gpu_seconds": 0.0,
+    "target_predictions": 0
+  },
+  "related_cpu_checks": 53,
+  "source_confirmation_labels_opened": false,
+  "target_predictions": 0,
+  "goal_achieved": false,
+  "notes": [
+    "Live progress snapshot, not final accuracy or completed training",
+    "CPU UFG retains official width128 and31 roles",
+    "GPU peak includes inherited mechanism peak",
+    "No target labels/scores used for training or selection"
+  ]
+}
