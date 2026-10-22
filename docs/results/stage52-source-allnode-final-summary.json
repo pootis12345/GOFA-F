@@ -1,0 +1,377 @@
+{
+  "stage": 52,
+  "runtime_revision": "15be54c89605f526bed234465c308f7dace0299e",
+  "passed": false,
+  "verification": {
+    "passed": true,
+    "manifest_sha256": "c9a16f787e9802f57bd958c3269dc4d11a47d955b6164370f56e125da03fe332",
+    "report_sha256": "13f371dec18001681cad1ff99dc7647fc1a577922ee4ef1f21e9b62cccb26011",
+    "all_models_fresh_no_self_reuse": true,
+    "matched_initialization_cursors_rng": true,
+    "non_adjacency_original_inputs_unchanged": true,
+    "auxiliary_arrays_same_all_controls": true,
+    "auxiliary_labels_training_only": true,
+    "allnode_weighting": {
+      "pems04_flow": {
+        "variables": 257,
+        "points": 209244,
+        "persistence_macro_mae": 30.498775970212684,
+        "independent_norm_absolute_difference": 0.0
+      },
+      "pems04_speed": {
+        "variables": 257,
+        "points": 209088,
+        "persistence_macro_mae": 1.9415292660379433,
+        "independent_norm_absolute_difference": 0.0
+      }
+    },
+    "actual_source_maximum_increment_input_ratio": {
+      "42": 0.9763988852500916
+    },
+    "metric_reaggregation_absolute_differences": {
+      "42-physical-pems04_flow": 0.0,
+      "42-physical-pems04_speed": 0.0,
+      "42-self-pems04_flow": 0.0,
+      "42-self-pems04_speed": 0.0,
+      "42-rewired-pems04_flow": 0.0,
+      "42-rewired-pems04_speed": 0.0
+    },
+    "all_workers_exited": true,
+    "cuda_initialized": false,
+    "wall_seconds": 2.7335218796506524
+  },
+  "initial_validation": {
+    "passed": false,
+    "seeds": [
+      42
+    ],
+    "comparisons": {
+      "pems04_flow": {
+        "self": {
+          "physical_to_control_macro_mae": 0.9392007857142213,
+          "per_seed_ratios": [
+            0.9392007857142213
+          ],
+          "time_block_ratios": [
+            0.954747736929497,
+            0.9158500723224408,
+            0.845296958582691,
+            1.063187846342763
+          ],
+          "zero_error_control": false
+        },
+        "rewired": {
+          "physical_to_control_macro_mae": 1.016365028217464,
+          "per_seed_ratios": [
+            1.016365028217464
+          ],
+          "time_block_ratios": [
+            0.9539027750970713,
+            1.0375233051344337,
+            0.99531967740059,
+            1.0817449013294258
+          ],
+          "zero_error_control": false
+        }
+      },
+      "pems04_speed": {
+        "self": {
+          "physical_to_control_macro_mae": 0.980048071968535,
+          "per_seed_ratios": [
+            0.980048071968535
+          ],
+          "time_block_ratios": [
+            1.0326073220344287,
+            1.0048873264123737,
+            0.9304350533536054,
+            0.9261003618032889
+          ],
+          "zero_error_control": false
+        },
+        "rewired": {
+          "physical_to_control_macro_mae": 0.9644873529605468,
+          "per_seed_ratios": [
+            0.9644873529605468
+          ],
+          "time_block_ratios": [
+            0.9078977936893367,
+            0.9734569765034508,
+            0.9862143529671453,
+            1.0351270719605308
+          ],
+          "zero_error_control": false
+        }
+      }
+    },
+    "reasons": [
+      "pems04_flow:self:time_block_regression",
+      "pems04_flow:rewired:less_than_1pct_gain",
+      "pems04_flow:rewired:time_block_regression",
+      "pems04_speed:self:time_block_regression",
+      "pems04_speed:rewired:time_block_regression"
+    ],
+    "independent_unseen_dataset_transfer_proven": false
+  },
+  "repeated_validation": null,
+  "source_confirmation": null,
+  "condition_semantics": {
+    "physical": "bounded_published_bidirectional_road_on_physical_roster",
+    "self": "same_physical_roster_no_cross_messages",
+    "rewired": "same_physical_roster_target_fixed_static_permuted_road"
+  },
+  "limitations": [
+    "exposed single-source validation; no whole-dataset zero-shot proof",
+    "small diagnostic continuous-output GNN, not a ChatTime numerical head",
+    "control semantics fixed in condition_semantics; label budgets across stages may differ"
+  ],
+  "selections": {
+    "42": {
+      "physical": {
+        "selected_update": 1000,
+        "completed_updates": 1000,
+        "checkpoint_sha256": "07fb4954744d2c7ac998dbcc398bcd527dade0d7e0a273f825a7f52ecbbb211e",
+        "tensor_sha256": "e25655e4ed71afef0b682bab692e1d5a8d40282157c23d804560c459b39c9c75",
+        "validation": {
+          "pems04_flow": {
+            "macro_mae": 24.11341677017562,
+            "macro_rmse": 31.145344321856143,
+            "time_blocks": {
+              "0": 22.96414861048537,
+              "1": 24.523065392656633,
+              "2": 23.97403654554445,
+              "3": 24.992416532016012
+            },
+            "step_macro_mae": [
+              15.521005804340044,
+              16.88741758754218,
+              19.81469699010874,
+              24.07340512839922,
+              22.492591441195046,
+              23.555952486840802,
+              24.961984378285706,
+              21.36473123004867,
+              27.804476528428495,
+              30.602734668283826,
+              26.919830387665165,
+              35.362174610969504
+            ]
+          },
+          "pems04_speed": {
+            "macro_mae": 1.472902944792229,
+            "macro_rmse": 2.0647518601770596,
+            "time_blocks": {
+              "0": 2.049645770593366,
+              "1": 1.3712223032019615,
+              "2": 1.157484627632597,
+              "3": 1.3132590777409918
+            },
+            "step_macro_mae": [
+              0.7990198634726496,
+              0.9725760522871951,
+              1.2239364933860786,
+              1.306382710243541,
+              1.434907462968291,
+              1.542770218872841,
+              1.8664742889882409,
+              1.5987588754430206,
+              1.7419200169733502,
+              1.6969643002701642,
+              1.6573246450603674,
+              1.8338004095410092
+            ]
+          }
+        }
+      },
+      "self": {
+        "selected_update": 900,
+        "completed_updates": 1000,
+        "checkpoint_sha256": "9ade6224c42d4f6a470e323a95c4214720ab86f76306b3b79ac43e317e4120ac",
+        "tensor_sha256": "e3fafcfe228342516bd26dc2467e3e175140dc9a84e29f74ff63bfc4d7eeb762",
+        "validation": {
+          "pems04_flow": {
+            "macro_mae": 25.674400125036538,
+            "macro_rmse": 33.92442496759693,
+            "time_blocks": {
+              "0": 24.05258239662227,
+              "1": 26.776288099721704,
+              "2": 28.3616737314916,
+              "3": 23.507056272310567
+            },
+            "step_macro_mae": [
+              14.883174399869555,
+              16.165733169167652,
+              19.784116637228482,
+              23.694239604779998,
+              23.17370632112822,
+              25.106242437091876,
+              27.485169212020182,
+              23.45066080180954,
+              31.108154690889123,
+              33.755648333155676,
+              30.326098337632075,
+              39.15985755566604
+            ]
+          },
+          "pems04_speed": {
+            "macro_mae": 1.5028884673317509,
+            "macro_rmse": 2.104738439769673,
+            "time_blocks": {
+              "0": 1.9849227551042172,
+              "1": 1.3645532858867557,
+              "2": 1.2440251723756832,
+              "3": 1.4180526559603466
+            },
+            "step_macro_mae": [
+              0.8261606573186293,
+              0.9769962966139184,
+              1.2571944625135585,
+              1.3556312676152207,
+              1.4438562219964437,
+              1.5796439417889332,
+              1.872061828637467,
+              1.5960265343581446,
+              1.7722513650548928,
+              1.7833333609304174,
+              1.7490144626409325,
+              1.8224912085124503
+            ]
+          }
+        }
+      },
+      "rewired": {
+        "selected_update": 800,
+        "completed_updates": 1000,
+        "checkpoint_sha256": "d5eb6cd547b027b000646b8b86dcf4bef35117a51a0b91fa5cc69dc483c05a57",
+        "tensor_sha256": "496d76bc2a80e6212807dfc4bb0f9210fa2b33cd5449673cea87f06b87961908",
+        "validation": {
+          "pems04_flow": {
+            "macro_mae": 23.725153956218424,
+            "macro_rmse": 31.1520605545651,
+            "time_blocks": {
+              "0": 24.073888041837897,
+              "1": 23.636158601255843,
+              "2": 24.086770401400926,
+              "3": 23.103798780379023
+            },
+            "step_macro_mae": [
+              13.767810925517956,
+              17.214548561773782,
+              19.865407485062153,
+              23.88844705379516,
+              22.227058480571333,
+              23.07816188979066,
+              23.514371127304102,
+              20.92150612207802,
+              27.86745914731485,
+              30.69801639369689,
+              26.264679734556314,
+              35.39438055315986
+            ]
+          },
+          "pems04_speed": {
+            "macro_mae": 1.527135571317833,
+            "macro_rmse": 2.1210849609662055,
+            "time_blocks": {
+              "0": 2.2575732476057886,
+              "1": 1.408611100746578,
+              "2": 1.1736643500980941,
+              "3": 1.2686935868208713
+            },
+            "step_macro_mae": [
+              0.8368548933976003,
+              1.0384555473456512,
+              1.2784830520027015,
+              1.3663120866899225,
+              1.5134943052013623,
+              1.61786818652053,
+              1.9044128840704593,
+              1.6424740611057407,
+              1.7685267941634615,
+              1.799831645676417,
+              1.736183107896179,
+              1.8227302917439705
+            ]
+          }
+        }
+      }
+    }
+  },
+  "cpu_preflight": {
+    "passed": true,
+    "tests": 39,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "manifest_sha256": "c9a16f787e9802f57bd958c3269dc4d11a47d955b6164370f56e125da03fe332",
+    "cpu_wall_seconds": 5.8139868807047606,
+    "cuda_visible_devices": "",
+    "omp_threads": 2,
+    "mkl_threads": 2,
+    "scope": "inherited_full_plus_related",
+    "inherited_full_proof_sha256": "cd763603cb47ef77736f62d7b1e5b3857b4702a8445b7e8cbe713d938b2ed7b2",
+    "related_test_files": [
+      "test_source_graph_probe.py",
+      "test_source_neighborhood_probe.py",
+      "test_source_normalized_probe.py",
+      "test_source_sparse_normalized_probe.py",
+      "test_source_allnode_probe.py"
+    ]
+  },
+  "controller_timing": {
+    "started_at_unix": 1792658430.275318,
+    "phases": [
+      {
+        "phase": "prepare",
+        "started_at_unix": 1792658430.275319,
+        "passed": true,
+        "wall_seconds": 1.6104337712749839
+      },
+      {
+        "phase": "related_tests",
+        "started_at_unix": 1792658431.892908,
+        "passed": true,
+        "wall_seconds": 4.195906831882894
+      },
+      {
+        "phase": "source_worker",
+        "started_at_unix": 1792658436.0895422,
+        "passed": true,
+        "wall_seconds": 91.4192514596507
+      }
+    ],
+    "scope": "controller_wall_excludes_development_and_transfer",
+    "elapsed_wall_seconds": 97.23347835987806
+  },
+  "activity": {
+    "cpu_active_wall_seconds": 90.00723033025861,
+    "gpu_seconds": 0.0,
+    "worker": null,
+    "cuda_initialized": false,
+    "peak_rss_mib": 696.80859375
+  },
+  "gpu_seconds": 0.0,
+  "target_forecasts": 0,
+  "chattime_updates": 0,
+  "implementation_and_transfer_before_launch_seconds": 626.272002696991,
+  "authorized_window_start_unix": 1792656470,
+  "deadline_unix": 1792663670,
+  "wall_since_window_start_to_verification_seconds": 2129.809375524521,
+  "campaign_accounting": {
+    "window_start_unix": 1792656470,
+    "deadline_unix": 1792663670,
+    "seal_started_unix": 1792658754.1992886,
+    "elapsed_to_seal_start_seconds": 2284.1992886066437,
+    "stages": [
+      51,
+      52
+    ],
+    "new_cpu_worker_active_wall_seconds": 155.1460688887164,
+    "controller_wall_seconds": 168.07975457422435,
+    "stage52_implementation_static_checks_and_transfer_seconds": 626.272002696991,
+    "other_elapsed_including_heartbeat_gaps_reviews_and_sync_seconds": 1489.8475313354284,
+    "new_gpu_seconds": 0.0,
+    "inherited_costs_not_reset_or_double_counted": true,
+    "early_stop_reason": "Both predeclared source recipes failed original scientific gates; no Stage53",
+    "automatic_iterations_stopped": true
+  }
+}
