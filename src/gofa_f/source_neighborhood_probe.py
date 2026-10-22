@@ -23,6 +23,10 @@ SEMANTICS = dict(physical='physical_BFS_roster_dense_attention',
     rewired='uniform_partition_roster_matched_count_dense_attention')
 
 
+def stage_number(cfg):
+    return {'stage38-source-neighborhood-probe-v1':38,'stage40-source-normalized-probe-v1':40}[cfg['protocol']]
+
+
 def configuration(path):
     cfg=yaml.safe_load(Path(path).read_text().replace('${GOFA_WORKSPACE}',os.environ['GOFA_WORKSPACE']))
     base=p.configuration(Path(__file__).parents[2]/'configs/stage37_source_road_probe.yaml')
@@ -170,14 +174,14 @@ def run(cfg,output,charge):
                 checkpoints={str(s):{c:selections[s][c]['checkpoint_sha256'] for c in CONDITIONS} for s in selections}))
             confirmed=confirm(cfg,output,m,packed,selections,charge)
     passed=bool(confirmed and confirmed['passed'])
-    report=dict(stage=38,protocol=PROTOCOL,complete=True,passed=passed,condition_semantics=SEMANTICS,
+    report=dict(stage=stage_number(cfg),protocol=PROTOCOL,complete=True,passed=passed,condition_semantics=SEMANTICS,
         initial_validation=initial,repeated_validation=repeat,source_confirmation=confirmed,
         selections={str(s):v for s,v in selections.items()},gpu_seconds=0.,target_forecasts=0,chattime_updates=0,
         limitations=['exposed single-source validation; no whole-dataset zero-shot proof',
             'small diagnostic continuous-output GNN, not a ChatTime numerical head',
             'random nodes matched by partition/count, not by sensor marginal distributions'])
     p.immutable(output/'report.json',report)
-    atomic_json(output/'status.json',dict(state='source_probe_passed' if passed else 'stopped_at_source_gate',stage=38))
+    atomic_json(output/'status.json',dict(state='source_probe_passed' if passed else 'stopped_at_source_gate',stage=stage_number(cfg)))
     atomic_json(output/'progress.json',dict(state='complete',eta_seconds=None))
     return report
 

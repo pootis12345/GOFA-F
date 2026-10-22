@@ -16,7 +16,7 @@ def main():
     p.add_argument('--output',required=True,type=Path)
     p.add_argument('--config',type=Path)
     p.add_argument('--module',default='gofa_f.source_graph_probe',
-        choices=('gofa_f.source_graph_probe','gofa_f.source_neighborhood_probe'))
+        choices=('gofa_f.source_graph_probe','gofa_f.source_neighborhood_probe','gofa_f.source_normalized_probe'))
     p.add_argument('--related-baseline',type=Path)
     args=p.parse_args()
     python=args.workspace/'.venv-chat/bin/python'
@@ -55,14 +55,15 @@ def main():
                 tests=[str(args.snapshot/'tests')]
                 baseline=None
                 if args.related_baseline:
-                    if args.module!='gofa_f.source_neighborhood_probe':
-                        raise ValueError('Related proof reuse is restricted to Stage38 unchanged numerical kernel')
+                    if args.module not in ('gofa_f.source_neighborhood_probe','gofa_f.source_normalized_probe'):
+                        raise ValueError('Related proof reuse requires a registered source probe')
                     baseline=args.related_baseline/'cpu_preflight.json'
                     manifest=json.loads((args.output/'manifest.json').read_text())
                     if hashlib.sha256(baseline.read_bytes()).hexdigest()!=manifest['baseline_full_proof_sha256']:
                         raise ValueError('Full baseline proof binding changed')
-                    tests=[str(args.snapshot/'tests'/n) for n in
-                        ('test_source_graph_probe.py','test_source_neighborhood_probe.py')]
+                    files=['test_source_graph_probe.py','test_source_neighborhood_probe.py']
+                    if args.module=='gofa_f.source_normalized_probe':files.append('test_source_normalized_probe.py')
+                    tests=[str(args.snapshot/'tests'/n) for n in files]
                 with (args.output/'cpu_regression.log').open('w') as log:
                     code=phase('related_tests' if baseline else 'full_tests',lambda:subprocess.run([str(python),'-m','pytest',*tests,'-q',
                         '--disable-warnings','--junitxml='+str(args.output/'cpu_tests.xml')],
