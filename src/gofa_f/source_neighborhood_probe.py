@@ -24,7 +24,8 @@ SEMANTICS = dict(physical='physical_BFS_roster_dense_attention',
 
 
 def stage_number(cfg):
-    return {'stage38-source-neighborhood-probe-v1':38,'stage40-source-normalized-probe-v1':40}[cfg['protocol']]
+    return {'stage38-source-neighborhood-probe-v1':38,'stage40-source-normalized-probe-v1':40,
+        'stage41-source-time-robust-probe-v1':41}[cfg['protocol']]
 
 
 def configuration(path):
