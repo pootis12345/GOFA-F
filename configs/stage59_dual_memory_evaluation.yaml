@@ -1,0 +1,23 @@
+protocol: stage59-dual-memory-evaluation-v1
+source_output: ${GOFA_WORKSPACE}/outputs/stage59-dual-memory-source-v1
+accepted_snapshot: ${GOFA_WORKSPACE}/../GOFA-F-runs/stage59-dual-memory-v1
+source_confirmation_output: ${GOFA_WORKSPACE}/outputs/stage59-dual-memory-source-confirm-v1
+target_output: ${GOFA_WORKSPACE}/outputs/stage59-dual-memory-targets-v1
+target_reference_manifest: ${GOFA_WORKSPACE}/outputs/stage21-graph-benchmark-v2/manifest.json
+target_reference_manifest_sha256: c94a4d5bed128be16d99712349fd5681a64620bbf95cb9f287a71e534cdcbbb9
+target_directory: ${GOFA_WORKSPACE}/data/stage21-v2/targets
+ufg_root: ${GOFA_WORKSPACE}/external/ufgtime
+ufg_python: ${GOFA_WORKSPACE}/.venv-ufg/bin/python
+training: {max_updates: 0}
+data: {target_training_enabled: false, target_evaluation_enabled: true}
+sampling: {samples: 8, top_k: 100, temperature: 1.0, top_p: 1.0, seed: 42, aggregate: pointwise_median, execution: serial_single_query_independent_kv}
+resources:
+  admission_policy: memory_cap_only
+  admission_samples: 1
+  resource_check_seconds: 10
+  memory_cap_gib: 40
+  torch_cap_gib: 38
+  activity_limit_seconds: null
+  wall_deadline: null
+  yield_on_foreign: false
+  leave_free_gib: 0
