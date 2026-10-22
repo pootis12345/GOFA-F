@@ -1492,3 +1492,6 @@ Stage46 read-only source audit completed: Stage40 gains concentrate on few varia
 
 
 Stage47 fixed road-distance prior completed: passed=False; flow24.403986, speed1.482628. Original gates retained, exact self replay and33 checks passed; GPU0, no ChatTime/target forecast. All processes exited. See STAGE47_RESULTS.md.
+
+
+Stage48 fixed source-supervised CPU ridge diagnostic complete: physical-neighbor MAE flow26.412003/speed1.496876, vs random -1.16%/-5.14%; physical/random intervals cross1. Speed supports usable neighbor-history information vs self but not stable road-specific gain. No neural/ChatTime/GPU/target work; confirmation closed, old evidence unchanged. See STAGE48_RESULTS.md.
