@@ -1513,3 +1513,6 @@ Stage52 final registered CPU recipe implementation ready: all-node source superv
 
 
 Stage52 final predeclared recipe completed and independently verified: original gate failed; all-node fresh-trained physical flow24.113416770/speed1.472902945, self25.674400125/1.502888467, static permuted23.725153956/1.527135571.39CPU checks, identical control inputs/labels/weights and exact metric replay passed. Worker90.007s/controller97.233s/GPU0, all processes exited; no source confirmation/targets/ChatTime/UFG. Both permitted recipes failed; automatic campaign stops early, no Stage53. See STAGE52_RESULTS.md.
+
+
+New user-triggered Stage53 registered after the prior automatic campaign stopped: a single full-observed-history cross-node attention test, source all-node supervision and matched sparse-road/static-permuted/self controls. No automatic follow-up; previous18:07:50 safety deadline retained, no extension. Related acceptance before fit; original gates remain. See STAGE53_ORIGIN_HISTORY_PROTOCOL.md.
