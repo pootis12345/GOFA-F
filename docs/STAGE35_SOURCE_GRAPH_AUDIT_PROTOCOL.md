@@ -1,0 +1,25 @@
+# Stage35: inexpensive source physical-graph feasibility screen
+
+New user authorization: execute the proposed genuine graph-transfer research route while minimizing time cost. Automatic followup remains disabled. All Stage21/33/34 final results remain immutable. No target labels, target predictions, target calibration coefficients, or target scores are opened by this entry point. The old eleven-hour window does not apply to this separately authorized CPU screen.
+
+## First gate before LLM expenditure
+
+Reuse the frozen source-selected Stage34 DCRNN3000 checkpoint, SHA `613231c51cee84cea43fe4622de42a858db3a76b7be201c932a80baa716acbb2`. It is an inexpensive diagnostic instrument, not the proposed new architecture or a recent-GNN substitute. No download, optimizer, new parameter fit, GPU context, or LLM inference. CPU FP32, OMP/MKL2.
+
+Before forecasting, seal64 ID/time-stratified queries per source view,256 total: PEMS04 flow/speed12→12 share the old32 source sensor IDs, Boston16 temperature and Penmanshiel14 power48→24 cover all their variables. Use the last20% of SOURCE time only, exclude same-variable label windows from the old Stage23 confirmation/diagnostic and exclude overlap within this new screen. Selection uses IDs, lawful origins and missing eligibility, seed42; never errors. These are fresh time windows, not unseen source graphs, and prior source-development exposure is disclosed.
+
+Five support conditions, same nodes/inputs/scales/computation/checkpoint: (1) original mixed physical/correlation supports; (2) physical external topology+self only; (3) self only; (4) mixed supports rewired; (5) physical supports rewired. Rewire via a query-bound permutation of non-target present node identities, holding target0 fixed and holding histories fixed. Preserve weighted degree multiset and target degree. Report invariant/degenerate cases, never force fake edges. Other conditions do not change the node roster; graph-dependent sampling information can therefore remain even in the self control.
+
+Physical means published directed road adjacency, or the already audited coordinate4NN symmetric-union proxy for weather/wind. It does not mean measured weather transport/wind-wake causality. The reverse random-walk support is explicitly preserved as part of the existing DCRNN adaptation.
+
+Report valid-point MAE within variable then equal variables, per view in original units. Do not average different physical units. For traffic combine flow/speed physical/control ratios geometrically; weather/wind are their own domain. Paired2000 variable-cluster resamples(seed42/35) share sensor draws across flow/speed. Intervals are exploratory, conditional on time windows, not population guarantees.
+
+Preregistered resource gate: physical support must improve BOTH self and rewired-physical by at least0.5% in at least two domains; no domain may worsen more than2% against either; at least one improving domain must have both paired ratio95% upper bounds below1. At least32/64 physical rewires in every view must actually change supports. Failure stops before expensive ChatTime work. This conservative cost gate does not establish impossibility of graph transfer: support deletion shifts the frozen mixed-support model's input distribution.
+
+Passing authorizes the next low-cost step, independently TRAINED matched real/self/rewired controls with an entire source graph/domain held out. It does not immediately authorize interpreting this screen as an LLM graph result. Only supporting cross-graph evidence justifies building the proposed time-aware graph-memory interface: shared frozen ChatTime for all nodes, exchanges before blocks30/31, history-only lag-aware memory, generation-step readout, exact zero cross-edge residual, original generative head. Architecture acceptance and a bounded source-only pilot precede any full run. UFGTime needs a separate explicit inductive adaptation or matched few-shot protocol because its official node/frequency-sized parameters are not plug-and-play arbitrary-graph zero-shot.
+
+## Evidence and acceptance
+
+Independent output/snapshot `stage35-source-graph-audit-v1`, entry `gofa_f.source_graph_audit`, fixed config `configs/stage35_source_graph_audit.yaml`. Prepare/run/progress modes, immutable per-query forecasts, complete input/code/checkpoint hashes, advisory exclusive worker lock, resume completed chunks, source-only report and explicit gate. No target evaluation or training-resume entry exists. CPU elapsed cost is this stage only; reused checkpoint training cost remains attributed to Stage34. Old activity ledgers are never edited or reset.
+
+Tests: physical direction vs correlation, self/padding/missing-node controls, exact support rewiring/target identity, source-time and nonoverlap selection, future-value/missingness perturbation, inference receives no labels or teacher, metric weighting, immutable-binding rejection. CPU1e-6. B static check and C CUDA-disabled two-thread full CPU regression before execution. Verify the source checkpoint SHA unchanged and worker exited at completion. Failure evidence remains saved, no automatic repeat or coefficient/architecture search.
