@@ -1,0 +1,360 @@
+{
+  "stage": 53,
+  "runtime_revision": "0bfc7e6b5fdd82ba7557f1fda7d7e280d6e20e05",
+  "passed": false,
+  "verification": {
+    "passed": true,
+    "manifest_sha256": "4b7911e2b33110d12442739104aa38d47ef7971fec31f1cd3944357242c21412",
+    "report_sha256": "a8aad3dae897cf204b5ca990b8016280c9c2cc4a413607fd3554d8b1a85f53c7",
+    "all_models_fresh_no_self_reuse": true,
+    "matched_initialization_cursors_rng": true,
+    "non_adjacency_original_inputs_unchanged": true,
+    "auxiliary_arrays_same_all_controls": true,
+    "auxiliary_labels_training_only": true,
+    "allnode_weighting": {
+      "pems04_flow": {
+        "variables": 257,
+        "points": 209244,
+        "persistence_macro_mae": 30.498775970212684,
+        "independent_norm_absolute_difference": 0.0
+      },
+      "pems04_speed": {
+        "variables": 257,
+        "points": 209088,
+        "persistence_macro_mae": 1.9415292660379433,
+        "independent_norm_absolute_difference": 0.0
+      }
+    },
+    "actual_source_maximum_increment_input_ratio": {
+      "42": 0.9720838069915771
+    },
+    "metric_reaggregation_absolute_differences": {
+      "42-physical-pems04_flow": 0.0,
+      "42-physical-pems04_speed": 0.0,
+      "42-self-pems04_flow": 0.0,
+      "42-self-pems04_speed": 0.0,
+      "42-rewired-pems04_flow": 0.0,
+      "42-rewired-pems04_speed": 0.0
+    },
+    "all_workers_exited": true,
+    "cuda_initialized": false,
+    "dedicated_per_update_trainer_exact_replay": true,
+    "wall_seconds": 5.755946752615273
+  },
+  "initial_validation": {
+    "passed": false,
+    "seeds": [
+      42
+    ],
+    "comparisons": {
+      "pems04_flow": {
+        "self": {
+          "physical_to_control_macro_mae": 0.9563699793975563,
+          "per_seed_ratios": [
+            0.9563699793975563
+          ],
+          "time_block_ratios": [
+            1.0038946786492138,
+            0.9212249039782219,
+            0.8889505056747861,
+            1.029118009484922
+          ],
+          "zero_error_control": false
+        },
+        "rewired": {
+          "physical_to_control_macro_mae": 1.018432191430113,
+          "per_seed_ratios": [
+            1.018432191430113
+          ],
+          "time_block_ratios": [
+            0.9443248137785812,
+            0.991668868291238,
+            1.1063564858530999,
+            1.0424327360484602
+          ],
+          "zero_error_control": false
+        }
+      },
+      "pems04_speed": {
+        "self": {
+          "physical_to_control_macro_mae": 0.9975605681955843,
+          "per_seed_ratios": [
+            0.9975605681955843
+          ],
+          "time_block_ratios": [
+            1.0807163314223935,
+            0.9432702086237373,
+            0.9742747110957084,
+            0.9538333585972688
+          ],
+          "zero_error_control": false
+        },
+        "rewired": {
+          "physical_to_control_macro_mae": 0.9724439867452235,
+          "per_seed_ratios": [
+            0.9724439867452235
+          ],
+          "time_block_ratios": [
+            0.9898919859857548,
+            0.9293799468122728,
+            1.0014023072564222,
+            0.9630327762941175
+          ],
+          "zero_error_control": false
+        }
+      }
+    },
+    "reasons": [
+      "pems04_flow:self:time_block_regression",
+      "pems04_flow:rewired:less_than_1pct_gain",
+      "pems04_flow:rewired:time_block_regression",
+      "pems04_speed:self:less_than_1pct_gain",
+      "pems04_speed:self:time_block_regression"
+    ],
+    "independent_unseen_dataset_transfer_proven": false
+  },
+  "repeated_validation": null,
+  "source_confirmation": null,
+  "condition_semantics": {
+    "physical": "bounded_published_bidirectional_road_on_physical_roster_origin_causal_full12_history",
+    "self": "same_physical_roster_no_cross_messages_origin_causal_full12_history",
+    "rewired": "same_physical_roster_target_fixed_static_permuted_road_origin_causal_full12_history"
+  },
+  "limitations": [
+    "exposed single-source validation; no whole-dataset zero-shot proof",
+    "small diagnostic continuous-output GNN, not a ChatTime numerical head",
+    "control semantics fixed in condition_semantics; label budgets across stages may differ"
+  ],
+  "selections": {
+    "42": {
+      "physical": {
+        "selected_update": 1000,
+        "completed_updates": 1000,
+        "checkpoint_sha256": "c656921bd33d06cc441b24c91966c28f43c9f4429b7acfe3f381382e4eaa8d91",
+        "tensor_sha256": "cd30b64f25ca6a2642042c7f44d621d76bd8d913f7da148fdfa076660ff00939",
+        "validation": {
+          "pems04_flow": {
+            "macro_mae": 24.55422551862581,
+            "macro_rmse": 31.6005811730114,
+            "time_blocks": {
+              "0": 24.146259475740848,
+              "1": 24.66698343355933,
+              "2": 25.212124205392755,
+              "3": 24.191534959810298
+            },
+            "step_macro_mae": [
+              14.558762666174314,
+              16.519119276471127,
+              19.974546747941833,
+              24.074244718520074,
+              23.165308901884902,
+              24.03034983510669,
+              25.53340712972244,
+              22.78337940752196,
+              29.08764586446341,
+              30.900608998490497,
+              27.866566064211334,
+              36.15676661300111
+            ]
+          },
+          "pems04_speed": {
+            "macro_mae": 1.499222273406052,
+            "macro_rmse": 2.0955254836819237,
+            "time_blocks": {
+              "0": 2.14513843805306,
+              "1": 1.2871424626566064,
+              "2": 1.2120222654121076,
+              "3": 1.3525859275024348
+            },
+            "step_macro_mae": [
+              0.8059811590977705,
+              0.9629276695638125,
+              1.2891706417062814,
+              1.3381630234891992,
+              1.4516136941612277,
+              1.5585971861624643,
+              1.8883288052941838,
+              1.5857911572630448,
+              1.7528485817641377,
+              1.723953991693711,
+              1.7624698920453938,
+              1.8708214786313984
+            ]
+          }
+        }
+      },
+      "self": {
+        "selected_update": 900,
+        "completed_updates": 1000,
+        "checkpoint_sha256": "21ae5b9d9141dacb895877fed6709ad0dd4d3edf09ed11ca45221f5dc97a0409",
+        "tensor_sha256": "3b2b521094f26b50c66cbea80edf6faca459bd899d0159d5901ae05f44f19e5d",
+        "validation": {
+          "pems04_flow": {
+            "macro_mae": 25.674400125036538,
+            "macro_rmse": 33.92442496759693,
+            "time_blocks": {
+              "0": 24.05258239662227,
+              "1": 26.776288099721704,
+              "2": 28.3616737314916,
+              "3": 23.507056272310567
+            },
+            "step_macro_mae": [
+              14.883174399869555,
+              16.165733169167652,
+              19.784116637228482,
+              23.694239604779998,
+              23.17370632112822,
+              25.106242437091876,
+              27.485169212020182,
+              23.45066080180954,
+              31.108154690889123,
+              33.755648333155676,
+              30.326098337632075,
+              39.15985755566604
+            ]
+          },
+          "pems04_speed": {
+            "macro_mae": 1.5028884673317509,
+            "macro_rmse": 2.104738439769673,
+            "time_blocks": {
+              "0": 1.9849227551042172,
+              "1": 1.3645532858867557,
+              "2": 1.2440251723756832,
+              "3": 1.4180526559603466
+            },
+            "step_macro_mae": [
+              0.8261606573186293,
+              0.9769962966139184,
+              1.2571944625135585,
+              1.3556312676152207,
+              1.4438562219964437,
+              1.5796439417889332,
+              1.872061828637467,
+              1.5960265343581446,
+              1.7722513650548928,
+              1.7833333609304174,
+              1.7490144626409325,
+              1.8224912085124503
+            ]
+          }
+        }
+      },
+      "rewired": {
+        "selected_update": 1000,
+        "completed_updates": 1000,
+        "checkpoint_sha256": "7f39a050cf1ff7a3426c2c4dffd9be06f25e772d31d21c4de367e078962b08d9",
+        "tensor_sha256": "1073cfb7fe978e166c8a8bed701ce94603bdc343d2a13e276184947bd5ff684f",
+        "validation": {
+          "pems04_flow": {
+            "macro_mae": 24.10982854356364,
+            "macro_rmse": 31.26376309314378,
+            "time_blocks": {
+              "0": 25.56986655801517,
+              "1": 24.874213784752,
+              "2": 22.78842717313846,
+              "3": 23.20680665834893
+            },
+            "step_macro_mae": [
+              15.355381459334037,
+              16.547125618012313,
+              20.2386387493332,
+              24.64802759251971,
+              22.200635251097587,
+              24.347918804709074,
+              25.010975449190784,
+              22.30282503416917,
+              26.919928985389156,
+              29.705346993080134,
+              27.501890807205605,
+              34.53924777872291
+            ]
+          },
+          "pems04_speed": {
+            "macro_mae": 1.5417055314660941,
+            "macro_rmse": 2.1332352146913447,
+            "time_blocks": {
+              "0": 2.167042938444326,
+              "1": 1.3849475309548493,
+              "2": 1.2103250178569374,
+              "3": 1.4045066386082634
+            },
+            "step_macro_mae": [
+              0.844415304630757,
+              1.0549116257005013,
+              1.327117508646732,
+              1.392519519753022,
+              1.5342697193452706,
+              1.616005283451163,
+              1.8939629274468541,
+              1.6058444407256027,
+              1.7824668699001782,
+              1.8125145518029113,
+              1.7298086197052571,
+              1.9066300064848802
+            ]
+          }
+        }
+      }
+    }
+  },
+  "cpu_preflight": {
+    "passed": true,
+    "tests": 45,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "manifest_sha256": "4b7911e2b33110d12442739104aa38d47ef7971fec31f1cd3944357242c21412",
+    "cpu_wall_seconds": 8.998745955526829,
+    "cuda_visible_devices": "",
+    "omp_threads": 2,
+    "mkl_threads": 2,
+    "scope": "inherited_full_plus_related",
+    "inherited_full_proof_sha256": "cd763603cb47ef77736f62d7b1e5b3857b4702a8445b7e8cbe713d938b2ed7b2",
+    "related_test_files": [
+      "test_source_graph_probe.py",
+      "test_source_neighborhood_probe.py",
+      "test_source_normalized_probe.py",
+      "test_source_sparse_normalized_probe.py",
+      "test_source_allnode_probe.py",
+      "test_source_origin_history_probe.py"
+    ]
+  },
+  "controller_timing": {
+    "started_at_unix": 1792661236.5631537,
+    "phases": [
+      {
+        "phase": "prepare",
+        "started_at_unix": 1792661236.5631547,
+        "passed": true,
+        "wall_seconds": 1.6191505091264844
+      },
+      {
+        "phase": "related_tests",
+        "started_at_unix": 1792661238.1896749,
+        "passed": true,
+        "wall_seconds": 7.371769810095429
+      },
+      {
+        "phase": "source_worker",
+        "started_at_unix": 1792661245.562135,
+        "passed": true,
+        "wall_seconds": 95.97447833698243
+      }
+    ],
+    "scope": "controller_wall_excludes_development_and_transfer",
+    "elapsed_wall_seconds": 104.97346274461597
+  },
+  "activity": {
+    "cpu_active_wall_seconds": 94.57494643516839,
+    "gpu_seconds": 0.0,
+    "worker": null,
+    "cuda_initialized": false,
+    "peak_rss_mib": 721.6328125
+  },
+  "gpu_seconds": 0.0,
+  "target_forecasts": 0,
+  "chattime_updates": 0,
+  "deadline_unix": 1792663670,
+  "user_triggered_after_automatic_campaign_stopped": true,
+  "total_request_elapsed_not_directly_instrumented": true
+}

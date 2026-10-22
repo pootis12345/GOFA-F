@@ -1516,3 +1516,6 @@ Stage52 final predeclared recipe completed and independently verified: original 
 
 
 New user-triggered Stage53 registered after the prior automatic campaign stopped: a single full-observed-history cross-node attention test, source all-node supervision and matched sparse-road/static-permuted/self controls. No automatic follow-up; previous18:07:50 safety deadline retained, no extension. Related acceptance before fit; original gates remain. See STAGE53_ORIGIN_HISTORY_PROTOCOL.md.
+
+
+Stage53 user-triggered full-observed-history source exchange completed and independently verified: original gate failed. Correct road flow24.554225519/speed1.499222273; static permuted24.109828544/1.541705531; self25.674400125/1.502888467.45CPU checks, dedicated per-update exact recovery and metric replay passed. Worker94.575s/controller104.973s/GPU0, all processes exited. No targets/ChatTime/UFG or extra recipe; automatic follow-up remains off. See STAGE53_RESULTS.md.
