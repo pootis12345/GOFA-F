@@ -1545,3 +1545,6 @@ Stage57predeclared actual ChatTime graph-memory source pilot: fresh matched phys
 
 
 Stage57source pilot is live from immutable71371b1;40CPU checks passed, exact same source inputs/rosters and degree-preserving controls audited. Physical completed100updates in112.249s and locked before evaluation; remaining controls continue with the same fixed recipe. During this wait, UFGTime input-only fixed9-roster/two-shape compatibility passed7CPU checks in2.11s, GPU/training/targets0. Runtime source is unchanged; no accuracy/ranking claim. See UFG_SUBGRAPH_COMPATIBILITY.md.
+
+
+Stage57actual ChatTime graph-memory source pilot COMPLETE; original source gate FAILED. Real graph MAE flow35.657872/speed2.782140/weather4.017890/wind206.525769; worse than permuted graph on both traffic views and Native on3/4views. Three controls100updates each, exact initialization/query order and raw2048trajectory/metric replay verified(maxdiff0). GPU1683.192490s, train218.219s, peak14960MiB, wait/pause0; own processes exited. Targets/held-source confirmation unopened. Goal remains unachieved. Fixed16-query conditional/prefix diagnosis registered next; no extra training recipe or relaxed gate. See STAGE57_RESULTS.md and STAGE57_DIAGNOSTIC_PROTOCOL.md.
