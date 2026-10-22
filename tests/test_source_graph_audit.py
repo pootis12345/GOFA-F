@@ -7,7 +7,7 @@ import torch
 
 from gofa_f.generative_graph import origin_graph
 from gofa_f.source_graph_audit import (CONDITIONS, VIEWS, audit_sample, dual_support,
-    fresh_queries, immutable, predict, rewire, summarize, variable_errors)
+    configuration, fresh_queries, immutable, predict, rewire, summarize, variable_errors)
 from gofa_f.source_dcrnn_model import DCRNN
 
 
@@ -144,3 +144,19 @@ def test_missing_neighbor_and_constant_history_remain_finite():
     for supports in conditions.values():
         assert np.isfinite(supports).all()
         np.testing.assert_array_equal(supports.sum(-1) > 0, np.tile(packed['present'] > 0, (2,1)))
+
+
+def test_portable_configuration_binds_explicit_workspace(monkeypatch):
+    from pathlib import Path
+    path = Path(__file__).parents[1]/'configs/stage35_source_graph_audit.yaml'
+    monkeypatch.setenv('GOFA_WORKSPACE', '/tmp/audited-source-workspace')
+    cfg = configuration(path)
+    assert cfg['source_output'] == '/tmp/audited-source-workspace/outputs/stage23-source-retraining-v2'
+    assert cfg['gnn_output'] == '/tmp/audited-source-workspace/outputs/stage34-source-dcrnn-v1'
+
+
+def test_portable_configuration_rejects_unbound_workspace(monkeypatch):
+    from pathlib import Path
+    monkeypatch.delenv('GOFA_WORKSPACE', raising=False)
+    with pytest.raises(ValueError, match='GOFA_WORKSPACE'):
+        configuration(Path(__file__).parents[1]/'configs/stage35_source_graph_audit.yaml')

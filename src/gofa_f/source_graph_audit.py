@@ -47,7 +47,13 @@ def immutable(path, value):
 
 
 def configuration(path):
-    cfg = yaml.safe_load(Path(path).read_text(encoding='utf-8'))
+    text = Path(path).read_text(encoding='utf-8')
+    if '${GOFA_WORKSPACE}' in text:
+        workspace = os.environ.get('GOFA_WORKSPACE')
+        if not workspace:
+            raise ValueError('Set GOFA_WORKSPACE to the existing audited workspace')
+        text = text.replace('${GOFA_WORKSPACE}', workspace.replace('\\', '/'))
+    cfg = yaml.safe_load(text)
     if cfg['protocol'] != PROTOCOL or cfg['seed'] != 42 \
             or cfg['queries_per_view'] != 64 or cfg['bootstrap_draws'] != 2000 \
             or cfg['conditions'] != list(CONDITIONS) \

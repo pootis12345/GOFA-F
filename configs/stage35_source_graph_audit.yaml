@@ -1,8 +1,8 @@
 protocol: stage35-source-graph-audit-v1
 seed: 42
-source_output: /home/dcg/dcg_data/GOFA-F/outputs/stage23-source-retraining-v2
+source_output: ${GOFA_WORKSPACE}/outputs/stage23-source-retraining-v2
 source_manifest_sha256: 9d2b5cb1d9c2856adda7d53699379d9eaf4b86a380e8051da9616f0c8ec4f224
-gnn_output: /home/dcg/dcg_data/GOFA-F/outputs/stage34-source-dcrnn-v1
+gnn_output: ${GOFA_WORKSPACE}/outputs/stage34-source-dcrnn-v1
 gnn_manifest_sha256: 28b53d0d78f25523eedec45da2fc6b3e7c9510429d1b13b272b3d10a0e70982d
 gnn_checkpoint_sha256: 613231c51cee84cea43fe4622de42a858db3a76b7be201c932a80baa716acbb2
 queries_per_view: 64
