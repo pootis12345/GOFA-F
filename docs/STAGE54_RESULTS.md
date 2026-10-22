@@ -17,7 +17,7 @@ Stage52 correct road versus messages-off lowers flow18.53% and speed8.37%; Stage
 
 However, for those same weights the permuted topology gives LOWER flow MAE in both stages: the correct-road error is2.979%/5.106% higher. For speed the correct road gives2.817%/5.338% lower MAE. The separately permuted-trained models show the same direction: switching them to correct roads worsens flow but improves speed. This is not explained solely by choosing different trained checkpoints. It is also not evidence that arbitrary topology is intrinsically better: only one fixed target-preserving permutation was registered.
 
-Both independently self-trained models are bitwise insensitive to all three topologies, a useful negative control. All36 frozen matching-condition baseline/view replays and independent metric recalculations match exactly; parent manifests/reports/checkpoint SHAs remain unchanged. Same physical rosters, values, edge features and all non-adjacency arrays were verified. Target in/out degree and global edge count are preserved by the permuted support. No double permutation.
+Both independently self-trained models are bitwise insensitive to all three topologies, a useful negative control. All12 matching-condition baseline/view replays and all36 independent metric recalculations match exactly; parent manifests/reports/checkpoint SHAs remain unchanged. Same physical rosters, values, edge features and all non-adjacency arrays were verified. Target in/out degree and global edge count are preserved by the permuted support. No double permutation.
 
 ## Uncertainty and limits
 
