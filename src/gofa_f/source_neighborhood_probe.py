@@ -180,7 +180,7 @@ def run(cfg,output,charge):
         selections={str(s):v for s,v in selections.items()},gpu_seconds=0.,target_forecasts=0,chattime_updates=0,
         limitations=['exposed single-source validation; no whole-dataset zero-shot proof',
             'small diagnostic continuous-output GNN, not a ChatTime numerical head',
-            'random nodes matched by partition/count, not by sensor marginal distributions'])
+            'control semantics fixed in condition_semantics; label budgets across stages may differ'])
     p.immutable(output/'report.json',report)
     atomic_json(output/'status.json',dict(state='source_probe_passed' if passed else 'stopped_at_source_gate',stage=stage_number(cfg)))
     atomic_json(output/'progress.json',dict(state='complete',eta_seconds=None))
