@@ -1,0 +1,55 @@
+protocol: stage59-dual-memory-v1
+seed: 42
+source_output: ${GOFA_WORKSPACE}/outputs/stage23-source-retraining-v2
+source_manifest_sha256: 9d2b5cb1d9c2856adda7d53699379d9eaf4b86a380e8051da9616f0c8ec4f224
+partition_output: ${GOFA_WORKSPACE}/outputs/stage38-source-neighborhood-probe-v1
+reservation_output: ${GOFA_WORKSPACE}/outputs/stage56-chattime-graph-memory-v1
+sampler:
+  repository: https://github.com/JiaruiFeng/TAGLAS
+  revision: e30dca89cd89a238ba3b935121d516bee7c27548
+  routine: k_hop_subgraph
+  implementation: dense_single_root_whole_fringe_before_union
+  hops: 3
+  maximum_per_whole_hop: 10
+  maximum_real_nodes: 31
+architecture: {depths: [6, 3], memory_slots: 4, graph_width: 128, continuous_shared_head: true}
+queries: {training_per_view: 8192, initial_training_per_view: 1024, validation_per_shape_view: 32, confirmation_per_shape_view: 32}
+training:
+  max_updates: 2000
+  effective_batch: 8
+  microbatch: 1
+  learning_rate: 0.0001
+  warmup_updates: 50
+  interface_only_updates: 50
+  weight_decay: 0.0001
+  gradient_clip: 1.0
+  validation_every: 100
+  early_min_updates: 400
+  early_patience: 5
+  significant_improvement: 0.001
+  pool_expand_if_training_epoch_completed: true
+  source_group_crossfit: [traffic, weather, wind]
+  source_group_traffic_includes_both_channels: true
+ufg:
+  repository: https://github.com/WonderHeiYi/UFGTIME
+  revision: 61f55135bc2bd6e9b9e5d592009d358015eea681
+  width: 128
+  maximum_updates: 10000
+  effective_batch: 64
+  learning_rate: 0.001
+  validation_every: 250
+  early_min_updates: 2000
+  early_patience: 8
+  shape_specific_weights: true
+sampling: {samples: 8, top_k: 100, temperature: 1.0, top_p: 1.0, aggregate: pointwise_median}
+data: {target_training_enabled: false, target_evaluation_enabled: false}
+resources:
+  admission_policy: memory_cap_only
+  admission_samples: 1
+  resource_check_seconds: 10
+  memory_cap_gib: 40
+  torch_cap_gib: 38
+  activity_limit_seconds: null
+  wall_deadline: null
+  yield_on_foreign: false
+  leave_free_gib: 0
