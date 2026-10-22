@@ -1,0 +1,19 @@
+protocol: stage59-dual-memory-source-v1
+parent_output: ${GOFA_WORKSPACE}/outputs/stage59-dual-memory-v1
+parent_manifest_sha256: 6fee1a93b56fe5757a0bb6eb9635e923132e9a6e876f01f197eabfcd1554d9b3
+acceptance_sha256: 6622dc6b1b2a5e44647380e7fbe9a4c166fed2deb762ac9cfc6efd1704d6ef18
+ufg_root: ${GOFA_WORKSPACE}/external/ufgtime
+prefix_cache: {ram_gib: 2, disk_gib: 8}
+fusion: {steps: 2000, learning_rate: 0.02, penalty: 0.001, features: 8, bias_initial: -2.0}
+training: {max_updates: 2000}
+data: {target_training_enabled: false, target_evaluation_enabled: false}
+resources:
+  admission_policy: memory_cap_only
+  admission_samples: 1
+  resource_check_seconds: 10
+  memory_cap_gib: 40
+  torch_cap_gib: 38
+  activity_limit_seconds: null
+  wall_deadline: null
+  yield_on_foreign: false
+  leave_free_gib: 0
