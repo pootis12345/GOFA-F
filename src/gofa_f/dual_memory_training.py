@@ -112,6 +112,12 @@ def verify_runtime(m,cfg):
         if sha(Path(__file__).parent/n)!=value:raise ValueError('Frozen accepted core changed')
 
 
+def require_cpu_proof(output,binding):
+    proof=read(output/'formal_cpu_preflight.json',{})
+    if not proof.get('passed') or proof.get('manifest_sha256')!=binding:
+        raise ValueError('Related training CPU proof is missing or bound to another manifest')
+
+
 def run_native(cfg,output):
     from transformers import LlamaForCausalLM,LlamaTokenizer
     from gofa_f.short_codec import ShortCodec
@@ -119,7 +125,7 @@ def run_native(cfg,output):
     from gofa_f.dual_memory_fusion import fit_gate
     if os.environ.get('GOFA_STAGE19_ADMITTED')!='1':raise ValueError('Cap-supervised source worker required')
     m=read(output/'manifest.json');verify_runtime(m,cfg);binding=sha(output/'manifest.json')
-    if not read(output/'formal_cpu_preflight.json',{}).get('passed'):raise ValueError('Related training CPU proof required')
+    require_cpu_proof(output,binding)
     stopped=[False]
     for sig in (signal.SIGINT,signal.SIGTERM):signal.signal(sig,lambda *_:stopped.__setitem__(0,True))
     def check():
@@ -199,7 +205,7 @@ def run_native(cfg,output):
 def run_ufg(cfg,output):
     if os.environ.get('CUDA_VISIBLE_DEVICES')!='' or torch.cuda.is_initialized():raise ValueError('UFG source runner is CPU-only')
     lock=(output/'ufg.lock').open('a');fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
-    m=read(output/'manifest.json');verify_runtime(m,cfg);binding=sha(output/'manifest.json');stopped=[False]
+    m=read(output/'manifest.json');verify_runtime(m,cfg);binding=sha(output/'manifest.json');require_cpu_proof(output,binding);stopped=[False]
     for sig in (signal.SIGINT,signal.SIGTERM):signal.signal(sig,lambda *_:stopped.__setitem__(0,True))
     started=time.monotonic();old=read(output/'ufg_activity.json',{});prior=old.get('spent_seconds',0.)
     from gofa_f.idle_launcher import process_identity

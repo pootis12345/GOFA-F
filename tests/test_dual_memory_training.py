@@ -181,3 +181,11 @@ def test_complete_fit_checkpoint_selection_and_resume_do_not_repeat_updates(tmp_
     again=fit(engine,manifest,{},tmp_path,'hold-traffic',3,'fit-binding',lambda:None,lambda **_:None)
     assert again['model_sha256']==best['model_sha256']
     assert all(torch.equal(v,engine.state_model.state_dict()[k]) for k,v in before.items())
+
+
+def test_formal_cpu_proof_rejects_another_manifest(tmp_path):
+    from gofa_f.dual_memory_training import require_cpu_proof
+    path=tmp_path/'formal_cpu_preflight.json';path.write_text(json.dumps(dict(passed=True,manifest_sha256='other')))
+    with pytest.raises(ValueError,match='manifest'):require_cpu_proof(tmp_path,'current')
+    path.write_text(json.dumps(dict(passed=True,manifest_sha256='current')))
+    require_cpu_proof(tmp_path,'current')
