@@ -1551,3 +1551,6 @@ Stage57actual ChatTime graph-memory source pilot COMPLETE; original source gate 
 
 
 Fixed Stage57source diagnostic implemented,6targeted CPU checks passed in2.03s with CUDA disabled/OMP2/MKL2.16fixed exposed source queries,128paired teacher/Native-prefix plus32fixed-weight support forwards; optimizer/new-free-generation/target/holdout0. Observation wrappers proven logits/RNG neutral and restored on exceptions. Old accepted model/kernels unchanged; exact CPU proof reused at deployment. Source screening remains failed; no new training recipe.
+
+
+Stage57fixed source prefix/support diagnostic COMPLETE:160forwards/16exposed source queries,6new CPU checks,18.284006s GPU/peak14354MiB/wait-pause0, raw metric replay0, all processes exited. Traffic teacher CE/conditional median improve, generated-prefix conditional gaps persist; fixed-weight topology sensitivity small despite active8–22%mean residuals. No parameters/new free forecasts/targets/held-source0. Original source screen stays failed. Next single Native-proposal coupled replay is preregistered, no new training or amplitude search. See STAGE57_DIAGNOSTIC_RESULTS.md and STAGE57_PROPOSAL_REPLAY_PROTOCOL.md.
