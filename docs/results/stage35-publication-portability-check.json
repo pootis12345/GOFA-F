@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "tests": 742,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 21,
+  "revision": "3e66d0f97442fc4a835f8746cf8ac886016c9782",
+  "cpu_wall_seconds": 52.64518275856972,
+  "scientific_forecasts_regenerated": 0,
+  "gpu_seconds": 0.0,
+  "old_snapshot_unchanged": true
+}
