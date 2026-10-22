@@ -1,0 +1,241 @@
+{
+  "stage": 44,
+  "complete": true,
+  "binding": {
+    "stage": 44,
+    "script_sha256": "30e90a5225429e76c05153780f778a2fd1bf3fb1847c3860ca0a6d14049c319b",
+    "parent_report_sha256": "29747e1d2b076c38d6980dbd4ff80f6c2b407f368626853121d7e8101d8ad3e0",
+    "source_cache_manifest_sha256": "1e36fb8e8d8bb6b6ade11f5d2a7c8f83ead364bf0bc3a323f538c8b182e301b6",
+    "scope": [
+      "train",
+      "validation"
+    ],
+    "operations": [
+      "replay_packing",
+      "audit_clipping",
+      "coordinate_algebra",
+      "label_range_statistics"
+    ],
+    "model_loaded": false,
+    "training_updates": 0,
+    "target_forecasts": 0,
+    "confirmation_windows_materialized": false
+  },
+  "results": {
+    "physical": {
+      "train": {
+        "pems04_flow": {
+          "counts": {
+            "queries": 2048,
+            "pairs": 136904,
+            "logratio_clipped_pairs": 86,
+            "offset_clipped_pairs": 7709,
+            "either_clipped_pairs": 7753,
+            "constant_target_histories": 15,
+            "target_pairs": 15389,
+            "target_clipped_pairs": 899,
+            "target_points": 24576,
+            "future_outside_history_points": 10721,
+            "future_outside_nominal_scale_points": 10719
+          },
+          "logratio_clipped_pair_fraction": 0.0006281774089873195,
+          "offset_clipped_pair_fraction": 0.05630953076608426,
+          "either_clipped_pair_fraction": 0.05663092385905452,
+          "target_clipped_pair_fraction": 0.05841835077003054,
+          "constant_target_history_fraction": 0.00732421875,
+          "hypothetical_clipped_coordinate_reconstruction_macro_mae": 4.396471733551215,
+          "untruncated_algebra_reconstruction_max_error": 2.2737367544323206e-13,
+          "future_outside_history_fraction": 0.4362386067708333,
+          "future_outside_nominal_scale_fraction": 0.4361572265625
+        },
+        "pems04_speed": {
+          "counts": {
+            "queries": 2048,
+            "pairs": 136768,
+            "logratio_clipped_pairs": 12,
+            "offset_clipped_pairs": 14868,
+            "either_clipped_pairs": 14874,
+            "constant_target_histories": 19,
+            "target_pairs": 15376,
+            "target_clipped_pairs": 1756,
+            "target_points": 24576,
+            "future_outside_history_points": 8712,
+            "future_outside_nominal_scale_points": 8678
+          },
+          "logratio_clipped_pair_fraction": 8.773982218062704e-05,
+          "offset_clipped_pair_fraction": 0.10870963968179691,
+          "either_clipped_pair_fraction": 0.10875350959288722,
+          "target_clipped_pair_fraction": 0.11420395421436004,
+          "constant_target_history_fraction": 0.00927734375,
+          "hypothetical_clipped_coordinate_reconstruction_macro_mae": 1.0467604764955472,
+          "untruncated_algebra_reconstruction_max_error": 2.842170943040401e-14,
+          "future_outside_history_fraction": 0.3544921875,
+          "future_outside_nominal_scale_fraction": 0.3531087239583333
+        }
+      },
+      "validation": {
+        "pems04_flow": {
+          "counts": {
+            "queries": 72,
+            "pairs": 5184,
+            "logratio_clipped_pairs": 0,
+            "offset_clipped_pairs": 386,
+            "either_clipped_pairs": 386,
+            "constant_target_histories": 0,
+            "target_pairs": 576,
+            "target_clipped_pairs": 49,
+            "target_points": 864,
+            "future_outside_history_points": 363,
+            "future_outside_nominal_scale_points": 363
+          },
+          "logratio_clipped_pair_fraction": 0.0,
+          "offset_clipped_pair_fraction": 0.07445987654320987,
+          "either_clipped_pair_fraction": 0.07445987654320987,
+          "target_clipped_pair_fraction": 0.08506944444444445,
+          "constant_target_history_fraction": 0.0,
+          "hypothetical_clipped_coordinate_reconstruction_macro_mae": 4.878472222222224,
+          "untruncated_algebra_reconstruction_max_error": 2.2737367544323206e-13,
+          "future_outside_history_fraction": 0.4201388888888889,
+          "future_outside_nominal_scale_fraction": 0.4201388888888889
+        },
+        "pems04_speed": {
+          "counts": {
+            "queries": 72,
+            "pairs": 5184,
+            "logratio_clipped_pairs": 0,
+            "offset_clipped_pairs": 441,
+            "either_clipped_pairs": 441,
+            "constant_target_histories": 0,
+            "target_pairs": 576,
+            "target_clipped_pairs": 51,
+            "target_points": 864,
+            "future_outside_history_points": 298,
+            "future_outside_nominal_scale_points": 298
+          },
+          "logratio_clipped_pair_fraction": 0.0,
+          "offset_clipped_pair_fraction": 0.08506944444444445,
+          "either_clipped_pair_fraction": 0.08506944444444445,
+          "target_clipped_pair_fraction": 0.08854166666666667,
+          "constant_target_history_fraction": 0.0,
+          "hypothetical_clipped_coordinate_reconstruction_macro_mae": 1.4717013289531071,
+          "untruncated_algebra_reconstruction_max_error": 1.4210854715202004e-14,
+          "future_outside_history_fraction": 0.3449074074074074,
+          "future_outside_nominal_scale_fraction": 0.3449074074074074
+        }
+      }
+    },
+    "rewired": {
+      "train": {
+        "pems04_flow": {
+          "counts": {
+            "queries": 2048,
+            "pairs": 136904,
+            "logratio_clipped_pairs": 132,
+            "offset_clipped_pairs": 11784,
+            "either_clipped_pairs": 11851,
+            "constant_target_histories": 15,
+            "target_pairs": 15389,
+            "target_clipped_pairs": 1345,
+            "target_points": 24576,
+            "future_outside_history_points": 10721,
+            "future_outside_nominal_scale_points": 10719
+          },
+          "logratio_clipped_pair_fraction": 0.0009641792789107696,
+          "offset_clipped_pair_fraction": 0.08607491380821597,
+          "either_clipped_pair_fraction": 0.08656430783614796,
+          "target_clipped_pair_fraction": 0.08740009097407239,
+          "constant_target_history_fraction": 0.00732421875,
+          "hypothetical_clipped_coordinate_reconstruction_macro_mae": 7.587006944286099,
+          "untruncated_algebra_reconstruction_max_error": 2.8421709430404007e-13,
+          "future_outside_history_fraction": 0.4362386067708333,
+          "future_outside_nominal_scale_fraction": 0.4361572265625
+        },
+        "pems04_speed": {
+          "counts": {
+            "queries": 2048,
+            "pairs": 136768,
+            "logratio_clipped_pairs": 12,
+            "offset_clipped_pairs": 16910,
+            "either_clipped_pairs": 16916,
+            "constant_target_histories": 19,
+            "target_pairs": 15376,
+            "target_clipped_pairs": 2068,
+            "target_points": 24576,
+            "future_outside_history_points": 8712,
+            "future_outside_nominal_scale_points": 8678
+          },
+          "logratio_clipped_pair_fraction": 8.773982218062704e-05,
+          "offset_clipped_pair_fraction": 0.12364003275620028,
+          "either_clipped_pair_fraction": 0.1236839026672906,
+          "target_clipped_pair_fraction": 0.13449531737773152,
+          "constant_target_history_fraction": 0.00927734375,
+          "hypothetical_clipped_coordinate_reconstruction_macro_mae": 1.1479614320108928,
+          "untruncated_algebra_reconstruction_max_error": 2.842170943040401e-14,
+          "future_outside_history_fraction": 0.3544921875,
+          "future_outside_nominal_scale_fraction": 0.3531087239583333
+        }
+      },
+      "validation": {
+        "pems04_flow": {
+          "counts": {
+            "queries": 72,
+            "pairs": 5184,
+            "logratio_clipped_pairs": 4,
+            "offset_clipped_pairs": 476,
+            "either_clipped_pairs": 478,
+            "constant_target_histories": 0,
+            "target_pairs": 576,
+            "target_clipped_pairs": 63,
+            "target_points": 864,
+            "future_outside_history_points": 363,
+            "future_outside_nominal_scale_points": 363
+          },
+          "logratio_clipped_pair_fraction": 0.0007716049382716049,
+          "offset_clipped_pair_fraction": 0.09182098765432099,
+          "either_clipped_pair_fraction": 0.09220679012345678,
+          "target_clipped_pair_fraction": 0.109375,
+          "constant_target_history_fraction": 0.0,
+          "hypothetical_clipped_coordinate_reconstruction_macro_mae": 8.965600360687644,
+          "untruncated_algebra_reconstruction_max_error": 2.2737367544323206e-13,
+          "future_outside_history_fraction": 0.4201388888888889,
+          "future_outside_nominal_scale_fraction": 0.4201388888888889
+        },
+        "pems04_speed": {
+          "counts": {
+            "queries": 72,
+            "pairs": 5184,
+            "logratio_clipped_pairs": 0,
+            "offset_clipped_pairs": 431,
+            "either_clipped_pairs": 431,
+            "constant_target_histories": 0,
+            "target_pairs": 576,
+            "target_clipped_pairs": 53,
+            "target_points": 864,
+            "future_outside_history_points": 298,
+            "future_outside_nominal_scale_points": 298
+          },
+          "logratio_clipped_pair_fraction": 0.0,
+          "offset_clipped_pair_fraction": 0.08314043209876543,
+          "either_clipped_pair_fraction": 0.08314043209876543,
+          "target_clipped_pair_fraction": 0.0920138888888889,
+          "constant_target_history_fraction": 0.0,
+          "hypothetical_clipped_coordinate_reconstruction_macro_mae": 1.5100695018966992,
+          "untruncated_algebra_reconstruction_max_error": 2.842170943040401e-14,
+          "future_outside_history_fraction": 0.3449074074074074,
+          "future_outside_nominal_scale_fraction": 0.3449074074074074
+        }
+      }
+    }
+  },
+  "packing_replayed_exactly": true,
+  "elapsed_wall_seconds": 1.6916621290147305,
+  "gpu_seconds": 0.0,
+  "training_updates": 0,
+  "target_forecasts": 0,
+  "limitations": [
+    "clipped coordinate reconstruction is hypothetical, not the model computation or forecast error",
+    "clipping alone does not prove the cause of forecast failure or an unavoidable error lower bound",
+    "continuous source readout has no finite-vocabulary range cap; future range exceedance is descriptive",
+    "single exposed source; no confirmation, target or ChatTime performance claim"
+  ]
+}
