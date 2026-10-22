@@ -1,0 +1,163 @@
+{
+  "stage": 35,
+  "protocol": "stage35-source-graph-audit-v1",
+  "runtime_revision": "954dc27277b3c5f3c80304934b034703fe5c0fea",
+  "manifest_sha256": "70e7634993b02b227e82dc1f7b35399df033911af3c0018f6a253dcaa3d2595e",
+  "report_sha256": "1466809e99b8e53033c40ab0f63174ea76a087b546c8de10c6c9081ace3002ae",
+  "report": {
+    "complete": true,
+    "source_view_variable_equal_mae": {
+      "pems04_flow": {
+        "mixed": 28.37371100274201,
+        "physical": 28.713637911127687,
+        "self": 28.030797425900044,
+        "rewired_mixed": 28.007534732909942,
+        "rewired_physical": 28.427030848456827
+      },
+      "pems04_speed": {
+        "mixed": 1.2324606865750323,
+        "physical": 1.339576343778336,
+        "self": 1.3909677296698628,
+        "rewired_mixed": 1.2407658263140169,
+        "rewired_physical": 1.2548033569369004
+      },
+      "boston2017": {
+        "mixed": 3.187233437407113,
+        "physical": 3.1800108594519587,
+        "self": 3.2152788128956242,
+        "rewired_mixed": 3.162062977849832,
+        "rewired_physical": 3.1680956773404922
+      },
+      "penmanshiel2017": {
+        "mixed": 238.6031368483688,
+        "physical": 239.07352480514692,
+        "self": 238.37743965666007,
+        "rewired_mixed": 238.53230277820376,
+        "rewired_physical": 238.7783730571958
+      }
+    },
+    "source_domains": {
+      "traffic": {
+        "self": {
+          "physical_to_control_mae_ratio": 0.9932340299318312,
+          "paired_variable_cluster_ratio_95pct": [
+            0.9452441199969899,
+            1.0488713360094615
+          ],
+          "clusters": 32,
+          "physical_point_improvement": 0.006765970068168814
+        },
+        "rewired_physical": {
+          "physical_to_control_mae_ratio": 1.038422902980238,
+          "paired_variable_cluster_ratio_95pct": [
+            0.9667746524265772,
+            1.1443906288867687
+          ],
+          "clusters": 32,
+          "physical_point_improvement": -0.038422902980238094
+        }
+      },
+      "weather": {
+        "self": {
+          "physical_to_control_mae_ratio": 0.9890311368015067,
+          "paired_variable_cluster_ratio_95pct": [
+            0.9590723090790526,
+            1.0198421550568968
+          ],
+          "clusters": 16,
+          "physical_point_improvement": 0.010968863198493328
+        },
+        "rewired_physical": {
+          "physical_to_control_mae_ratio": 1.0037609918780828,
+          "paired_variable_cluster_ratio_95pct": [
+            0.9946726215810126,
+            1.0139992555211623
+          ],
+          "clusters": 16,
+          "physical_point_improvement": -0.0037609918780827645
+        }
+      },
+      "wind": {
+        "self": {
+          "physical_to_control_mae_ratio": 1.0029200965892135,
+          "paired_variable_cluster_ratio_95pct": [
+            0.9803544268752826,
+            1.023231593202561
+          ],
+          "clusters": 14,
+          "physical_point_improvement": -0.00292009658921355
+        },
+        "rewired_physical": {
+          "physical_to_control_mae_ratio": 1.0012360907906865,
+          "paired_variable_cluster_ratio_95pct": [
+            0.9909131740366339,
+            1.010746186215559
+          ],
+          "clusters": 14,
+          "physical_point_improvement": -0.0012360907906865393
+        }
+      }
+    },
+    "graph_structure_audit": {
+      "pems04_flow": {
+        "queries": 64,
+        "variables": 32,
+        "physical_rewiring_changed_queries": 62,
+        "mixed_rewiring_changed_queries": 64,
+        "no_cross_edge_queries": 2
+      },
+      "pems04_speed": {
+        "queries": 64,
+        "variables": 32,
+        "physical_rewiring_changed_queries": 63,
+        "mixed_rewiring_changed_queries": 64,
+        "no_cross_edge_queries": 1
+      },
+      "boston2017": {
+        "queries": 64,
+        "variables": 16,
+        "physical_rewiring_changed_queries": 64,
+        "mixed_rewiring_changed_queries": 64,
+        "no_cross_edge_queries": 0
+      },
+      "penmanshiel2017": {
+        "queries": 64,
+        "variables": 14,
+        "physical_rewiring_changed_queries": 64,
+        "mixed_rewiring_changed_queries": 64,
+        "no_cross_edge_queries": 0
+      }
+    },
+    "gate": {
+      "passed": false,
+      "point_supported_domains": [],
+      "interval_supported_domains": [],
+      "no_large_domain_regression": false,
+      "rewiring_informative": true,
+      "next_action": "stop_before_expensive_chattime_training"
+    },
+    "gpu_seconds": 0.0,
+    "target_forecasts": 0,
+    "optimizer_updates": 0,
+    "graph_llm_transfer_proven": false,
+    "strict_heldout_graph_transfer_proven": false,
+    "limitations": [
+      "frozen model trained on mixed physical/correlation supports",
+      "support deletion can shift the model input distribution",
+      "all source graphs seen during old training; fresh time windows only",
+      "single seed; few weather/wind variable clusters; prior source development exposure",
+      "coordinate nearest-neighbor graphs are geographic proxies, not measured weather/wake causality"
+    ]
+  },
+  "cpu": {
+    "end_to_end_wall_seconds": 71.78154747840017,
+    "regression_wall_seconds": 55.54064855724573,
+    "audit_active_wall_seconds": 14.958922809921205,
+    "passed_tests": 719,
+    "skipped_tests": 21
+  },
+  "gpu_seconds": 0.0,
+  "checkpoint_unchanged": true,
+  "workers_exited": true,
+  "hourly_followup": false
+}
