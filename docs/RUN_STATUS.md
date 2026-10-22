@@ -1501,3 +1501,6 @@ Stage49 innovation-residual source probe complete: passed=False; physical flow24
 
 
 Stage50 original-recipe convergence control complete: passed=False, all seed42 controls reached3000 total/2000 extra updates. Physical best update900, flow23.632124, speed1.495254.33 checks and exact state/metric verification passed, GPU0. All processes exited; no further budget extension. See STAGE50_RESULTS.md.
+
+
+New autonomous window2026-10-22 16:07:50–18:07:50 Beijing, gofa-11 heartbeat active. Stage51 fixed bounded sparse-road source experiment registered; correct/static-permuted topology/self on the same physical rosters. Stage40 exact self reused, no GPU/target/ChatTime. Every new worker carries deadline1792663670 and cooperative stop. See STAGE51_SPARSE_NORMALIZED_PROTOCOL.md; inspect actual launch/status before any follow-up.
