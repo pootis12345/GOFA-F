@@ -1519,3 +1519,6 @@ New user-triggered Stage53 registered after the prior automatic campaign stopped
 
 
 Stage53 user-triggered full-observed-history source exchange completed and independently verified: original gate failed. Correct road flow24.554225519/speed1.499222273; static permuted24.109828544/1.541705531; self25.674400125/1.502888467.45CPU checks, dedicated per-update exact recovery and metric replay passed. Worker94.575s/controller104.973s/GPU0, all processes exited. No targets/ChatTime/UFG or extra recipe; automatic follow-up remains off. See STAGE53_RESULTS.md.
+
+
+Stage54 fixed-weight source topology audit completed: zero training/GPU,1.374s internal CPU. Both Stage52/53 models benefit from cross messages, but correct versus static-permuted roads worsens flow and improves speed at fixed weights; all road-specific95% variable-cluster intervals cross1. Self-trained negative controls bitwise unchanged; independent metric replay0 and all parent hashes unchanged. No new selected topology/model, source confirmation, targets, ChatTime or UFG. Diagnostic exited, automation remains off. See STAGE54_RESULTS.md.
