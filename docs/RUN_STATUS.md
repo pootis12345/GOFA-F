@@ -1498,3 +1498,6 @@ Stage48 fixed source-supervised CPU ridge diagnostic complete: physical-neighbor
 
 
 Stage49 innovation-residual source probe complete: passed=False; physical flow24.305445, speed1.494625.33 checks and final replay passed, GPU0; old evidence preserved, confirmation/targets/ChatTime untouched when initial gate failed. All processes exited. See STAGE49_RESULTS.md.
+
+
+Stage50 original-recipe convergence control complete: passed=False, all seed42 controls reached3000 total/2000 extra updates. Physical best update900, flow23.632124, speed1.495254.33 checks and exact state/metric verification passed, GPU0. All processes exited; no further budget extension. See STAGE50_RESULTS.md.
