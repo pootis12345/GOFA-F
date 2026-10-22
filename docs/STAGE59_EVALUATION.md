@@ -103,3 +103,29 @@ UFG shape/padding adaptations, and that fixed-sample wins/intervals alone do not
 prove stable general superiority. There are no extra SCADA inputs or target-label
 updates in this experiment. Mechanism attribution follows the main prediction
 experiment and is not automatically inferred from fusion gains.
+
+## Final CPU completion audit and portable delivery
+
+After the connected experiment finishes, run the standalone CPU exporter:
+
+```bash
+CUDA_VISIBLE_DEVICES= OMP_NUM_THREADS=2 MKL_NUM_THREADS=2 PYTHONPATH="$GOFA_WORKSPACE/src" "$GOFA_WORKSPACE/.venv-chat/bin/python" -m gofa_f.dual_memory_delivery --evaluation-output "$GOFA_WORKSPACE/outputs/stage59-dual-memory-evaluation-v1" --output "$GOFA_WORKSPACE/outputs/stage59-final-delivery-v1"
+```
+
+It refuses an unfinished pipeline before opening confirmation/target reports.
+After completion it verifies source/target/runtime/model/report hashes, all four
+prediction groups and all eight Native trajectories, then independently recomputes
+valid-point-per-variable raw MAE with scalar summation (tolerance1e-6). It checks
+both strict baseline gates on all six datasets again; no prediction or fitting
+is performed. Failed precision gates remain failures in the exported report.
+
+Deliverables include RESULTS.md, complete four-group metric/per-variable/per-step
+CSV, paired counts, full uncertainty and coverage JSON, source selection/learning
+curves (including update0/cap disclosures), exact sampling/text manifests, unique
+model/config/code SHA, cumulative/new costs and artifact checksums. Portable
+reports omit server paths and process identities. CSV writes are atomic and
+byte-exact on recovery; null metrics are never replaced with zero. Source/target
+primary histories remain the only forecasting data, without extra SCADA inputs.
+
+The exporter has six new focused CPU checks; these are separate from the earlier
+66evaluation/launcher and5UFG checks, not a new real7Bacceptance or a new score.
