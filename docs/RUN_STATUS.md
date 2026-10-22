@@ -1495,3 +1495,6 @@ Stage47 fixed road-distance prior completed: passed=False; flow24.403986, speed1
 
 
 Stage48 fixed source-supervised CPU ridge diagnostic complete: physical-neighbor MAE flow26.412003/speed1.496876, vs random -1.16%/-5.14%; physical/random intervals cross1. Speed supports usable neighbor-history information vs self but not stable road-specific gain. No neural/ChatTime/GPU/target work; confirmation closed, old evidence unchanged. See STAGE48_RESULTS.md.
+
+
+Stage49 innovation-residual source probe complete: passed=False; physical flow24.305445, speed1.494625.33 checks and final replay passed, GPU0; old evidence preserved, confirmation/targets/ChatTime untouched when initial gate failed. All processes exited. See STAGE49_RESULTS.md.

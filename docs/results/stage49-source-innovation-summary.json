@@ -1,0 +1,391 @@
+{
+  "stage": 49,
+  "runtime_revision": "8c4655bed6be9e90c856ee0014b6d2abbe0cc979",
+  "passed": false,
+  "verification": {
+    "passed": true,
+    "manifest_sha256": "2a0587cf657db92a2975c4367859160bd0bff1be420473588c5f4e8baa508136",
+    "report_sha256": "f929bd89df174442f2dee36c411960adfe0559e04d5c611d2eaad20ea7cd43e7",
+    "matched_initialization_and_cursors": true,
+    "per_seed_initialization_sha256": {
+      "42": "9a84189389546935f0cbc821adf13d6b42428d33ed26cc6236af8cf76a84ac91"
+    },
+    "non_x_parent_cache_arrays_unchanged": true,
+    "masks_unchanged": true,
+    "all_active_node_last_observed_values_zero": true,
+    "baseline_matches_across_conditions": true,
+    "fixed_ridge_validation_prediction_absolute_differences": {
+      "pems04_flow": 1.1368683772161603e-13,
+      "pems04_speed": 1.4210854715202004e-14
+    },
+    "innovation_binding_sha256": "7d9d3d2a82761bdba939ef168d1d8b49d567d11953c477ed83fa9c816dcbdde5",
+    "inspected_cache_queries": 8992,
+    "actual_source_maximum_increment_input_ratio": {
+      "42": 0.9788898825645447
+    },
+    "metric_reaggregation_absolute_differences": {
+      "42-physical-pems04_flow": 0.0,
+      "42-physical-pems04_speed": 0.0,
+      "42-self-pems04_flow": 0.0,
+      "42-self-pems04_speed": 0.0,
+      "42-rewired-pems04_flow": 0.0,
+      "42-rewired-pems04_speed": 0.0
+    },
+    "all_workers_exited": true,
+    "cuda_initialized": false,
+    "gpu_seconds": 0.0,
+    "wall_seconds": 0.5398243339732289
+  },
+  "initial_validation": {
+    "passed": false,
+    "seeds": [
+      42
+    ],
+    "comparisons": {
+      "pems04_flow": {
+        "self": {
+          "physical_to_control_macro_mae": 0.9337238182116521,
+          "per_seed_ratios": [
+            0.9337238182116521
+          ],
+          "time_block_ratios": [
+            0.9595191291014404,
+            0.972871330300584,
+            0.8888516161695122,
+            0.9152324999338269
+          ],
+          "zero_error_control": false
+        },
+        "rewired": {
+          "physical_to_control_macro_mae": 0.9772575947105514,
+          "per_seed_ratios": [
+            0.9772575947105514
+          ],
+          "time_block_ratios": [
+            0.9415645329920482,
+            0.9712886715187329,
+            0.930426321274554,
+            1.0835933201276475
+          ],
+          "zero_error_control": false
+        }
+      },
+      "pems04_speed": {
+        "self": {
+          "physical_to_control_macro_mae": 0.958161973049162,
+          "per_seed_ratios": [
+            0.958161973049162
+          ],
+          "time_block_ratios": [
+            0.9736101554601146,
+            0.9653746193669137,
+            0.8773465635964675,
+            1.0100139777590436
+          ],
+          "zero_error_control": false
+        },
+        "rewired": {
+          "physical_to_control_macro_mae": 1.0145774359282813,
+          "per_seed_ratios": [
+            1.0145774359282813
+          ],
+          "time_block_ratios": [
+            0.979851293204385,
+            0.9911210897235532,
+            0.9609188925912167,
+            1.170449670979754
+          ],
+          "zero_error_control": false
+        }
+      }
+    },
+    "reasons": [
+      "pems04_flow:rewired:time_block_regression",
+      "pems04_speed:rewired:less_than_1pct_gain",
+      "pems04_speed:rewired:time_block_regression"
+    ],
+    "independent_unseen_dataset_transfer_proven": false
+  },
+  "repeated_validation": null,
+  "source_confirmation": null,
+  "condition_semantics": {
+    "physical": "physical_BFS_roster_dense_attention",
+    "self": "same_physical_roster_no_cross_messages",
+    "rewired": "uniform_partition_roster_matched_count_dense_attention"
+  },
+  "limitations": [
+    "exposed single-source validation; no whole-dataset zero-shot proof",
+    "small diagnostic continuous-output GNN, not a ChatTime numerical head",
+    "random nodes matched by partition/count, not by sensor marginal distributions",
+    "Both centered representation and fixed residual baseline changed; not a single-factor attribution",
+    "One shared diagnostic GNN plus two source-view-specific frozen ridge models; not a ChatTime candidate"
+  ],
+  "system_components": {
+    "42": {
+      "physical": {
+        "trainable_graph_checkpoint_sha256": "be908276073199fec2c2f582a3d71e21c07f903ecdcdd494638e9977aa3e10d6",
+        "trainable_graph_tensor_sha256": "3b05cfb25601cb041a60dd1425ede97d5c7303255a12a4360f9b27793eda9851",
+        "frozen_source_ridge_model_sha256": {
+          "pems04_flow": "28f4c73f1b6184065773d3f4e1b05c87fe8f7d556bfeee916c5ff9534cd2799e",
+          "pems04_speed": "bed62248f5b4052d1abbe55a082c30a9fc73dcd9d1c30b7eacb7e1cdfc998301"
+        }
+      },
+      "self": {
+        "trainable_graph_checkpoint_sha256": "68415df156157c14d3b9259934eecaf7f99c60c8a389e50cd5bb04a4750e2f51",
+        "trainable_graph_tensor_sha256": "f554b4c1f6158c982a3a4c85b30ff416269b0b12daaa72221d50855651436416",
+        "frozen_source_ridge_model_sha256": {
+          "pems04_flow": "28f4c73f1b6184065773d3f4e1b05c87fe8f7d556bfeee916c5ff9534cd2799e",
+          "pems04_speed": "bed62248f5b4052d1abbe55a082c30a9fc73dcd9d1c30b7eacb7e1cdfc998301"
+        }
+      },
+      "rewired": {
+        "trainable_graph_checkpoint_sha256": "e3d6a3de97b5f44e79237df1fba37df4751c12ef0eba1a860a991fd06a5e60d1",
+        "trainable_graph_tensor_sha256": "01d516749d94a808caeeb2df92834755d86dadf0fd28bc65de7eeb311c9bd7f6",
+        "frozen_source_ridge_model_sha256": {
+          "pems04_flow": "28f4c73f1b6184065773d3f4e1b05c87fe8f7d556bfeee916c5ff9534cd2799e",
+          "pems04_speed": "bed62248f5b4052d1abbe55a082c30a9fc73dcd9d1c30b7eacb7e1cdfc998301"
+        }
+      }
+    }
+  },
+  "frozen_source_ridge_model_sha256": {
+    "pems04_flow": "28f4c73f1b6184065773d3f4e1b05c87fe8f7d556bfeee916c5ff9534cd2799e",
+    "pems04_speed": "bed62248f5b4052d1abbe55a082c30a9fc73dcd9d1c30b7eacb7e1cdfc998301"
+  },
+  "frozen_source48_report_sha256": "2fc9e431dc0eebf0c358c22b5b79421d76e4c4c313df52bf3497855600f7a036",
+  "selections": {
+    "42": {
+      "physical": {
+        "selected_update": 1000,
+        "completed_updates": 1000,
+        "checkpoint_sha256": "be908276073199fec2c2f582a3d71e21c07f903ecdcdd494638e9977aa3e10d6",
+        "tensor_sha256": "3b05cfb25601cb041a60dd1425ede97d5c7303255a12a4360f9b27793eda9851",
+        "validation": {
+          "pems04_flow": {
+            "macro_mae": 24.305444944882776,
+            "macro_rmse": 31.990070797450034,
+            "time_blocks": {
+              "0": 24.14390551714897,
+              "1": 25.740940146395765,
+              "2": 24.05843718973001,
+              "3": 23.278496926256345
+            },
+            "step_macro_mae": [
+              13.820302684643774,
+              16.187516724749212,
+              20.323900440432144,
+              23.947432968114146,
+              22.378428657457658,
+              23.18842204713675,
+              24.913070720413902,
+              21.631948852259498,
+              26.95650374950564,
+              31.570836984799023,
+              25.992354549601895,
+              40.75462095947963
+            ]
+          },
+          "pems04_speed": {
+            "macro_mae": 1.494625222377823,
+            "macro_rmse": 2.066217867702414,
+            "time_blocks": {
+              "0": 2.1406835763635144,
+              "1": 1.3213731003102283,
+              "2": 1.2061751036074906,
+              "3": 1.3102691092300587
+            },
+            "step_macro_mae": [
+              0.8672255794314068,
+              0.9917479119274009,
+              1.1973816226598204,
+              1.25957780100715,
+              1.3686088688804814,
+              1.4867773883066078,
+              1.9391757973835064,
+              1.5689444596237865,
+              1.705809619611882,
+              1.7833342867521802,
+              1.8357272062631564,
+              1.931192126686497
+            ]
+          }
+        }
+      },
+      "self": {
+        "selected_update": 500,
+        "completed_updates": 1000,
+        "checkpoint_sha256": "68415df156157c14d3b9259934eecaf7f99c60c8a389e50cd5bb04a4750e2f51",
+        "tensor_sha256": "f554b4c1f6158c982a3a4c85b30ff416269b0b12daaa72221d50855651436416",
+        "validation": {
+          "pems04_flow": {
+            "macro_mae": 26.03065753579538,
+            "macro_rmse": 34.498599578535654,
+            "time_blocks": {
+              "0": 25.16250566026649,
+              "1": 26.458730301408607,
+              "2": 27.066876801562618,
+              "3": 25.434517379943813
+            },
+            "step_macro_mae": [
+              14.747277738482754,
+              15.776997050266926,
+              21.913329523952342,
+              24.4553531462267,
+              23.758594935830942,
+              24.231880035391214,
+              27.308816667433064,
+              23.952657375729725,
+              29.4275752277158,
+              35.50731651911931,
+              27.01866970189453,
+              44.26942250750129
+            ]
+          },
+          "pems04_speed": {
+            "macro_mae": 1.5598878523862434,
+            "macro_rmse": 2.2135112599788314,
+            "time_blocks": {
+              "0": 2.1987071153256994,
+              "1": 1.368767185092121,
+              "2": 1.3747989148815618,
+              "3": 1.297278194245591
+            },
+            "step_macro_mae": [
+              0.832969627093098,
+              0.9965820762743421,
+              1.328321984435845,
+              1.3882537812443596,
+              1.5598840741379258,
+              1.6079624372376766,
+              1.8891601003985903,
+              1.6152518713884552,
+              1.825716050507863,
+              1.8542019336523299,
+              1.8952736775185939,
+              1.9250766147458407
+            ]
+          }
+        }
+      },
+      "rewired": {
+        "selected_update": 1000,
+        "completed_updates": 1000,
+        "checkpoint_sha256": "e3d6a3de97b5f44e79237df1fba37df4751c12ef0eba1a860a991fd06a5e60d1",
+        "tensor_sha256": "01d516749d94a808caeeb2df92834755d86dadf0fd28bc65de7eeb311c9bd7f6",
+        "validation": {
+          "pems04_flow": {
+            "macro_mae": 24.871072966265025,
+            "macro_rmse": 32.98957464904601,
+            "time_blocks": {
+              "0": 25.642326862531547,
+              "1": 26.50184327399448,
+              "2": 25.85743399517472,
+              "3": 21.482687733359352
+            },
+            "step_macro_mae": [
+              13.447857259291023,
+              17.100220018610237,
+              20.621494995119335,
+              25.41442284231062,
+              23.480820227587966,
+              22.667060798376134,
+              25.96662522609791,
+              22.887372648935457,
+              27.08518423312325,
+              32.90655045589794,
+              25.74801053224851,
+              41.12725635758189
+            ]
+          },
+          "pems04_speed": {
+            "macro_mae": 1.4731504658491887,
+            "macro_rmse": 2.0510693447631403,
+            "time_blocks": {
+              "0": 2.1847025066047383,
+              "1": 1.3332105572274626,
+              "2": 1.2552309179340988,
+              "3": 1.1194578816304552
+            },
+            "step_macro_mae": [
+              0.7932234881470215,
+              0.9278224628864015,
+              1.1876980895706477,
+              1.2896691489706535,
+              1.4330457318560343,
+              1.492413828543863,
+              1.7983328835927186,
+              1.5067571447018626,
+              1.7144012434976683,
+              1.8164919836409825,
+              1.840854352101342,
+              1.87709523268107
+            ]
+          }
+        }
+      }
+    }
+  },
+  "cpu_preflight": {
+    "passed": true,
+    "tests": 33,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "manifest_sha256": "2a0587cf657db92a2975c4367859160bd0bff1be420473588c5f4e8baa508136",
+    "cpu_wall_seconds": 4.2591161811724305,
+    "cuda_visible_devices": "",
+    "omp_threads": 2,
+    "mkl_threads": 2,
+    "scope": "inherited_full_plus_related",
+    "inherited_full_proof_sha256": "cd763603cb47ef77736f62d7b1e5b3857b4702a8445b7e8cbe713d938b2ed7b2",
+    "related_test_files": [
+      "test_source_graph_probe.py",
+      "test_source_neighborhood_probe.py",
+      "test_source_normalized_probe.py",
+      "test_source_innovation_probe.py"
+    ]
+  },
+  "controller_timing": {
+    "started_at_unix": 1792655247.965172,
+    "phases": [
+      {
+        "phase": "prepare",
+        "started_at_unix": 1792655247.9651735,
+        "passed": true,
+        "wall_seconds": 1.639837658032775
+      },
+      {
+        "phase": "related_tests",
+        "started_at_unix": 1792655249.6120684,
+        "passed": true,
+        "wall_seconds": 2.61172794457525
+      },
+      {
+        "phase": "source_worker",
+        "started_at_unix": 1792655252.2245247,
+        "passed": true,
+        "wall_seconds": 96.04959911853075
+      }
+    ],
+    "scope": "controller_wall_excludes_development_and_transfer",
+    "elapsed_wall_seconds": 100.30895466171205
+  },
+  "controller_completion": {
+    "cpu_wall_seconds": 100.3096263743937,
+    "scientific_report_present": true
+  },
+  "activity": {
+    "cpu_active_wall_seconds": 94.62640794925392,
+    "gpu_seconds": 0.0,
+    "worker": null,
+    "cuda_initialized": false,
+    "peak_rss_mib": 692.75390625
+  },
+  "gpu_seconds": 0.0,
+  "target_forecasts": 0,
+  "chattime_updates": 0,
+  "hourly_followup": false,
+  "evidence_archive_sha256": "23d863846c8b8b162b919d73ce1d4804b13705193fe4e2c8867352961745a745",
+  "turn_wall_seconds_through_summary": 619.192606,
+  "turn_wall_scope": "initial read completion to summary generation, excludes final synchronization"
+}
