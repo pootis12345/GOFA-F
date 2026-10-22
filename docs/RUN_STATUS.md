@@ -1548,3 +1548,6 @@ Stage57source pilot is live from immutable71371b1;40CPU checks passed, exact sam
 
 
 Stage57actual ChatTime graph-memory source pilot COMPLETE; original source gate FAILED. Real graph MAE flow35.657872/speed2.782140/weather4.017890/wind206.525769; worse than permuted graph on both traffic views and Native on3/4views. Three controls100updates each, exact initialization/query order and raw2048trajectory/metric replay verified(maxdiff0). GPU1683.192490s, train218.219s, peak14960MiB, wait/pause0; own processes exited. Targets/held-source confirmation unopened. Goal remains unachieved. Fixed16-query conditional/prefix diagnosis registered next; no extra training recipe or relaxed gate. See STAGE57_RESULTS.md and STAGE57_DIAGNOSTIC_PROTOCOL.md.
+
+
+Fixed Stage57source diagnostic implemented,6targeted CPU checks passed in2.03s with CUDA disabled/OMP2/MKL2.16fixed exposed source queries,128paired teacher/Native-prefix plus32fixed-weight support forwards; optimizer/new-free-generation/target/holdout0. Observation wrappers proven logits/RNG neutral and restored on exceptions. Old accepted model/kernels unchanged; exact CPU proof reused at deployment. Source screening remains failed; no new training recipe.

@@ -1,0 +1,17 @@
+protocol: stage57-graph-memory-fixed-diagnostic-v1
+source_output: ${GOFA_WORKSPACE}/outputs/stage57-chattime-graph-memory-source-pilot-v1
+source_manifest_sha256: e7d6e4e59c9a617a5b2cbab35a70189d3c42ec19a1495dbf4c49f743d8288343
+source_report_sha256: bdbca46a44059c5a8e6fc84822a704961442c8af5763d9475a4c3e519089a750
+queries_per_view: 4
+training: {max_updates: 0}
+data: {target_training_enabled: false, target_evaluation_enabled: false}
+resources:
+  admission_policy: memory_cap_only
+  admission_samples: 1
+  resource_check_seconds: 10
+  memory_cap_gib: 40
+  torch_cap_gib: 38
+  activity_limit_seconds: null
+  wall_deadline: null
+  yield_on_foreign: false
+  leave_free_gib: 0
