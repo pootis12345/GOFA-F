@@ -1504,3 +1504,6 @@ Stage50 original-recipe convergence control complete: passed=False, all seed42 c
 
 
 New autonomous window2026-10-22 16:07:50–18:07:50 Beijing, gofa-11 heartbeat active. Stage51 fixed bounded sparse-road source experiment registered; correct/static-permuted topology/self on the same physical rosters. Stage40 exact self reused, no GPU/target/ChatTime. Every new worker carries deadline1792663670 and cooperative stop. See STAGE51_SPARSE_NORMALIZED_PROTOCOL.md; inspect actual launch/status before any follow-up.
+
+
+Stage51 complete and independently verified: original gate failed; published sparse road flow25.805332/speed1.519529, static permuted25.799651/1.502533.33CPU checks, exact self reuse and metric replay passed, worker65.139s/controller70.846s/GPU0, all processes exited. New automatic window ends18:07:50 Beijing; proceed only predeclared Stage52 (full plan in STAGE52_ALLNODE_PROTOCOL.md), all three models fresh/no old self reuse, then stop if failed.
