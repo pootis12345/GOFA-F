@@ -1,0 +1,256 @@
+{
+  "cold_prefix_plus_enhanced_seconds": 18.32971994392574,
+  "cpu_checks": 59,
+  "cpu_preparation_seconds": 47.32149587664753,
+  "depths": {
+    "3": {
+      "cases": [
+        {
+          "constructed_topology_for_maximum_shape_only": false,
+          "full_cached_memory_max_difference": 0.0,
+          "full_cached_raw_max_difference": 0.0,
+          "gradient_max_difference": 0.0,
+          "input_sha256": "d0308b6e5efe0af35a68981af04507f66ec257263a91e54d8b713e399e9ac21b",
+          "nodes": 11,
+          "shape": "12-12",
+          "source": "pems04_flow"
+        },
+        {
+          "constructed_topology_for_maximum_shape_only": true,
+          "full_cached_memory_max_difference": 0.0,
+          "full_cached_raw_max_difference": 0.0,
+          "gradient_max_difference": 0.0,
+          "input_sha256": "45378e17c5a14d73afeb63d3e43c41ff469b1dd19a9b5d334391b2da522e175a",
+          "nodes": 31,
+          "shape": "48-24",
+          "source": "pems04_flow"
+        },
+        {
+          "constructed_topology_for_maximum_shape_only": false,
+          "full_cached_memory_max_difference": 0.0,
+          "full_cached_raw_max_difference": 0.0,
+          "gradient_max_difference": 0.0,
+          "input_sha256": "e5c95b24fb9c5d00e701a8d40adec36bc397899c97af967e34578032284eb56f",
+          "nodes": 7,
+          "shape": "12-12",
+          "source": "pems04_speed"
+        },
+        {
+          "constructed_topology_for_maximum_shape_only": false,
+          "full_cached_memory_max_difference": 0.0,
+          "full_cached_raw_max_difference": 0.0,
+          "gradient_max_difference": 0.0,
+          "input_sha256": "b5ad848ebbfb69e3d62aac5d9702a38c6e0ad9b8a495763ea34dec460130d837",
+          "nodes": 5,
+          "shape": "48-24",
+          "source": "pems04_speed"
+        },
+        {
+          "constructed_topology_for_maximum_shape_only": false,
+          "full_cached_memory_max_difference": 0.0,
+          "full_cached_raw_max_difference": 0.0,
+          "gradient_max_difference": 0.0,
+          "input_sha256": "546490a3df6d6ec0620c4e53521c2f9885c9981111851e99a618f8df4ad78f0e",
+          "nodes": 12,
+          "shape": "12-12",
+          "source": "boston2017"
+        },
+        {
+          "constructed_topology_for_maximum_shape_only": false,
+          "full_cached_memory_max_difference": 0.0,
+          "full_cached_raw_max_difference": 0.0,
+          "gradient_max_difference": 0.0,
+          "input_sha256": "ef716b761da15adfe335e5b4ce8b1a716d5d11e96259cfc2ad1774a2b6559292",
+          "nodes": 10,
+          "shape": "48-24",
+          "source": "boston2017"
+        },
+        {
+          "constructed_topology_for_maximum_shape_only": false,
+          "full_cached_memory_max_difference": 0.0,
+          "full_cached_raw_max_difference": 0.0,
+          "gradient_max_difference": 0.0,
+          "input_sha256": "b2be47f1bbae5185f2b4b3de77bfbb692c1f39ea7e5f05804839a1d40e7e9ff2",
+          "nodes": 12,
+          "shape": "12-12",
+          "source": "penmanshiel2017"
+        },
+        {
+          "constructed_topology_for_maximum_shape_only": false,
+          "full_cached_memory_max_difference": 0.0,
+          "full_cached_raw_max_difference": 0.0,
+          "gradient_max_difference": 0.0,
+          "input_sha256": "0558e87ee3aae0821c4d29d7ce92d68f99616709defb2fe3bd6d4465080a1f15",
+          "nodes": 11,
+          "shape": "48-24",
+          "source": "penmanshiel2017"
+        }
+      ],
+      "discarded_updates": 3,
+      "losses": [
+        0.5336921710216437,
+        0.5333425770389283,
+        0.5326278586142769
+      ],
+      "nonzero_graph_gates": 0.15
+    },
+    "6": {
+      "cases": [
+        {
+          "constructed_topology_for_maximum_shape_only": false,
+          "full_cached_memory_max_difference": 0.0,
+          "full_cached_raw_max_difference": 0.0,
+          "gradient_max_difference": 0.0,
+          "input_sha256": "d0308b6e5efe0af35a68981af04507f66ec257263a91e54d8b713e399e9ac21b",
+          "nodes": 11,
+          "shape": "12-12",
+          "source": "pems04_flow"
+        },
+        {
+          "constructed_topology_for_maximum_shape_only": true,
+          "full_cached_memory_max_difference": 0.0,
+          "full_cached_raw_max_difference": 0.0,
+          "gradient_max_difference": 0.0,
+          "input_sha256": "45378e17c5a14d73afeb63d3e43c41ff469b1dd19a9b5d334391b2da522e175a",
+          "nodes": 31,
+          "shape": "48-24",
+          "source": "pems04_flow"
+        },
+        {
+          "constructed_topology_for_maximum_shape_only": false,
+          "full_cached_memory_max_difference": 0.0,
+          "full_cached_raw_max_difference": 0.0,
+          "gradient_max_difference": 0.0,
+          "input_sha256": "e5c95b24fb9c5d00e701a8d40adec36bc397899c97af967e34578032284eb56f",
+          "nodes": 7,
+          "shape": "12-12",
+          "source": "pems04_speed"
+        },
+        {
+          "constructed_topology_for_maximum_shape_only": false,
+          "full_cached_memory_max_difference": 0.0,
+          "full_cached_raw_max_difference": 0.0,
+          "gradient_max_difference": 0.0,
+          "input_sha256": "b5ad848ebbfb69e3d62aac5d9702a38c6e0ad9b8a495763ea34dec460130d837",
+          "nodes": 5,
+          "shape": "48-24",
+          "source": "pems04_speed"
+        },
+        {
+          "constructed_topology_for_maximum_shape_only": false,
+          "full_cached_memory_max_difference": 0.0,
+          "full_cached_raw_max_difference": 0.0,
+          "gradient_max_difference": 0.0,
+          "input_sha256": "546490a3df6d6ec0620c4e53521c2f9885c9981111851e99a618f8df4ad78f0e",
+          "nodes": 12,
+          "shape": "12-12",
+          "source": "boston2017"
+        },
+        {
+          "constructed_topology_for_maximum_shape_only": false,
+          "full_cached_memory_max_difference": 0.0,
+          "full_cached_raw_max_difference": 0.0,
+          "gradient_max_difference": 0.0,
+          "input_sha256": "ef716b761da15adfe335e5b4ce8b1a716d5d11e96259cfc2ad1774a2b6559292",
+          "nodes": 10,
+          "shape": "48-24",
+          "source": "boston2017"
+        },
+        {
+          "constructed_topology_for_maximum_shape_only": false,
+          "full_cached_memory_max_difference": 0.0,
+          "full_cached_raw_max_difference": 0.0,
+          "gradient_max_difference": 0.0,
+          "input_sha256": "b2be47f1bbae5185f2b4b3de77bfbb692c1f39ea7e5f05804839a1d40e7e9ff2",
+          "nodes": 12,
+          "shape": "12-12",
+          "source": "penmanshiel2017"
+        },
+        {
+          "constructed_topology_for_maximum_shape_only": false,
+          "full_cached_memory_max_difference": 0.0,
+          "full_cached_raw_max_difference": 0.0,
+          "gradient_max_difference": 0.0,
+          "input_sha256": "0558e87ee3aae0821c4d29d7ce92d68f99616709defb2fe3bd6d4465080a1f15",
+          "nodes": 11,
+          "shape": "48-24",
+          "source": "penmanshiel2017"
+        }
+      ],
+      "discarded_updates": 3,
+      "losses": [
+        0.5336921710216437,
+        0.5333159316284306,
+        0.5321992143169956
+      ],
+      "nonzero_graph_gates": 0.15
+    }
+  },
+  "formal_updates": 0,
+  "goal_achieved": false,
+  "gpu_activity_seconds": 61.09420684911311,
+  "limitations": [
+    "execution acceptance only, not a forecasting accuracy result",
+    "maximum31 shape case uses31 distinct real source histories and a constructed QA-only topology",
+    "Native replay uses one historical trajectory per source",
+    "historical source/target development exposure persists"
+  ],
+  "manifest_sha256": "6fee1a93b56fe5757a0bb6eb9635e923132e9a6e876f01f197eabfcd1554d9b3",
+  "mechanisms_passed": true,
+  "mechanisms_sha256": "6622dc6b1b2a5e44647380e7fbe9a4c166fed2deb762ac9cfc6efd1704d6ef18",
+  "native_replays": {
+    "boston2017": {
+      "reference_sha256": "21d9c0aff1a3bc89cea0e628219b30568dbafe8cbceb62f7b7f56556b3a5e92e",
+      "sampled_tokens_equal": true
+    },
+    "pems04_flow": {
+      "reference_sha256": "febfba4e2a3e6fc70260eb5bc4303f04a7a5bde8b04e7d9777e708d034562759",
+      "sampled_tokens_equal": true
+    },
+    "pems04_speed": {
+      "reference_sha256": "509a70de3c6c22c0bc0613e60ba45a18139e64491ad8c478300346847551bd78",
+      "sampled_tokens_equal": true
+    },
+    "penmanshiel2017": {
+      "reference_sha256": "fc0dcc9d8a7c908910b784609d93ff896fcb0ce50fd159440e50be84e089d47a",
+      "sampled_tokens_equal": true
+    }
+  },
+  "peak_group_mib": 23676,
+  "peak_torch_allocated_bytes": 22471492096,
+  "peak_torch_reserved_bytes": 24134025216,
+  "pending": [
+    "formal source cross-fitting and depth selection",
+    "shared source fusion",
+    "independent source confirmation",
+    "adequately trained UFG",
+    "sealed six-target evaluation"
+  ],
+  "protocol": "protected Native plus dedicated bidirectional soft Memory; source-only",
+  "resource_pauses": 0,
+  "sampler": "TAGLAS.k_hop_subgraph:dense:single_root:whole_fringe:3x10:v1",
+  "source_confirmation_labels_opened": false,
+  "source_groups": {
+    "boston2017": "weather",
+    "pems04_flow": "traffic",
+    "pems04_speed": "traffic",
+    "penmanshiel2017": "wind"
+  },
+  "source_sha": "9e991737cff0f2bf8bdb761ab23c5f9dd6e55036",
+  "source_shapes": [
+    [
+      12,
+      12
+    ],
+    [
+      48,
+      24
+    ]
+  ],
+  "stage": 59,
+  "target_predictions": 0,
+  "throughput_queries": 64,
+  "training_queries_per_view": 8192,
+  "waiting_seconds": 0.0,
+  "worker_exited": true
+}
