@@ -1,0 +1,41 @@
+{
+  "scope": "Official UFGTime fixed-roster input compatibility only",
+  "tests": 7,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "cuda_disabled": true,
+  "omp_threads": 2,
+  "mkl_threads": 2,
+  "cpu_test_seconds": 2.112,
+  "new_gpu_seconds": 0,
+  "training_updates": 0,
+  "target_queries": 0,
+  "official_revision": "61f55135bc2bd6e9b9e5d592009d358015eea681",
+  "official_effective_forward_unchanged": true,
+  "width": 128,
+  "fixed_roster_roles": 9,
+  "task_shapes": [
+    [
+      12,
+      12
+    ],
+    [
+      48,
+      24
+    ]
+  ],
+  "cross_shape_single_checkpoint": false,
+  "tests_sha256": "71a6d191bc0eeec29a93ee61d8ae2df7d27757e60a8c963acd111ed8a42b1733",
+  "files_sha256": {
+    "src/gofa_f/ufg_subgraph.py": "d1379bbbf517241f4eca4207edb52667e3eb98f8088f3835b83b4222deec5ed9",
+    "tests/test_ufg_subgraph.py": "4264e8d0f5885a6bcc9920c8b0d057e4acf62ecc64f3dcb54d1ebcd38a51209f"
+  },
+  "limitations": [
+    "No UFG performance experiment has run",
+    "Fixed roster roles and masked-zero virtual nodes adapt the original dataset-specific protocol",
+    "Native learned frequency graph is retained; it does not consume external road adjacency",
+    "Two task-shape checkpoints will be needed; not one universal cross-length UFG checkpoint",
+    "Source/few-shot training and model selection protocol must be fixed before fitting"
+  ]
+}

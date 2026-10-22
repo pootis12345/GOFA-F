@@ -1542,3 +1542,6 @@ Stage56-v2 real ChatTime graph-memory mechanism acceptance complete:32related CP
 
 
 Stage57predeclared actual ChatTime graph-memory source pilot: fresh matched physical/self/static-permuted controls,100updates each, identical256training/64development source queries, original sample8evaluation. No target/held-source confirmation access, no QA-weight reuse. CPU acceptance before deployment, memory_cap_only40/38GiB, no deadline/heartbeat. Runtime source to be pinned at deployment. See STAGE57_GRAPH_MEMORY_PILOT_PROTOCOL.md.
+
+
+Stage57source pilot is live from immutable71371b1;40CPU checks passed, exact same source inputs/rosters and degree-preserving controls audited. Physical completed100updates in112.249s and locked before evaluation; remaining controls continue with the same fixed recipe. During this wait, UFGTime input-only fixed9-roster/two-shape compatibility passed7CPU checks in2.11s, GPU/training/targets0. Runtime source is unchanged; no accuracy/ranking claim. See UFG_SUBGRAPH_COMPATIBILITY.md.
