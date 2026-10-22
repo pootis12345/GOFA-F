@@ -29,7 +29,7 @@ def main():
         suites=list(ET.parse(o/'cpu_tests.xml').getroot().iter('testsuite'))
         counts={k:sum(int(s.get(k,0)) for s in suites) for k in ('tests','failures','errors','skipped')}
         proof=dict(passed=code==0,**counts,manifest_sha256=hashlib.sha256((o/'manifest.json').read_bytes()).hexdigest(),
-            tests=counts['tests'],test_files=tests,cuda_disabled=True,omp_threads=2,mkl_threads=2,cpu_test_wall_seconds=time.monotonic()-begin)
+            test_files=tests,cuda_disabled=True,omp_threads=2,mkl_threads=2,cpu_test_wall_seconds=time.monotonic()-begin)
         (o/'cpu_preflight.json').write_text(json.dumps(proof,indent=2)+'\n')
         if code:
             print((o/'cpu_regression.log').read_text());raise RuntimeError('Related CPU acceptance failed; GPU not launched')

@@ -159,3 +159,14 @@ def test_trainable_checkpoint_optimizer_and_rng_replay(codec):
     model.load_trainable(saved);optimizer.load_state_dict(state);torch.set_rng_state(rng)
     assert update()==expected_loss
     for name,value in model.trainable_state().items():assert torch.equal(value,expected[name])
+
+
+@pytest.mark.parametrize('length,horizon',[(12,12),(48,24)])
+def test_nonzero_actual_sampled_paths_match_and_local_rng_isolated(codec,length,horizon):
+    from gofa_f.graph_memory_stage import verify_sampled_paths
+    d=data();model=tiny(codec);nonzero(model);query=q(length,horizon)
+    ctx=model.encode_origins([memory_graph(d,query)],codec)
+    before=torch.get_rng_state().clone()
+    value=verify_sampled_paths(model,codec,d.values[200-length:200,0],horizon,ctx,seed=42,rtol=1e-6,atol=1e-6)
+    assert value['sampled_tokens_equal'] and len(value['numeric_ids'])==horizon
+    assert torch.equal(before,torch.get_rng_state())

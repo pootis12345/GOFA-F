@@ -24,7 +24,26 @@ from gofa_f.source_retraining_data import VIEWS
 from gofa_f.prefix_cache import atomic_json
 
 FILES=('graph_memory.py','graph_memory_model.py','graph_memory_data.py','graph_memory_stage.py',
-       'allnode_model.py','allnode_kernel.py','generative_kernel.py','short_codec.py','short_training.py')
+       'allnode_model.py','allnode_kernel.py','generative_kernel.py','short_codec.py','short_training.py','short_sampling_diagnostic.py')
+
+
+@torch.no_grad()
+def verify_sampled_paths(model,codec,history,horizon,contexts,seed,check=lambda:None,rtol=.002,atol=.002):
+    """Compare actual local-RNG top100 trajectories, not teacher argmax proxies."""
+    from gofa_f.short_sampling_diagnostic import generate
+    traces=[];paths=[]
+    for cached in (False,True):
+        trace=[]
+        paths.append(generate(model,codec,history,horizon,contexts,seed=seed,cached=cached,check=check,trace=trace))
+        traces.append(torch.cat(trace))
+    torch.testing.assert_close(traces[0],traces[1],rtol=rtol,atol=atol)
+    if paths[0]['generated_ids']!=paths[1]['generated_ids'] or paths[0]['numeric_ids']!=paths[1]['numeric_ids']:
+        raise ValueError('Nonzero full/incremental sampled tokens differ')
+    return dict(seed=seed,numeric_slots=horizon,generated_ids=paths[0]['generated_ids'],
+        numeric_ids=paths[0]['numeric_ids'],sampled_tokens_equal=True,
+        numerical_logits_max_absolute_difference=float((traces[0]-traces[1]).abs().max()),
+        full_logits_sha256=hashlib.sha256(traces[0].numpy().tobytes()).hexdigest(),
+        incremental_logits_sha256=hashlib.sha256(traces[1].numpy().tobytes()).hexdigest())
 
 
 def configuration(path):
@@ -152,31 +171,58 @@ def gpu_acceptance(cfg,output):
             save_torch(output/'mechanism-state.pt',dict(binding=binding,adapter=model.trainable_state(),optimizer=optimizer.state_dict(),
                 torch_rng=torch.get_rng_state(),cuda_rng=torch.cuda.get_rng_state_all(),updates=update+1,losses=losses,
                 parameter_version=model.parameter_version,cache_generation=model.cache_generation,discarded_candidate=True))
-        phase='nonzero_full_prefix_incremental';status('running');optimizer.zero_grad(set_to_none=True)
-        contexts=model.encode_origins([graph],codec,check=check)
-        full=model(tokens,contexts=contexts).logits;loss=numeric_loss(full,tokens.labels,codec)[0];loss.backward()
-        gradients={n:p.grad.detach().cpu().clone() if p.grad is not None else None for n,p in model.adapter.named_parameters()}
-        model.zero_grad();contexts=model.encode_origins([graph],codec,check=check)
-        compact=compact_forward(model,codec,tokens,contexts,teacher_prefix(model,tokens));compact_loss(compact)[0].backward()
-        for n,p in model.adapter.named_parameters():
-            if gradients[n] is None:
-                if p.grad is not None:raise ValueError('Gradient branch mismatch')
-            else:torch.testing.assert_close(p.grad.cpu(),gradients[n],rtol=.002,atol=.002)
-        model.zero_grad();contexts=model.encode_origins([graph],codec,check=check)
-        with torch.no_grad():
-            cut=int(tokens.prompt_ends[0])+1;part=tokens.first(cut);out=model(part,contexts=contexts,use_cache=True)
-            pieces=[out.logits];kv=out.past_key_values
-            for index in range(cut,tokens.input_ids.shape[1]):
-                check();part=part.append(tokens.input_ids[:,index:index+1]);out=model(part,contexts=contexts,cache=kv,use_cache=True)
-                pieces.append(out.logits);kv=out.past_key_values
-            incremental=torch.cat(pieces,1);torch.testing.assert_close(incremental,full,rtol=.002,atol=.002)
-            alphabet=codec.alphabet(full.device)
-            if not torch.equal(incremental.index_select(-1,alphabet).argmax(-1),full.index_select(-1,alphabet).argmax(-1)):
-                raise ValueError('Nonzero full/incremental numeric argmax tokens differ')
+        del prefix,tokens
+        contexts=loss=None
+        replay=read(output/'nonzero_cases.json',dict(binding=binding,results={}))
+        if replay['binding']!=binding:raise ValueError('Nonzero-case binding changed')
+        nonzero=replay['results']
+        # Cover both supported real-source length/horizon shapes after the same
+        # three discarded updates; neither case contributes model selection.
+        for name,query in (cases[0],cases[2]):
+            if name in nonzero:continue
+            phase='nonzero_full_prefix_incremental_'+name;status('running');check();model.zero_grad(set_to_none=True)
+            q=Query(**query);data=sources[name]
+            history=np.where(data.mask[q.origin-q.length:q.origin,q.variable],data.values[q.origin-q.length:q.origin,q.variable],np.nan)
+            target=np.where(data.mask[q.origin:q.origin+q.horizon,q.variable],data.values[q.origin:q.origin+q.horizon,q.variable],np.nan)
+            tokens=codec.batch([codec.record(history,target)]).to('cuda:0');graph=memory_graph(data,q,m['partitions'][name]['train'])
+            contexts=model.encode_origins([graph],codec,check=check)
+            full=model(tokens,contexts=contexts).logits;numeric_loss(full,tokens.labels,codec)[0].backward();full=full.detach()
+            gradients={n:p.grad.detach().cpu().clone() if p.grad is not None else None for n,p in model.adapter.named_parameters()}
+            model.zero_grad(set_to_none=True);contexts=model.encode_origins([graph],codec,check=check)
+            compact=compact_forward(model,codec,tokens,contexts,teacher_prefix(model,tokens));compact_loss(compact)[0].backward()
+            for n,p in model.adapter.named_parameters():
+                if gradients[n] is None:
+                    if p.grad is not None:raise ValueError('Gradient branch mismatch')
+                else:torch.testing.assert_close(p.grad.cpu(),gradients[n],rtol=.002,atol=.002)
+            del compact,gradients,contexts
+            model.zero_grad(set_to_none=True)
+            with torch.no_grad():
+                contexts=model.encode_origins([graph],codec,check=check)
+                cut=int(tokens.prompt_ends[0])+1;part=tokens.first(cut);out=model(part,contexts=contexts,use_cache=True)
+                pieces=[out.logits];kv=out.past_key_values
+                for index in range(cut,tokens.input_ids.shape[1]):
+                    check();part=part.append(tokens.input_ids[:,index:index+1]);out=model(part,contexts=contexts,cache=kv,use_cache=True)
+                    pieces.append(out.logits);kv=out.past_key_values
+                incremental=torch.cat(pieces,1);torch.testing.assert_close(incremental,full,rtol=.002,atol=.002)
+                alphabet=codec.alphabet(full.device)
+                if not torch.equal(incremental.index_select(-1,alphabet).argmax(-1),full.index_select(-1,alphabet).argmax(-1)):
+                    raise ValueError('Nonzero full/incremental numeric argmax tokens differ')
+                from gofa_f.short_sampling_diagnostic import sample_seed
+                sampled=verify_sampled_paths(model,codec,history,q.horizon,contexts,sample_seed(query,0),check)
+                # After adaptation, explicit graph-off still returns the same native
+                # result checked before all optimizer steps.
+                off=model(tokens).logits
+                native_difference=float((off-full).abs().max())
+            nonzero[name]=dict(query=query,nodes=contexts[0].nodes,full_compact_gradients_passed=True,
+                full_incremental_max_absolute_difference=float((incremental-full).abs().max()),numeric_argmax_equal=True,
+                nonzero_graph_effect_max_absolute_difference=native_difference,sampling=sampled)
+            if native_difference==0:raise ValueError('Discarded updates did not exercise the graph-memory path')
+            atomic_json(output/'nonzero_cases.json',replay)
+            del full,incremental,pieces,kv,out,off,part,contexts,tokens
         if any(p.requires_grad or p.grad is not None or p._version!=versions[n] for n,p in model.native.named_parameters()):raise ValueError('Frozen backbone changed')
         value=dict(passed=True,manifest_sha256=binding,real_chattime=True,source_cases=results,discarded_optimizer_updates=3,
-            losses=losses,full_incremental_max_absolute_difference=float((incremental-full).abs().max()),
-            numeric_argmax_equal=True,full_compact_gradients_passed=True,native_frozen=True,
+            losses=losses,nonzero_source_cases=nonzero,
+            numeric_argmax_equal=True,sampled_tokens_equal=True,full_compact_gradients_passed=True,native_frozen=True,
             trainable_parameters=sum(p.numel() for p in model.adapter.parameters()),target_predictions=0,
             gpu_active_seconds=time.monotonic()-started,torch_peak_allocated_bytes=torch.cuda.max_memory_allocated(),
             torch_peak_reserved_bytes=torch.cuda.max_memory_reserved(),next_action='fixed source pilot; do not claim forecast improvement')

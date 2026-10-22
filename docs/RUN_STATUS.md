@@ -1533,3 +1533,6 @@ Latest user policy2026-10-22: remove all time deadlines for subsequent work. The
 
 
 Active real-graph zero-/few-shot goal continues; target CPU few-shot blend was not started. Stage56 implements actual shared frozen ChatTime/all-node30/31graph memories with forecast-slot reads and fresh source reservations, not another small-GNN recipe. Mechanism acceptance only; no time cap/heartbeat, legacy resource policies unchanged. See STAGE56_GRAPH_MEMORY_PROTOCOL.md.
+
+
+Stage56-v1:30related CPU checks passed; bootstrap metadata duplicate keyword caused exit before any GPU worker. Fixed in independent v2, retaining v1 evidence and exactly the same reserved source queries. v2 adds actual sampled-token full/cache checks and nonzero real48→24gradient coverage; formal training and target evaluation remain disabled. No accuracy claim.
