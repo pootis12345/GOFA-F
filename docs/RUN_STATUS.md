@@ -1,3 +1,7 @@
+## 本轮自动迭代已由用户提前停止
+
+2026-10-22 09:30北京时间按用户要求关闭临时自动跟进，gofa-11=PAUSED，未延长11小时窗口。本轮训练/GPU进程均已退出，Stage33/34完成且worker=null，不再自动恢复。Stage33固定六集目标监督混合MAE全部改善；Stage34源DCRNN真实结果已封存，LLaMA补充未执行。结论身份、全部排名、未完成项和成本见[本轮总结](OVERNIGHT_ITERATION_SUMMARY.md)。
+
 ## Stage34源DCRNN已完成，真实排序已封存
 
 5000更新按源早停，唯一最佳3000更新SHA613231c51cee84cea43fe4622de42a858db3a76b7be201c932a80baa716acbb2。固定六集MAE均优于原生，在PeMS03/MeteoNet/EngRAD/SDWPF也优于源GOFA-F3500；不人为改变排名。新增GPU0，总CPU活动2336.204秒，进程全部退出。Stage33目标监督混合在五集点估计更低，但监督/输入机制不同，不能混称公平零样本优势。完整指标和局限见[Stage34结果](STAGE34_RESULTS.md)。主目标Stage33结果保持封存；LLaMA准确版本/合法权重仍待用户回复，未生成该项实验数据。固定11:15:12北京截止不变。

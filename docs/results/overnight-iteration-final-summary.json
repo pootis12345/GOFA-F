@@ -1,0 +1,83 @@
+{
+  "state": "stopped_by_user",
+  "stop_requested_bjt": "2026-10-22T09:30:46+08:00",
+  "original_deadline_bjt": "2026-10-22T11:15:12+08:00",
+  "automation_id": "gofa-11",
+  "automation_status": "PAUSED",
+  "active_iteration_processes": [],
+  "active_gpu_processes": [],
+  "main_goal_achieved_on_fixed_samples": true,
+  "main_system": "target-supervised hybrid; not pure zero-shot GOFA-F",
+  "target_test_queries": 768,
+  "metrics": "variable-equal original-unit MAE",
+  "datasets": {
+    "pems03": {
+      "native_mae": 26.73317948689995,
+      "source_gofa3500_mae": 24.423249477657635,
+      "source_dcrnn_mae": 21.954108208299658,
+      "target_supervised_hybrid_mae": 19.891329836762218,
+      "hybrid_relative_change_pct": -25.59310108807088,
+      "strict_hybrid_improvement": true,
+      "queries": 128
+    },
+    "pems_bay": {
+      "native_mae": 2.976910937577486,
+      "source_gofa3500_mae": 2.358860067402323,
+      "source_dcrnn_mae": 2.432041822730022,
+      "target_supervised_hybrid_mae": 2.291419688727389,
+      "hybrid_relative_change_pct": -23.02693171626853,
+      "strict_hybrid_improvement": true,
+      "queries": 128
+    },
+    "meteonet_nw2018": {
+      "native_mae": 2.24044875121458,
+      "source_gofa3500_mae": 2.251814316719928,
+      "source_dcrnn_mae": 1.9756127722496883,
+      "target_supervised_hybrid_mae": 1.9264292695560017,
+      "hybrid_relative_change_pct": -14.015918975533081,
+      "strict_hybrid_improvement": true,
+      "queries": 128
+    },
+    "engrad": {
+      "native_mae": 2.0844726862082203,
+      "source_gofa3500_mae": 2.3278484257655996,
+      "source_dcrnn_mae": 1.7704782442262759,
+      "target_supervised_hybrid_mae": 1.8926076278059438,
+      "hybrid_relative_change_pct": -9.20448896604591,
+      "strict_hybrid_improvement": true,
+      "queries": 128
+    },
+    "sdwpf": {
+      "native_mae": 169.42579341869583,
+      "source_gofa3500_mae": 164.58577364127936,
+      "source_dcrnn_mae": 158.8443385183469,
+      "target_supervised_hybrid_mae": 143.37030249892263,
+      "hybrid_relative_change_pct": -15.378703793573633,
+      "strict_hybrid_improvement": true,
+      "queries": 128
+    },
+    "kelmarsh2019": {
+      "native_mae": 258.0838126131467,
+      "source_gofa3500_mae": 250.68815129863935,
+      "source_dcrnn_mae": 256.3480665674815,
+      "target_supervised_hybrid_mae": 249.47847256628347,
+      "hybrid_relative_change_pct": -3.334319948133335,
+      "strict_hybrid_improvement": true,
+      "queries": 128
+    }
+  },
+  "source_dcrnn_selected_update": 3000,
+  "source_dcrnn_training_updates": 5000,
+  "source_dcrnn_stop_reason": "source_early_stop",
+  "source_dcrnn_checkpoint_sha256": "613231c51cee84cea43fe4622de42a858db3a76b7be201c932a80baa716acbb2",
+  "source_dcrnn_parameters": 372353,
+  "gpu_seconds": 4543.11330986768,
+  "peak_group_mib": 14362,
+  "source_dcrnn_cpu_active_wall_seconds": 2336.2038747258484,
+  "source_dcrnn_gpu_seconds": 0.0,
+  "llama_comparison": "not executed; exact legally accessible weights not acquired and verified",
+  "chattime_original_backbone": "Llama-2-7B Base",
+  "independent_blind_test": false,
+  "universal_additional_graph_llm_gain_proven": false,
+  "desired_rankings_enforced": false
+}
