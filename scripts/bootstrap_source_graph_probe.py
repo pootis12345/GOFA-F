@@ -17,7 +17,7 @@ def main():
     p.add_argument('--config',type=Path)
     p.add_argument('--module',default='gofa_f.source_graph_probe',
         choices=('gofa_f.source_graph_probe','gofa_f.source_neighborhood_probe','gofa_f.source_normalized_probe',
-            'gofa_f.source_time_robust_probe','gofa_f.source_state_attention_probe','gofa_f.source_scale_encoding_probe','gofa_f.source_distance_prior_probe'))
+            'gofa_f.source_time_robust_probe','gofa_f.source_state_attention_probe','gofa_f.source_scale_encoding_probe','gofa_f.source_distance_prior_probe','gofa_f.source_innovation_probe'))
     p.add_argument('--related-baseline',type=Path)
     args=p.parse_args()
     python=args.workspace/'.venv-chat/bin/python'
@@ -57,7 +57,7 @@ def main():
                 baseline=None
                 if args.related_baseline:
                     if args.module not in ('gofa_f.source_neighborhood_probe','gofa_f.source_normalized_probe',
-                            'gofa_f.source_time_robust_probe','gofa_f.source_state_attention_probe','gofa_f.source_scale_encoding_probe','gofa_f.source_distance_prior_probe'):
+                            'gofa_f.source_time_robust_probe','gofa_f.source_state_attention_probe','gofa_f.source_scale_encoding_probe','gofa_f.source_distance_prior_probe','gofa_f.source_innovation_probe'):
                         raise ValueError('Related proof reuse requires a registered source probe')
                     baseline=args.related_baseline/'cpu_preflight.json'
                     manifest=json.loads((args.output/'manifest.json').read_text())
@@ -65,12 +65,13 @@ def main():
                         raise ValueError('Full baseline proof binding changed')
                     files=['test_source_graph_probe.py','test_source_neighborhood_probe.py']
                     if args.module in ('gofa_f.source_normalized_probe','gofa_f.source_time_robust_probe',
-                            'gofa_f.source_state_attention_probe','gofa_f.source_scale_encoding_probe','gofa_f.source_distance_prior_probe'):
+                            'gofa_f.source_state_attention_probe','gofa_f.source_scale_encoding_probe','gofa_f.source_distance_prior_probe','gofa_f.source_innovation_probe'):
                         files.append('test_source_normalized_probe.py')
                     if args.module=='gofa_f.source_time_robust_probe':files.append('test_source_time_robust_probe.py')
                     if args.module=='gofa_f.source_state_attention_probe':files.append('test_source_state_attention_probe.py')
                     if args.module=='gofa_f.source_scale_encoding_probe':files.append('test_source_scale_encoding_probe.py')
                     if args.module=='gofa_f.source_distance_prior_probe':files.append('test_source_distance_prior_probe.py')
+                    if args.module=='gofa_f.source_innovation_probe':files.append('test_source_innovation_probe.py')
                     tests=[str(args.snapshot/'tests'/n) for n in files]
                 with (args.output/'cpu_regression.log').open('w') as log:
                     code=phase('related_tests' if baseline else 'full_tests',lambda:subprocess.run([str(python),'-m','pytest',*tests,'-q',
