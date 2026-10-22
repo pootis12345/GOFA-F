@@ -1554,3 +1554,6 @@ Fixed Stage57source diagnostic implemented,6targeted CPU checks passed in2.03s w
 
 
 Stage57fixed source prefix/support diagnostic COMPLETE:160forwards/16exposed source queries,6new CPU checks,18.284006s GPU/peak14354MiB/wait-pause0, raw metric replay0, all processes exited. Traffic teacher CE/conditional median improve, generated-prefix conditional gaps persist; fixed-weight topology sensitivity small despite active8–22%mean residuals. No parameters/new free forecasts/targets/held-source0. Original source screen stays failed. Next single Native-proposal coupled replay is preregistered, no new training or amplitude search. See STAGE57_DIAGNOSTIC_RESULTS.md and STAGE57_PROPOSAL_REPLAY_PROTOCOL.md.
+
+
+Single Native-proposal replay implemented;4new CPU checks passed in2.31s, CUDA disabled/OMP2/MKL2.64exposed source queries×8saved Native proposals, no new Native autoregressive generation or optimizer updates. Native-off exact512trajectory identity is required before physical/self/permuted comparisons. Existing accepted model/numerical kernels unchanged; source screening stays failed, targets/holdout closed. See STAGE57_PROPOSAL_REPLAY_PROTOCOL.md.
