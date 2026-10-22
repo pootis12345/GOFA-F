@@ -11,6 +11,15 @@ VIEWS = ('pems04_flow', 'pems04_speed')
 CONDITIONS = ('physical', 'self', 'rewired')
 
 
+def road_adjacency(adjacency, contract='csv_directed'):
+    value=np.asarray(adjacency)>0
+    if value.ndim!=2 or value.shape[0]!=value.shape[1]:
+        raise ValueError('Square audited road adjacency required')
+    if contract=='csv_directed':return value.astype(np.float32)
+    if contract=='publisher_bidirectional':return (value|value.T).astype(np.float32)
+    raise ValueError('Unregistered road graph convention')
+
+
 def component_partition(adjacency, ids):
     a = np.asarray(adjacency) > 0
     if a.shape != (len(ids), len(ids)) or len(set(ids)) != len(ids):

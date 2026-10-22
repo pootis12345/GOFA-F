@@ -7,7 +7,7 @@ import pytest
 import torch
 
 from gofa_f.graph_probe_data import (CONDITIONS,VIEWS,component_partition,controls,
-    node_roster,pack,select_training)
+    node_roster,pack,road_adjacency,select_training)
 from gofa_f.lag_graph_probe import LagExchange,LagGraphProbe,state_digest
 from gofa_f.source_graph_probe import (configuration,confirmation,digest,gate,
     immutable,loss_value,metrics,next_indices,train_weights,verify)
@@ -249,3 +249,32 @@ def test_training_pool_selection_keeps_all_variables_and_time_strata():
     assert result==select_training(pool,[0,1,2,3],32,0)
     assert {r['query']['variable'] for r in result}=={0,1,2,3}
     assert len({digest(r) for r in result})==32
+
+
+def test_bidirectional_contract_only_changes_support_not_features_labels_or_roster():
+    d=fixture();other=copy.deepcopy(d)
+    original=d.external.copy()
+    other.external=road_adjacency(other.external,'publisher_bidirectional')
+    np.testing.assert_array_equal(d.external,original)
+    np.testing.assert_array_equal(other.external,(original|original.T).astype(np.float32))
+    r=dict(query=dict(source='pems04_flow',variable=2,origin=100,length=12,horizon=12),block=-1)
+    a=pack(d,r,list(range(8)));b=pack(other,r,list(range(8)))
+    for key in a:
+        if key!='adjacency':np.testing.assert_array_equal(a[key],b[key])
+    assert np.count_nonzero(b['adjacency'])==2*np.count_nonzero(a['adjacency'])
+    np.testing.assert_array_equal(controls(a['adjacency'][None],a['nodes'][None],[r],'self'),
+        controls(b['adjacency'][None],b['nodes'][None],[r],'self'))
+    with pytest.raises(ValueError):road_adjacency(original,'unregistered_search')
+
+
+def test_road_study_pins_official_contract_without_retrofitting_old_protocol(tmp_path,monkeypatch):
+    import yaml
+    monkeypatch.setenv('GOFA_WORKSPACE','/tmp/audited-source')
+    root=Path(__file__).parents[1]
+    cfg=configuration(root/'configs/stage37_source_road_probe.yaml')
+    assert cfg['graph_contract']=='publisher_bidirectional'
+    assert cfg['protocol']=='stage37-source-road-probe-v1'
+    old=configuration(root/'configs/stage36_source_graph_probe.yaml')
+    old['graph_contract']='publisher_bidirectional'
+    p=tmp_path/'bad.yaml';p.write_text(yaml.safe_dump(old))
+    with pytest.raises(ValueError,match='immutable'):configuration(p)

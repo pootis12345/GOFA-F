@@ -14,6 +14,7 @@ def main():
     p.add_argument('--workspace',required=True,type=Path)
     p.add_argument('--snapshot',required=True,type=Path)
     p.add_argument('--output',required=True,type=Path)
+    p.add_argument('--config',type=Path)
     args=p.parse_args()
     python=args.workspace/'.venv-chat/bin/python'
     env=os.environ.copy()
@@ -25,7 +26,7 @@ def main():
     with (args.output/'bootstrap.lock').open('a') as lease:
         fcntl.flock(lease,fcntl.LOCK_EX|fcntl.LOCK_NB)
         base=[str(python),'-m','gofa_f.source_graph_probe','--config',
-            str(args.snapshot/'configs/stage36_source_graph_probe.yaml'),'--output',str(args.output)]
+            str(args.config or args.snapshot/'configs/stage36_source_graph_probe.yaml'),'--output',str(args.output)]
         start=time.monotonic()
         def write(name,value):
             path=args.output/name;temporary=path.with_suffix(path.suffix+'.tmp')

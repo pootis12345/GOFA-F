@@ -1,0 +1,35 @@
+protocol: stage37-source-road-probe-v1
+graph_contract: publisher_bidirectional
+source_output: ${GOFA_WORKSPACE}/outputs/stage23-source-retraining-v2
+source_manifest_sha256: 9d2b5cb1d9c2856adda7d53699379d9eaf4b86a380e8051da9616f0c8ec4f224
+prior_screen_output: ${GOFA_WORKSPACE}/outputs/stage35-source-graph-audit-v1
+prior_screen_manifest_sha256: 70e7634993b02b227e82dc1f7b35399df033911af3c0018f6a253dcaa3d2595e
+parent_probe_output: ${GOFA_WORKSPACE}/outputs/stage36-source-graph-probe-v1
+parent_probe_report_sha256: 7a9fcb2c745f536759e7d1c21bb476f106b3643a28aeaae65a0e8ac0cc461731
+upstream_revision: 9c2e19b98c4cedf1f35214d8789685b6381b3aad
+upstream_evidence_directory: ${GOFA_WORKSPACE}/.remote/stage37-upstream
+upstream_sha256:
+  PEMS04.conf: 70fbf3ed92805287c714042ff13de6766fabcb8206ff68525cf2cb4ba4b9ce31
+  train_ASTGNN.py: 5c4c25a9fe9425f5cefc9aa658cc23f7c35368fb6e52fd823fc121aba0cc7e89
+  utils.py: 3ac4575c8a2bfb044cb8751e97e213e088ab94dcfba17b59dfd623dcba90114f
+seeds: [42, 43, 44]
+conditions: [physical, self, rewired]
+model: {width: 32, rank: 8, lags: [0, 1, 2, 3], maximum_nodes: 9, graph_blocks: 2}
+training:
+  queries_per_view: 2048
+  max_updates: 1000
+  effective_batch: 64
+  learning_rate: 0.001
+  warmup_updates: 20
+  weight_decay: 0.0001
+  gradient_clip: 1.0
+  validation_every: 100
+  profile_updates: 20
+gate: {minimum_view_improvement: 0.01, maximum_time_block_degradation: 0.02, paired_bootstrap_draws: 2000}
+policy:
+  source_training_enabled: true
+  target_training_enabled: false
+  target_evaluation_enabled: false
+  neural_chattime_training_enabled: false
+  gpu_enabled: false
+  hourly_followup: false

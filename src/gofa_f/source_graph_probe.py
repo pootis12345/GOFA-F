@@ -18,13 +18,18 @@ import yaml
 
 from gofa_f.generative_data import Series, sha
 from gofa_f.graph_probe_data import (CONDITIONS, VIEWS, component_partition, controls,
-    evaluation_queries, pack, select_training)
+    evaluation_queries, pack, road_adjacency, select_training)
 from gofa_f.lag_graph_probe import LagGraphProbe, state_digest
 from gofa_f.prefix_cache import atomic_json
 
 PROTOCOL = 'stage36-source-graph-probe-v1'
+ROAD_PROTOCOL = 'stage37-source-road-probe-v1'
 CODE_FILES = ('source_graph_probe.py','graph_probe_data.py','lag_graph_probe.py','generative_data.py')
 STOP = [False]
+
+
+def stage_number(cfg):
+    return {PROTOCOL:36,ROAD_PROTOCOL:37}[cfg['protocol']]
 
 
 def read(path, default=None):
@@ -62,7 +67,7 @@ def configuration(path):
     expected_training = dict(queries_per_view=2048,max_updates=1000,effective_batch=64,
         learning_rate=.001,warmup_updates=20,weight_decay=.0001,gradient_clip=1.,
         validation_every=100,profile_updates=20)
-    if cfg['protocol'] != PROTOCOL or cfg['seeds'] != [42,43,44] \
+    if cfg['protocol'] not in (PROTOCOL,ROAD_PROTOCOL) or cfg['seeds'] != [42,43,44] \
             or cfg['conditions'] != list(CONDITIONS) \
             or cfg['model'] != dict(width=32,rank=8,lags=[0,1,2,3],maximum_nodes=9,graph_blocks=2) \
             or cfg['training'] != expected_training \
@@ -72,6 +77,17 @@ def configuration(path):
                 target_evaluation_enabled=False,neural_chattime_training_enabled=False,
                 gpu_enabled=False,hourly_followup=False):
         raise ValueError('Fixed single-plan source probe configuration changed')
+    if cfg['protocol']==PROTOCOL and cfg.get('graph_contract','csv_directed')!='csv_directed':
+        raise ValueError('Original Stage36 graph contract is immutable')
+    if cfg['protocol']==ROAD_PROTOCOL:
+        if cfg['graph_contract']!='publisher_bidirectional' \
+                or cfg['parent_probe_report_sha256']!='7a9fcb2c745f536759e7d1c21bb476f106b3643a28aeaae65a0e8ac0cc461731' \
+                or cfg['upstream_revision']!='9c2e19b98c4cedf1f35214d8789685b6381b3aad' \
+                or cfg['upstream_sha256']!={
+                    'PEMS04.conf':'70fbf3ed92805287c714042ff13de6766fabcb8206ff68525cf2cb4ba4b9ce31',
+                    'train_ASTGNN.py':'5c4c25a9fe9425f5cefc9aa658cc23f7c35368fb6e52fd823fc121aba0cc7e89',
+                    'utils.py':'3ac4575c8a2bfb044cb8751e97e213e088ab94dcfba17b59dfd623dcba90114f'}:
+            raise ValueError('Pinned official bidirectional contract differs')
     return cfg
 
 
@@ -89,6 +105,8 @@ def source_series(m):
     if result[VIEWS[0]].ids != result[VIEWS[1]].ids \
             or not np.array_equal(result[VIEWS[0]].external, result[VIEWS[1]].external):
         raise ValueError('Traffic views must share exact topology and node mapping')
+    for data in result.values():
+        data.external=road_adjacency(data.external,m.get('graph_contract','csv_directed'))
     return result
 
 
@@ -99,6 +117,7 @@ def prepare(cfg, output):
         raise ValueError('Locked source/query lineage changed')
     sm, old = read(parent/'manifest.json'), read(prior/'manifest.json')
     m = dict(configuration=cfg,code=code_hashes(),
+        graph_contract=cfg.get('graph_contract','csv_directed'),
         source_directory=str(Path(sm['configuration']['data']['directory'])/'sources'),
         source_hashes={v:sm['source_hashes'][v] for v in VIEWS},
         metadata_hashes={v:sm['metadata_hashes'][v] for v in VIEWS})
@@ -116,10 +135,27 @@ def prepare(cfg, output):
         target_data_opened=False,pretrained_probe_weights_used=False,
         whole_new_traffic_dataset_test=False,source_region_identity_and_time_held_out=True,
         prior_source_development_exposure=True)
+    if cfg['protocol']==ROAD_PROTOCOL:
+        parent_probe=Path(cfg['parent_probe_output'])
+        if sha(parent_probe/'report.json')!=cfg['parent_probe_report_sha256'] \
+                or read(parent_probe/'activity.json')['worker'] is not None \
+                or not read(parent_probe/'final_verification.json')['passed'] \
+                or (parent_probe/'source_confirmation.json').exists():
+            raise ValueError('Stopped parent proof and unopened confirmation required')
+        parent_manifest=read(parent_probe/'manifest.json')
+        if parent_manifest['queries']!=queries or parent_manifest['partition']!=partition:
+            raise ValueError('Paired graph-convention study must preserve ALL queries and regions')
+        for name,expected in cfg['upstream_sha256'].items():
+            if sha(Path(cfg['upstream_evidence_directory'])/name)!=expected:
+                raise ValueError('Official graph-convention evidence changed')
+        m.update(parent_probe_report_sha256=cfg['parent_probe_report_sha256'],
+            parent_manifest_sha256=sha(parent_probe/'manifest.json'),
+            source_validation_previously_seen=True,graph_convention_only_new_factor=True,
+            official_benchmark_bidirectional_not_verified_traffic_causal_direction=True)
     output.mkdir(parents=True,exist_ok=True)
     immutable(output/'manifest.json',m)
     if not (output/'status.json').exists():
-        atomic_json(output/'status.json',dict(state='prepared',stage=36,gpu_seconds=0.,hourly_followup=False))
+        atomic_json(output/'status.json',dict(state='prepared',stage=stage_number(cfg),gpu_seconds=0.,hourly_followup=False))
     return m
 
 
@@ -469,7 +505,7 @@ def run(cfg,output,charge):
         for condition in CONDITIONS:
             selection=fit(cfg,output,m,packed,seed,condition,charge,speed)
             if selection is None or STOP[0]:
-                atomic_json(output/'status.json',dict(state='paused',stage=36,gpu_seconds=0.))
+                atomic_json(output/'status.json',dict(state='paused',stage=stage_number(cfg),gpu_seconds=0.))
                 return None
             selections[seed][condition]=selection
         if seed==42:
@@ -487,7 +523,8 @@ def run(cfg,output,charge):
     phase='initial_source_screen' if not initial['passed'] else 'repeat_source_screen' \
         if not repeat['passed'] else 'source_confirmation'
     passed=bool(confirmed and confirmed['passed'])
-    report=dict(complete=True,stage=36,protocol=PROTOCOL,passed=passed,stop_phase=phase,
+    report=dict(complete=True,stage=stage_number(cfg),protocol=cfg['protocol'],passed=passed,stop_phase=phase,
+        graph_contract=m.get('graph_contract','csv_directed'),
         initial_validation=initial,repeated_validation=repeat,source_confirmation=confirmed,
         selections={str(k):v for k,v in selections.items()},source_partition=m['partition'],
         profiling=speed,parameters=sum(p.numel() for p in model_for(cfg,42).parameters()),
@@ -503,7 +540,7 @@ def run(cfg,output,charge):
             'continuous diagnostic readout is not a numerical head attached to ChatTime'])
     immutable(output/'report.json',report)
     atomic_json(output/'status.json',dict(state='source_probe_passed' if passed else 'stopped_at_source_gate',
-        stage=36,phase=phase,gpu_seconds=0.,target_forecasts=0,chattime_updates=0,hourly_followup=False))
+        stage=stage_number(cfg),phase=phase,gpu_seconds=0.,target_forecasts=0,chattime_updates=0,hourly_followup=False))
     atomic_json(output/'progress.json',dict(state='complete',phase=phase,eta_seconds=None,
         conditional_stages_skipped=report['skipped']))
     return report
@@ -546,7 +583,7 @@ def main():
             print(json.dumps(dict(complete=value is not None,passed=value['passed'] if value else None)),flush=True)
         except Exception as exc:
             immutable(args.output/f'failure-{time.time_ns()}.json',dict(error=repr(exc)))
-            atomic_json(args.output/'status.json',dict(state='failed',stage=36,error=repr(exc)))
+            atomic_json(args.output/'status.json',dict(state='failed',stage=stage_number(cfg),error=repr(exc)))
             raise
         finally:
             charge();activity['worker']=None;atomic_json(path,activity)
