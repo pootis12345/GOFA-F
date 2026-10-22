@@ -1483,3 +1483,6 @@ Electricity 8→8、Solar-Energy 24→3，取代上一条的 1/1/3/12/1/3。
 仅修订后续协议；原首轮快照不变。用户随后取消旧首轮，执行结果见本文件顶部最新状态。
 没有启动新训练或测速。
 
+
+
+Stage45 source asinh edge encoding completed and stopped at original source gate: flow 24.226026, speed 1.461244; mixed versus Stage40, flow worse than random roster. CPU109.320s, GPU0; 33 related checks and exact self replay passed. Confirmation/targets/ChatTime untouched, all processes exited. See STAGE45_RESULTS.md.
