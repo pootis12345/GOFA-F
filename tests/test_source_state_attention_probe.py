@@ -53,7 +53,7 @@ def test_batch_node_isolation_and_optimizer_exact_replay():
 
 def test_runtime_scope_new_parameter_budget_and_rng_preservation(monkeypatch):
     monkeypatch.setenv('GOFA_WORKSPACE','/tmp/source')
-    cfg=n.configuration(Path(__file__).parents[1]/'configs/stage40_source_normalized_probe.yaml')
+    cfg=n.configuration(Path(__file__).parents[1]/'configs/stage38_source_neighborhood_probe.yaml')
     before=p.model_for;baseline=before(cfg,42);rng=torch.get_rng_state().clone()
     with state_attention_runtime():
         fixed=n.configuration(Path(__file__).parents[1]/'configs/stage43_source_state_attention_probe.yaml')
