@@ -1486,3 +1486,6 @@ Electricity 8→8、Solar-Energy 24→3，取代上一条的 1/1/3/12/1/3。
 
 
 Stage45 source asinh edge encoding completed and stopped at original source gate: flow 24.226026, speed 1.461244; mixed versus Stage40, flow worse than random roster. CPU109.320s, GPU0; 33 related checks and exact self replay passed. Confirmation/targets/ChatTime untouched, all processes exited. See STAGE45_RESULTS.md.
+
+
+Stage46 read-only source audit completed: Stage40 gains concentrate on few variables, all paired source intervals cross1; dense physical-roster messages include77.78% non-road pairs and validation has more long-hop neighbors. This is a hypothesis, not a bug or causal proof. GPU/training/target0, confirmation closed. Proposed fixed road-distance prior is not yet run. See STAGE46_RESULTS.md.

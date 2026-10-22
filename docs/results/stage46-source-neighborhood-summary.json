@@ -1,0 +1,409 @@
+{
+  "stage": 46,
+  "complete": true,
+  "results": {
+    "40": {
+      "pems04_flow": {
+        "checkpoints": {
+          "physical": "23ef64a809c3b2e03a863106dda65cef70a45e96cec9a6957915d9369443cc01",
+          "self": "813e4e60b5bc5f0b84215b7e57033898a7d58b72e1137824bf76b38c20a361e5",
+          "rewired": "a4b6da97ca9b8b18c081c46d44997a94102d7eb3623f5ef726d1af201a121935"
+        },
+        "by_time_block": {
+          "0": {
+            "query_count": 18,
+            "mean_difference": -0.9160424505653619
+          },
+          "1": {
+            "query_count": 18,
+            "mean_difference": 0.22004073423212794
+          },
+          "2": {
+            "query_count": 18,
+            "mean_difference": -2.57323867606896
+          },
+          "3": {
+            "query_count": 18,
+            "mean_difference": 0.3935678665767664
+          }
+        },
+        "by_variable_mean_difference": {
+          "48": -2.2603641631042892,
+          "100": 2.2721959515474746,
+          "114": -11.668540568246197,
+          "136": 2.08694594547463,
+          "138": 0.37649893054428185,
+          "139": -3.4650315051743137,
+          "144": -1.3880410320513565,
+          "145": -0.03770539048127808,
+          "172": -0.46309879360099626,
+          "205": -1.2500180993229157,
+          "206": 1.6740725422666096,
+          "228": -0.6123517576488665,
+          "244": -0.948521399075011,
+          "245": 0.040491256862879244,
+          "273": 1.8719165874645118,
+          "284": -0.18738097530634334,
+          "303": -0.06708098761737347,
+          "305": 1.0854870912541315
+        },
+        "physical_better_queries": 37,
+        "tied_queries": 0,
+        "physical_worse_queries": 35,
+        "physical_roster": {
+          "dense_message_pairs": 5184,
+          "published_road_pairs": 1152,
+          "fraction_dense_pairs_not_published_edges": 0.7777777777777778,
+          "target_to_sampled_node_hops": {
+            "1": 128,
+            "2": 112,
+            "3": 96,
+            "4": 80,
+            "5": 64,
+            "6": 48,
+            "7": 32,
+            "8": 16
+          },
+          "roster_sizes": [
+            9
+          ],
+          "target_published_degree_min": 1,
+          "target_published_degree_max": 2
+        }
+      },
+      "pems04_speed": {
+        "checkpoints": {
+          "physical": "23ef64a809c3b2e03a863106dda65cef70a45e96cec9a6957915d9369443cc01",
+          "self": "813e4e60b5bc5f0b84215b7e57033898a7d58b72e1137824bf76b38c20a361e5",
+          "rewired": "a4b6da97ca9b8b18c081c46d44997a94102d7eb3623f5ef726d1af201a121935"
+        },
+        "by_time_block": {
+          "0": {
+            "query_count": 18,
+            "mean_difference": -0.0766954899337527
+          },
+          "1": {
+            "query_count": 18,
+            "mean_difference": 0.019937224804927225
+          },
+          "2": {
+            "query_count": 18,
+            "mean_difference": -0.12856531287625883
+          },
+          "3": {
+            "query_count": 18,
+            "mean_difference": 0.11873040832137101
+          }
+        },
+        "by_variable_mean_difference": {
+          "48": -1.0964268778674575,
+          "100": 0.05995621322966649,
+          "114": -0.003330425216286459,
+          "136": 0.1849965872539018,
+          "138": -0.04565497501573051,
+          "139": -0.02333993348757818,
+          "144": 0.3714100109068804,
+          "145": 0.2577211634995108,
+          "172": 0.28312282263597427,
+          "205": -0.11448790553134691,
+          "206": 0.06336649879945086,
+          "228": -0.3539940250656475,
+          "244": 0.4468005469208246,
+          "245": 0.029573108794740385,
+          "273": -0.21892604749537983,
+          "284": -0.028026921836628665,
+          "303": -0.20115968716828664,
+          "305": 0.08873058306668265
+        },
+        "physical_better_queries": 39,
+        "tied_queries": 0,
+        "physical_worse_queries": 33,
+        "physical_roster": {
+          "dense_message_pairs": 5184,
+          "published_road_pairs": 1152,
+          "fraction_dense_pairs_not_published_edges": 0.7777777777777778,
+          "target_to_sampled_node_hops": {
+            "1": 128,
+            "2": 112,
+            "3": 96,
+            "4": 80,
+            "5": 64,
+            "6": 48,
+            "7": 32,
+            "8": 16
+          },
+          "roster_sizes": [
+            9
+          ],
+          "target_published_degree_min": 1,
+          "target_published_degree_max": 2
+        }
+      }
+    },
+    "45": {
+      "pems04_flow": {
+        "checkpoints": {
+          "physical": "66f5c4c859c78d41aa5f5d2ce79cb2a01ef38811dd282b88cb5b36914db87363",
+          "self": "05d3f4ae309d4349a1a4a9692b0df00e9601365c7e5f6cf9ddec5f88255335c2",
+          "rewired": "dc1b88e3ac5de3ccd77e5bc656dad535c2c9cd7561059cc7d9eb9ddd75fac8fc"
+        },
+        "by_time_block": {
+          "0": {
+            "query_count": 18,
+            "mean_difference": -0.465357156617015
+          },
+          "1": {
+            "query_count": 18,
+            "mean_difference": 1.995839749980304
+          },
+          "2": {
+            "query_count": 18,
+            "mean_difference": -1.2824744524399716
+          },
+          "3": {
+            "query_count": 18,
+            "mean_difference": 1.1051847438039082
+          }
+        },
+        "by_variable_mean_difference": {
+          "48": 0.4095105678231148,
+          "100": 2.9722830718868263,
+          "114": -8.941323285301525,
+          "136": 2.9132278811497,
+          "138": 0.10882197103152658,
+          "139": -1.1312721516781794,
+          "144": -0.1043882792194677,
+          "145": -0.1688089115389937,
+          "172": -0.12964151112828404,
+          "205": 0.5240067536166553,
+          "206": 1.8996527113486081,
+          "228": -0.6546725300916778,
+          "244": -0.267668243031949,
+          "245": 1.5056636575609441,
+          "273": 3.226116968629261,
+          "284": 0.6239286007670064,
+          "303": 1.5604260509523211,
+          "305": 1.7435046584966285
+        },
+        "physical_better_queries": 32,
+        "tied_queries": 0,
+        "physical_worse_queries": 40,
+        "physical_roster": {
+          "dense_message_pairs": 5184,
+          "published_road_pairs": 1152,
+          "fraction_dense_pairs_not_published_edges": 0.7777777777777778,
+          "target_to_sampled_node_hops": {
+            "1": 128,
+            "2": 112,
+            "3": 96,
+            "4": 80,
+            "5": 64,
+            "6": 48,
+            "7": 32,
+            "8": 16
+          },
+          "roster_sizes": [
+            9
+          ],
+          "target_published_degree_min": 1,
+          "target_published_degree_max": 2
+        }
+      },
+      "pems04_speed": {
+        "checkpoints": {
+          "physical": "66f5c4c859c78d41aa5f5d2ce79cb2a01ef38811dd282b88cb5b36914db87363",
+          "self": "05d3f4ae309d4349a1a4a9692b0df00e9601365c7e5f6cf9ddec5f88255335c2",
+          "rewired": "dc1b88e3ac5de3ccd77e5bc656dad535c2c9cd7561059cc7d9eb9ddd75fac8fc"
+        },
+        "by_time_block": {
+          "0": {
+            "query_count": 18,
+            "mean_difference": -0.14046210604107207
+          },
+          "1": {
+            "query_count": 18,
+            "mean_difference": -0.04330137199329417
+          },
+          "2": {
+            "query_count": 18,
+            "mean_difference": -0.11460995543177684
+          },
+          "3": {
+            "query_count": 18,
+            "mean_difference": 0.10945238174050007
+          }
+        },
+        "by_variable_mean_difference": {
+          "48": -0.9242503401082549,
+          "100": 0.008425057757613097,
+          "114": -0.10191902318238541,
+          "136": 0.09788428966536541,
+          "138": 0.022098953394219127,
+          "139": 0.04156841558360469,
+          "144": 0.0845318314468931,
+          "145": -0.03508903156654364,
+          "172": 0.07933850235141135,
+          "205": -0.13973003086831165,
+          "206": 0.03295822368877341,
+          "228": -0.29439156005039174,
+          "244": 0.3228983445341054,
+          "245": 0.06020438604140624,
+          "273": -0.14565844467695396,
+          "284": 0.07175376742990983,
+          "303": -0.18662761471389233,
+          "305": 0.1558595405080384
+        },
+        "physical_better_queries": 38,
+        "tied_queries": 0,
+        "physical_worse_queries": 34,
+        "physical_roster": {
+          "dense_message_pairs": 5184,
+          "published_road_pairs": 1152,
+          "fraction_dense_pairs_not_published_edges": 0.7777777777777778,
+          "target_to_sampled_node_hops": {
+            "1": 128,
+            "2": 112,
+            "3": 96,
+            "4": 80,
+            "5": 64,
+            "6": 48,
+            "7": 32,
+            "8": 16
+          },
+          "roster_sizes": [
+            9
+          ],
+          "target_published_degree_min": 1,
+          "target_published_degree_max": 2
+        }
+      }
+    }
+  },
+  "cpu_wall_seconds": 2.0848832223564386,
+  "gpu_seconds": 0,
+  "training_updates": 0,
+  "target_forecasts": 0,
+  "confirmation_opened": false,
+  "cuda_initialized": false,
+  "limitations": [
+    "Already exposed source validation; retrospective diagnosis, no new scientific gate passed",
+    "Past correlations and error associations do not establish causality; no feature or model selected",
+    "Dense physical-roster probe is not direct published-road message passing"
+  ],
+  "manifest_sha256": "7f97c00cee7f6a18f9a88d057426881852acc5c28718da129c52bf198e68a9f6",
+  "report_sha256": "c3f5ccea52c94674ccd02bf4f51023533cbdfab9e600afca3c8ea263647d1935",
+  "concentration": {
+    "source_report_sha256": "c3f5ccea52c94674ccd02bf4f51023533cbdfab9e600afca3c8ea263647d1935",
+    "statistics": {
+      "40": {
+        "pems04_flow": {
+          "physical_macro_mae": 23.63212415020529,
+          "random_macro_mae": 24.35104228166165,
+          "physical_better_variables": 11,
+          "physical_worse_variables": 7,
+          "paired_variable_cluster_ratio_95pct": [
+            0.9103821120863409,
+            1.0204853796691415
+          ],
+          "largest_improvement_variable": 114,
+          "largest_variable_mae_difference": -11.6685405682462,
+          "share_of_net_gain_from_largest_variable": 0.9017052504688545,
+          "diagnostic_leave_that_variable_out_ratio": 0.9967283058958539,
+          "mean_past_lag_correlation": {
+            "physical": 0.46942179439104287,
+            "rewired": 0.4458077345115329
+          }
+        },
+        "pems04_speed": {
+          "physical_macro_mae": 1.4952544577345637,
+          "random_macro_mae": 1.511902750155492,
+          "physical_better_variables": 9,
+          "physical_worse_variables": 9,
+          "paired_variable_cluster_ratio_95pct": [
+            0.8883816331994652,
+            1.083554244151576
+          ],
+          "largest_improvement_variable": 48,
+          "largest_variable_mae_difference": -1.0964268778674577,
+          "share_of_net_gain_from_largest_variable": 3.6587899098527,
+          "diagnostic_leave_that_variable_out_ratio": 1.032995295894983,
+          "mean_past_lag_correlation": {
+            "physical": 0.328550234819289,
+            "rewired": 0.330713821653834
+          }
+        }
+      },
+      "45": {
+        "pems04_flow": {
+          "physical_macro_mae": 24.22602597584396,
+          "random_macro_mae": 23.88772775466215,
+          "physical_better_variables": 7,
+          "physical_worse_variables": 11,
+          "paired_variable_cluster_ratio_95pct": [
+            0.9591921838175348,
+            1.0595233687431758
+          ],
+          "largest_improvement_variable": 114,
+          "largest_variable_mae_difference": -8.941323285301529,
+          "share_of_net_gain_from_largest_variable": null,
+          "diagnostic_leave_that_variable_out_ratio": 1.0388888517412502,
+          "mean_past_lag_correlation": {
+            "physical": 0.46942179439104287,
+            "rewired": 0.4458077345115329
+          }
+        },
+        "pems04_speed": {
+          "physical_macro_mae": 1.4612436763978123,
+          "random_macro_mae": 1.5084739393292228,
+          "physical_better_variables": 7,
+          "physical_worse_variables": 11,
+          "paired_variable_cluster_ratio_95pct": [
+            0.8919685218282444,
+            1.0398387603708679
+          ],
+          "largest_improvement_variable": 48,
+          "largest_variable_mae_difference": -0.9242503401082551,
+          "share_of_net_gain_from_largest_variable": 1.0871682249936514,
+          "diagnostic_leave_that_variable_out_ratio": 1.0030462605022257,
+          "mean_past_lag_correlation": {
+            "physical": 0.328550234819289,
+            "rewired": 0.330713821653834
+          }
+        }
+      }
+    },
+    "training_physical_support": {
+      "dense_message_pairs": 136904,
+      "published_road_pairs": 36516,
+      "fraction_dense_pairs_not_published_edges": 0.7332729503885935,
+      "target_to_sampled_node_hops": {
+        "1": 4657,
+        "2": 5001,
+        "3": 3115,
+        "4": 1672,
+        "5": 496,
+        "6": 272,
+        "7": 120,
+        "8": 56
+      },
+      "roster_sizes": [
+        2,
+        3,
+        4,
+        9
+      ],
+      "target_published_degree_min": 1,
+      "target_published_degree_max": 7
+    },
+    "bootstrap_draws": 2000,
+    "bootstrap_seed": 4246,
+    "postprocessing_wall_seconds": 1.0350004034116864,
+    "limitations": [
+      "Single seed/exposed source nodes only; intervals are diagnostic, not a new gate",
+      "Leave-one-variable-out is sensitivity analysis; official metric/query list unchanged"
+    ]
+  },
+  "evidence_archive_sha256": "154d9953172939d354c11d072c94d6bde2788a6b602cee2758f30503a8a48ced",
+  "turn_wall_seconds_through_summary": 625.752883,
+  "turn_wall_scope": "first audit read completion through summary generation; excludes final synchronization"
+}
