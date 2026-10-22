@@ -1,6 +1,6 @@
 # Stage54: fixed-weight source topology intervention audit
 
-Completed the single predeclared2stage×3training-condition×3inference-topology×2view audit, without fitting/selection. All weights/checkpoints/query IDs/inputs/scales stay fixed. Reuse Stage52/53 unique source-selected seed42models; compare correct road, static target-fixed permuted topology and zero cross edges. All cases/parent hashes were sealed before the first forward. Only already exposed source validation was read; source confirmation and all six target datasets remain closed.
+Completed the single predeclared2stage脳3training-condition脳3inference-topology脳2view audit, without fitting/selection. All weights/checkpoints/query IDs/inputs/scales stay fixed. Reuse Stage52/53 unique source-selected seed42models; compare correct road, static target-fixed permuted topology and zero cross edges. All cases/parent hashes were sealed before the first forward. Only already exposed source validation was read; source confirmation and all six target datasets remain closed.
 
 ## The models use neighbors, but correct roads have quantity-dependent effects
 
@@ -30,7 +30,7 @@ Ratios below1 favor correct roads.2000paired18-variable-cluster bootstrap draws,
 | 53 | pems04_flow | 1.051064 | [1.009369, 1.093370] | 4/14 |
 | 53 | pems04_speed | 0.946624 | [0.893005, 1.001314] | 12/6 |
 
-All correct/permuted intervals cross1. Speed therefore supplies a directional road-specific signal, not a proven stable advantage. Mixed query/variable effects and the small repeatedly inspected set remain important. The audit distinguishes message usefulness from correct-topology usefulness; it does not identify the data-generating causal graph, rank ChatTime/UFG, select a new topology, or validate zero-shot transfer.
+The Stage53 flow correct/permuted interval is wholly above1; the other three intervals cross1. Thus this model is worse with correct roads on the exposed flow sample. Speed supplies a directional road-specific signal, not a proven stable advantage. Mixed query/variable effects and the small repeatedly inspected set remain important. The audit distinguishes message usefulness from correct-topology usefulness; it does not identify the data-generating causal graph, rank ChatTime/UFG, select a new topology, or validate zero-shot transfer.
 
 ## Decision and cost
 
