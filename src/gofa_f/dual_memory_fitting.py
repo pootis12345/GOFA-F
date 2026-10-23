@@ -40,7 +40,7 @@ def evaluate(engine,rows,split,root,binding,checkpoint_sha,check,progress,role='
     return records
 
 
-def fit(engine,manifest,config,output,fit_id,depth,binding,check,progress,ufg=False):
+def fit(engine,manifest,config,output,fit_id,depth,binding,check,progress,ufg=False,schedule_factory=SourceSchedule,summarizer=summarize):
     output=Path(output);output.mkdir(parents=True,exist_ok=True)
     settings=manifest['configuration']['ufg'] if ufg else manifest['configuration']['training']
     maximum=settings['maximum_updates'] if ufg else settings['max_updates']
@@ -48,7 +48,7 @@ def fit(engine,manifest,config,output,fit_id,depth,binding,check,progress,ufg=Fa
     held=None if fit_id=='all' else fit_id[5:]
     own=fit_groups(fit_id)
     rows=[q for name in own for s,v in manifest['queries'][name].items() if shape is None or s==shape for q in v['development']]
-    schedule=SourceSchedule(manifest['queries'],held_group=held,shape=shape,
+    schedule=schedule_factory(manifest['queries'],held_group=held,shape=shape,
         initial=manifest['configuration']['queries']['training_per_view'] if ufg else manifest['configuration']['queries']['initial_training_per_view'],expand=not ufg)
     initial=dict(updates=0,pending=0,loss_sum=0.,cursor=schedule.state,selection={},active_seconds=0.,
         completed=False,train_query_count=0,phases={},engine='ufg' if ufg else 'memory',fit_id=fit_id,depth=depth)
@@ -68,7 +68,7 @@ def fit(engine,manifest,config,output,fit_id,depth,binding,check,progress,ufg=Fa
         records=evaluate(engine,rows,'development',output/'evaluations'/f"update-{state['updates']:06d}",binding,key,check,
             lambda **f:progress(**dict(f,fit=fit_id,depth=depth,updates=state['updates'],maximum=maximum)))
         state['validation_query_seconds']=sum(r.get('prediction_seconds',0.) for r in records)/max(len(records),1)
-        summary=summarize(records,manifest['training_unit_normalizers'])
+        summary=summarizer(records,manifest['training_unit_normalizers'])
         score=summary['selection_score'];old=state['selection'].get('best_update')
         state['selection']=update_selection(state['selection'],score,state['updates'],
             settings['early_min_updates'],settings['early_patience'],.001)
