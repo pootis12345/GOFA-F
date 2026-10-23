@@ -1,4 +1,4 @@
-protocol: stage64-independent-tsgfm-targets-v1
+protocol: stage64-independent-tsgfm-targets-v2
 expert_output: ${GOFA_WORKSPACE}/outputs/stage61-independent-tsgfm-source-v1
 expert_manifest_sha256: 860cf517b1d06270c8ebb29fa879d056b051a4d2bd02d4ee92722b8f7ef2d646
 ufg_output: ${GOFA_WORKSPACE}/outputs/stage62-official-ufg-source-adequacy-v1

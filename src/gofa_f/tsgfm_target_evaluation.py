@@ -7,6 +7,7 @@ before target inputs open. Reuse the old immutable target queries/Native paths.
 import argparse
 from collections import Counter, defaultdict
 import csv
+import hashlib
 import math
 import os
 from pathlib import Path
@@ -30,11 +31,11 @@ from gofa_f.generative_data import Query, Series, sha
 from gofa_f.prefix_cache import atomic_json
 from gofa_f.tsgfm_expert import TSGFMExpert
 
-PROTOCOL='stage64-independent-tsgfm-targets-v1'
+PROTOCOL='stage64-independent-tsgfm-targets-v2'
 FILES=('tsgfm_target_evaluation.py','tsgfm_expert.py','dual_memory_data.py',
     'dual_memory_engines.py','dual_memory_eval_data.py','dual_memory_eval_records.py',
     'dual_memory_eval_metrics.py','dual_memory_policy.py','generative_data.py',
-    'ufg_memory_roster.py','ufg_subgraph.py','ufg.py','prefix_cache.py')
+    'ufg_memory_roster.py','ufg_subgraph.py','ufg.py','prefix_cache.py','short_sampling_diagnostic.py')
 
 
 def runtime():return {n:sha(Path(__file__).parent/n) for n in FILES}
@@ -136,6 +137,38 @@ def checked_prediction(path,expected):
     return value
 
 
+def recorded_sample_seed(query,sample):
+    key = f'42:{Query(**query).key}:{sample}'.encode()
+    return int.from_bytes(hashlib.sha256(key).digest()[:8], 'big') % (2**63-1)
+
+
+def validate_native(reference,old,inputs):
+    """Read-only equivalent of Native completion; no LLM/Torch2.5 imports.
+
+    The seed equation is AST-checked against the pinned producer in CPU tests.
+    Every path hash, identity, seed, finite numeric slot and exact median is
+    checked. Nothing in the previous output can be created or overwritten.
+    """
+    reference=Path(reference);path=reference/'native_complete.json';sealed=read(path);shards={}
+    for row in old.manifest['queries']:
+        item,_=inputs.get(row);value=old.get(row,item,'native')
+        if value is None:raise ValueError('Missing frozen Native median')
+        p=old.path(row,'native');shards[str(p.relative_to(reference))]=sha(p);paths=[]
+        for sample in range(8):
+            p=reference/'trajectories'/(digest(Query(**row).key)+f'-{sample}.json');v=read(p)
+            if v['identity']!=old.identity(row,item,'native') or v['seed']!=recorded_sample_seed(row,sample) or v['sample']!=sample:
+                raise ValueError('Frozen Native seed/sample/identity changed')
+            prediction=np.asarray(v['result']['prediction'],np.float64)
+            if prediction.shape!=(row['horizon'],) or not np.isfinite(prediction).all() or len(v['result']['numeric_ids'])!=row['horizon']:
+                raise ValueError('Incomplete frozen Native path')
+            paths.append(prediction);shards[str(p.relative_to(reference))]=sha(p)
+        if not np.array_equal(np.median(paths,axis=0),value['prediction']):raise ValueError('Frozen Native median changed')
+    expected=dict(binding=old.binding,complete=True,queries=len(old.manifest['queries']),model='native',
+        input_index_sha256=sha(reference/'inputs/index.json'),shards=shards)
+    if sealed!=expected:raise ValueError('Frozen Native completion does not bind all paths')
+    return sha(path)
+
+
 def require_complete(root,manifest,inputs):
     binding=sha(Path(root)/'manifest.json');result={}
     for name in ('native','tsgfm','ufg'):
@@ -182,7 +215,7 @@ def predict(cfg,root):
         # seal already exists, so this cannot cause any Native generation.
         native_seal=ref/'native_complete.json'
         if not native_seal.exists():raise ValueError('Frozen Native trajectories required; generation is forbidden')
-        original_native_sha=sha(native_seal);old.complete('native',inputs)
+        original_native_sha=validate_native(ref,old,inputs)
         if sha(native_seal)!=original_native_sha:raise ValueError('Native completion evidence changed')
         expert=TSGFMExpert().eval();expert.load_state_dict(torch.load(root/'expert-model-only.pt',map_location='cpu',weights_only=False)['model'])
         for p in expert.parameters():p.requires_grad_(False)

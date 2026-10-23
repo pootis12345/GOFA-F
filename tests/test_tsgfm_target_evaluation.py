@@ -1,5 +1,6 @@
 from copy import deepcopy
 import json
+import ast
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -12,7 +13,7 @@ from gofa_f.generative_data import sha
 from gofa_f.dual_memory_engines import model_digest
 from gofa_f.tsgfm_expert import TSGFMExpert
 from gofa_f.tsgfm_target_evaluation import (TARGETS, PROTOCOL, query_contract, configuration,
-    identity, checked_prediction, require_complete, source_locks)
+    identity, checked_prediction, require_complete, source_locks,recorded_sample_seed,validate_native)
 
 
 def rows():
@@ -93,3 +94,41 @@ def test_portable_model_tensor_export_has_identical_prediction_and_no_gradients(
             data=item(length,horizon,nodes=4,missing=True)
             torch.testing.assert_close(a.forecast(data),b.forecast(data),rtol=0,atol=0)
     assert model_digest(b)==before and all(p.grad is None for p in b.parameters())
+
+
+def test_read_only_seed_equation_is_identical_to_original_producer_without_import():
+    import inspect
+    import gofa_f.tsgfm_target_evaluation as mod
+    source=Path(mod.__file__).with_name('short_sampling_diagnostic.py').read_text()
+    original=next(n for n in ast.parse(source).body if isinstance(n,ast.FunctionDef) and n.name=='sample_seed')
+    current=ast.parse(inspect.getsource(recorded_sample_seed)).body[0]
+    original.name=current.name;assert ast.dump(original)==ast.dump(current)
+
+
+@pytest.mark.parametrize('change',[None,'seed','slot','identity','median'])
+def test_native_reuse_checks_all_paths_and_exact_median_without_loading_LLM(tmp_path,change):
+    from gofa_f.dual_memory_policy import digest
+    from gofa_f.generative_data import Query
+    q=rows()[0];value=dict(prediction=[3.]*12);expected=dict(model='native',query=q)
+    put(tmp_path/'inputs/index.json',{});record=put(tmp_path/'predictions/native/one.json',value)
+    old=SimpleNamespace(manifest=dict(queries=[q]),binding='old',get=lambda *_:value,
+        path=lambda *_:record,identity=lambda *_:expected)
+    inputs=SimpleNamespace(get=lambda _:(None,None));shards={str(record.relative_to(tmp_path)):sha(record)}
+    for sample in range(8):
+        path=put(tmp_path/'trajectories'/(digest(Query(**q).key)+f'-{sample}.json'),dict(identity=deepcopy(expected),
+            seed=recorded_sample_seed(q,sample),sample=sample,result=dict(prediction=[3.]*12,numeric_ids=list(range(12)))))
+        shards[str(path.relative_to(tmp_path))]=sha(path)
+    put(tmp_path/'native_complete.json',dict(binding='old',complete=True,queries=1,model='native',
+        input_index_sha256=sha(tmp_path/'inputs/index.json'),shards=shards))
+    if change is None:
+        before={str(p):sha(p) for p in tmp_path.rglob('*') if p.is_file()}
+        validate_native(tmp_path,old,inputs)
+        assert before=={str(p):sha(p) for p in tmp_path.rglob('*') if p.is_file()}
+    else:
+        data=json.loads(path.read_text())
+        if change=='seed':data['seed']+=1
+        if change=='slot':data['result']['numeric_ids'].pop()
+        if change=='identity':data['identity']['model']='other'
+        if change=='median':value['prediction']=[4.]*12
+        put(path,data)
+        with pytest.raises(ValueError):validate_native(tmp_path,old,inputs)
