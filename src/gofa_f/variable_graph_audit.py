@@ -75,6 +75,60 @@ def check_shards(root,completion,expected):
         if not path.is_relative_to(root.resolve()) or sha(path)!=hash_value:raise ValueError('Forecast shard changed: '+name)
 
 
+def confirmation_audit(root,manifest,kind,model_sha):
+    """Only after source lock: independently replay held/seen length evidence."""
+    from gofa_f.variable_graph_data import variable_input
+    own=Path(root)/kind;value=read(own/'confirmation.json');binding=sha(Path(root)/'manifest.json')
+    if value['binding']!=binding or value['model_sha256']!=model_sha or value['used_for_selection']:
+        raise ValueError('Confirmation must use the previously locked source-best')
+    expected=[q for d in manifest['queries'].values() for v in d.values() for q in v['confirmation']]
+    held={tuple(x) for x in manifest['held_length_pairs']};seen={tuple(x) for x in manifest['training_shapes']}
+    if held&seen:raise ValueError('Held length pairs overlap declared training pairs')
+    for d in manifest['queries'].values():
+        for v in d.values():
+            if any((q['length'],q['horizon']) in held for q in v['train']+v['development']):
+                raise ValueError('Held lengths leaked into training or selection')
+    records=[read(p) for p in sorted((own/'confirmation').glob('*.json'))]
+    if len(records)!=len(expected) or [r['query'] for r in records]!=expected or len({Query(**q).key for q in expected})!=len(expected):
+        raise ValueError('Confirmation coverage, order or query binding changed')
+    data={};by_shape=defaultdict(lambda:defaultdict(list))
+    for r,q in zip(records,expected):
+        if r['identity']!=dict(binding=binding,checkpoint_sha=model_sha,query=q,split='confirmation'):
+            raise ValueError('Confirmation checkpoint binding changed')
+        name=q['source']
+        if name not in data:
+            p=Path(manifest['source_directory'])/(name+'.npz')
+            if sha(p)!=manifest['source_hashes'][name] or sha(p.with_suffix('.json'))!=manifest['metadata_hashes'][name]:
+                raise ValueError('Confirmation source observations changed')
+            data[name]=Series(p)
+            if name.startswith('pems04'):data[name].external=np.maximum(data[name].external,data[name].external.T)
+        series=data[name];query=Query(**q);o=query.origin;h=query.horizon
+        item=variable_input(series,query,manifest['partitions'][name]['confirmation'])
+        target=np.asarray(series.values[o:o+h,query.variable],np.float64)
+        mask=np.asarray(series.mask[o:o+h,query.variable],bool)&np.isfinite(target)
+        if r['input_sha256']!=item.identity or not np.array_equal(mask,np.asarray(r['observed'],bool)):
+            raise ValueError('Confirmation causal input or target mask changed')
+        saved=np.asarray(r['target'],np.float64)
+        if saved.shape!=target.shape or not np.array_equal(saved[mask],target[mask]):
+            raise ValueError('Confirmation truth differs from sealed observations')
+        by_shape[(query.length,query.horizon)][name].append((query.variable,r['prediction'],target,mask))
+    if set(by_shape)!=seen|held or set(value['metrics']['per_shape'])!={f'{l}-{h}' for l,h in by_shape}:
+        raise ValueError('Missing seen or withheld length confirmation')
+    scores={}
+    for (length,horizon),views in by_shape.items():
+        saved=value['metrics']['per_shape'][f'{length}-{horizon}'];domains=defaultdict(list)
+        for name,rows in views.items():
+            metric=scalar_metrics(rows)['macro']['mae'];close(metric,saved['views'][name]['macro_mae'])
+            domains[GROUPS[name]].append(max(metric/manifest['training_unit_normalizers'][name],1e-12))
+        domain=[math.exp(math.fsum(math.log(v) for v in x)/len(x)) for x in domains.values()]
+        score=math.exp(math.fsum(math.log(v) for v in domain)/len(domain));close(score,saved['selection_score'])
+        scores[f'{length}-{horizon}']=score
+    total=math.exp(math.fsum(math.log(v) for v in scores.values())/len(scores));close(total,value['metrics']['selection_score'])
+    return dict(records=len(records),seen_length_pairs=sorted(seen),held_length_pairs=sorted(held),
+        independent_length_scores=scores,independent_selection_score=total,used_for_selection=False,
+        exact_source_truth_masks_and_causal_inputs=True,model_sha256=model_sha)
+
+
 def source_audit(root,manifest,kind):
     own=root/kind;lock=read(own/'source_lock.json');selection=read(own/'all/selection.json')
     if read(own/'status.json')['state']!='complete' or read(own/'activity.json')['worker'] is not None:
@@ -119,7 +173,8 @@ def source_audit(root,manifest,kind):
     if adequate!=lock['source_adequacy']:raise ValueError('Source adequacy claim changed')
     return dict(best_update=best['update'],stopped_update=state['updates'],source_adequacy=adequate,
         checkpoint_sha256=sha(checkpoint),model_sha256=tensors,independent_source_score=score,
-        optimizer_steps=sorted(steps),source_records=len(records),target_labels_used=False)
+        optimizer_steps=sorted(steps),source_records=len(records),target_labels_used=False,
+        independent_confirmation=confirmation_audit(root,manifest,kind,tensors))
 
 
 def audit(source,target):
