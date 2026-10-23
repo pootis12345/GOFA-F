@@ -1,0 +1,11 @@
+protocol: stage64-independent-tsgfm-targets-v1
+expert_output: ${GOFA_WORKSPACE}/outputs/stage61-independent-tsgfm-source-v1
+expert_manifest_sha256: 860cf517b1d06270c8ebb29fa879d056b051a4d2bd02d4ee92722b8f7ef2d646
+ufg_output: ${GOFA_WORKSPACE}/outputs/stage62-official-ufg-source-adequacy-v1
+ufg_manifest_sha256: 8dfb77c667060ab7e78b3a06a7fff4a890eb552f3e73d93b685e3ede1d45bb9c
+target_reference: ${GOFA_WORKSPACE}/outputs/stage59-dual-memory-targets-v1
+target_manifest_sha256: c58780117f6346062f4a01f4c543f1fef9e2a300348526b9acf08353861e2eec
+ufg_root: ${GOFA_WORKSPACE}/external/ufgtime
+training: {max_updates: 0}
+data: {target_training_enabled: false, target_evaluation_enabled: true}
+resources: {cuda_enabled: false, cpu_threads: 2, deadline: null}
