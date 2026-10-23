@@ -1,0 +1,55 @@
+{
+  "scientific_screen_passed": false,
+  "goal_achieved": false,
+  "scope": "included_source_development_not_zero_shot_targets",
+  "manifest_sha256": "860cf517b1d06270c8ebb29fa879d056b051a4d2bd02d4ee92722b8f7ef2d646",
+  "best_update": 6000,
+  "stopped_update": 6750,
+  "stop_reason": "source_early_stop",
+  "checkpoint_sha256": "959c4fe99882d2520c5ad1b0560e5425394384b4fc451655e148dd0375bd275d",
+  "model_sha256": "8e047c788b9280211df5862c424579834856b9a227769f8525feaa067c37d98c",
+  "model_parameters": 224003,
+  "independent_source_macro_mae": {
+    "pems04_flow": 31.852791866951048,
+    "pems04_speed": 2.313616973463317,
+    "boston2017": 3.2993404105815083,
+    "penmanshiel2017": 151.6648478475275
+  },
+  "view_ratios_to_old_UFG": {
+    "pems04_flow": 1.1146039053694485,
+    "pems04_speed": 1.157133720014637,
+    "boston2017": 1.3033147482635628,
+    "penmanshiel2017": 1.026354173035108
+  },
+  "source_screen": {
+    "passed": false,
+    "view_ratios_to_ufg": {
+      "pems04_flow": 1.1146039053694485,
+      "pems04_speed": 1.157133720014637,
+      "boston2017": 1.3033147482635628,
+      "penmanshiel2017": 1.026354173035108
+    },
+    "domain_ratios_to_ufg": {
+      "traffic": 1.1356697422063302,
+      "weather": 1.3033147482635628,
+      "wind": 1.026354173035108
+    },
+    "geometric_domain_ratio": 1.1495632522628112,
+    "scope": "included_source_development",
+    "zero_shot_superiority_proven": false,
+    "target_results_read": false
+  },
+  "source_predictions": 256,
+  "optimizer_step_values": [
+    6750.0
+  ],
+  "no_implementation_failure_found": true,
+  "both_processes_exited": true,
+  "matching_source_fits_started": 0,
+  "target_predictions": 0,
+  "source_confirmation_opened": false,
+  "new_gpu_seconds": 0,
+  "new_cpu_residency_seconds": 4776.537633448839,
+  "peak_rss_kib": 1211672,
+  "model_is_adaptation_not_exact_original_TSGFM_replication": true
+}
