@@ -34,7 +34,7 @@ def admission_gate(resources, worker_mode):
     policy = resources['admission_policy']
     if resources['resource_check_seconds'] != 10:
         raise ValueError('Resource audits must remain ten seconds apart')
-    if worker_mode in ('robust_source_adaptation', 'weather_prefix_adaptation', 'six_target_calibration', 'history_target_calibration', 'state_residual_calibration', 'supervised_target_ensemble', 'graph_memory_mechanisms', 'graph_memory_pilot', 'graph_memory_diagnostic', 'graph_proposal_probe', 'source_cross_innovation', 'dual_memory_acceptance', 'dual_memory_source', 'dual_memory_retraining', 'dual_memory_evaluation') and policy == 'memory_cap_only':
+    if worker_mode in ('robust_source_adaptation', 'weather_prefix_adaptation', 'six_target_calibration', 'history_target_calibration', 'state_residual_calibration', 'supervised_target_ensemble', 'graph_memory_mechanisms', 'graph_memory_pilot', 'graph_memory_diagnostic', 'graph_proposal_probe', 'source_cross_innovation', 'dual_memory_acceptance', 'dual_memory_source', 'dual_memory_retraining', 'dual_memory_evaluation', 'dual_memory_revalidation') and policy == 'memory_cap_only':
         if resources['admission_samples'] != 1 or resources['memory_cap_gib'] != 40 \
                 or resources['torch_cap_gib'] != 38 or resources['yield_on_foreign'] \
                 or resources['leave_free_gib'] != 0:
@@ -49,13 +49,16 @@ def supervise(output, config, snapshot, worker_mode="train"):
     import yaml
     output, config, snapshot = Path(output).resolve(), Path(config).resolve(), Path(snapshot).resolve()
     cfg = yaml.safe_load(config.read_text())
-    update_cap = 3000 if worker_mode == "dual_memory_retraining" else 2000 if worker_mode in ("dual_memory_acceptance", "dual_memory_source") else 0 if worker_mode in ("six_target_calibration", "history_target_calibration", "state_residual_calibration", "supervised_target_ensemble", "graph_memory_mechanisms", "graph_memory_diagnostic", "graph_proposal_probe", "dual_memory_evaluation") else 100 if worker_mode in ("weather_prefix_adaptation", "graph_memory_pilot", "source_cross_innovation") else 250 if worker_mode == "robust_source_adaptation" else 1000 if worker_mode == "source_retraining" else 4000
+    update_cap = 3000 if worker_mode == "dual_memory_retraining" else 2000 if worker_mode in ("dual_memory_acceptance", "dual_memory_source") else 0 if worker_mode in ("six_target_calibration", "history_target_calibration", "state_residual_calibration", "supervised_target_ensemble", "graph_memory_mechanisms", "graph_memory_diagnostic", "graph_proposal_probe", "dual_memory_evaluation", "dual_memory_revalidation") else 100 if worker_mode in ("weather_prefix_adaptation", "graph_memory_pilot", "source_cross_innovation") else 250 if worker_mode == "robust_source_adaptation" else 1000 if worker_mode == "source_retraining" else 4000
     if cfg["training"]["max_updates"] != update_cap or cfg["resources"]["activity_limit_seconds"] is not None \
             or cfg["resources"]["wall_deadline"] is not None \
             or cfg["data"]["target_training_enabled"] and worker_mode != "supervised_target_ensemble":
         raise ValueError("Stage19 requires bounded updates, unlimited activity and disabled target training")
     if worker_mode == 'dual_memory_evaluation':
         from gofa_f.dual_memory_evaluation import configuration
+        configuration(config)
+    if worker_mode == 'dual_memory_revalidation':
+        from gofa_f.dual_memory_revalidation import configuration
         configuration(config)
     if worker_mode == 'dual_memory_retraining':
         from gofa_f.dual_memory_retraining import configuration
@@ -79,7 +82,7 @@ def supervise(output, config, snapshot, worker_mode="train"):
         locks.append(stream)
     if worker_mode not in ("train", "projection_probe", "source_diagnostic", "native_case_probe",
                            "sampling_diagnostic", "stability_diagnostic", "sampled_continuation", "sampled_targets",
-                           "target_calibration", "graph_benchmark", "source_reliability_gate", "source_retraining", "robust_source_adaptation", "weather_prefix_adaptation", "six_target_calibration", "history_target_calibration", "state_residual_calibration", "supervised_target_ensemble", "graph_memory_mechanisms", "graph_memory_pilot", "graph_memory_diagnostic", "graph_proposal_probe", "source_cross_innovation", "dual_memory_acceptance", "dual_memory_source", "dual_memory_retraining", "dual_memory_evaluation"):
+                           "target_calibration", "graph_benchmark", "source_reliability_gate", "source_retraining", "robust_source_adaptation", "weather_prefix_adaptation", "six_target_calibration", "history_target_calibration", "state_residual_calibration", "supervised_target_ensemble", "graph_memory_mechanisms", "graph_memory_pilot", "graph_memory_diagnostic", "graph_proposal_probe", "source_cross_innovation", "dual_memory_acceptance", "dual_memory_source", "dual_memory_retraining", "dual_memory_evaluation", "dual_memory_revalidation"):
         raise ValueError("Unknown supervised worker mode")
     binding = {"snapshot": str(snapshot), "config": str(config), "admission_policy": cfg['resources']['admission_policy'],
         "resource_check_seconds": 10, "admission_samples": cfg['resources']['admission_samples'],
@@ -90,6 +93,12 @@ def supervise(output, config, snapshot, worker_mode="train"):
         binding['leave_free_gib'] = 0
     else:
         binding['idle_max_used_mib'] = 256
+    if worker_mode == 'dual_memory_revalidation':
+        binding.update(target_training_enabled=False,optimizer_updates=0,
+            target_evaluation_enabled='only_after_frozen_source_confirmation',
+            sampling='eight_independent_paths_pointwise_median',
+            adequate_ufg_source_manifest=cfg['ufg_adequacy_manifest_sha256'],
+            source_route_review_manifest=cfg['source_alternative_review_manifest_sha256'])
     if worker_mode == 'source_cross_innovation':
         if cfg['protocol']!='stage58-cross-innovation-v1' or cfg['conditions']!=['physical','self','rewired'] or cfg['data']['target_evaluation_enabled']:
             raise ValueError('Only the single fixed source innovation recipe is allowed')
@@ -295,7 +304,8 @@ def supervise(output, config, snapshot, worker_mode="train"):
                   "dual_memory_acceptance": "gofa_f.dual_memory_run",
                   "dual_memory_source": "gofa_f.dual_memory_training",
                   "dual_memory_retraining": "gofa_f.dual_memory_retraining",
-                  "dual_memory_evaluation": "gofa_f.dual_memory_evaluation"}[worker_mode]
+                  "dual_memory_evaluation": "gofa_f.dual_memory_evaluation",
+                  "dual_memory_revalidation": "gofa_f.dual_memory_revalidation"}[worker_mode]
         command = [sys.executable, "-u", "-m", module,
                    "--config", str(config), "--output", str(output)]
         if worker_mode == "train":
@@ -353,7 +363,7 @@ def supervise(output, config, snapshot, worker_mode="train"):
         previous = ledger.state
         final = read(output/"status.json", {}).get("state")
         if worker_mode in ("sampled_continuation", "sampled_targets", "target_calibration", "graph_benchmark",
-                            "source_reliability_gate", "source_retraining", "robust_source_adaptation", "weather_prefix_adaptation", "six_target_calibration", "history_target_calibration", "state_residual_calibration", "supervised_target_ensemble", "graph_memory_mechanisms", "graph_memory_pilot", "graph_memory_diagnostic", "graph_proposal_probe", "source_cross_innovation", "dual_memory_retraining", "dual_memory_evaluation") and final == "resource_paused" and reason is None:
+                            "source_reliability_gate", "source_retraining", "robust_source_adaptation", "weather_prefix_adaptation", "six_target_calibration", "history_target_calibration", "state_residual_calibration", "supervised_target_ensemble", "graph_memory_mechanisms", "graph_memory_pilot", "graph_memory_diagnostic", "graph_proposal_probe", "source_cross_innovation", "dual_memory_retraining", "dual_memory_evaluation", "dual_memory_revalidation") and final == "resource_paused" and reason is None:
             ledger.state["resource_pause_count"] += 1
             ledger.save()
         if reason == "stopped_by_user":
@@ -394,7 +404,7 @@ def main():
                                                 "native_case_probe", "sampling_diagnostic",
                                                 "stability_diagnostic", "sampled_continuation", "sampled_targets",
                                                 "target_calibration", "graph_benchmark",
-                                                "source_reliability_gate", "source_retraining", "robust_source_adaptation", "weather_prefix_adaptation", "six_target_calibration", "history_target_calibration", "state_residual_calibration", "supervised_target_ensemble", "graph_memory_mechanisms", "graph_memory_pilot", "graph_memory_diagnostic", "graph_proposal_probe", "source_cross_innovation", "dual_memory_acceptance", "dual_memory_source", "dual_memory_retraining", "dual_memory_evaluation"), default="train")
+                                                "source_reliability_gate", "source_retraining", "robust_source_adaptation", "weather_prefix_adaptation", "six_target_calibration", "history_target_calibration", "state_residual_calibration", "supervised_target_ensemble", "graph_memory_mechanisms", "graph_memory_pilot", "graph_memory_diagnostic", "graph_proposal_probe", "source_cross_innovation", "dual_memory_acceptance", "dual_memory_source", "dual_memory_retraining", "dual_memory_evaluation", "dual_memory_revalidation"), default="train")
     args = parser.parse_args()
     supervise(args.output, args.config, args.snapshot, args.worker_mode)
 

@@ -1,0 +1,33 @@
+protocol: stage60-dual-memory-evaluation-v1
+source_output: ${GOFA_WORKSPACE}/outputs/stage60-dual-memory-source-v1
+source_training_manifest_sha256: 39d218011ec2815c7f1c9469e1810f2bb2d3e310343daa1040a3b880e302a0b5
+accepted_snapshot: ${GOFA_WORKSPACE}/../GOFA-F-runs/stage59-dual-memory-v1
+ufg_adequacy_output: ${GOFA_WORKSPACE}/outputs/stage62-official-ufg-source-adequacy-v1
+ufg_adequacy_manifest_sha256: 8dfb77c667060ab7e78b3a06a7fff4a890eb552f3e73d93b685e3ede1d45bb9c
+source_alternative_review_output: ${GOFA_WORKSPACE}/outputs/stage63-matched-source-crossfit-v1
+source_alternative_review_manifest_sha256: 1801d25c82ddf2b5ca88cb36ac1e6266cd78b1e9d4b7c0811085920c69612218
+source_confirmation_output: ${GOFA_WORKSPACE}/outputs/stage60-dual-memory-source-confirm-v1
+target_output: ${GOFA_WORKSPACE}/outputs/stage60-dual-memory-targets-v1
+target_reference_manifest: ${GOFA_WORKSPACE}/outputs/stage21-graph-benchmark-v2/manifest.json
+target_reference_manifest_sha256: c94a4d5bed128be16d99712349fd5681a64620bbf95cb9f287a71e534cdcbbb9
+target_directory: ${GOFA_WORKSPACE}/data/stage21-v2/targets
+target_query_seed: 60
+prior_target_query_manifests:
+  - path: ${GOFA_WORKSPACE}/outputs/stage59-dual-memory-targets-v1/manifest.json
+    sha256: c58780117f6346062f4a01f4c543f1fef9e2a300348526b9acf08353861e2eec
+ufg_root: ${GOFA_WORKSPACE}/external/ufgtime
+ufg_python: ${GOFA_WORKSPACE}/.venv-ufg/bin/python
+delivery_output: ${GOFA_WORKSPACE}/outputs/stage60-final-delivery-v1
+training: {max_updates: 0}
+data: {target_training_enabled: false, target_evaluation_enabled: true}
+sampling: {samples: 8, top_k: 100, temperature: 1.0, top_p: 1.0, seed: 42, aggregate: pointwise_median, execution: serial_single_query_independent_kv}
+resources:
+  admission_policy: memory_cap_only
+  admission_samples: 1
+  resource_check_seconds: 10
+  memory_cap_gib: 40
+  torch_cap_gib: 38
+  activity_limit_seconds: null
+  wall_deadline: null
+  yield_on_foreign: false
+  leave_free_gib: 0
