@@ -1,6 +1,7 @@
 from copy import deepcopy
 from pathlib import Path
 from types import SimpleNamespace
+import os
 import torch
 import pytest
 
@@ -10,7 +11,7 @@ from gofa_f.ufg_subgraph import pack_history
 from gofa_f.dual_memory_engines import model_digest
 from gofa_f.dual_memory_policy import capture,restore,accumulate
 
-ROOT=Path('/home/dcg/dcg_data/GOFA-F/external/ufgtime')
+ROOT=Path(os.environ.get('GOFA_WORKSPACE',Path(__file__).resolve().parents[1]))/'external/ufgtime'
 
 
 def history(length,nodes=7,batch=1):
