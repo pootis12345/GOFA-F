@@ -1,0 +1,20 @@
+protocol: stage60-dual-memory-source-v1
+warmup_output: ${GOFA_WORKSPACE}/outputs/stage60-source-warmup-v2
+warmup_manifest_sha256: 204cb5ad2088d5d14075cfe6e60019143afd4e47651251c96ba90dd3d9717e61
+parent_source_output: ${GOFA_WORKSPACE}/outputs/stage59-dual-memory-source-v1
+parent_source_manifest_sha256: 791752bd5f83dda8ad051711fd636f7d75c2e4c7f1d957e92e678fe5289a23d6
+accepted_snapshot: ${GOFA_WORKSPACE}/../GOFA-F-runs/stage59-dual-memory-v1
+prefix_cache: {ram_gib: 2, disk_gib: 8}
+fusion: {steps: 2000, learning_rate: 0.02, penalty: 0.001, features: 8, bias_initial: -2.0}
+training: {max_updates: 3000}
+data: {target_training_enabled: false, target_evaluation_enabled: false}
+resources:
+  admission_policy: memory_cap_only
+  admission_samples: 1
+  resource_check_seconds: 10
+  memory_cap_gib: 40
+  torch_cap_gib: 38
+  activity_limit_seconds: null
+  wall_deadline: null
+  yield_on_foreign: false
+  leave_free_gib: 0
