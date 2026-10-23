@@ -1,0 +1,39 @@
+protocol: stage60-source-warmup-v1
+parent_output: ${GOFA_WORKSPACE}/outputs/stage59-dual-memory-source-v1
+parent_manifest_sha256: 791752bd5f83dda8ad051711fd636f7d75c2e4c7f1d957e92e678fe5289a23d6
+inherited_costs_file: ${GOFA_WORKSPACE}/outputs/stage59-final-delivery-v1/costs.json
+inherited_costs_sha256: b9839a332a80b62f8ef0f0ac3c177f24e2f1db5e798b8c870dd2e4287791a16c
+target_training_enabled: false
+target_evaluation_enabled: false
+warmup:
+  max_updates: 2000
+  effective_batch: 16
+  microbatch: 16
+  learning_rate: 0.001
+  warmup_updates: 50
+  interface_only_updates: 0
+  weight_decay: 0.0001
+  gradient_clip: 1.0
+  validation_every: 100
+  early_min_updates: 1000
+  early_patience: 8
+  significant_improvement: 0.001
+joint_memory_training:
+  depths: [6, 3]
+  max_updates: 3000
+  effective_batch: 8
+  microbatch: 1
+  learning_rate: 0.0001
+  warmup_updates: 50
+  interface_only_updates: 50
+  weight_decay: 0.0001
+  gradient_clip: 1.0
+  validation_every: 100
+  early_min_updates: 1200
+  early_patience: 8
+  significant_improvement: 0.001
+resources:
+  cpu_threads: 2
+  cuda_enabled: false
+  wall_deadline: null
+  inherited_gpu_cost_reset: false
