@@ -1,0 +1,24 @@
+protocol: stage65-shared-ufg-source-v1
+source_output: ${GOFA_WORKSPACE}/outputs/stage59-dual-memory-source-v1
+source_manifest_sha256: 791752bd5f83dda8ad051711fd636f7d75c2e4c7f1d957e92e678fe5289a23d6
+ufg_root: ${GOFA_WORKSPACE}/external/ufgtime
+target_training_enabled: false
+evaluation:
+  output: ${GOFA_WORKSPACE}/outputs/stage65-shared-ufg-targets-v1
+  reference: ${GOFA_WORKSPACE}/outputs/stage64-independent-tsgfm-targets-v2
+  reference_manifest_sha256: 0c18fec91679789e34e29dec8665cf09c4447eeb8b993d47c8da42fe37c31681
+model: {width: 128, canonical_history: 48, maximum_horizon: 24, single_parameter_set: true, shape_specific_weights: false}
+training:
+  max_updates: 40000
+  effective_batch: 64
+  microbatch: 64
+  learning_rate: 0.001
+  warmup_updates: 1
+  interface_only_updates: 0
+  weight_decay: 0.0
+  gradient_clip: 5.0
+  validation_every: 500
+  early_min_updates: 4000
+  early_patience: 8
+  significant_improvement: 0.001
+resources: {cuda_enabled: false, cpu_threads: 2, deadline: null}
