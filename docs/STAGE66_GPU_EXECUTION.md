@@ -13,3 +13,12 @@
 启动命令与进度：`python -m gofa_f.graph_gpu_execution --output outputs/stage66-gpu-execution-v1 --progress`。输出逐模型状态、源更新、部分累积和当前阶段；早期泛用ETA仍混有既有CPU速度，迁移后应以新增GPU更新实测速率解释，不将其当完整精确ETA。源/目标结果未完成前不宣称超过UFG或ChatTime。
 
 实际部署已完成：运行源码d09b2fb，专家2433与原主任务共享UFG5393更新已实际核验。多长度共享UFG为正式可变长度对照，旧主任务共享UFG作为独立补充，不按目标/形状拼接或选择二者。启动证据SHA为7e0dca1fb27b6d5218e2ef4d266092444126ecd4b9a9f4f18cfd8b66c9165c50。
+
+
+## GPU资源集中于独立专家与多长度共享UFG
+
+旧两任务共享UFG不是当前可变长度目标的必要对照，已合作暂停于5626更新、64/64部分累积；仅保留历史补充，不进入本轮自动目标重测。独立专家切换队列时保存2674更新、28/32部分累积及完整CUDA RNG，按原状态接续。新执行仅排入expert和variable_ufg两个worker；后者从原固定seed42初态正式训练，全部L/H共用同一检查点，旧基线不再占用名额。
+
+新执行目录stage66-gpu-execution-v2保留全部原模型/Adam/部分梯度/RNG/游标/源最佳/验证分片与累计CPU/GPU成本，旧v1目录与快照保持暂停。数值计算、状态恢复等五个函数AST及其余数值依赖SHA完全不变，仅调整控制器队列和条件评价出口，复用既有CPU/GPU数值证明；新相关CPU检查验证逐文件移交、CUDA RNG、无覆盖与非法队列拒绝，禁CUDA两线程通过。GOFA-F继续暂停，无截止时间；源训练、选模及六集目标门槛不改。不把队列切换算作重新开始科学实验。
+
+当前进度改用`python -m gofa_f.graph_gpu_execution --output outputs/stage66-gpu-execution-v2 --progress`。旧v1仅保留历史，不再用于自动执行。

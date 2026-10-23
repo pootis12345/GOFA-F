@@ -99,6 +99,69 @@ def prepare(root,variable,primary):
     print(json.dumps(dict(prepared=str(root),execution_manifest_sha256=sha(root/'execution_manifest.json'))),flush=True)
 
 
+def active_cases(root):
+    values=read(root/'execution_manifest.json').get('active_cases',list(CASES))
+    if not values or len(set(values))!=len(values) or any(v not in CASES for v in values):
+        raise ValueError('Unknown or duplicate GPU source cases')
+    return values
+
+
+def resume_focus(root,previous):
+    """Execution-only queue change; preserve every fit and old cost exactly."""
+    if root.exists():raise ValueError('Do not overwrite a previous execution')
+    old=read(previous/'execution_manifest.json');activity=read(previous/'gpu_activity.json')
+    if activity['worker'] is not None or read(previous/'gpu_status.json')['state']!='paused_by_user':
+        raise ValueError('Previous GPU controller must cooperatively exit')
+    launch=read(Path(str(previous)+'.bootstrap.launch.json'))
+    if process_identity(launch['pid'])==launch['start_ticks']:raise ValueError('Old controller still live')
+    for case in old.get('active_cases',CASES):
+        _,work=paths(previous,case)
+        if read(work/'activity.json',{}).get('worker') is not None:raise ValueError('Old worker still live')
+        if read(work/'status.json')['state'] not in ('paused','prepared','complete'):
+            raise ValueError('Audit failed execution before migration')
+    # No numerical function changed: only the CPU supervisor's queue and
+    # conditional finalization. Keep the exact prior numerical proof chain.
+    import ast
+    old_snapshot=Path(launch['snapshot']);before=ast.parse((old_snapshot/'src/gofa_f/graph_gpu_execution.py').read_text())
+    after=ast.parse(Path(__file__).read_text());methods=('construct','worker','gpu_environment','source_settings','paths')
+    def nodes(tree):return {v.name:ast.dump(v,include_attributes=False) for v in tree.body if isinstance(v,ast.FunctionDef)}
+    a,b=nodes(before),nodes(after)
+    for name in methods:
+        if a[name]!=b[name]:raise ValueError('Numerical state-transition code changed: '+name)
+    new_runtime=runtime()
+    for name,value in old['runtime'].items():
+        if name!='graph_gpu_execution.py' and new_runtime[name]!=value:raise ValueError('Numerical dependency changed: '+name)
+    root.mkdir(parents=True);copied={}
+    for label in ('variable','primary'):
+        shutil.copytree(previous/label,root/label,symlinks=True)
+        for p in (previous/label).rglob('*'):
+            if p.is_file() and not p.is_symlink():
+                relative=p.relative_to(previous);copied[str(relative)]=sha(p)
+                if sha(root/relative)!=copied[str(relative)]:raise ValueError('Copy changed scientific state')
+    new=dict(old,runtime=new_runtime,active_cases=['expert','variable_ufg'],
+        execution_predecessor=dict(path=str(previous),manifest_sha256=sha(previous/'execution_manifest.json'),
+            all_copied_file_sha256=copied,old_gpu_union_seconds=activity['project_gpu_union_seconds']),
+        old_primary_shared_ufg='cooperatively paused; historical auxiliary only; not used for variable expert selection')
+    atomic_json(root/'execution_manifest.json',new)
+    inherited=dict(activity,worker=None);atomic_json(root/'gpu_activity.json',inherited)
+    derivation=dict(source_manifest_sha256=sha(previous/'execution_manifest.json'),
+        new_manifest_sha256=sha(root/'execution_manifest.json'),unchanged_function_AST=list(methods),
+        all_other_runtime_bytes_identical=True,all_states_and_evaluations_byte_identical=True,
+        GPU_RNG_and_partial_gradients_copied=True,only_queue_and_conditional_finalization_changed=True)
+    atomic_json(root/'acceptance_inheritance.json',derivation)
+    for case in ('expert','variable_ufg'):
+        for folder in ('cpu_acceptance','gpu_acceptance'):
+            p=previous/folder/(case+'.json');v=read(p)
+            if not v.get('passed') or v['execution_manifest_sha256']!=sha(previous/'execution_manifest.json'):
+                raise ValueError('Original acceptance proof missing')
+            (root/folder).mkdir(exist_ok=True)
+            v=dict(v,runtime=new_runtime,execution_manifest_sha256=sha(root/'execution_manifest.json'),
+                execution_proof_reuse=dict(path=str(p),sha256=sha(p),inheritance_sha256=sha(root/'acceptance_inheritance.json')))
+            atomic_json(root/folder/(case+'.json'),v)
+    print(json.dumps(dict(resumed_execution=str(root),active_cases=new['active_cases'],
+        execution_manifest_sha256=sha(root/'execution_manifest.json'))),flush=True)
+
+
 def gpu_environment():
     if os.environ.get('GOFA_GPU_ADMITTED')!='1':raise ValueError('A verified memory-cap supervisor is required')
     torch.set_num_threads(2);torch.use_deterministic_algorithms(True)
@@ -170,14 +233,14 @@ def supervise(root,snapshot,qa_case=None):
     project_lock=(root.parent/'stage19-gpu.lock').open('a');fcntl.flock(project_lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
     if read(root/'execution_manifest.json')['runtime']!=runtime():raise ValueError('Immutable GPU runtime required')
     if not qa_case:
-        for case in CASES:
+        for case in active_cases(root):
             for folder in ('cpu_acceptance','gpu_acceptance'):
                 proof=read(root/folder/f'{case}.json',{})
                 if not proof.get('passed') or proof.get('execution_manifest_sha256')!=sha(root/'execution_manifest.json'):
                     raise ValueError('All case-specific CPU/GPU acceptances required before deployment')
     stopped=[False]
     for sig in (signal.SIGINT,signal.SIGTERM):signal.signal(sig,lambda *_:stopped.__setitem__(0,True))
-    gate=CapOnlyGate();gate.uuid=GPU_UUID;active={};queue=[qa_case] if qa_case else list(CASES);done=[];last=time.monotonic();last_probe=0.
+    gate=CapOnlyGate();gate.uuid=GPU_UUID;active={};queue=[qa_case] if qa_case else list(active_cases(root));done=[];last=time.monotonic();last_probe=0.
     ledger=read(root/('qa_activity.json' if qa_case else 'gpu_activity.json'),{});spent=ledger.get('project_gpu_union_seconds',0.);peak=ledger.get('peak_project_mib',0)
     def status(state,**fields):
         atomic_json(root/('qa_status.json' if qa_case else 'gpu_status.json'),dict(state=state,completed=done,queued=queue,
@@ -243,7 +306,7 @@ def supervise(root,snapshot,qa_case=None):
 def finalize(root,stopped,status):
     """Use the original immutable CPU inference paths and exact data manifests."""
     execution=read(root/'execution_manifest.json')
-    for label in ('primary','variable'):
+    for label in (('primary','variable') if 'primary_ufg' in active_cases(root) else ('variable',)):
         origin=Path(execution['origins'][label]);launch=read(Path(str(origin)+'.bootstrap.launch.json'))
         snapshot=Path(launch['snapshot']);source=root/label;m=read(source/'manifest.json')
         cfg=m['shared_ufg_configuration'] if label=='primary' else m['variable_configuration']
@@ -266,11 +329,12 @@ def finalize(root,stopped,status):
 
 def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--output',required=True);p.add_argument('--snapshot')
-    p.add_argument('--prepare',action='store_true');p.add_argument('--variable-origin');p.add_argument('--primary-origin')
+    p.add_argument('--resume-from');p.add_argument('--prepare',action='store_true');p.add_argument('--variable-origin');p.add_argument('--primary-origin')
     p.add_argument('--worker',choices=CASES);p.add_argument('--qa-worker',choices=CASES);p.add_argument('--accept',choices=CASES)
     p.add_argument('--cpu-accept',choices=CASES)
     p.add_argument('--supervise',action='store_true');p.add_argument('--progress',action='store_true');a=p.parse_args();root=Path(a.output)
-    if a.prepare:prepare(root,Path(a.variable_origin),Path(a.primary_origin))
+    if a.resume_from:resume_focus(root,Path(a.resume_from))
+    elif a.prepare:prepare(root,Path(a.variable_origin),Path(a.primary_origin))
     elif a.worker:
         try:worker(root,a.worker)
         except InterruptedError:raise SystemExit(75)
