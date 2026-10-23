@@ -1,0 +1,17 @@
+protocol: stage63-matched-source-crossfit-v1
+expert_output: ${GOFA_WORKSPACE}/outputs/stage61-independent-tsgfm-source-v1
+expert_manifest_sha256: 860cf517b1d06270c8ebb29fa879d056b051a4d2bd02d4ee92722b8f7ef2d646
+ufg_adequacy_output: ${GOFA_WORKSPACE}/outputs/stage62-official-ufg-source-adequacy-v1
+ufg_adequacy_manifest_sha256: 8dfb77c667060ab7e78b3a06a7fff4a890eb552f3e73d93b685e3ede1d45bb9c
+source_cache_output: ${GOFA_WORKSPACE}/outputs/stage59-dual-memory-source-v1
+source_cache_manifest_sha256: 791752bd5f83dda8ad051711fd636f7d75c2e4c7f1d957e92e678fe5289a23d6
+prior_source_reservation: ${GOFA_WORKSPACE}/outputs/stage60-source-warmup-v2
+prior_source_reservation_manifest_sha256: 204cb5ad2088d5d14075cfe6e60019143afd4e47651251c96ba90dd3d9717e61
+native_python: ${GOFA_WORKSPACE}/.venv-chat/bin/python
+ufg_python: ${GOFA_WORKSPACE}/.venv-ufg/bin/python
+ufg_root: ${GOFA_WORKSPACE}/external/ufgtime
+held_groups: [traffic, weather, wind]
+ufg_maximum_updates: 20000
+target_training_enabled: false
+target_evaluation_enabled: false
+resources: {cuda_enabled: false, cpu_threads: 2, deadline: null}
